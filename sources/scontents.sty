@@ -1,0 +1,283 @@
+\RequirePackage{filecontentsdef}[2019/04/20]
+\RequirePackage{l3keys2e}
+\RequirePackage{xparse}[2019/05/03]
+\ProvidesExplPackage{scontents}{2019/07/30}{1.0}
+  {Store LaTeX content in Sequences (l3seq)}
+\@ifpackagelater { xparse } { 2019/05/03 }
+  { }
+  {
+    \PackageError { scontents } { Support~package~xparse~too~old }
+      {
+        You~need~to~update~your~installation~of~the~bundles~
+        'l3kernel'~and~'l3packages'.\MessageBreak
+        Loading~scontents~will~abort!
+      }
+    \tex_endinput:D
+  }
+\keys_define:nn { scontents }
+  {
+    store-env .tl_set:N         = \l__scontents_name_seq_env_tl,
+    store-env .initial:n        = contents,
+    print-env .bool_set:N       = \l__scontents_print_env_bool,
+    print-env .initial:n        = false,
+    store-cmd .tl_set:N         = \l__scontents_name_seq_cmd_tl,
+    store-cmd .initial:n        = contents,
+    print-cmd .bool_set:N       = \l__scontents_print_cmd_bool,
+    print-cmd .initial:n        = false,
+    print-all .meta:n           = { print-env = true , print-cmd = true },
+    store-env .value_required:n = true,
+    store-cmd .value_required:n = true,
+    print-env .value_required:n = true,
+    print-cmd .value_required:n = true,
+    print-all .value_required:n = true
+  }
+%%^^A Process options for pkg
+\ProcessKeysOptions { scontents }
+%%^^A Internal tl vars
+\tl_new:N \l__scontents_macro_tmp_tl
+\tl_new:N \l__scontents_fname_out_tl
+\tl_new:N \l__scontents_temp_tl
+%%^^A Internal bool vars
+\bool_new:N \l__scontents_typeverb_env_bool
+\bool_set_true:N  \l__scontents_typevrb_env_bool
+\bool_new:N \l__scontents_writing_bool
+\bool_set_false:N \l__scontents_writing_bool
+\bool_new:N \l__scontents_storing_bool
+\bool_set_true:N  \l__scontents_storing_bool
+%%^^A Internal quarks
+\quark_new:N \q__scontents_stop
+\quark_new:N \q__scontents_mark
+%%^^A Add keys to scontents environnment
+\keys_define:nn { scontents }
+  {
+    write-env .code:n           = {
+                                    \bool_set_true:N \l__scontents_writing_bool
+                                    \tl_set:Nn \l__scontents_fname_out_tl {#1}
+                                  },
+    write-out .code:n           = {
+                                    \bool_set_false:N \l__scontents_storing_bool
+                                    \bool_set_true:N  \l__scontents_writing_bool
+                                    \tl_set:Nn \l__scontents_fname_out_tl {#1}
+                                  },
+    write-env .value_required:n = true,
+    write-out .value_required:n = true
+  }
+%%^^A A sub/keys for command |\Scontents|
+\keys_define:nn { scontents / Scontents }
+  {
+    print-cmd .meta:nn = { scontents } { print-cmd = #1 },
+    store-cmd .meta:nn = { scontents } { store-cmd = #1 }
+  }
+%%^^A Append content to seq
+\cs_new_protected:Npn \__scontents_append_contents:nn #1#2
+  {
+    \tl_if_blank:nT {#1}
+      { \msg_error:nn { scontents } { empty-store-cmd } }
+    \seq_if_exist:cF { g__scontents_seq_name_#1_seq }
+      { \seq_new:c { g__scontents_seq_name_#1_seq } }
+    \seq_gput_right:cn { g__scontents_seq_name_#1_seq } {#2}
+  }
+\cs_generate_variant:Nn \__scontents_append_contents:nn { Vx }
+\cs_new:Npn \__scontents_getfrom_seq:nn #1#2
+  { \seq_item:cn { g__scontents_seq_name_#2_seq } {#1} }
+%%^^A Define |scontents| whit [key=val] (delaying)
+\ProvideDocumentEnvironment { scontents } { }
+  {
+    \char_set_catcode_active:N \^^M
+    \__scontents_start_environment:w
+  }
+  {
+    \__scontents_stop_environment:
+    \__scontents_atend_environment:
+  }
+%%^^A First \cs{@@_start_environment:w}
+\group_begin:
+  \char_set_catcode_active:N \^^M
+  \cs_new_protected:Npn \__scontents_start_environment:w #1 ^^M
+    {
+      \__scontents_environment_inline:w #1 \q__scontents_mark
+      \group_begin:
+        \bool_if:NTF \l__scontents_writing_bool
+          {
+            \use:c { filecontentsdef* } { \l__scontents_fname_out_tl }
+                                        { \l__scontents_macro_tmp_tl } ^^M
+          }
+          { \filecontentsdefmacro { \l__scontents_macro_tmp_tl } ^^M }
+    }
+  \cs_new_protected:Npn \__scontents_stop_environment:
+    {
+        \bool_if:NTF \l__scontents_writing_bool
+          { \endfilecontentsdef }
+          { \endfilecontentsdefmacro }
+      \group_end:
+    }
+\group_end:
+%%^^A key val for environment scontents
+\cs_new_protected:Npn \__scontents_environment_inline:w
+  {
+    \peek_charcode_ignore_spaces:NTF [ % ]
+      { \__scontents_environment_keys:w }
+      {
+        \__scontents_environment_junk:xw
+          { after~\c_backslash_str begin{scontents} }
+      }
+  }
+\cs_new_protected:Npn \__scontents_environment_keys:w [ #1 ]
+  {
+    \keys_set_known:nn { scontents } {#1}
+    \__scontents_environment_junk:xw
+      { after~optional~argument~to~\c_backslash_str begin{scontents} }
+  }
+\cs_new_protected:Npn \__scontents_environment_junk:nw #1 #2 \q__scontents_mark
+  {
+    \tl_if_blank:nF {#2}
+      { \msg_error:nnnn { scontents } { junk-after-begin } {#1} {#2} }
+  }
+\cs_generate_variant:Nn \__scontents_environment_junk:nw { x }
+\cs_new_protected:Npn \__scontents_atend_environment:
+  {
+    \bool_if:NT \l__scontents_storing_bool
+      {
+        \__scontents_stored_to_seq:
+        \bool_if:NT \l__scontents_print_env_bool
+          { \__scontents_getfrom_seq:nn { -1 } { \l__scontents_name_seq_env_tl } }
+      }
+    \tl_clear:N \l__scontents_macro_tmp_tl
+  }
+\cs_gset_protected:Npn \__scontents_stored_to_seq:
+  {
+    \regex_replace_all:nnN { \^^M } { \^^J } \l__scontents_macro_tmp_tl
+    \tl_log:N \l__scontents_macro_tmp_tl
+    \__scontents_append_contents:Vx \l__scontents_name_seq_env_tl
+      { \exp_not:N \tex_scantokens:D { \tl_use:N \l__scontents_macro_tmp_tl } }
+  }
+%%^^A User command to stored content
+\ProvideDocumentCommand { \Scontents }{ !s !O{} }
+  {
+    \group_begin:
+      \IfNoValueF {#2}
+        { \keys_set_known:nn { scontents / Scontents } {#2} }
+      \IfBooleanTF{#1}
+        { \__scontents_verb:w }
+        { \__scontents_norm:n }
+  }
+\cs_new_protected:Npn \__scontents_norm:n #1
+  {
+     \exp_args:NV \__scontents_append_contents:nn \l__scontents_name_seq_cmd_tl {#1}
+     \bool_if:NT \l__scontents_print_cmd_bool
+       { \__scontents_getfrom_seq:nn { -1 } { \l__scontents_name_seq_cmd_tl } }
+   \group_end:
+  }
+\NewDocumentCommand { \__scontents_verb:w } { +v }
+  {
+      \tl_set:Nn \l__scontents_temp_tl {#1}
+      \regex_replace_all:nnN { \^^M } { \^^J } \l__scontents_temp_tl
+      \tl_log:N \l__scontents_temp_tl
+      \exp_args:NVx \__scontents_append_contents:nn \l__scontents_name_seq_cmd_tl
+        { \exp_not:N \tex_scantokens:D { \tl_use:N \l__scontents_temp_tl } }
+      \bool_if:NT \l__scontents_print_cmd_bool
+        { \__scontents_getfrom_seq:nn { -1 } { \l__scontents_name_seq_cmd_tl } }
+    \group_end:
+  }
+\ProvideDocumentCommand { \getstored } { O{1} m }
+  { \__scontents_getfrom_seq:nn {#1} {#2} }
+\ProvideDocumentCommand { \typestored } { s O{1} m }
+  {
+    \group_begin:
+      \tl_set:Nx \l__scontents_temp_tl { \__scontents_getfrom_seq:nn {#2} {#3} }
+      \tl_log:N \l__scontents_temp_tl
+      \IfBooleanTF {#1}
+        { \bool_set_false:N \l__scontents_typeverb_env_bool }
+        { \bool_set_true:N  \l__scontents_typeverb_env_bool }
+      \use:c { filecontentsdef@get } \__scontents_fcdef_print:N \l__scontents_temp_tl
+    \group_end:
+  }
+\group_begin:
+ \char_set_catcode_active:N \^^M
+ \cs_new_protected:Npn \__scontents_fcdef_print:N #1
+    {
+      \tl_if_blank:VT #1
+        { \msg_error:nnn { scontents } { empty-variable } {#1} }
+      \cs_set_eq:NN \__scontents_fcdef_saved_EOL: ^^M
+      \cs_set_eq:NN ^^M \scan_stop:
+      \use:x
+        {
+          \exp_not:N \tex_scantokens:D
+            {
+              \exp_not:N \begin{verbatimsc} ^^M
+              \__scontents_strip_scantokens:N #1
+              \bool_if:NF \l__scontents_typeverb_env_bool { ^^M }
+              \c_backslash_str end
+                \c_left_brace_str verbatimsc \c_right_brace_str
+            }
+        }
+      \cs_set_eq:NN ^^M \__scontents_fcdef_saved_EOL:
+    }
+\group_end:
+\group_begin:
+  \catcode`|=0
+  \catcode`[=1
+  \catcode`]=2
+  \catcode`\{=12
+  \catcode`\}=12
+  \catcode`\\=12
+  |gdef|scxverbatim#1\end{verbatimsc}[#1|end[verbatimsc]]
+|group_end:
+\ProvideDocumentEnvironment {verbatimsc} { }
+  {
+    \let\@xverbatim=\scxverbatim
+    \verbatim
+  }{}
+\cs_new:Npn \__scontents_strip_scantokens:N #1
+  { \exp_args:NV \__scontents_strip_scantokens:n #1 }
+\cs_new:Npn \__scontents_strip_scantokens:n #1
+  {
+    \tl_if_head_is_N_type:nTF {#1}
+      {
+        \__scontents_if_scantokens:NwTF #1 \q__scontents_mark
+          {
+            \exp_args:No \tl_if_single_token:nTF { \use_none:nn #1 ? }
+              { \exp_not:o { \use_ii:nn #1 } }
+              { \exp_not:n {#1} }
+          }
+          { \exp_not:n {#1} }
+      }
+      { \exp_not:n {#1} }
+  }
+\prg_new_conditional:Npnn \__scontents_if_scantokens:Nw #1#2 \q__scontents_mark { TF }
+  {
+    \token_if_eq_meaning:NNTF \tex_scantokens:D #1
+      { \prg_return_true: }
+      { \prg_return_false: }
+  }
+%%^^A User command to setup module
+\ProvideDocumentCommand { \setupsc } { m }
+  { \keys_set:nn { scontents } {#1} }
+\ProvideDocumentCommand { \meaningsc } { O{1} m }
+  {
+    \group_begin:
+      \tl_set:Nx \l__scontents_temp_tl { \__scontents_getfrom_seq:nn {#1} {#2} }
+      \tl_log:N \l__scontents_temp_tl
+      \tl_set:Nx \l__scontents_temp_tl { \__scontents_strip_scantokens:N \l__scontents_temp_tl }
+      \regex_replace_all:nnN { \v{1,} } {   } \l__scontents_temp_tl
+      \ttfamily
+      \cs_replacement_spec:N \l__scontents_temp_tl
+    \group_end:
+  }
+\ProvideExpandableDocumentCommand { \countsc } { m }
+  { \seq_count:c { g__scontents_seq_name_#1_seq } }
+\ProvideExpandableDocumentCommand { \cleanseqsc } { m }
+  { \seq_clear_new:c { g__scontents_seq_name_#1_seq } }
+%%^^A Messages
+\msg_new:nnn { scontents } { junk-after-begin }
+  {
+    Junk~characters~#1~\msg_line_context: :
+    \\ \\
+    #2
+  }
+\msg_new:nnn { scontents } { empty-stored-content }
+  { Empty~value~for~key~`getstored'~\msg_line_context:. }
+\msg_new:nnn { scontents } { empty-variable }
+ { Variable~`#1'~empty~\msg_line_context:. }
+%%^^A Finish package
+\file_input_stop:
