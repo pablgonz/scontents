@@ -1,0 +1,42 @@
+## auxiliary files:
+*.aux
+*.lof
+*.log
+*.lot
+*.fls
+*.out
+*.toc
+*.tmp
+*.out
+*.glo
+*.hd
+*.xdv
+*.ins
+
+## atach
+*.atfi
+
+## makeidx and glo
+*.idx
+*.ilg
+*.ind
+*.ist
+
+## minted
+_minted*
+*.pyg
+
+## Intermediate documents:
+*.dvi
+*.ps
+*.pdf
+*.ltx
+
+## Build tool auxiliary files:
+*.fdb_latexmk
+*.synctex
+*.synctex.gz
+*.synctex.gz(busy)
+*.synctex(busy)
+*.pdfsync
+*.zip

@@ -1,0 +1,42 @@
+\documentclass{article}
+\usepackage{scontents}
+\setlength{\parindent}{0pt}
+\pagestyle{empty}
+\begin{document}
+
+\section{Test \texttt{\textbackslash begin\{scontents\}}}
+Test \verb+\begin{scontents}+ \par
+
+\begin{scontents}
+Using \verb+scontents+ env no \verb+[key=val]+, save in seq \verb+contents+ 
+with index $1$.
+% this line ignore by \getstored
+Prove \verb*| verb inline whit bars | and environment \verb+verbatim*+
+\begin{verbatim}
+     A verbatim  
+       environment
+\end{verbatim}
+A text, no space after dot.
+\end{scontents}
+
+\section{Test \texttt{\textbackslash Scontents}}
+
+\Scontents*{Write in one line \LaTeX: $E=mc^2$, no space after dot.}
+
+\section{Test \texttt{\textbackslash getstored}}
+
+XX\getstored[1]{contents}YY\par
+XX\getstored[2]{contents}YY
+
+\section{Test \texttt{\textbackslash meaningsc}}
+
+\meaningsc[1]{contents}\par
+
+\meaningsc[2]{contents}
+
+\section{Test \texttt{\textbackslash typestored}}
+
+\typestored[1]{contents}
+
+\typestored[2]{contents}
+\end{document}
