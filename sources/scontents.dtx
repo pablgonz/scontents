@@ -1334,6 +1334,22 @@ conditions of the [LaTeX Project Public License](https://www.latex-project.org/l
 %    \end{macrocode}
 % \end{macro}
 %
+% \begin{macro}{\g_@@_end_verbatimsc_tl}
+%   A token list to match when ending verbatim environments.
+%    \begin{macrocode}
+\tl_new:N \g_@@_end_verbatimsc_tl
+\tl_gset_rescan:Nnn
+  \g_@@_end_verbatimsc_tl
+  {
+    \char_set_catcode_escape:N \|
+    \char_set_catcode_other:N \\
+    \char_set_catcode_other:N \{
+    \char_set_catcode_other:N \}
+  }
+  { \end{verbatimsc} }
+%    \end{macrocode}
+% \end{macro}
+%
 % \subsection{Add keys for environment}
 %
 % We define a set of keys for environment \env{scontents}.
@@ -1597,7 +1613,7 @@ conditions of the [LaTeX Project Public License](https://www.latex-project.org/l
 % This implementation is an adaptation taken from answer by Phelype Oleinik
 % in (\url{https://tex.stackexchange.com/a/497651/7832}).
 %
-% \begin{macro}{\typestored,@@_fcdef_print:N,verbatimsc}
+% \begin{macro}{\typestored,\@@_fcdef_print:N,\@@_xverb:w,verbatimsc}
 %   The \cs{typestored} commands fetches a buffer from memory, prints it
 %   to the log file,
 %^^A NOTE: Perhaps this logging should be optional, with a key to switch
@@ -1639,8 +1655,7 @@ conditions of the [LaTeX Project Public License](https://www.latex-project.org/l
               \exp_not:N \begin{verbatimsc} ^^M
               \@@_strip_scantokens:N #1
               \bool_if:NF \l_@@_typeverb_env_bool { ^^M }
-              \c_backslash_str end
-                \c_left_brace_str verbatimsc \c_right_brace_str
+              \g_@@_end_verbatimsc_tl
             }
         }
       \cs_set_eq:NN ^^M \@@_fcdef_saved_EOL:
@@ -1648,24 +1663,17 @@ conditions of the [LaTeX Project Public License](https://www.latex-project.org/l
 \group_end:
 %    \end{macrocode}
 %   Finally, the \env{verbatimsc} environment is defined.
-%^^A An idea take from spverbatim
+%^^A An idea taken from spverbatim
 %    \begin{macrocode}
-\group_begin:
-  \catcode`|=0
-  \catcode`[=1
-  \catcode`]=2
-  \catcode`\{=12
-  \catcode`\}=12
-  \catcode`\\=12
-  |gdef|scxverbatim#1\end{verbatimsc}[#1|end[verbatimsc]]
-|group_end:
-%    \end{macrocode}
-%    \begin{macrocode}
-\ProvideDocumentEnvironment {verbatimsc} { }
+\use:x
+  { \cs_gset_protected:Npn \exp_not:N \@@_xverb:w ##1 \g_@@_end_verbatimsc_tl }
+      { #1 \end{verbatimsc} }
+\ProvideDocumentEnvironment { verbatimsc } { }
   {
-    \let\@xverbatim=\scxverbatim
+    \cs_set_eq:cN { @xverbatim } \@@_xverb:w
     \verbatim
-  }{}
+  }
+  { }
 %    \end{macrocode}
 % \end{macro}
 %

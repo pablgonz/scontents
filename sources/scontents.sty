@@ -47,6 +47,16 @@
 %%^^A Internal quarks
 \quark_new:N \q__scontents_stop
 \quark_new:N \q__scontents_mark
+\tl_new:N \g__scontents_end_verbatimsc_tl
+\tl_gset_rescan:Nnn
+  \g__scontents_end_verbatimsc_tl
+  {
+    \char_set_catcode_escape:N \|
+    \char_set_catcode_other:N \\
+    \char_set_catcode_other:N \{
+    \char_set_catcode_other:N \}
+  }
+  { \end{verbatimsc} }
 %%^^A Add keys to scontents environnment
 \keys_define:nn { scontents }
   {
@@ -207,27 +217,21 @@
               \exp_not:N \begin{verbatimsc} ^^M
               \__scontents_strip_scantokens:N #1
               \bool_if:NF \l__scontents_typeverb_env_bool { ^^M }
-              \c_backslash_str end
-                \c_left_brace_str verbatimsc \c_right_brace_str
+              \g__scontents_end_verbatimsc_tl
             }
         }
       \cs_set_eq:NN ^^M \__scontents_fcdef_saved_EOL:
     }
 \group_end:
-\group_begin:
-  \catcode`|=0
-  \catcode`[=1
-  \catcode`]=2
-  \catcode`\{=12
-  \catcode`\}=12
-  \catcode`\\=12
-  |gdef|scxverbatim#1\end{verbatimsc}[#1|end[verbatimsc]]
-|group_end:
-\ProvideDocumentEnvironment {verbatimsc} { }
+\use:x
+  { \cs_gset_protected:Npn \exp_not:N \__scontents_xverb:w ##1 \g__scontents_end_verbatimsc_tl }
+      { #1 \end{verbatimsc} }
+\ProvideDocumentEnvironment { verbatimsc } { }
   {
-    \let\@xverbatim=\scxverbatim
+    \cs_set_eq:cN { @xverbatim } \__scontents_xverb:w
     \verbatim
-  }{}
+  }
+  { }
 \cs_new:Npn \__scontents_strip_scantokens:N #1
   { \exp_args:NV \__scontents_strip_scantokens:n #1 }
 \cs_new:Npn \__scontents_strip_scantokens:n #1
