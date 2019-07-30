@@ -103,7 +103,7 @@ conditions of the [LaTeX Project Public License](https://www.latex-project.org/l
    SmallCapsFont     = lmmonocaps10-oblique,%
    SlantedFont       = lmmonoslant10-regular,
    ]
-\newfontfamily\fetamono{ffmw10.otf}[
+\newfontfamily\fetamontotf{ffmw10.otf}[
    Scale             = 0.95,%
    RawFeature        = {+latn,+rand,+kern,+size},%
    ]
@@ -342,7 +342,7 @@ conditions of the [LaTeX Project Public License](https://www.latex-project.org/l
 % Logo whit textffmw font for title
 \newsavebox{\logobox}
 \savebox{\logobox}{%
-  \normalsize\fetamono{\textcolor{mypkgcolor}{s}\textcolor{OrangeRed}{content}\textcolor{mypkgcolor}{s}}}
+  \normalsize\fetamontotf{\textcolor{mypkgcolor}{s}\textcolor{OrangeRed}{content}\textcolor{mypkgcolor}{s}}}
 \newcommand{\mylogo}{%
   \settoheight{\@tempdima}{L}%
   \resizebox{!}{\@tempdima}{\usebox{\logobox}}%

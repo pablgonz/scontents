@@ -1,3 +1,6 @@
+## project-specific
+build/*
+
 ## auxiliary files:
 *.aux
 *.lof
