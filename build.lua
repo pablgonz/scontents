@@ -5,7 +5,7 @@ pkgdate      = "2019/07/30"
 module       = "scontents"
 ctanpkg      = "scontents"
 
-tagfiles     = {"sources/*.md","sources/*.sty","sources/*.dtx"}
+tagfiles     = {"sources/scontents.md","sources/scontents.sty","sources/scontents.dtx"}
 
 -- ctan setup
 docfiles = {"sources/scontents.pdf","source/scontents.dtx"}
@@ -15,15 +15,10 @@ textfiles= {"sources/README.md"}
 typesetexe = "xelatex"
 packtdszip   = false
 
-installfiles = {
-                "**/*.sty"
-               }  
+installfiles = { "sources/scontents.sty" }
                
-sourcefiles  = {
-                "**/*.sty",
-                "**/*.dtx"
-               }
+sourcefiles  = { "sources/scontents.dtx" }
                             
-typesetfiles = {"scontents.dtx"}
+typesetfiles = { "scontents.dtx" }
 
-typesetruns = 3
+typesetruns = 2
