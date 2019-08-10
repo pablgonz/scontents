@@ -1,37 +1,5 @@
 % \iffalse meta-comment
 %<*internal>
-\iffalse
-%</internal>
-%<*readme>
-# scontents — Store LaTeX content in Sequences (l3seq)
-- Version: 1.0
-- Date: 2019/07/30
-- Authors: Pablo González and Phelype Oleinik
-
-## Description
-The `scontents` package stores valid `LaTeX` code in sequences using the
-`l3seq` module of `expl3`. The stored content (including verbatim) can be
-used as many times as desired in the document, additionally can be written
-to external files if desired.
-
-## Requirements
-The package requires the following packages:
-- [filecontentsdef](https://ctan.org/pkg/filecontentsdef)
-- [l3keys2e](https://ctan.org/pkg/l3keys2e)
-- [xparse](https://ctan.org/pkg/xparse)
-
-## License
-The scontents package may be modified and distributed under the terms and
-conditions of the [LaTeX Project Public License](https://www.latex-project.org/lppl/), version 1.3c or greater.
-
-## Contents
-- README.md (this file)
-- scontents.sty (the sty)
-- scontents.pdf  (documentation)
-- scontents.dtx  (master file that produced all files)
-%</readme>
-%<*internal>
-\fi
 \def\nameofplainTeX{plain}
 \ifx\fmtname\nameofplainTeX\else
   \expandafter\begingroup
@@ -53,11 +21,7 @@ conditions of the [LaTeX Project Public License](https://www.latex-project.org/l
 \generate{
   \file{\jobname.ins}{\from{\jobname.dtx}{install}}
 }
-\nopreamble\nopostamble
-\usedir{doc/latex/scontents}
-\generate{
-  \file{README.md}{\from{\jobname.dtx}{readme}}
-}
+
 \ifx\fmtname\nameofplainTeX
   \expandafter\endbatchfile
 \else
@@ -67,35 +31,11 @@ conditions of the [LaTeX Project Public License](https://www.latex-project.org/l
 %<*driver>
 \documentclass[full]{l3doc}
 \usepackage[top=0.5in,bottom=0.5in,left=2.0in,right=1in,footskip=0.2in,headsep=10pt]{geometry}
+\usepackage[osf,mono=false,scale=0.95,llscaled=0.95]{libertine}
 \usepackage{unicode-math}
-\setmathfont[Scale = 0.95]{Latin Modern Math}
-\setmainfont[
-   Numbers           = OldStyle,
-   Ligatures         = TeX,
-   Scale               = 0.95,
-   UprightFont       = *-Regular,
-   ItalicFont        = *-Italic,
-   BoldFont          = *-Bold,
-   BoldItalicFont    = *-BoldItalic,
-   SmallCapsFeatures = {Letters=SmallCaps},
-   Extension =.otf]{LibertinusSerif}
-\setsansfont[
-   Numbers           = OldStyle,
-   Ligatures         = TeX,
-   Scale             = 0.95,
-   UprightFont       = *-Regular,
-   ItalicFont        = *-Italic,
-   BoldFont          = *-Bold,
-   SmallCapsFeatures = {Letters=SmallCaps},
-   Extension = .otf]{LibertinusSans}
-\setmonofont[
-   Scale             = 0.80,
-   Extension         = .otf,
-   UprightFont       = *-Regular ,
-   ItalicFont        = *-RegularIt,
-   BoldFont          = *-Medium ,
-   BoldItalicFont    = *-MediumIt
-            ]{SourceCodePro}
+\setmathfont[Scale = 0.95]{latinmodern-math.otf}
+\usepackage[osf,scale=0.80,semibold]{sourcecodepro}
+\usepackage{fontawesome5}
 \newfontfamily\lmmitalic{lmmono10-italic.otf}[
    Scale             = 0.95,%
    Extension         = .otf,%
@@ -108,7 +48,6 @@ conditions of the [LaTeX Project Public License](https://www.latex-project.org/l
    RawFeature        = {+latn,+rand,+kern,+size},%
    ]
 \usepackage[svgnames]{xcolor}
-\usepackage{fontawesome5}
 \usepackage[sf,bf,compact,medium,pagestyles]{titlesec}
 \usepackage{hyperxmp,lastpage,imakeidx,microtype,attachfile2}
 \usepackage{adjustbox,multicol,listings,accsupp,titletoc}
@@ -140,102 +79,102 @@ conditions of the [LaTeX Project Public License](https://www.latex-project.org/l
 \expandafter\DoNotIndex\expandafter{\string\}}
 \expandafter\DoNotIndex\expandafter{\string\begin}
 \newcommand{\HP}[1]{\emph{\hyperpage{#1}}\normalsize}
-\def\MYSortIndex#1#2{\index[mydoc]{#1\actualchar#2|HP}}
+\def\MYSortIndex#1#2{\index[userdoc]{#1\actualchar#2|HP}}
 
 \indexsetup{level=\section,firstpagestyle=myheader}
-\makeindex[name=mydoc,options=-s gind.ist,columnsep=15pt,title={Index of Documentation}]
+\makeindex[name=userdoc,options=-s gind.ist,columnsep=15pt,title={Index of Documentation}]
 \makeindex[options=-s gind.ist,columnsep=15pt,title={Index of Implementation}]
 \setlength{\parindent}{0pt}
 
-%%-------------------- ONLY FOR DOCUMENTATION ------------------------%%
-% Colors for options
+%^^A------------------- ONLY FOR DOCUMENTATION ------------------------%%
+%^^A Colors for options
 \definecolor{optcolor}{rgb}{0.281,0.275,0.485}
 \definecolor{mypkgcolor}{RGB}{0,128,128}%
-% Custom \mymeta[...]{...}, \mymarg[...]{...} and \myoarg[...]{...} for color
+%^^A Custom \meta[...]{...}, \marg[...]{...} and \oarg[...]{...} with color
 \ExplSyntaxOn
 %^^A user level commands
 \NewDocumentCommand{\mymeta}{O{}m}
   {
-   \mydoc_mymeta_generic:Nnn \mydoc_mymeta:n { #1 } { #2 }
+   \userdoc_meta_generic:Nnn \userdoc_meta:n { #1 } { #2 }
   }
 \NewDocumentCommand{\mymarg}{O{}m}
   {
-   \mydoc_mymeta_generic:Nnn \mydoc_mymarg:n { #1 } { #2 }
+   \userdoc_meta_generic:Nnn \userdoc_marg:n { #1 } { #2 }
   }
 \NewDocumentCommand{\myoarg}{O{}m}
   {
-   \mydoc_mymeta_generic:Nnn \mydoc_myoarg:n { #1 } { #2 }
+   \userdoc_meta_generic:Nnn \userdoc_oarg:n { #1 } { #2 }
   }
 %^^A variables and keys
-\tl_new:N \l_mydoc_mymeta_font_tl
+\tl_new:N \l_userdoc_meta_font_tl
 
-\keys_define:nn { mydoc / mymeta }
+\keys_define:nn { userdoc / mymeta }
   {
    type .choice:,
-   type / tt .code:n = \tl_set:Nn \l_mydoc_mymeta_font_tl { \ttfamily },
-   type / rm .code:n = \tl_set:Nn \l_mydoc_mymeta_font_tl { \rmfamily },
+   type / tt .code:n = \tl_set:Nn \l_userdoc_meta_font_tl { \ttfamily },
+   type / rm .code:n = \tl_set:Nn \l_userdoc_meta_font_tl { \rmfamily },
    type .initial:n = tt,
-   cf .tl_set:N = \l_mydoc_mymeta_color_tl,
+   cf .tl_set:N = \l_userdoc_meta_color_tl,
    cf .initial:n = black,
-   ac .tl_set:N = \l_mydoc_mymeta_anglecolor_tl,
+   ac .tl_set:N = \l_userdoc_meta_anglecolor_tl,
    ac .initial:n = black,
-   sbc .tl_set:N = \l_mydoc_mymeta_brackcolor_tl,
+   sbc .tl_set:N = \l_userdoc_meta_brackcolor_tl,
    sbc .initial:n = black,
-   cbc .tl_set:N = \l_mydoc_mymeta_bracecolor_tl,
+   cbc .tl_set:N = \l_userdoc_meta_bracecolor_tl,
    cbc .initial:n = black,
   }
 %^^A internal commands
-\cs_new_protected:Npn \mydoc_mymeta_generic:Nnn #1 #2 #3
+\cs_new_protected:Npn \userdoc_meta_generic:Nnn #1 #2 #3
   {
    \group_begin:
-   \keys_set:nn { mydoc / mymeta } { #2 }
-   \color{ \l_mydoc_mymeta_color_tl }
-   \l_mydoc_mymeta_font_tl
-   #1 { #3 } % #1 is \mydoc_mymeta:n, \mydoc_mymarg:n or \mydoc_myoarg:n
+   \keys_set:nn { userdoc / mymeta } { #2 }
+   \color{ \l_userdoc_meta_color_tl }
+   \l_userdoc_meta_font_tl
+   #1 { #3 } % #1 is \userdoc_meta:n, \userdoc_marg:n or \userdoc_oarg:n
    \group_end:
   }
-\cs_new_protected:Npn \mydoc_mymeta:n #1
+\cs_new_protected:Npn \userdoc_meta:n #1
   {
-   \mydoc_mymeta_angle:n { \textlangle }
-   \mydoc_mymeta_mymeta:n { #1 }
-   \mydoc_mymeta_angle:n { \textrangle }
+   \userdoc_meta_angle:n { \textlangle }
+   \userdoc_meta_meta:n { #1 }
+   \userdoc_meta_angle:n { \textrangle }
   }
-\cs_new_protected:Npn \mydoc_mymarg:n #1
+\cs_new_protected:Npn \userdoc_marg:n #1
   {
-   \mydoc_mymeta_brace:n { \textbraceleft }
-   \mydoc_mymeta:n { #1 }
-   \mydoc_mymeta_brace:n { \textbraceright }
+   \userdoc_meta_brace:n { \textbraceleft }
+   \userdoc_meta:n { #1 }
+   \userdoc_meta_brace:n { \textbraceright }
   }
-\cs_new_protected:Npn \mydoc_myoarg:n #1
+\cs_new_protected:Npn \userdoc_oarg:n #1
   {
-   \mydoc_mymeta_brack:n { [ }
-   \mydoc_mymeta:n { #1 }
-   \mydoc_mymeta_brack:n { ] }
+   \userdoc_meta_brack:n { [ }
+   \userdoc_meta:n { #1 }
+   \userdoc_meta_brack:n { ] }
   }
-\cs_new_protected:Npn \mydoc_mymeta_mymeta:n #1
+\cs_new_protected:Npn \userdoc_meta_meta:n #1
   {
    \textnormal{\textit{#1}}
   }
-\cs_new_protected:Npn \mydoc_mymeta_angle:n #1
+\cs_new_protected:Npn \userdoc_meta_angle:n #1
   {
    \group_begin:
    \fontfamily{lmr}\selectfont
-   \textcolor{\l_mydoc_mymeta_anglecolor_tl}{#1}
+   \textcolor{\l_userdoc_meta_anglecolor_tl}{#1}
    \group_end:
   }
-\cs_new_protected:Npn \mydoc_mymeta_brace:n #1
+\cs_new_protected:Npn \userdoc_meta_brace:n #1
   {
    \group_begin:
-   \color{\l_mydoc_mymeta_bracecolor_tl}
+   \color{\l_userdoc_meta_bracecolor_tl}
     #1
    \group_end:
   }
-\cs_new_protected:Npn \mydoc_mymeta_brack:n #1
+\cs_new_protected:Npn \userdoc_meta_brack:n #1
   {
-   \textcolor{\l_mydoc_mymeta_brackcolor_tl}{#1}
+   \textcolor{\l_userdoc_meta_brackcolor_tl}{#1}
   }
 
-% \envexamp{m}
+%^^A \envexamp{m}
 \newsavebox{\marginexa}
 \NewDocumentCommand{\envexamp}{m}
   {
@@ -253,7 +192,7 @@ conditions of the [LaTeX Project Public License](https://www.latex-project.org/l
    \ignorespaces%
   }
 
-% \cmdexamp{s m o m o}
+%^^A \cmdexamp{s m o m o}
 \DeclareDocumentCommand{\cmdexamp}{s m o m o}
   {
   \group_begin:
@@ -273,7 +212,7 @@ conditions of the [LaTeX Project Public License](https://www.latex-project.org/l
   \MYSortIndex{Commands}{Commands ~ provide  ~ by  ~ \textcolor{gray}{scontents}>\texttt{\textbackslash#2}}%
   }
 
-% \keyexamp{mmm}
+%^^A \keyexamp{mmm}
 \DeclareDocumentCommand{\keyexamp}{ m m m }
   {
   \par
@@ -285,7 +224,7 @@ conditions of the [LaTeX Project Public License](https://www.latex-project.org/l
   \MYSortIndex{Keys}{Keys>\texttt{#1}}%
   }
 
-% \mypkg{sm}
+%^^A \mypkg{sm}
 \NewDocumentCommand{\mypkg}{sm}
   {
    \IfBooleanTF{#1}
@@ -299,7 +238,7 @@ conditions of the [LaTeX Project Public License](https://www.latex-project.org/l
     }
   }
 
-% \myenv{sm}
+%^^A \myenv{sm}
 \DeclareDocumentCommand{\myenv}{sm}
   {
    \IfBooleanTF{#1}
@@ -313,7 +252,7 @@ conditions of the [LaTeX Project Public License](https://www.latex-project.org/l
     }
   }
 
-% \ics{sm}
+%^^A \ics{sm}
 \DeclareDocumentCommand{\ics}{sm}
   {
     \IfBooleanTF{#1}
@@ -328,7 +267,7 @@ conditions of the [LaTeX Project Public License](https://www.latex-project.org/l
   }
 \ExplSyntaxOff
 
-% email https://tex.stackexchange.com/a/663
+%^^A email https://tex.stackexchange.com/a/663
 \catcode`\_=11\relax%
 \newcommand\email[1]{\_email #1\q_nil}%
 \def\_email#1@#2\q_nil{%
@@ -339,7 +278,7 @@ conditions of the [LaTeX Project Public License](https://www.latex-project.org/l
 \catcode`\_=8\relax%
 
 \makeatletter
-% Logo whit textffmw font for title
+%^^A Logo whit fetamont font for title
 \newsavebox{\logobox}
 \savebox{\logobox}{%
   \normalsize\fetamontotf{\textcolor{mypkgcolor}{s}\textcolor{OrangeRed}{content}\textcolor{mypkgcolor}{s}}}
@@ -349,10 +288,10 @@ conditions of the [LaTeX Project Public License](https://www.latex-project.org/l
  }
 \makeatother
 
-% don't copy numbers in code example
+%^^A Don't copy numbers in code example
 \newcommand*{\noaccsupp}[1]{\BeginAccSupp{ActualText={}}#1\EndAccSupp{}}
 
-% Create a language for documentation
+%^^A Create a language for documentation
 \lstdefinelanguage{scontents-doc}{
     texcsstyle=*,%
     escapechar=`,%
@@ -393,7 +332,7 @@ conditions of the [LaTeX Project Public License](https://www.latex-project.org/l
               {=}{{\textcolor{red}{=}}}{1},%
 }[keywords,tex,comments,strings]% end languaje
 
-% \begin{examplecode}[optlst]...\end{examplecode}
+%^^A \begin{examplecode}[key=val]...\end{examplecode}
 \lstnewenvironment{examplecode}[1][]{%
 \lstset{
     language=scontents-doc,%
@@ -410,7 +349,7 @@ conditions of the [LaTeX Project Public License](https://www.latex-project.org/l
     }% close lstset
 }{}% close examplecode
 
-% \lstinline[style=inline]|...|
+%^^A \lstinline[style=inline]|...|
 \lstdefinestyle{inline}
   {
    language=scontents-doc,%
@@ -422,13 +361,13 @@ conditions of the [LaTeX Project Public License](https://www.latex-project.org/l
    literate=*{\%}{{\bfseries\textcolor{gray}{\%}}}{1}
   }
 
-% set default style
+%^^A Set default style
 \lstset{style=inline}
 
-% Get file info
+%^^A Get file info
 \GetFileInfo{\jobname.sty}
 
-% Config hyperref
+%^^A Config hyperref
 \hypersetup{
    linkcolor          = blue!50,
    citecolor          = red!50,%
@@ -445,7 +384,7 @@ conditions of the [LaTeX Project Public License](https://www.latex-project.org/l
    bookmarksopenlevel = 2,%
   }
 
-% Configuration titleps
+%^^A Configuration titleps
 \settitlemarks{section}
 \renewpagestyle{plain}[\color{gray}\small\sffamily]{
 \setfoot{}{}{\thepage/\pageref{LastPage}}}
@@ -460,10 +399,10 @@ conditions of the [LaTeX Project Public License](https://www.latex-project.org/l
         {\raisebox{0.75\baselineskip}{\scshape\small\S.\thesection\space\sectiontitle}}
 }
 
-% add headheight
+%^^A Add headheight
 \setlength{\headheight}{21pt}%
 
-% Table of contents
+%^^A Configuration titlesec
 \titlecontents{section}[0mm]{}%
     {\bfseries\contentspush{\makebox[4mm][l]{\thecontentslabel\hfill}}}%
     {\hspace*{-4mm}}% numberless
@@ -477,7 +416,7 @@ conditions of the [LaTeX Project Public License](https://www.latex-project.org/l
     {\hspace*{-18mm}}% numberless
     {\hspace{0.25em}\titlerule*[6pt]{.}\contentspage}%
 
-% Table of contents
+%^^A Table of contents
 \makeatletter
 \renewcommand\tableofcontents{%
 \begingroup%
@@ -494,12 +433,6 @@ conditions of the [LaTeX Project Public License](https://www.latex-project.org/l
 \endgroup
 }
 \makeatother
-
-\begingroup\expandafter\expandafter\expandafter\endgroup
-\expandafter\ifx\csname pdfxform\endcsname\relax
-  \usepackage{luatex85} % For LuaTeX
-\fi
-
 \begin{document}
   \DocInput{\jobname.dtx}
 \end{document}
@@ -1212,7 +1145,7 @@ conditions of the [LaTeX Project Public License](https://www.latex-project.org/l
 %
 % \newpage
 %
-% \printindex[mydoc]
+% \printindex[userdoc]
 % \newpage
 % \StopEventually{^^A
 % \newgeometry{top=0.5in,bottom=0.5in,left=1.0in,right=1in,footskip=0.2in,headsep=10pt}
