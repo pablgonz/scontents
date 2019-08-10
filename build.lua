@@ -1,6 +1,6 @@
 -- Build script for scontents
-pkgversion   = "1.0"
-pkgdate      = "2019/07/30"
+pkgversion   = "1.1"
+pkgdate      = "2019/08/11"
 
 module       = "scontents"
 ctanpkg      = "scontents"
@@ -21,4 +21,4 @@ sourcefiles  = { "sources/scontents.dtx" }
                             
 typesetfiles = { "scontents.dtx" }
 
-typesetruns = 2
+typesetruns = 3
