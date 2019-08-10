@@ -1,4 +1,4 @@
-# scontents — Store LaTeX content in Sequences (l3seq)
+# scontents — Stores LaTeX content in memory or files
 - Version: 1.0
 - Date: 2019/07/30
 - Authors: Pablo González and Phelype Oleinik
@@ -15,12 +15,17 @@ The package requires the following packages:
 - [l3keys2e](https://ctan.org/pkg/l3keys2e)
 - [xparse](https://ctan.org/pkg/xparse)
 
+## Installation
+
+The package `scontents` is present in the distribution `TeXLive`, use the 
+package manager to install. For a manual installation, put `scontents.dtx` 
+in your working directory and run `tex scontents.dtx`.
+
 ## License
 The scontents package may be modified and distributed under the terms and
 conditions of the [LaTeX Project Public License](https://www.latex-project.org/lppl/), version 1.3c or greater.
 
 ## Contents
 - README.md (this file)
-- scontents.sty (the sty)
 - scontents.pdf  (documentation)
 - scontents.dtx  (master file that produced all files)
