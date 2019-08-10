@@ -381,10 +381,10 @@
    pdfcontacturl      = {https://github.com/pablgonz/scontents},
    pdfkeywords        = {filecontents, filecontentsdef, xparse, expl3, l3seq, Store contents},
    pdfstartview       = {FitH},%
-   bookmarksopenlevel = 2,%
+   bookmarksopenlevel = 1,%
   }
 
-%^^A Configuration titleps
+%^^A Configuration titleps and titlesec
 \settitlemarks{section}
 \renewpagestyle{plain}[\color{gray}\small\sffamily]{
 \setfoot{}{}{\thepage/\pageref{LastPage}}}
@@ -399,21 +399,15 @@
         {\raisebox{0.75\baselineskip}{\scshape\small\S.\thesection\space\sectiontitle}}
 }
 
-%^^A Add headheight
 \setlength{\headheight}{21pt}%
 
-%^^A Configuration titlesec
 \titlecontents{section}[0mm]{}%
-    {\bfseries\contentspush{\makebox[4mm][l]{\thecontentslabel\hfill}}}%
-    {\hspace*{-4mm}}% numberless
+    {\bfseries\contentspush{\makebox[5mm][l]{\thecontentslabel\hfill}}}%
+    {\hspace*{-5mm}}% numberless
     {\hspace{0.25em}\titlerule*[6pt]{.}\contentspage}%
-\titlecontents{subsection}[4mm]{}%
+\titlecontents{subsection}[5mm]{}%
     {\contentspush{\makebox[6mm][l]{\thecontentslabel\hfill}}}
-    {\hspace*{-10mm}}% numberless
-    {\hspace{0.25em}\titlerule*[6pt]{.}\contentspage}%
-\titlecontents{subsubsection}[10mm]{}%
-    {\contentspush{\makebox[8mm][l]{\thecontentslabel\hfill}}}
-    {\hspace*{-18mm}}% numberless
+    {\hspace*{-11mm}}% numberless
     {\hspace{0.25em}\titlerule*[6pt]{.}\contentspage}%
 
 %^^A Table of contents
@@ -471,7 +465,7 @@
 %
 % \setlength{\parskip}{3pt}
 %
-% \section[Description]{Description}
+% \section*{Description}
 %
 % The \mypkg*{scontents} package encapsulates the \mypkg{filecontentsdef}
 % package of \textsc{Jean Fran\c{c}ois Burnol} which allows you to save the
@@ -479,7 +473,7 @@
 % style \myoarg{key = val} along with the ability to save content in sequences
 % for later use in different parts of the document.
 %
-% \section{Motivation and Acknowledgments}
+% \section*{Motivation and Acknowledgments}
 %
 % In \hologo{LaTeX} there is no direct way to record content for later use, although
 % you can do this using \verb|\macros|, recording \meta{verbatim content}  is a
@@ -510,8 +504,8 @@
 % \item \href{https://tex.stackexchange.com/q/373647/7832}{Collect contents of an environment (that contains verbatim content)}
 % \end{enumerate}
 %
-% \section[License and Requirements]{License and Requirements}
-% \label{sec:Licenseandreq}
+% \section*{License and Requirements}
+% \label{sec:licence}
 %
 % Permission is granted to copy, distribute and/or modify this software under
 % the terms of the LaTeX Project Public License (lppl), version 1.3 or later
@@ -572,13 +566,7 @@
 %
 % The summary with all possible options can be found in \ref{sec:optover}.
 %
-% \section{User interface}
-% \label{sec:userinterface}
-%
-% The user interface provided by the package provides an environment and several
-% commands with some limitations that must be taken into account.
-%
-% \subsection{The environment \texttt{scontents}}
+% \section{The environment \texttt{scontents}}
 % \label{sec:envscontents}
 %
 % \envexamp{scontents}
@@ -602,7 +590,7 @@
 % For more technical information about the environment it is better to read
 % the documentation of the \mypkg{filecontentsdef} package.
 %
-% \subsubsection*{Options for environment}
+% \subsection*{Options for environment}
 %
 % The environment options can be configured globally using option
 % in package or the \ics*{setupsc} command and locally
@@ -632,7 +620,7 @@
 % it will not store the contents of this one. It is analogous to the
 % \myenv{filecontents*} environment.
 %
-% \subsection{The command \cs{Scontents}}
+% \section{The command \cs{Scontents}}
 % \label{sec:Scontents}
 %
 % \cmdexamp{Scontents}[key=val]{argument}
@@ -660,7 +648,7 @@
 % \ics{relax} or \lstinline[style=inline]|%| at the end.
 % \end{enumerate}
 %
-% \subsubsection*{Options for command}
+% \subsection*{Options for command}
 %
 % The command options (including star version) can be configured globally
 % using option in package or the \ics*{setupsc} command and locally
@@ -676,7 +664,7 @@
 % \keyexamp{print-cmd}{true\textbar false}{false}
 % It will show the current content of \ics*{Scontents}.
 %
-% \subsection{The command \cs{getstored}}
+% \section{The command \cs{getstored}}
 % \label{sec:getstored}
 %
 % \cmdexamp{getstored}[index]{seq name}
@@ -685,7 +673,7 @@
 % and can be used as an \meta{argument} for another command. If the optional argument
 % is not passed it defaults to the last element saved in the \meta{seq name}.
 %
-% \subsection{The command \cs{typestored}}
+% \section{The command \cs{typestored}}
 % \label{sec:typestored}
 %
 % \cmdexamp{typestored}[index]{seq name}
@@ -759,9 +747,9 @@
 %</example>
 % \fi
 %
-% \subsection{Other commands provided}
+% \section{Other commands provided}
 %
-% \subsubsection*{The command \cs{meaningsc}}
+% \subsection*{The command \cs{meaningsc}}
 % \label{sec:meaningsc}
 %
 % \cmdexamp{meaningsc}[index]{seq name}
@@ -769,19 +757,19 @@
 % in \meta{seq name}. If the optional argument is not passed it defaults to the
 % last element saved in the \meta{seq name}.
 %
-% \subsubsection*{The command \cs{countsc}}
+% \subsection*{The command \cs{countsc}}
 % \label{sec:countsc}
 %
 % \cmdexamp{countsc}{seq name}
 % The command \ics*{countsc} count a number of contents stored in \meta{seq name}.
 %
-% \subsubsection*{The command \cs{cleansc}}
+% \subsection*{The command \cs{cleansc}}
 % \label{sec:cleansc}
 %
 % \cmdexamp{cleansc}{seq name}
 % The command \ics*{cleansc} remove all contents stored in \meta{seq name}.
 %
-% \subsection{Options Overview}
+% \section{Options Overview}
 % \label{sec:optover}
 %
 % \newcommand*{\xmark}{\textcolor{red}{✘}}%
@@ -1156,9 +1144,86 @@
 % \printindex
 % }
 %
-% \section{Implementation}
+% \section{scontents implementation}
 % \label{sec:Implementation}
 % \addtocontents{toc}{\protect\setcounter{tocdepth}{0}}
+%
+% \begin{documentation}
+% \subsection{User interface}
+% 
+% The \emph{user interface} provided by this package consists of a couple of environments 
+% and a series of commands described below.
+%
+% \begin{function}{\setupsc}
+%   \begin{syntax}
+%       \cs{setupsc} \Arg{key=val}
+%   \end{syntax}
+% The command to set options for \cs{Scontents}, \cs{Scontents*} and the 
+% environment \env{scontents}.
+% \end{function}
+%
+% \begin{function}{scontents}
+%   \begin{syntax}
+%  \oarg{key=val}
+%   \end{syntax}
+% The environment encapsulating \env{filecontentsdef*} and 
+% \env{filecontentsdefmacro} from  \pkg{filecontentsdef} package.
+% \end{function}
+%
+% \begin{function}{\Scontents}
+%   \begin{syntax}
+%     \cs{Scontents}~ \oarg{key=val} \Arg{argument}
+%     \cs{Scontents*} \oarg{key=val} \Arg{argument} 
+%     \cs{Scontents*} \oarg{key=val} \meta{del}\Arg{argument}\meta{del}
+%   \end{syntax}
+% The command to store content directly in memory, the star version allows to save 
+%  \meta{verbatim} content.
+% \end{function}
+%
+% \begin{function}{\getstored}
+%   \begin{syntax}
+%     \cs{getstored}~\oarg{index} \Arg{seq name}
+%   \end{syntax}
+%  The command to receive content stored in memory.
+% \end{function}
+%
+% \begin{function}{\typestored}
+%   \begin{syntax}
+%       \cs{typestored}~\oarg{index} \Arg{seq name}
+%      \cs{typestored*}\oarg{index} \Arg{seq name}
+%   \end{syntax}
+% The command to display the content stored in memory within the \env{verbatimsc}, 
+% the starred version displays the content stored by \cs{Scontents*}.
+% \end{function}
+%
+% \begin{function}{verbatimsc}
+% Internal environment used by \cs{typestored} and \cs{typestored*}  to display 
+% \meta{verbatim style} content.
+% \end{function}
+%
+% \begin{function}{\countsc}
+%   \begin{syntax}
+%       \cs{countsc} \Arg{seq name}
+%   \end{syntax}
+% The command to count the number of elements stored.
+% \end{function}
+%
+% \begin{function}{\meaningsc}
+%   \begin{syntax}
+%        \cs{meaningsc}~\oarg{index} \Arg{seq name}
+%   \end{syntax}
+% The command to display the \cs{meaning} of the stored content.
+% \end{function}
+%
+% \begin{function}{\cleanseqsc}
+%   \begin{syntax}
+%        \cs{meaningsc} \Arg{seq name}
+%   \end{syntax}
+% The command to erase the memory sequence at the point at which it is executed.
+% \end{function}
+%
+% \end{documentation}
+%
 % \iffalse
 %<*package>
 % \fi
@@ -1175,7 +1240,7 @@
 %    \begin{macrocode}
 \RequirePackage{filecontentsdef}[2019/04/20]
 \RequirePackage{l3keys2e}
-\RequirePackage{xparse}[2019/05/03]
+\RequirePackage{xparse}[2019/05/28]
 \ProvidesExplPackage{scontents}{2019/08/11}{1.1}
   {Stores LaTeX content in memory or files}
 %    \end{macrocode}
