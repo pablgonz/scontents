@@ -375,9 +375,9 @@
    colorlinks         = true,%
    linktoc            = all,%
    pdftitle           = {.:: The scontents package --- \fileinfo{} ::.},%
-   pdfauthor          = {Pablo González L and Phelype Oleinik},
+   pdfauthor          = {Pablo González L},
    pdfsubject         = {Documentation for \fileversion{} [\filedate] },%
-   pdfcopyright       = {\textcopyright 2019 by Pablo González and Phelype Oleinik},
+   pdfcopyright       = {\textcopyright 2019 by Pablo González},
    pdfcontacturl      = {https://github.com/pablgonz/scontents},
    pdfkeywords        = {filecontents, filecontentsdef, xparse, expl3, l3seq, Store contents},
    pdfstartview       = {FitH},%
@@ -391,7 +391,7 @@
 
 \newpagestyle{myheader}[\color{gray}\small\sffamily]{
 \renewcommand\makeheadrule{\color{gray}\rule[0.45\baselineskip]{\linewidth}{0.4pt}}
-\setfoot{\scalebox{0.8}{\mylogo}\space\textcopyright\space 2019 by Pablo González and  Phelype Oleinik}
+\setfoot{\scalebox{0.8}{\mylogo}\space\textcopyright\space 2019 by Pablo González}
         {}
         {\thepage/\pageref{LastPage}}
 \sethead{\raisebox{0.75\baselineskip}{Documentation for \fileversion\space[\filedate]}}
@@ -449,7 +449,7 @@
 %    \filedate.}\\[25pt]
 %    \author{
 %    \large
-%    \raisebox{-1pt}{\textcopyright}{}2019 by Pablo González and Phelype Oleinik
+%    \raisebox{-1pt}{\textcopyright}{}2019 by Pablo González 
 %    \thanks{E-mail: \textsf{\guillemotleft}\email{pablgonz@educarchile.cl}\textsf{\guillemotright}}%
 %    }
 % \small
@@ -461,7 +461,7 @@
 % \maketitle
 %
 % \begin{abstract}
-% The \mypkg*{scontents} package stores valid \hologo{LaTeX} code in sequences using
+% The \mypkg*{scontents} package stores valid \hologo{LaTeX} code in memory (sequences) using
 % the \mypkg{l3seq} module of \mypkg{expl3}. The stored content (including
 % \emph{verbatim}) can be used as many times as desired in the document,
 % additionally can be written to external files if desired.
@@ -493,7 +493,8 @@
 % This package would not be possible without the great work of \textsc{Jean
 % Fran\c{c}ois Burnol} who was kind enough to take my requirements into account
 % and add the \myenv{filecontentsdefmacro} environment. Also a special thanks to
-% all the \hologo{LaTeX3} team for their great work and to the different members
+% Phelype Oleinik who has collaborated and adapted a large part of the code and 
+% all  \hologo{LaTeX3} team for their great work and to the different members
 % of the \href{https://tex.stackexchange.com}{TeX-SX} community who have provided
 % great answers and ideas. Here a note of the main ones:
 %
@@ -528,7 +529,7 @@
 %
 % \pagestyle{myheader}
 %
-% \section{The scontents package}
+% \section{The \texttt{scontents} package}
 %
 % The \mypkg*{scontents} package provides the \myenv*{scontents} environment,
 % \ics*{Scontents} and \ics*{Scontents*} command to stored contents and \ics*{getstored}
@@ -577,7 +578,7 @@
 % The user interface provided by the package provides an environment and several
 % commands with some limitations that must be taken into account.
 %
-% \subsection{The environment scontents}
+% \subsection{The environment \texttt{scontents}}
 % \label{sec:envscontents}
 %
 % \envexamp{scontents}
@@ -1175,8 +1176,8 @@
 \RequirePackage{filecontentsdef}[2019/04/20]
 \RequirePackage{l3keys2e}
 \RequirePackage{xparse}[2019/05/03]
-\ProvidesExplPackage{scontents}{2019/07/30}{1.0}
-  {Store LaTeX content in Sequences (l3seq)}
+\ProvidesExplPackage{scontents}{2019/08/11}{1.1}
+  {Stores LaTeX content in memory or files}
 %    \end{macrocode}
 % A check to make sure that \pkg{xparse} is not too old
 %    \begin{macrocode}
