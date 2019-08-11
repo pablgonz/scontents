@@ -1,4 +1,4 @@
-# scontents — Stores LaTeX content in memory or files
+## scontents — Stores LaTeX content in memory or files
 - Version: 1.1
 - Date: 2019/08/11
 - Author: Pablo González
@@ -17,7 +17,7 @@ The package requires the following packages:
 
 ## Installation
 
-The package `scontents` is present in the distribution `TeXLive`, use the 
+The package `scontents` is present in `TeXLive` and `MiKTeX`, use the 
 package manager to install. For a manual installation, put `scontents.dtx` 
 in your working directory and run `tex scontents.dtx`.
 
