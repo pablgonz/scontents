@@ -4,6 +4,7 @@ pkgdate      = "2019/08/11"
 
 module       = "scontents"
 ctanpkg      = "scontents"
+ctanzip      = ctanpkg..pkgversion
 
 tagfiles     = {"sources/scontents.md","sources/scontents.sty","sources/scontents.dtx"}
 
@@ -21,4 +22,4 @@ sourcefiles  = { "sources/scontents.dtx" }
                             
 typesetfiles = { "scontents.dtx" }
 
-typesetruns = 3
+typesetruns = 4
