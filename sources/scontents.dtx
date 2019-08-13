@@ -434,10 +434,9 @@
 % \fi
 %
 % \title{
-%    \scalebox{1.1}{\mylogo}\\[2pt]
-%    \large
-%    \textsf{Store \hologo{LaTeX} contents in seq}\\[3pt]
+%    \scalebox{1.025}{\mylogo}\\[2pt]
 %    \Large
+%    \textsf{Stores \hologo{LaTeX} contents}\\[3pt]
 %    \fileversion{} --- \filedate\thanks{
 %    This file describes a documentation for \fileversion, last revised
 %    \filedate.}\\[25pt]
@@ -566,7 +565,7 @@
 %
 % The summary with all possible options can be found in \ref{sec:optover}.
 %
-% \section{The environment \texttt{scontents}}
+% \section{The environment \env{scontents}}
 % \label{sec:envscontents}
 %
 % \envexamp{scontents}
@@ -1120,18 +1119,35 @@
 %
 % \section{Test \texttt{\textbackslash getstored}}
 % \getstored[2]{contents}\par
-%
 % \getstored[1]{contents}
 %
 % \section{Test \texttt{\textbackslash typestored}}
-%
 % \typestored[1]{contents}
 % \end{document}
 % \end{VerbatimOut}
+%
 % Customization of \myenv*{verbatimsc} using the \mypkg{minted} package
 % \textattachfile[color=0 0 1]{scexamp8.ltx}{\faFile*[regular]}.
 % \lstinputlisting[language=scontents-doc,numbers=left]{scexamp8.ltx}
 %
+% \section{Change history}
+%
+% \label{sec:changes}
+% 
+% \setlist[itemize,1]{label=\textendash, wide=0.5em, nosep, noitemsep, leftmargin=10pt}
+% \newlength\descrwidth
+% \settowidth{\descrwidth}{\textsf{v1.0, (ctan), 2019/07/30} }
+% \begin{description}[font=\small\sffamily, wide=0pt, style=multiline, leftmargin=\descrwidth,  nosep, noitemsep]
+% \item [\fileversion{} (ctan), \filedate]
+%    \begin{itemize}
+%        \item Extension of documentation.
+%        \item Replace \verb+\tex_endinput:D+ by \verb+\file_input_stop:+.
+%    \end{itemize}
+% \item [v1.0 (ctan), 2019/07/30]
+%    \begin{itemize}
+%        \item First public release,
+%    \end{itemize}
+% \end{description}
 % \newpage
 %
 % \printindex[userdoc]
@@ -1241,8 +1257,8 @@
 \RequirePackage{filecontentsdef}[2019/04/20]
 \RequirePackage{l3keys2e}
 \RequirePackage{xparse}[2019/05/28]
-\ProvidesExplPackage{scontents}{2019/08/11}{1.1}
-  {Stores LaTeX content in memory or files}
+\ProvidesExplPackage{scontents}{2019/08/12}{1.1}
+  {Stores LaTeX contents in memory or files}
 %    \end{macrocode}
 % A check to make sure that \pkg{xparse} is not too old
 %    \begin{macrocode}

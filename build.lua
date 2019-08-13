@@ -1,10 +1,10 @@
 -- Build script for scontents
 pkgversion   = "1.1"
-pkgdate      = "2019/08/11"
+pkgdate      = "2019/08/12"
 
 module       = "scontents"
 ctanpkg      = "scontents"
-ctanzip      = ctanpkg..pkgversion
+ctanzip      = ctanpkg.."-"..pkgversion
 
 tagfiles     = {"sources/scontents.md","sources/scontents.sty","sources/scontents.dtx"}
 
