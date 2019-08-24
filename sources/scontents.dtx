@@ -72,6 +72,7 @@
 \EnableCrossrefs
 \PageIndex
 \CodelineIndex
+\EnableDocumentation
 \EnableImplementation
 \DoNotIndex{\ , \1,\^}
 \expandafter\DoNotIndex\expandafter{\string\{}
@@ -1226,7 +1227,6 @@
 % \printindex[userdoc]
 %
 % \end{documentation}
-%
 % \newpage
 % \StopEventually{^^A
 % \newgeometry{top=0.5in,bottom=0.5in,left=1.0in,right=1in,footskip=0.2in,headsep=10pt}
@@ -1235,17 +1235,13 @@
 % \phantomsection
 % \printindex
 % }
-%
 % \section{Implementation}
 % \label{sec:Implementation}
 % \addtocontents{toc}{\protect\setcounter{tocdepth}{0}}
-%
 % \begin{implementation}
-%
 % \iffalse
 %<*package>
 % \fi
-%
 % \subsection{Declaration of the package}
 %
 % First we set up the module name for \pkg{l3doc}:
