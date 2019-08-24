@@ -11,9 +11,9 @@
 \askforoverwritefalse
 \nopreamble\nopostamble
 \usedir{tex/latex/scontents}
-\generate{
-  \file{\jobname.sty}{\from{\jobname.dtx}{package}}
-}
+\generate{%
+  \file{\jobname.sty}{\from{\jobname.dtx}{package}}%
+}%
 %</install>
 %<install>\endbatchfile
 %<*internal>
@@ -21,7 +21,6 @@
 \generate{
   \file{\jobname.ins}{\from{\jobname.dtx}{install}}
 }
-
 \ifx\fmtname\nameofplainTeX
   \expandafter\endbatchfile
 \else
@@ -52,7 +51,6 @@
 \usepackage{hyperxmp,lastpage,imakeidx,microtype,attachfile2}
 \usepackage{adjustbox,multicol,listings,accsupp,titletoc}
 \usepackage{scontents} % main
-
 \usepackage[contents]{colordoc}
 
 % Patching colordoc.sty to work with l3doc.cls
@@ -74,6 +72,7 @@
 \EnableCrossrefs
 \PageIndex
 \CodelineIndex
+\EnableImplementation
 \DoNotIndex{\ , \1,\^}
 \expandafter\DoNotIndex\expandafter{\string\{}
 \expandafter\DoNotIndex\expandafter{\string\}}
@@ -175,10 +174,10 @@
   }
 
 %^^A \envexamp{m}
-\newsavebox{\marginexa}
+\newsavebox{\boxexaenv}
 \NewDocumentCommand{\envexamp}{m}
   {
-   \begin{lrbox}{\marginexa}%
+   \begin{lrbox}{\boxexaenv}%
     \begin{minipage}[t]{\marginparwidth}%
      \raggedright\ttfamily\small
      \textcolor{gray}{\textbackslash begin\{\textcolor{mypkgcolor}{\bfseries{#1}}\}\myoarg
@@ -187,7 +186,7 @@
      \textcolor{gray}{\textbackslash end\{{\textcolor{mypkgcolor}{\bfseries{#1}}}\}}\par
     \end{minipage}%
    \end{lrbox}%
-   \usebox{\marginexa}
+   \usebox{\boxexaenv}
   }
 
 %^^A \cmdexamp{s m o m o}
@@ -431,6 +430,8 @@
 %</driver>
 % \fi
 %
+% \begin{documentation}
+%
 % \title{
 %    \scalebox{1.025}{\mylogo}\\[2pt]
 %    \Large
@@ -440,7 +441,7 @@
 %    \filedate.}\\[25pt]
 %    \author{
 %    \large
-%    \raisebox{-1pt}{\textcopyright}{}2019 by Pablo González 
+%    \raisebox{-1pt}{\textcopyright}{}2019 by Pablo González
 %    \thanks{E-mail: \textsf{\guillemotleft}\email{pablgonz@educarchile.cl}\textsf{\guillemotright}}%
 %    }
 % \small
@@ -476,7 +477,7 @@
 % This package would not be possible without the great work of \textsc{Jean
 % Fran\c{c}ois Burnol} who was kind enough to take my requirements into account
 % and add the \myenv{filecontentsdefmacro} environment. Also a special thanks to
-% Phelype Oleinik who has collaborated and adapted a large part of the code and 
+% Phelype Oleinik who has collaborated and adapted a large part of the code and
 % all  \hologo{LaTeX3} team for their great work and to the different members
 % of the \href{https://tex.stackexchange.com}{TeX-SX} community who have provided
 % great answers and ideas. Here a note of the main ones:
@@ -526,6 +527,7 @@
 % \label{sec:loadoptpkg}
 %
 % The package is loaded in the usual way:
+%
 % \iffalse
 %<*example>
 % \fi
@@ -535,7 +537,7 @@
 % \iffalse
 %</example>
 % \fi
-% Or
+% or
 % \iffalse
 %<*example>
 % \fi
@@ -545,11 +547,14 @@
 % \iffalse
 %</example>
 % \fi
+%
 % \subsection{Configuration of the options}
 % \label{sec:confopt}
 %
 % Most of the options can be passed directly to the package or can be
 % configured by means of the command \ics*{setupsc}.
+%
+% \vspace*{-10pt}
 %
 % \begin{function}{\setupsc}
 %   \begin{syntax}
@@ -585,20 +590,22 @@
 % \end{tabular}
 %
 % \section{User interface}
-% 
-% The \emph{user interface} provided by this package consists in \myenv*{scontents} environment, 
-% \ics*{Scontents} and \ics*{Scontents*} commands to stored contents and \ics*{getstored} command 
+%
+% The \emph{user interface} provided by this package consists in \myenv*{scontents} environment,
+% \ics*{Scontents} and \ics*{Scontents*} commands to stored contents and \ics*{getstored} command
 % to get the \meta{stored content} along with other utilities described in this documentation.
 %
 % \subsection{The environment \env{scontents}}
 % \label{sec:envscontents}
+%
+% \vspace*{-10pt}
 %
 % \begin{function}{scontents}
 %   \begin{syntax}
 %   \envexamp{scontents}
 %   \end{syntax}
 %
-% The \myenv*{scontents} environment encapsulates the \myenv{filecontentsdef*} and 
+% The \myenv*{scontents} environment encapsulates the \myenv{filecontentsdef*} and
 % \myenv{filecontentsdefmacro} environments provided by the \mypkg{filecontentsdef}
 % package. This allows you to record content including verbatim for later reuse.
 % \end{function}
@@ -653,8 +660,10 @@
 % \subsection{The command \cs{Scontents}}
 % \label{sec:Scontents}
 %
-% The command to store content directly in memory, the star version allows to save 
+% The command to store content directly in memory, the star version allows to save
 %  \meta{verbatim} contents.
+%
+% \vspace*{-10pt}
 %
 % \begin{function}{\Scontents}
 %   \begin{syntax}
@@ -663,7 +672,7 @@
 %     \cmdexamp*{Scontents}[key=val]{argument}[del]
 %   \end{syntax}
 % \end{function}
-% 
+%
 % The \ics*{Scontents} command reads the \meta{argument} in standard mode.
 % It is not possible to pass environments such as \meta{verbatim}, but it is
 % possible to use the implementation of \ics{Verb} provided by the
@@ -705,6 +714,8 @@
 % \subsection{The command \cs{getstored}}
 % \label{sec:getstored}
 %
+% \vspace*{-10pt}
+%
 % \begin{function}{\getstored}
 %   \begin{syntax}
 %      \cmdexamp{getstored}[index]{seq name}
@@ -718,6 +729,8 @@
 %
 % \subsection{The command \cs{typestored}}
 % \label{sec:typestored}
+%
+% \vspace*{-10pt}
 %
 % \begin{function}{\typestored}
 %   \begin{syntax}
@@ -737,8 +750,10 @@
 %
 % \subsection{The environment \env{verbatimsc}}
 %
+% \vspace*{-10pt}
+%
 % \begin{function}{verbatimsc}
-% Internal environment used by \cs{typestored} and \cs{typestored*}  to display 
+% Internal environment used by \cs{typestored} and \cs{typestored*}  to display
 % \meta{verbatim style} contents.
 % \end{function}
 %
@@ -807,6 +822,8 @@
 % \subsection{The command \cs{meaningsc}}
 % \label{sec:meaningsc}
 %
+% \vspace*{-10pt}
+%
 % \begin{function}{\meaningsc}
 %   \begin{syntax}
 %      \cmdexamp{meaningsc}[index]{seq name}
@@ -819,6 +836,8 @@
 % \subsection{The command \cs{countsc}}
 % \label{sec:countsc}
 %
+% \vspace*{-10pt}
+%
 % \begin{function}{\countsc}
 %   \begin{syntax}
 %      \cmdexamp{countsc}{seq name}
@@ -828,6 +847,8 @@
 
 % \subsection{The command \cs{cleansc}}
 % \label{sec:cleansc}
+%
+% \vspace*{-10pt}
 %
 % \begin{function}{\cleanseqsc}
 %   \begin{syntax}
@@ -1179,7 +1200,7 @@
 % \section{Change history}
 %
 % \label{sec:changes}
-% 
+%
 % \setlist[itemize,1]{label=\textendash, wide=0.5em, nosep, noitemsep, leftmargin=10pt}
 % \newlength\descrwidth
 % \settowidth{\descrwidth}{\textsf{v1.0, (ctan), 2019/07/30} }
@@ -1203,6 +1224,9 @@
 % \newpage
 %
 % \printindex[userdoc]
+%
+% \end{documentation}
+%
 % \newpage
 % \StopEventually{^^A
 % \newgeometry{top=0.5in,bottom=0.5in,left=1.0in,right=1in,footskip=0.2in,headsep=10pt}
@@ -1216,6 +1240,8 @@
 % \label{sec:Implementation}
 % \addtocontents{toc}{\protect\setcounter{tocdepth}{0}}
 %
+% \begin{implementation}
+%
 % \iffalse
 %<*package>
 % \fi
@@ -1223,6 +1249,7 @@
 % \subsection{Declaration of the package}
 %
 % First we set up the module name for \pkg{l3doc}:
+%
 %    \begin{macrocode}
 %<@@=scontents>
 %    \end{macrocode}
@@ -1540,7 +1567,7 @@
 % \url{https://tex.stackexchange.com/a/500281/7832}.
 %
 %%^^A User command to stored content
-% 
+%
 % \begin{macro}{\Scontents,\@@_norm:n,\@@_verb:w}
 %   The \cs{Scontents} macro starts by parsing an optional argument and
 %   then delegates to \cs{@@_verb:w} or \cs{@@_norm:n} depending whether
@@ -1786,4 +1813,5 @@
 % \iffalse
 %</package>
 % \fi
+% \end{implementation}
 % \Finale
