@@ -180,16 +180,14 @@
   {
    \begin{lrbox}{\marginexa}%
     \begin{minipage}[t]{\marginparwidth}%
-     \raggedleft\ttfamily\small
+     \raggedright\ttfamily\small
      \textcolor{gray}{\textbackslash begin\{\textcolor{mypkgcolor}{\bfseries{#1}}\}\myoarg
      [type=tt,sbc=gray,ac=NavyBlue,cf=optcolor]{key=val}}\par%
-     \mymeta[ac=gray,cf=gray]{env ~ contents}\par%
+     \hspace{0.5cm}\mymeta[ac=gray,cf=gray]{env ~ contents}\par%
      \textcolor{gray}{\textbackslash end\{{\textcolor{mypkgcolor}{\bfseries{#1}}}\}}\par
     \end{minipage}%
    \end{lrbox}%
-   \leavevmode%
-   \marginpar{\usebox{\marginexa}}%
-   \ignorespaces%
+   \usebox{\marginexa}
   }
 
 %^^A \cmdexamp{s m o m o}
@@ -197,7 +195,7 @@
   {
   \group_begin:
   \small\ttfamily
-  \adjustbox{outer=-0.5\marginparsep}{\textcolor{mypkgcolor}{\textbackslash#2}}
+  \textcolor{mypkgcolor}{\textbackslash#2}
   \IfBooleanTF{#1}{ \textcolor{red}{*} }{ \hphantom{*} }
   \IfValueT{#3}{ \myoarg[type=tt,sbc=gray,ac=NavyBlue,cf=optcolor]{#3} }
   \IfValueTF{#5}
@@ -464,15 +462,7 @@
 %
 % \setlength{\parskip}{3pt}
 %
-% \section*{Description}
-%
-% The \mypkg*{scontents} package encapsulates the \mypkg{filecontentsdef}
-% package of \textsc{Jean Fran\c{c}ois Burnol} which allows you to save the
-% content in a |\macro| and save it in external files, adding a user interface
-% style \myoarg{key = val} along with the ability to save content in sequences
-% for later use in different parts of the document.
-%
-% \section*{Motivation and Acknowledgments}
+% \section{Motivation and Acknowledgments}
 %
 % In \hologo{LaTeX} there is no direct way to record content for later use, although
 % you can do this using \verb|\macros|, recording \meta{verbatim content}  is a
@@ -503,7 +493,7 @@
 % \item \href{https://tex.stackexchange.com/q/373647/7832}{Collect contents of an environment (that contains verbatim content)}
 % \end{enumerate}
 %
-% \section*{License and Requirements}
+% \section{License and Requirements}
 % \label{sec:licence}
 %
 % Permission is granted to copy, distribute and/or modify this software under
@@ -524,10 +514,13 @@
 %
 % \section{The \texttt{scontents} package}
 %
-% The \mypkg*{scontents} package provides the \myenv*{scontents} environment,
-% \ics*{Scontents} and \ics*{Scontents*} command to stored contents and \ics*{getstored}
-% command to get the \meta{stored content} along with other utilities described in this
-% documentation.
+% \subsection{Description}
+%
+% The \mypkg*{scontents} package encapsulates the \mypkg{filecontentsdef}
+% package of \textsc{Jean Fran\c{c}ois Burnol} which allows you to save the
+% content in a |\macro| and save it in external files, adding a user interface
+% style \myoarg{key = val} along with the ability to save content in sequences
+% for later use in different parts of the document.
 %
 % \subsection{Loading package}
 % \label{sec:loadoptpkg}
@@ -558,21 +551,59 @@
 % Most of the options can be passed directly to the package or can be
 % configured by means of the command \ics*{setupsc}.
 %
-% \cmdexamp{setupsc}{key=val}
+% \begin{function}{\setupsc}
+%   \begin{syntax}
+%       \cmdexamp{setupsc}{key=val}
+%   \end{syntax}
+%
 % The command \ics*{setupsc} configures the options in a global way,
+% for \ics*{Scontents}, \ics*{Scontents*} and environment \myenv*{scontents}.
 % it can be used both in the preamble and in the body of the document
 % as many times as desired.
+% \end{function}
 %
-% The summary with all possible options can be found in \ref{sec:optover}.
+% \subsection{Options Overview}
+% \label{sec:optover}
 %
-% \section{The environment \env{scontents}}
+% \newcommand*{\xmark}{\textcolor{red}{✘}}%
+% \newcommand*{\cmark}{\textcolor{green}{✔}}%
+%
+% Summary table of available options.
+%
+% \begin{tabular}{cccccc}
+% \toprule
+%  \texttt{key}       & package & \ics{setupsc} & \myenv*{scontents}  & \ics*{Scontents} & \ics*{Scontents*}\\
+% \midrule
+%  \texttt{store-env} & \cmark  & \cmark        &  \cmark             & \xmark          & \xmark          \\
+%  \texttt{store-cmd} & \cmark  & \cmark        &  \xmark             & \cmark          & \cmark          \\
+%  \texttt{print-env} & \cmark  & \cmark        &  \cmark             & \xmark          & \xmark          \\
+%  \texttt{print-cmd} & \cmark  & \cmark        &  \xmark             & \cmark          & \cmark          \\
+%  \texttt{print-all} & \cmark  & \cmark        &  \cmark             & \xmark          & \xmark          \\
+%  \texttt{write-env} & \xmark  & \xmark        &  \cmark             & \xmark          & \xmark          \\
+%  \texttt{write-out} & \xmark  & \xmark        &  \cmark             & \xmark          & \xmark          \\
+% \bottomrule
+% \end{tabular}
+%
+% \section{User interface}
+% 
+% The \emph{user interface} provided by this package consists in \myenv*{scontents} environment, 
+% \ics*{Scontents} and \ics*{Scontents*} commands to stored contents and \ics*{getstored} command 
+% to get the \meta{stored content} along with other utilities described in this documentation.
+%
+% \subsection{The environment \env{scontents}}
 % \label{sec:envscontents}
 %
-% \envexamp{scontents}
-% The \myenv*{scontents} environment encapsulates the \ics{filecontentsdef*} and %
-% \ics{filecontentsdefmacro} environments provided by the \mypkg{filecontentsdef}
-% package. This allows you to record content including verbatim for later
-% reuse. Some considerations to keep in mind:
+% \begin{function}{scontents}
+%   \begin{syntax}
+%   \envexamp{scontents}
+%   \end{syntax}
+%
+% The \myenv*{scontents} environment encapsulates the \myenv{filecontentsdef*} and 
+% \myenv{filecontentsdefmacro} environments provided by the \mypkg{filecontentsdef}
+% package. This allows you to record content including verbatim for later reuse.
+% \end{function}
+%
+% Some considerations to keep in mind:
 %
 % \begin{enumerate}[nosep]
 % \item The environment cannot be nested.
@@ -619,10 +650,20 @@
 % it will not store the contents of this one. It is analogous to the
 % \myenv{filecontents*} environment.
 %
-% \section{The command \cs{Scontents}}
+% \subsection{The command \cs{Scontents}}
 % \label{sec:Scontents}
 %
-% \cmdexamp{Scontents}[key=val]{argument}
+% The command to store content directly in memory, the star version allows to save 
+%  \meta{verbatim} contents.
+%
+% \begin{function}{\Scontents}
+%   \begin{syntax}
+%     \cmdexamp{Scontents}[key=val]{argument}
+%     \cmdexamp*{Scontents}[key=val]{argument}
+%     \cmdexamp*{Scontents}[key=val]{argument}[del]
+%   \end{syntax}
+% \end{function}
+% 
 % The \ics*{Scontents} command reads the \meta{argument} in standard mode.
 % It is not possible to pass environments such as \meta{verbatim}, but it is
 % possible to use the implementation of \ics{Verb} provided by the
@@ -632,8 +673,6 @@
 % It can be used anywhere in the document and cannot be used as an \meta{argument}
 % for another command.
 %
-% \cmdexamp*{Scontents}[key=val]{argument}
-% \cmdexamp*{Scontents}[key=val]{argument}[del]
 % The \ics*{Scontents*} command reads the \meta{argument} under  verbatim
 % category code regimen. If its first delimiter is a brace, it will be assumed that
 % the \meta{argument} is nested into braces. Otherwise it will be assumed that
@@ -663,28 +702,45 @@
 % \keyexamp{print-cmd}{true\textbar false}{false}
 % It will show the current content of \ics*{Scontents}.
 %
-% \section{The command \cs{getstored}}
+% \subsection{The command \cs{getstored}}
 % \label{sec:getstored}
 %
-% \cmdexamp{getstored}[index]{seq name}
+% \begin{function}{\getstored}
+%   \begin{syntax}
+%      \cmdexamp{getstored}[index]{seq name}
+%   \end{syntax}
+% \end{function}
+%
 % The command \ics*{getstored} gets the content stored in \meta{seq name}
 % according to the index in which it was stored. The command is robust and expandable
 % and can be used as an \meta{argument} for another command. If the optional argument
 % is not passed it defaults to the last element saved in the \meta{seq name}.
 %
-% \section{The command \cs{typestored}}
+% \subsection{The command \cs{typestored}}
 % \label{sec:typestored}
 %
-% \cmdexamp{typestored}[index]{seq name}
+% \begin{function}{\typestored}
+%   \begin{syntax}
+%      \cmdexamp{typestored}[index]{seq name}
+%      \cmdexamp*{typestored}[index]{seq name}
+%   \end{syntax}
+% \end{function}
+%
 % The command \ics*{typestored} shows the content stored in \meta{seq name} in
 % \emph{verbatim} mode. Internally places the content into the \myenv*{verbatimsc} environment.
 %
-% \cmdexamp*{typestored}[index]{seq name}
 % The command \ics*{typestored*} must be used for content stored by \ics*{Scontents*} command.
 % Internally places the content into the \myenv*{verbatimsc} environment.
 %
 % If the optional argument is not passed it defaults to the
 % last element saved in the \meta{seq name}.
+%
+% \subsection{The environment \env{verbatimsc}}
+%
+% \begin{function}{verbatimsc}
+% Internal environment used by \cs{typestored} and \cs{typestored*}  to display 
+% \meta{verbatim style} contents.
+% \end{function}
 %
 % One consideration to keep in mind is that this is a \emph{representation} of the content
 % in a \meta{verbatim} environment and not a real \meta{verbatim} environment, the line ends
@@ -748,50 +804,40 @@
 %
 % \section{Other commands provided}
 %
-% \subsection*{The command \cs{meaningsc}}
+% \subsection{The command \cs{meaningsc}}
 % \label{sec:meaningsc}
 %
-% \cmdexamp{meaningsc}[index]{seq name}
+% \begin{function}{\meaningsc}
+%   \begin{syntax}
+%      \cmdexamp{meaningsc}[index]{seq name}
+%   \end{syntax}
 % The command \ics*{meaningsc} executes \ics{meaning} on the content stored
 % in \meta{seq name}. If the optional argument is not passed it defaults to the
 % last element saved in the \meta{seq name}.
+% \end{function}
 %
-% \subsection*{The command \cs{countsc}}
+% \subsection{The command \cs{countsc}}
 % \label{sec:countsc}
 %
-% \cmdexamp{countsc}{seq name}
+% \begin{function}{\countsc}
+%   \begin{syntax}
+%      \cmdexamp{countsc}{seq name}
+%   \end{syntax}
 % The command \ics*{countsc} count a number of contents stored in \meta{seq name}.
-%
-% \subsection*{The command \cs{cleansc}}
+% \end{function}
+
+% \subsection{The command \cs{cleansc}}
 % \label{sec:cleansc}
 %
-% \cmdexamp{cleansc}{seq name}
+% \begin{function}{\cleanseqsc}
+%   \begin{syntax}
+%      \cmdexamp{cleansc}{seq name}
+%   \end{syntax}
 % The command \ics*{cleansc} remove all contents stored in \meta{seq name}.
-%
-% \section{Options Overview}
-% \label{sec:optover}
-%
-% \newcommand*{\xmark}{\textcolor{red}{✘}}%
-% \newcommand*{\cmark}{\textcolor{green}{✔}}%
-%
-% Summary table of available options
-%
-%
-% \begin{tabular}{cccccc}
-% \toprule
-%  \texttt{key}       & package & \ics{setupsc} & \myenv*{scontents}  & \ics*{Scontents} & \ics*{Scontents*}\\
-% \midrule
-%  \texttt{store-env} & \cmark  & \cmark        &  \cmark             & \xmark          & \xmark          \\
-%  \texttt{store-cmd} & \cmark  & \cmark        &  \xmark             & \cmark          & \cmark          \\
-%  \texttt{print-env} & \cmark  & \cmark        &  \cmark             & \xmark          & \xmark          \\
-%  \texttt{print-cmd} & \cmark  & \cmark        &  \xmark             & \cmark          & \cmark          \\
-%  \texttt{print-all} & \cmark  & \cmark        &  \cmark             & \xmark          & \xmark          \\
-%  \texttt{write-env} & \xmark  & \xmark        &  \cmark             & \xmark          & \xmark          \\
-%  \texttt{write-out} & \xmark  & \xmark        &  \cmark             & \xmark          & \xmark          \\
-% \bottomrule
-% \end{tabular}
+% \end{function}
 %
 % \section{Examples}
+%
 % These are some (adapted) examples that have served as inspiration for
 % the creation of this package.
 %
@@ -1137,8 +1183,13 @@
 % \setlist[itemize,1]{label=\textendash, wide=0.5em, nosep, noitemsep, leftmargin=10pt}
 % \newlength\descrwidth
 % \settowidth{\descrwidth}{\textsf{v1.0, (ctan), 2019/07/30} }
+%
 % \begin{description}[font=\small\sffamily, wide=0pt, style=multiline, leftmargin=\descrwidth,  nosep, noitemsep]
 % \item [\fileversion{} (ctan), \filedate]
+%    \begin{itemize}
+%        \item Restructuring of documentation.
+%    \end{itemize}
+% \item [v1.1 (ctan), 2019/08/12]
 %    \begin{itemize}
 %        \item Extension of documentation.
 %        \item Replace \verb+\tex_endinput:D+ by \verb+\file_input_stop:+.
@@ -1148,6 +1199,7 @@
 %        \item First public release,
 %    \end{itemize}
 % \end{description}
+%
 % \newpage
 %
 % \printindex[userdoc]
@@ -1160,85 +1212,9 @@
 % \printindex
 % }
 %
-% \section{scontents implementation}
+% \section{Implementation}
 % \label{sec:Implementation}
 % \addtocontents{toc}{\protect\setcounter{tocdepth}{0}}
-%
-% \begin{documentation}
-% \subsection{User interface}
-% 
-% The \emph{user interface} provided by this package consists of a couple of environments 
-% and a series of commands described below.
-%
-% \begin{function}{\setupsc}
-%   \begin{syntax}
-%       \cs{setupsc} \Arg{key=val}
-%   \end{syntax}
-% The command to set options for \cs{Scontents}, \cs{Scontents*} and the 
-% environment \env{scontents}.
-% \end{function}
-%
-% \begin{function}{scontents}
-%   \begin{syntax}
-%  \oarg{key=val}
-%   \end{syntax}
-% The environment encapsulating \env{filecontentsdef*} and 
-% \env{filecontentsdefmacro} from  \pkg{filecontentsdef} package.
-% \end{function}
-%
-% \begin{function}{\Scontents}
-%   \begin{syntax}
-%     \cs{Scontents}~ \oarg{key=val} \Arg{argument}
-%     \cs{Scontents*} \oarg{key=val} \Arg{argument} 
-%     \cs{Scontents*} \oarg{key=val} \meta{del}\Arg{argument}\meta{del}
-%   \end{syntax}
-% The command to store content directly in memory, the star version allows to save 
-%  \meta{verbatim} content.
-% \end{function}
-%
-% \begin{function}{\getstored}
-%   \begin{syntax}
-%     \cs{getstored}~\oarg{index} \Arg{seq name}
-%   \end{syntax}
-%  The command to receive content stored in memory.
-% \end{function}
-%
-% \begin{function}{\typestored}
-%   \begin{syntax}
-%       \cs{typestored}~\oarg{index} \Arg{seq name}
-%      \cs{typestored*}\oarg{index} \Arg{seq name}
-%   \end{syntax}
-% The command to display the content stored in memory within the \env{verbatimsc}, 
-% the starred version displays the content stored by \cs{Scontents*}.
-% \end{function}
-%
-% \begin{function}{verbatimsc}
-% Internal environment used by \cs{typestored} and \cs{typestored*}  to display 
-% \meta{verbatim style} content.
-% \end{function}
-%
-% \begin{function}{\countsc}
-%   \begin{syntax}
-%       \cs{countsc} \Arg{seq name}
-%   \end{syntax}
-% The command to count the number of elements stored.
-% \end{function}
-%
-% \begin{function}{\meaningsc}
-%   \begin{syntax}
-%        \cs{meaningsc}~\oarg{index} \Arg{seq name}
-%   \end{syntax}
-% The command to display the \cs{meaning} of the stored content.
-% \end{function}
-%
-% \begin{function}{\cleanseqsc}
-%   \begin{syntax}
-%        \cs{meaningsc} \Arg{seq name}
-%   \end{syntax}
-% The command to erase the memory sequence at the point at which it is executed.
-% \end{function}
-%
-% \end{documentation}
 %
 % \iffalse
 %<*package>
@@ -1257,7 +1233,7 @@
 \RequirePackage{filecontentsdef}[2019/04/20]
 \RequirePackage{l3keys2e}
 \RequirePackage{xparse}[2019/05/28]
-\ProvidesExplPackage{scontents}{2019/08/12}{1.1}
+\ProvidesExplPackage{scontents}{2019/08/26}{1.2}
   {Stores LaTeX contents in memory or files}
 %    \end{macrocode}
 % A check to make sure that \pkg{xparse} is not too old
