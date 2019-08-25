@@ -72,8 +72,6 @@
 \EnableCrossrefs
 \PageIndex
 \CodelineIndex
-\EnableDocumentation
-\EnableImplementation
 \DoNotIndex{\ , \1,\^}
 \expandafter\DoNotIndex\expandafter{\string\{}
 \expandafter\DoNotIndex\expandafter{\string\}}
@@ -83,7 +81,7 @@
 
 \indexsetup{level=\section,firstpagestyle=myheader}
 \makeindex[name=userdoc,options=-s gind.ist,columnsep=15pt,title={Index of Documentation}]
-\makeindex[options=-s gind.ist,columnsep=15pt,title={Index of Implementation}]
+\makeindex[options=-s gind.ist -o \jobname.ind \jobname.idx,columnsep=15pt,title={Index of Implementation}]
 \setlength{\parindent}{0pt}
 
 %^^A------------------- ONLY FOR DOCUMENTATION ------------------------%%
@@ -431,8 +429,6 @@
 %</driver>
 % \fi
 %
-% \begin{documentation}
-%
 % \title{
 %    \scalebox{1.025}{\mylogo}\\[2pt]
 %    \Large
@@ -515,6 +511,7 @@
 % \pagestyle{myheader}
 %
 % \section{The \texttt{scontents} package}
+% \label{sec:pkgscontents}
 %
 % \subsection{Description}
 %
@@ -591,13 +588,14 @@
 % \end{tabular}
 %
 % \section{User interface}
+% \label{sec:interface}
 %
 % The \emph{user interface} provided by this package consists in \myenv*{scontents} environment,
 % \ics*{Scontents} and \ics*{Scontents*} commands to stored contents and \ics*{getstored} command
 % to get the \meta{stored content} along with other utilities described in this documentation.
 %
 % \subsection{The environment \env{scontents}}
-% \label{sec:envscontents}
+% \label{sec:scontents}
 %
 % \vspace*{-10pt}
 %
@@ -697,6 +695,7 @@
 % \end{enumerate}
 %
 % \subsection*{Options for command}
+% \label{sec:optcmdsc}
 %
 % The command options (including star version) can be configured globally
 % using option in package or the \ics*{setupsc} command and locally
@@ -750,6 +749,7 @@
 % last element saved in the \meta{seq name}.
 %
 % \subsection{The environment \env{verbatimsc}}
+% \label{sec:verbatimsc}
 %
 % \vspace*{-10pt}
 %
@@ -1199,7 +1199,6 @@
 % \lstinputlisting[language=scontents-doc,numbers=left]{scexamp8.ltx}
 %
 % \section{Change history}
-%
 % \label{sec:changes}
 %
 % \setlist[itemize,1]{label=\textendash, wide=0.5em, nosep, noitemsep, leftmargin=10pt}
@@ -1226,8 +1225,6 @@
 %
 % \printindex[userdoc]
 %
-% \end{documentation}
-%
 % \newpage
 %
 % \StopEventually{^^A
@@ -1240,14 +1237,12 @@
 %
 % \section{Implementation}
 % \label{sec:Implementation}
-%
 % \addtocontents{toc}{\protect\setcounter{tocdepth}{0}}
-%
-% \begin{implementation}
 %
 % \iffalse
 %<*package>
 % \fi
+%
 % \subsection{Declaration of the package}
 %
 % First we set up the module name for \pkg{l3doc}:
@@ -1815,5 +1810,4 @@
 %</package>
 % \fi
 %
-% \end{implementation}
 % \Finale
