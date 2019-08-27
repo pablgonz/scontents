@@ -29,6 +29,13 @@
 %</internal>
 %<*driver>
 \documentclass[full]{l3doc}
+% imakeidx also opens a write stream for the .idx file, and that conflicts
+% with the one opened by l3doc. Here we close that write stream:
+\makeatletter
+\immediate\closeout\@indexfile
+\makeatother
+% and later we will copy the write stream opened by imakeidx into \@indexfile
+% so that entries written to both streams end up in the same file.
 \usepackage[top=0.5in,bottom=0.5in,left=2.0in,right=1in,footskip=0.2in,headsep=10pt]{geometry}
 \usepackage[osf,mono=false,scale=0.95,llscaled=0.95]{libertine}
 \usepackage{unicode-math}
@@ -53,6 +60,7 @@
 \usepackage{scontents} % main
 \usepackage[contents]{colordoc}
 
+
 % Patching colordoc.sty to work with l3doc.cls
 \ExplSyntaxOn
 \cs_new_eq:cN { liii@xmacro@code } \__codedoc_xmacro_code:n
@@ -70,9 +78,15 @@
 |endgroup
 
 \EnableCrossrefs
-\PageIndex
+% \PageIndex % \CodelineIndex undoes what \PageIndex does
+% \CodelineIndex tries to open another write stream for the index file. We don't
+% want that, so we temporarily make \makeindex a no-op:
+\let\ORGmakeindex\makeindex
+\def\makeindex{}
 \CodelineIndex
+\let\makeindex\ORGmakeindex
 \DoNotIndex{\ , \1,\^}
+\typeout{HERE 123}
 \expandafter\DoNotIndex\expandafter{\string\{}
 \expandafter\DoNotIndex\expandafter{\string\}}
 \expandafter\DoNotIndex\expandafter{\string\begin}
@@ -81,7 +95,13 @@
 
 \indexsetup{level=\section,firstpagestyle=myheader}
 \makeindex[name=userdoc,options=-s gind.ist,columnsep=15pt,title={Index of Documentation}]
-\makeindex[options=-s gind.ist -o \jobname.ind \jobname.idx,columnsep=15pt,title={Index of Implementation}]
+\makeindex[options=-s gind.ist,columnsep=15pt,title={Index of Implementation}]
+% Now, after imakeidx opens the write stream for the index file, we copy
+% the reference to \@indexfile:
+\makeatletter
+\let\@indexfile\scontents@idxfile
+\makeatother
+
 \setlength{\parindent}{0pt}
 
 %^^A------------------- ONLY FOR DOCUMENTATION ------------------------%%
@@ -1348,6 +1368,18 @@
 %    \end{macrocode}
 % \end{macro}
 %
+%%^^A Internal quarks
+% \begin{macro}{\@@_rescan_tokens:w}
+%   \cs{tl_rescan:nn} doesn't fit the needs of this package because
+%   it does not allow catcode changes inside the argument, so verbatim
+%   commands used inside one of \mypkg*{scontents}'s commands/environments
+%   will not work. Here we create a private copy of \cs{tex_scantokens:D}
+%   which will serve our purposes:
+%    \begin{macrocode}
+\cs_new_eq:NN \@@_rescan_tokens:w \tex_scantokens:D
+%    \end{macrocode}
+% \end{macro}
+%
 % \begin{macro}{\g_@@_end_verbatimsc_tl}
 %   A token list to match when ending verbatim environments.
 %    \begin{macrocode}
@@ -1355,7 +1387,6 @@
 \tl_gset_rescan:Nnn
   \g_@@_end_verbatimsc_tl
   {
-    \char_set_catcode_escape:N \|
     \char_set_catcode_other:N \\
     \char_set_catcode_other:N \{
     \char_set_catcode_other:N \}
@@ -1434,7 +1465,7 @@
 % \begin{macro}{scontents}
 %   This is the main environment used in the document.
 %    \begin{macrocode}
-\ProvideDocumentEnvironment { scontents } { }
+\NewDocumentEnvironment { scontents } { }
   {
     \char_set_catcode_active:N \^^M
     \@@_start_environment:w
@@ -1547,12 +1578,12 @@
       }
     \tl_clear:N \l_@@_macro_tmp_tl
   }
-\cs_gset_protected:Npn \@@_stored_to_seq:
+\cs_new_protected:Npn \@@_stored_to_seq:
   {
     \regex_replace_all:nnN { \^^M } { \^^J } \l_@@_macro_tmp_tl
     \tl_log:N \l_@@_macro_tmp_tl
     \@@_append_contents:Vx \l_@@_name_seq_env_tl
-      { \exp_not:N \tex_scantokens:D { \tl_use:N \l_@@_macro_tmp_tl } }
+      { \exp_not:N \@@_rescan_tokens:w { \tl_use:N \l_@@_macro_tmp_tl } }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -1580,7 +1611,7 @@
 %^^A Reply: The redirection of error messages has never worked well for me
 %^^A       perhaps it would be better to implement it.
 %    \begin{macrocode}
-\ProvideDocumentCommand { \Scontents }{ !s !O{} }
+\NewDocumentCommand { \Scontents }{ !s !O{} }
   {
     \group_begin:
       \IfNoValueF {#2}
@@ -1602,7 +1633,7 @@
       \regex_replace_all:nnN { \^^M } { \^^J } \l_@@_temp_tl
       \tl_log:N \l_@@_temp_tl
       \exp_args:NVx \@@_append_contents:nn \l_@@_name_seq_cmd_tl
-        { \exp_not:N \tex_scantokens:D { \tl_use:N \l_@@_temp_tl } }
+        { \exp_not:N \@@_rescan_tokens:w { \tl_use:N \l_@@_temp_tl } }
       \bool_if:NT \l_@@_print_cmd_bool
         { \@@_getfrom_seq:nn { -1 } { \l_@@_name_seq_cmd_tl } }
     \group_end:
@@ -1617,7 +1648,7 @@
 %   User command \cs{getstored} to extract stored content in |seq|
 %   (robust).
 %    \begin{macrocode}
-\ProvideDocumentCommand { \getstored } { O{1} m }
+\NewDocumentCommand { \getstored } { O{1} m }
   { \@@_getfrom_seq:nn {#1} {#2} }
 %    \end{macrocode}
 % \end{macro}
@@ -1637,7 +1668,7 @@
 %   to read the contents of the token list and pass them to
 %   \cs{@@_fcdef_print:N}.
 %    \begin{macrocode}
-\ProvideDocumentCommand { \typestored } { s O{1} m }
+\NewDocumentCommand { \typestored } { s O{1} m }
   {
     \group_begin:
       \tl_set:Nx \l_@@_temp_tl { \@@_getfrom_seq:nn {#2} {#3} }
@@ -1664,7 +1695,7 @@
       \cs_set_eq:NN ^^M \scan_stop:
       \use:x
         {
-          \exp_not:N \tex_scantokens:D
+          \exp_not:N \@@_rescan_tokens:w
             {
               \exp_not:N \begin{verbatimsc} ^^M
               \@@_strip_scantokens:N #1
@@ -1682,7 +1713,7 @@
 \use:x
   { \cs_gset_protected:Npn \exp_not:N \@@_xverb:w ##1 \g_@@_end_verbatimsc_tl }
       { #1 \end{verbatimsc} }
-\ProvideDocumentEnvironment { verbatimsc } { }
+\NewDocumentEnvironment { verbatimsc } { }
   {
     \cs_set_eq:cN { @xverbatim } \@@_xverb:w
     \verbatim
@@ -1721,7 +1752,7 @@
   }
 \prg_new_conditional:Npnn \@@_if_scantokens:Nw #1#2 \q_@@_mark { TF }
   {
-    \token_if_eq_meaning:NNTF \tex_scantokens:D #1
+    \token_if_eq_meaning:NNTF \@@_rescan_tokens:w #1
       { \prg_return_true: }
       { \prg_return_false: }
   }
@@ -1735,20 +1766,20 @@
 % \begin{macro}{\setupsc}
 %   A user-level wrapper for \cs{keys_set:nn}|{ scontents }|
 %    \begin{macrocode}
-\ProvideDocumentCommand { \setupsc } { m }
+\NewDocumentCommand { \setupsc } { m }
   { \keys_set:nn { scontents } {#1} }
 %    \end{macrocode}
 % \end{macro}
 %
 % \subsection{The command meaningsc}
 %
-% \begin{macro}{\meaningsc}
+% \begin{macro}[do-not-index=\v]{\meaningsc}
 %   User command \cs{meaningsc} to see content stored in seq.
 %^^A NOTE: Perhaps replace \cs{regex_replace_all:nnN} by something more
 %^^A       efficient...
 %^^A Reply: I've only used it to avoid ΩΩ ...
 %    \begin{macrocode}
-\ProvideDocumentCommand { \meaningsc } { O{1} m }
+\NewDocumentCommand { \meaningsc } { O{1} m }
   {
     \group_begin:
       \tl_set:Nx \l_@@_temp_tl { \@@_getfrom_seq:nn {#1} {#2} }
@@ -1767,7 +1798,7 @@
 % \begin{macro}{\countsc}
 %   User command \cs{countsc} to count number of contents stored in seq.
 %    \begin{macrocode}
-\ProvideExpandableDocumentCommand { \countsc } { m }
+\NewExpandableDocumentCommand { \countsc } { m }
   { \seq_count:c { g_@@_seq_name_#1_seq } }
 %    \end{macrocode}
 % \end{macro}
@@ -1777,7 +1808,7 @@
 % \begin{macro}{\cleanseqsc}
 %   A user command \cs{cleanseqsc} to clear (remove) a defined seq
 %    \begin{macrocode}
-\ProvideExpandableDocumentCommand { \cleanseqsc } { m }
+\NewDocumentCommand { \cleanseqsc } { m }
   { \seq_clear_new:c { g_@@_seq_name_#1_seq } }
 %    \end{macrocode}
 % \end{macro}
