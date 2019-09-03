@@ -9,6 +9,42 @@
 \usepackage{listings}
 \setlength{\parindent}{0pt}
 \begin{document}
+% These outputs should look the same
+FIRST\par
+This is normal text.
+\verb|This is from the verb command.|
+\verb*|This is from the verb* command.|    
+This is normal text.
+\begin{verbatim}
+This is from the verbatim environment:
+&%{}~
+\end{verbatim}
+
+SECOND\par
+% These outputs should look the same whit print-env=true
+\begin{scontents}[store-env=newattempt,print-env=true]
+This is normal text.
+\verb|This is from the verb command.|
+\verb*|This is from the verb* command.|    
+This is normal text.
+\begin{verbatim}
+This is from the verbatim environment:
+&%{}~
+\end{verbatim}
+\end{scontents}This text is removed from the output because it is on the same line.
+THIRD\par
+% These outputs should look the same
+\getstored[1]{newattempt}
+% Tab
+\begin{scontents}[write-out=withtab.tsc]
+No tab
+	One tab
+		Two tab
+\begin{verbatim}
+      (E) verbatim
+          environment
+\end{verbatim}
+\end{scontents}This text is removed from the output because it is on the same line.
 
 \section{Test \texttt{\textbackslash Scontents[key=val]}}
 
