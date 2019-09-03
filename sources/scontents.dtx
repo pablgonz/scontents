@@ -1368,7 +1368,7 @@
 %    \end{macrocode}
 % \end{macro}
 %
-%%^^A Internal quarks
+%%^^A Copy of \scantokens
 % \begin{macro}{\@@_rescan_tokens:w}
 %   \cs{tl_rescan:nn} doesn't fit the needs of this package because
 %   it does not allow catcode changes inside the argument, so verbatim
@@ -1827,7 +1827,11 @@
 \msg_new:nnn { scontents } { empty-stored-content }
   { Empty~value~for~key~`getstored'~\msg_line_context:. }
 \msg_new:nnn { scontents } { empty-variable }
- { Variable~`#1'~empty~\msg_line_context:. }
+  { Variable~`#1'~empty~\msg_line_context:. }
+\msg_new:nnn { scontents } { rewriting-file } 
+  { Overwriting ~ file ~ `#1' }
+\msg_new:nnn { scontents } { writing-file } 
+  { Writing ~ file ~ `#1' }
 %    \end{macrocode}
 %
 % \subsection{Finish package}
