@@ -231,7 +231,7 @@
 \DeclareDocumentCommand{\keyexamp}{ m m m }
   {
   \par
-  \adjustbox{outer=-\marginparsep}{\textcolor{mypkgcolor}{\small\ttfamily{#1}}}
+  \adjustbox{outer=-\marginparsep}{\textcolor{black}{\small\ttfamily{#1}}}
   \textcolor{gray}{\,\bfseries\texttt{=}}\,{}
   \mymarg[type=tt,cbc=OrangeRed,ac=NavyBlue,cf=MediumOrchid]{\small{#2}}
   \hfill\textcolor{gray}{\small\textsf{(default:  ~ \texttt{#3})}}
@@ -1276,7 +1276,7 @@
 \RequirePackage{filecontentsdef}[2019/04/20]
 \RequirePackage{l3keys2e}
 \RequirePackage{xparse}[2019/05/28]
-\ProvidesExplPackage{scontents}{2019/08/28}{1.2}
+\ProvidesExplPackage{scontents}{2019/09/03}{1.2a}
   {Stores LaTeX contents in memory or files}
 %    \end{macrocode}
 % A check to make sure that \pkg{xparse} is not too old
@@ -1380,6 +1380,7 @@
 %    \end{macrocode}
 % \end{macro}
 %
+%%^^A Definition of verbatimsc
 % \begin{macro}{\g_@@_end_verbatimsc_tl}
 %   A token list to match when ending verbatim environments.
 %    \begin{macrocode}
@@ -1477,48 +1478,11 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \subsubsection{The environment itself}
-%
-% The environment itself
-%
-%%^^A First \cs{@@_start_environment:w}
-% \begin{macro}{\@@_start_environment:w,\@@_stop_environment:}
-%   Here we make |^^M| an active character so that the end of line can
-%   be ``seen'' to be used as a delimiter.  First we check if the line
-%   directly after |\begin{scontents}| contains an optional argument
-%   enclosed in |[...]|, or other tokens.  The trailing tokens are
-%   treated as junk and an error is raised.  The
-%   \cs{@@_environment_inline:w} macro checks for those cases.
-%    \begin{macrocode}
-\group_begin:
-  \char_set_catcode_active:N \^^M
-  \cs_new_protected:Npn \@@_start_environment:w #1 ^^M
-    {
-      \@@_environment_inline:w #1 \q_@@_mark
-      \group_begin:
-        \bool_if:NTF \l_@@_writing_bool
-          {
-            \use:c { filecontentsdef* } { \l_@@_fname_out_tl }
-                                        { \l_@@_macro_tmp_tl } ^^M
-          }
-          { \filecontentsdefmacro { \l_@@_macro_tmp_tl } ^^M }
-    }
-  \cs_new_protected:Npn \@@_stop_environment:
-    {
-        \bool_if:NTF \l_@@_writing_bool
-          { \endfilecontentsdef }
-          { \endfilecontentsdefmacro }
-      \group_end:
-    }
-\group_end:
-%    \end{macrocode}
-% \end{macro}
-%
 % \subsubsection{key val for environment}
 %
 % Define a |key=val| for environment \env{scontents}
 %
-%%^^A key val for environment scontents
+%%^^A Test [key=val] for environment scontents
 % \begin{macro}{\@@_environment_inline:w,\@@_environment_keys:w,
 %      \@@_environment_junk:nw,\@@_environment_junk:xw}
 %   The macro \cs{@@_environment_inline:w} is called from the
@@ -1552,6 +1516,43 @@
 %    \end{macrocode}
 % \end{macro}
 %
+% \subsubsection{The environment itself}
+%
+% The environment itself
+%
+%%^^A First start_environment/stop_environment
+% \begin{macro}{\@@_start_environment:w,\@@_stop_environment:}
+%   Here we make |^^M| an active character so that the end of line can
+%   be ``seen'' to be used as a delimiter.  First we check if the line
+%   directly after |\begin{scontents}| contains an optional argument
+%   enclosed in |[...]|, or other tokens.  The trailing tokens are
+%   treated as junk and an error is raised.  The
+%   \cs{@@_environment_inline:w} macro checks for those cases.
+%    \begin{macrocode}
+\group_begin:
+  \char_set_catcode_active:N \^^M
+  \cs_new_protected:Npn \@@_start_environment:w #1 ^^M
+    {
+      \@@_environment_inline:w #1 \q_@@_mark
+      \group_begin:
+        \bool_if:NTF \l_@@_writing_bool
+          {
+            \use:c { filecontentsdef* } { \l_@@_fname_out_tl }
+                                        { \l_@@_macro_tmp_tl } ^^M
+          }
+          { \filecontentsdefmacro { \l_@@_macro_tmp_tl } ^^M }
+    }
+  \cs_new_protected:Npn \@@_stop_environment:
+    {
+        \bool_if:NTF \l_@@_writing_bool
+          { \endfilecontentsdef }
+          { \endfilecontentsdefmacro }
+      \group_end:
+    }
+\group_end:
+%    \end{macrocode}
+% \end{macro}
+%
 % \subsubsection{Recording of the content in the sequence}
 %
 % \begin{macro}{\@@_atend_environment:,\@@_stored_to_seq:}
@@ -1567,6 +1568,7 @@
 %^^A       performance... Or temporarily redefine ^^M to mean ^^J...
 %^^A Reply: Or maybe it is better to preserve the end of line with
 %^^A       \tex_newlinechar:D = 13 \scan_stop:
+%%^^A Second atend_environment/stored_to_seq
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_atend_environment:
   {
@@ -1593,7 +1595,7 @@
 % User command to stored content, adapted from
 % \url{https://tex.stackexchange.com/a/500281/7832}.
 %
-%%^^A User command to stored content
+%%^^A User command \Scontents to stored content
 %
 % \begin{macro}{\Scontents,\@@_norm:n,\@@_verb:w}
 %   The \cs{Scontents} macro starts by parsing an optional argument and
@@ -1643,7 +1645,7 @@
 %
 % \subsection{The command \cs{getstored}}
 %
-%
+%%^^A User command \getstored to extract stored content in |seq|
 % \begin{macro}{\getstored}
 %   User command \cs{getstored} to extract stored content in |seq|
 %   (robust).
@@ -1658,6 +1660,7 @@
 % This implementation is an adaptation taken from answer by Phelype Oleinik
 % in (\url{https://tex.stackexchange.com/a/497651/7832}).
 %
+%%^^A User command \typestored 
 % \begin{macro}{\typestored,\@@_fcdef_print:N,\@@_xverb:w,verbatimsc}
 %   The \cs{typestored} commands fetches a buffer from memory, prints it
 %   to the log file,
@@ -1684,6 +1687,7 @@
 %   (\textsc{ascii} 13) characters to mimick an actual verbatim environment
 %   ``on the loose''. The contents of the environment are placed in a
 %   \env{verbatimsc} environment and rescanned using \tn{scantokens}.
+%%^^A Internal fcdef_print:N
 %    \begin{macrocode}
 \group_begin:
  \char_set_catcode_active:N \^^M
@@ -1708,7 +1712,7 @@
 \group_end:
 %    \end{macrocode}
 %   Finally, the \env{verbatimsc} environment is defined.
-%^^A An idea taken from spverbatim
+%%^^A Definition of verbatimsc environment
 %    \begin{macrocode}
 \use:x
   { \cs_gset_protected:Npn \exp_not:N \@@_xverb:w ##1 \g_@@_end_verbatimsc_tl }
@@ -1722,6 +1726,7 @@
 %    \end{macrocode}
 % \end{macro}
 %
+%%^^A Internal check scantokens
 % \begin{macro}{
 %     \@@_strip_scantokens:N,
 %     \@@_strip_scantokens:n,
@@ -1828,21 +1833,25 @@
   { Empty~value~for~key~`getstored'~\msg_line_context:. }
 \msg_new:nnn { scontents } { empty-variable }
   { Variable~`#1'~empty~\msg_line_context:. }
-\msg_new:nnn { scontents } { rewriting-file } 
+\msg_new:nnn { scontents } { rewriting-file }
   { Overwriting ~ file ~ `#1' }
-\msg_new:nnn { scontents } { writing-file } 
+\msg_new:nnn { scontents } { writing-file }
   { Writing ~ file ~ `#1' }
+\msg_new:nnn { scontents } { ignoring-text }
+  { Ignoring~text~`#1'~after~\c_backslash_str end{scontents}~\msg_line_context:.}
+\msg_new:nnn { scontents } { tab-to-space }
+  { Tab has been converted to Blank Space }
+\msg_new:nnn { scontents } { feed-to-space }
+  { Form Feed has been converted to Blank Space }
 %    \end{macrocode}
 %
 % \subsection{Finish package}
 % Finish package
 %%^^A Finish package
-%
 %    \begin{macrocode}
 \file_input_stop:
 %    \end{macrocode}
 % \iffalse
 %</package>
 % \fi
-%
 % \Finale

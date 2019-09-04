@@ -1,7 +1,7 @@
 \RequirePackage{filecontentsdef}[2019/04/20]
 \RequirePackage{l3keys2e}
 \RequirePackage{xparse}[2019/05/28]
-\ProvidesExplPackage{scontents}{2019/08/28}{1.2}
+\ProvidesExplPackage{scontents}{2019/09/03}{1.2a}
   {Stores LaTeX contents in memory or files}
 \@ifpackagelater { xparse } { 2019/05/03 }
   { }
@@ -47,8 +47,9 @@
 %%^^A Internal quarks
 \quark_new:N \q__scontents_stop
 \quark_new:N \q__scontents_mark
-%%^^A Internal quarks
+%%^^A Copy of \scantokens
 \cs_new_eq:NN \__scontents_rescan_tokens:w \tex_scantokens:D
+%%^^A Definition of verbatimsc
 \tl_new:N \g__scontents_end_verbatimsc_tl
 \tl_gset_rescan:Nnn
   \g__scontents_end_verbatimsc_tl
@@ -101,29 +102,7 @@
     \__scontents_stop_environment:
     \__scontents_atend_environment:
   }
-%%^^A First \cs{@@_start_environment:w}
-\group_begin:
-  \char_set_catcode_active:N \^^M
-  \cs_new_protected:Npn \__scontents_start_environment:w #1 ^^M
-    {
-      \__scontents_environment_inline:w #1 \q__scontents_mark
-      \group_begin:
-        \bool_if:NTF \l__scontents_writing_bool
-          {
-            \use:c { filecontentsdef* } { \l__scontents_fname_out_tl }
-                                        { \l__scontents_macro_tmp_tl } ^^M
-          }
-          { \filecontentsdefmacro { \l__scontents_macro_tmp_tl } ^^M }
-    }
-  \cs_new_protected:Npn \__scontents_stop_environment:
-    {
-        \bool_if:NTF \l__scontents_writing_bool
-          { \endfilecontentsdef }
-          { \endfilecontentsdefmacro }
-      \group_end:
-    }
-\group_end:
-%%^^A key val for environment scontents
+%%^^A Test [key=val] for environment scontents
 \cs_new_protected:Npn \__scontents_environment_inline:w
   {
     \peek_charcode_ignore_spaces:NTF [ % ]
@@ -145,6 +124,29 @@
       { \msg_error:nnnn { scontents } { junk-after-begin } {#1} {#2} }
   }
 \cs_generate_variant:Nn \__scontents_environment_junk:nw { x }
+%%^^A First start_environment/stop_environment
+\group_begin:
+  \char_set_catcode_active:N \^^M
+  \cs_new_protected:Npn \__scontents_start_environment:w #1 ^^M
+    {
+      \__scontents_environment_inline:w #1 \q__scontents_mark
+      \group_begin:
+        \bool_if:NTF \l__scontents_writing_bool
+          {
+            \use:c { filecontentsdef* } { \l__scontents_fname_out_tl }
+                                        { \l__scontents_macro_tmp_tl } ^^M
+          }
+          { \filecontentsdefmacro { \l__scontents_macro_tmp_tl } ^^M }
+    }
+  \cs_new_protected:Npn \__scontents_stop_environment:
+    {
+        \bool_if:NTF \l__scontents_writing_bool
+          { \endfilecontentsdef }
+          { \endfilecontentsdefmacro }
+      \group_end:
+    }
+\group_end:
+%%^^A Second atend_environment/stored_to_seq
 \cs_new_protected:Npn \__scontents_atend_environment:
   {
     \bool_if:NT \l__scontents_storing_bool
@@ -162,7 +164,7 @@
     \__scontents_append_contents:Vx \l__scontents_name_seq_env_tl
       { \exp_not:N \__scontents_rescan_tokens:w { \tl_use:N \l__scontents_macro_tmp_tl } }
   }
-%%^^A User command to stored content
+%%^^A User command \Scontents to stored content
 \NewDocumentCommand { \Scontents }{ !s !O{} }
   {
     \group_begin:
@@ -190,8 +192,10 @@
         { \__scontents_getfrom_seq:nn { -1 } { \l__scontents_name_seq_cmd_tl } }
     \group_end:
   }
+%%^^A User command \getstored to extract stored content in |seq|
 \NewDocumentCommand { \getstored } { O{1} m }
   { \__scontents_getfrom_seq:nn {#1} {#2} }
+%%^^A User command \typestored
 \NewDocumentCommand { \typestored } { s O{1} m }
   {
     \group_begin:
@@ -203,6 +207,7 @@
       \use:c { filecontentsdef@get } \__scontents_fcdef_print:N \l__scontents_temp_tl
     \group_end:
   }
+%%^^A Internal fcdef_print:N
 \group_begin:
  \char_set_catcode_active:N \^^M
  \cs_new_protected:Npn \__scontents_fcdef_print:N #1
@@ -224,6 +229,7 @@
       \cs_set_eq:NN ^^M \__scontents_fcdef_saved_EOL:
     }
 \group_end:
+%%^^A Definition of verbatimsc environment
 \use:x
   { \cs_gset_protected:Npn \exp_not:N \__scontents_xverb:w ##1 \g__scontents_end_verbatimsc_tl }
       { #1 \end{verbatimsc} }
@@ -233,6 +239,7 @@
     \verbatim
   }
   { }
+%%^^A Internal check scantokens
 \cs_new:Npn \__scontents_strip_scantokens:N #1
   { \exp_args:NV \__scontents_strip_scantokens:n #1 }
 \cs_new:Npn \__scontents_strip_scantokens:n #1
@@ -283,6 +290,16 @@
 \msg_new:nnn { scontents } { empty-stored-content }
   { Empty~value~for~key~`getstored'~\msg_line_context:. }
 \msg_new:nnn { scontents } { empty-variable }
- { Variable~`#1'~empty~\msg_line_context:. }
+  { Variable~`#1'~empty~\msg_line_context:. }
+\msg_new:nnn { scontents } { rewriting-file }
+  { Overwriting ~ file ~ `#1' }
+\msg_new:nnn { scontents } { writing-file }
+  { Writing ~ file ~ `#1' }
+\msg_new:nnn { scontents } { ignoring-text }
+  { Ignoring~text~`#1'~after~\c_backslash_str end{scontents}~\msg_line_context:.}
+\msg_new:nnn { scontents } { tab-to-space }
+  { Tab has been converted to Blank Space }
+\msg_new:nnn { scontents } { feed-to-space }
+  { Form Feed has been converted to Blank Space }
 %%^^A Finish package
 \file_input_stop:
