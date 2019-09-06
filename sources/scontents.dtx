@@ -1276,7 +1276,7 @@
 \RequirePackage{filecontentsdef}[2019/04/20]
 \RequirePackage{l3keys2e}
 \RequirePackage{xparse}[2019/05/28]
-\ProvidesExplPackage{scontents}{2019/09/03}{1.2a}
+\ProvidesExplPackage{scontents}{2019/09/06}{1.2b}
   {Stores LaTeX contents in memory or files}
 %    \end{macrocode}
 % A check to make sure that \pkg{xparse} is not too old
@@ -1629,10 +1629,11 @@
        { \@@_getfrom_seq:nn { -1 } { \l_@@_name_seq_cmd_tl } }
    \group_end:
   }
+\cs_generate_variant:Nn \tl_replace_all:Nnn { Nxx }
 \NewDocumentCommand { \@@_verb:w } { +v }
   {
       \tl_set:Nn \l_@@_temp_tl {#1}
-      \regex_replace_all:nnN { \^^M } { \^^J } \l_@@_temp_tl
+      \tl_replace_all:Nxx \l_@@_temp_tl { \iow_char:N \^^M } { \iow_char:N \^^J }
       \tl_log:N \l_@@_temp_tl
       \exp_args:NVx \@@_append_contents:nn \l_@@_name_seq_cmd_tl
         { \exp_not:N \@@_rescan_tokens:w { \tl_use:N \l_@@_temp_tl } }
@@ -1780,9 +1781,6 @@
 %
 % \begin{macro}[do-not-index=\v]{\meaningsc}
 %   User command \cs{meaningsc} to see content stored in seq.
-%^^A NOTE: Perhaps replace \cs{regex_replace_all:nnN} by something more
-%^^A       efficient...
-%^^A Reply: I've only used it to avoid ΩΩ ...
 %    \begin{macrocode}
 \NewDocumentCommand { \meaningsc } { O{1} m }
   {
@@ -1790,7 +1788,7 @@
       \tl_set:Nx \l_@@_temp_tl { \@@_getfrom_seq:nn {#1} {#2} }
       \tl_log:N \l_@@_temp_tl
       \tl_set:Nx \l_@@_temp_tl { \@@_strip_scantokens:N \l_@@_temp_tl }
-      \regex_replace_all:nnN { \v{1,} } {   } \l_@@_temp_tl
+      \tl_replace_all:Nxx \l_@@_temp_tl { \iow_char:N \^^J } { \c_space_tl }
       \ttfamily
       \cs_replacement_spec:N \l_@@_temp_tl
     \group_end:
