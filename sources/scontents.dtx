@@ -1225,7 +1225,12 @@
 % \settowidth{\descrwidth}{\textsf{v1.0, (ctan), 2019/07/30} }
 %
 % \begin{description}[font=\small\sffamily, wide=0pt, style=multiline, leftmargin=\descrwidth,  nosep, noitemsep]
-% \item [\fileversion{} (ctan), \filedate]
+% \item [\fileversion{} (devp), \filedate]
+%    \begin{itemize}
+%        \item Changing \verb+\regex_replace_all:+ for \verb+\tl_replace_all:+.
+%        \item The space added by the macro \verb+\Scontents*+ was hidden.
+%    \end{itemize}
+% \item [v1.2 (ctan), 2019/08/28]
 %    \begin{itemize}
 %        \item Restructuring of documentation.
 %        \item Added copy of \verb+\tex_scantokens:D+.
@@ -1276,7 +1281,7 @@
 \RequirePackage{filecontentsdef}[2019/04/20]
 \RequirePackage{l3keys2e}
 \RequirePackage{xparse}[2019/05/28]
-\ProvidesExplPackage{scontents}{2019/09/06}{1.2c}
+\ProvidesExplPackage{scontents}{2019/09/06}{1.2d}
   {Stores LaTeX contents in memory or files}
 %    \end{macrocode}
 % A check to make sure that \pkg{xparse} is not too old
@@ -1329,15 +1334,17 @@
 % Now we declare the internal variables we will use.
 %
 %%^^A Internal tl vars
-% \begin{macro}{\l_@@_macro_tmp_tl,\l_@@_fname_out_tl,\l_@@_temp_tl}
+% \begin{macro}{\l_@@_macro_tmp_tl,\l_@@_fname_out_tl,\l_@@_temp_tl,\c_@@_hidden_space_tl}
 %   \cs{l_@@_macro_tmp_tl} is a temporary token list to hold the contents
 %   of the macro/environment, \cs{l_@@_fname_out_tl} is used as the name
-%   of the output file, when there's one, and \cs{l_@@_temp_tl} is a
-%   generic temporary token list.
+%   of the output file, when there's one, \cs{l_@@_temp_tl} is a
+%   generic temporary token list and \cs{c_@@_hidden_space_tl} is a constant token list.
 %    \begin{macrocode}
 \tl_new:N \l_@@_macro_tmp_tl
 \tl_new:N \l_@@_fname_out_tl
 \tl_new:N \l_@@_temp_tl
+\tl_const:Nx \c_@@_hidden_space_tl
+  { \c_percent_str scontentshs \c_percent_str }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -1636,6 +1643,7 @@
 \NewDocumentCommand { \@@_verb:w } { +v }
   {
       \tl_set:Nn \l_@@_temp_tl {#1}
+      \tl_put_right:Nx \l_@@_temp_tl { \c_@@_hidden_space_tl }
       \tl_replace_all:Nxx \l_@@_temp_tl { \iow_char:N \^^M } { \iow_char:N \^^J }
       \tl_log:N \l_@@_temp_tl
       \exp_args:NVx \@@_append_contents:nn \l_@@_name_seq_cmd_tl
@@ -1679,6 +1687,8 @@
   {
     \group_begin:
       \tl_set:Nx \l_@@_temp_tl { \@@_getfrom_seq:nn {#2} {#3} }
+      \tl_set:Nx \l_@@_temp_tl { \@@_strip_scantokens:N \l_@@_temp_tl }
+      \tl_replace_all:Nxx \l_@@_temp_tl { \c_@@_hidden_space_tl } { }
       \tl_log:N \l_@@_temp_tl
       \IfBooleanTF {#1}
         { \bool_set_false:N \l_@@_typeverb_env_bool }
@@ -1789,9 +1799,10 @@
   {
     \group_begin:
       \tl_set:Nx \l_@@_temp_tl { \@@_getfrom_seq:nn {#1} {#2} }
-      \tl_log:N \l_@@_temp_tl
       \tl_set:Nx \l_@@_temp_tl { \@@_strip_scantokens:N \l_@@_temp_tl }
       \tl_replace_all:Nxx \l_@@_temp_tl { \iow_char:N \^^J } { \c_space_tl }
+      \tl_replace_all:Nxx \l_@@_temp_tl { \c_@@_hidden_space_tl } { }
+      \tl_log:N \l_@@_temp_tl
       \ttfamily
       \cs_replacement_spec:N \l_@@_temp_tl
     \group_end:

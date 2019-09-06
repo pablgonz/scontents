@@ -15,11 +15,24 @@
 \makeatother
 \DefineVerbatimEnvironment{verbatimsc}{Verbatim}{numbers=left,frame=single}
 \begin{document}
+\Scontents*[store-cmd=nospace]{Write in one line \LaTeX: $E=mc^2$, no space after dot.}
+
+\Scontents*[store-cmd=nospace]|Other in one line, no space after dot.|
+
+XX\getstored[1]{nospace}YY\par
+XX\getstored[2]{nospace}YY\par
+
+\typestored*[1]{nospace}\par
+\typestored*[2]{nospace}\par
+
+\meaningsc[1]{nospace}\par
+\meaningsc[2]{nospace}
+
 % These outputs should look the same
 FIRST\par
 This is normal text.
 \verb|This is from the verb command.|
-\verb*|This is from the verb* command.|    
+\verb*|This is from the verb* command.|
 This is normal text.
 \begin{verbatim}
 This is from the verbatim environment:
@@ -31,7 +44,7 @@ SECOND\par
 \begin{scontents}[store-env=newattempt,print-env=true]
 This is normal text.
 \verb|This is from the verb command.|
-\verb*|This is from the verb* command.|    
+\verb*|This is from the verb* command.|
 This is normal text.
 \begin{verbatim}
 This is from the verbatim environment:
@@ -40,7 +53,10 @@ This is from the verbatim environment:
 \end{scontents}This text is removed from the output because it is on the same line.
 THIRD\par
 % These outputs should look the same
-\getstored[1]{newattempt}
+\getstored[1]{newattempt}\par
+
+MEANINGSC\par
+\meaningsc[1]{newattempt}\par
 % Tab
 \begin{scontents}[write-out=withtab.tsc]
 No tab
