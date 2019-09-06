@@ -1,7 +1,7 @@
 \RequirePackage{filecontentsdef}[2019/04/20]
 \RequirePackage{l3keys2e}
 \RequirePackage{xparse}[2019/05/28]
-\ProvidesExplPackage{scontents}{2019/09/06}{1.2c}
+\ProvidesExplPackage{scontents}{2019/09/06}{1.2d}
   {Stores LaTeX contents in memory or files}
 \@ifpackagelater { xparse } { 2019/05/03 }
   { }
@@ -37,6 +37,8 @@
 \tl_new:N \l__scontents_macro_tmp_tl
 \tl_new:N \l__scontents_fname_out_tl
 \tl_new:N \l__scontents_temp_tl
+\tl_const:Nx \c__scontents_hidden_space_tl
+  { \c_percent_str scontentshs \c_percent_str }
 %%^^A Internal bool vars
 \bool_new:N \l__scontents_typeverb_env_bool
 \bool_set_true:N  \l__scontents_typevrb_env_bool
@@ -186,6 +188,7 @@
 \NewDocumentCommand { \__scontents_verb:w } { +v }
   {
       \tl_set:Nn \l__scontents_temp_tl {#1}
+      \tl_put_right:Nx \l__scontents_temp_tl { \c__scontents_hidden_space_tl }
       \tl_replace_all:Nxx \l__scontents_temp_tl { \iow_char:N \^^M } { \iow_char:N \^^J }
       \tl_log:N \l__scontents_temp_tl
       \exp_args:NVx \__scontents_append_contents:nn \l__scontents_name_seq_cmd_tl
@@ -202,6 +205,8 @@
   {
     \group_begin:
       \tl_set:Nx \l__scontents_temp_tl { \__scontents_getfrom_seq:nn {#2} {#3} }
+      \tl_set:Nx \l__scontents_temp_tl { \__scontents_strip_scantokens:N \l__scontents_temp_tl }
+      \tl_replace_all:Nxx \l__scontents_temp_tl { \c__scontents_hidden_space_tl } { }
       \tl_log:N \l__scontents_temp_tl
       \IfBooleanTF {#1}
         { \bool_set_false:N \l__scontents_typeverb_env_bool }
@@ -271,9 +276,10 @@
   {
     \group_begin:
       \tl_set:Nx \l__scontents_temp_tl { \__scontents_getfrom_seq:nn {#1} {#2} }
-      \tl_log:N \l__scontents_temp_tl
       \tl_set:Nx \l__scontents_temp_tl { \__scontents_strip_scantokens:N \l__scontents_temp_tl }
       \tl_replace_all:Nxx \l__scontents_temp_tl { \iow_char:N \^^J } { \c_space_tl }
+      \tl_replace_all:Nxx \l__scontents_temp_tl { \c__scontents_hidden_space_tl } { }
+      \tl_log:N \l__scontents_temp_tl
       \ttfamily
       \cs_replacement_spec:N \l__scontents_temp_tl
     \group_end:
