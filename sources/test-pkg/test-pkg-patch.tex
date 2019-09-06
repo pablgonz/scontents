@@ -1,0 +1,430 @@
+% arara: pdflatex: { interaction: batchmode }
+% arara: clean: { extensions: [ aux, log] }
+\documentclass{article}
+\usepackage{scontents}
+% only for test
+\usepackage[top=0.5in,bottom=0.5in, left=1in, right=1in]{geometry}
+\usepackage{pgffor}
+\usepackage{fvextra}
+\usepackage{listings}
+\setlength{\parindent}{0pt}
+\begin{document}
+% These outputs should look the same
+FIRST\par
+This is normal text.
+\verb|This is from the verb command.|
+\verb*|This is from the verb* command.|    
+This is normal text.
+\begin{verbatim}
+This is from the verbatim environment:
+&%{}~
+\end{verbatim}
+
+SECOND\par
+% These outputs should look the same whit print-env=true
+\begin{scontents}[store-env=newattempt,print-env=true]
+This is normal text.
+\verb|This is from the verb command.|
+\verb*|This is from the verb* command.|    
+This is normal text.
+\begin{verbatim}
+This is from the verbatim environment:
+&%{}~
+\end{verbatim}
+\end{scontents}This text is removed from the output because it is on the same line.
+THIRD\par
+% These outputs should look the same
+\getstored[1]{newattempt}
+% Tab
+\begin{scontents}[write-out=withtab.tsc]
+No tab
+	One tab
+		Two tab
+\begin{verbatim}
+      (E) verbatim
+          environment
+\end{verbatim}
+\end{scontents}This text is removed from the output because it is on the same line.
+
+\section{Test \texttt{\textbackslash Scontents[key=val]}}
+
+Test \verb+\Scontents[print-cmd=false]+\par
+
+\Scontents[print-cmd=false]{
+Using \texttt{\textbackslash Scontents} command, \par
+no environment verbatim suport,\par
+but \Verb{fvextra inline yes} and \lstinline[basicstyle=\ttfamily]|lstinline yes|,
+save in seq \texttt{contents} with index $1$.}\par
+
+Test \verb+\Scontents[print-cmd=true]+\par
+
+\Scontents[print-cmd=true]{
+Using \texttt{\textbackslash Scontents} command, no environment verbatim suport,
+but \Verb{fvextra inline yes} and \lstinline[basicstyle=\ttfamily]|lstinline yes|,
+save in seq \texttt{contents} with index $2$.}
+
+Test \verb+\Scontents[store-cmd=testcmd]+\par
+
+\Scontents[store-cmd=testcmd]{
+Using \texttt{\textbackslash Scontents} command, no environment verbatim suport,
+but \Verb{fvextra inline yes} and \lstinline[basicstyle=\ttfamily]|lstinline yes|,
+save in seq \texttt{testcmd} with index 1.}
+
+\subsection{Test \texttt{\textbackslash getstored[index]\{seq name\}}}
+
+\noindent\hrulefill
+
+Test \verb+\getstored[1]{contents}+:\par
+
+\getstored[1]{contents}
+
+\noindent\hrulefill
+
+Test \verb+\getstored[2]{contents}+:\par
+
+\getstored[2]{contents}
+
+\noindent\hrulefill
+
+Test \verb+\getstored[1]{testcmd}+:\par
+
+\getstored[1]{testcmd}
+
+\noindent\hrulefill
+
+\subsection{Test \texttt{\textbackslash meaningsc[index]\{seq name\}}}
+
+\noindent\hrulefill
+
+Test \verb+\meaningsc[1]{contents}+:\par
+
+\meaningsc[1]{contents}
+
+\noindent\hrulefill
+
+Test \verb+\meaningsc[2]{contents}+:\par
+
+\meaningsc[2]{contents}
+
+\noindent\hrulefill
+
+Test \verb+\meaningsc[1]{testcmd}+:\par
+
+\meaningsc[1]{testcmd}
+
+\noindent\hrulefill
+
+\section{Test \texttt{\textbackslash Scontents*[key=val]}}
+
+Test \verb+\setupsc{store-cmd=testcmdvrb}+\par
+\setupsc{store-cmd=testcmdvrb}
+
+Test \verb+\Scontents*[print-cmd=false]+\par
+
+\Scontents*[print-cmd=false]{Using \texttt{\textbackslash Scontents*} command,
+
+with verbatim suport.
+
+\begin{verbatim*}
+      verbatim
+              environment
+\end{verbatim*}
+
+\Verb{fvextra inline yes}, save in seq \texttt{testcmdvrb} with index 1.}
+
+Test \verb+\Scontents*[print-cmd=true]+\par
+\Scontents*[print-cmd=true]|Using \verb/\Scontents*[print-cmd=true]+...+/ command, with verbatim suport,
+
+\begin{verbatim}
+      more verbatim environment
+\end{verbatim}
+
+And \Verb{fvextra inline yes}, save in seq \texttt{testcmdvrb} with index $2$.|
+
+Test \verb+\Scontents[store-cmd=othervrb]+\par
+\Scontents*[store-cmd=othervrb]{
+Using \texttt{\textbackslash Scontents*} command, whit verbatim suport,
+
+\begin{verbatim}
+      other verbatim  environment
+\end{verbatim}
+
+And \Verb{fvextra inline yes}, save in seq \texttt{othervrb} with index $1$.}
+
+\subsection{Test \texttt{\textbackslash getstored[index]\{seq name\}}}
+
+\noindent\hrulefill
+
+Test \verb+\getstored[1]{testcmdvrb}+:\par
+
+\getstored[1]{testcmdvrb}
+
+\noindent\hrulefill
+
+Test \verb+\getstored[2]{testcmdvrb}+:\par
+
+\getstored[2]{testcmdvrb}
+
+\noindent\hrulefill
+
+Test \verb+\getstored[1]{othervrb}+:\par
+
+\getstored[1]{othervrb}
+
+\noindent\hrulefill
+
+\subsection{Test \texttt{\textbackslash meaningsc[index]\{seq name\}}}
+
+\noindent\hrulefill
+
+Test \verb+\meaningsc[1]{testcmdvrb}+:\par
+
+\meaningsc[1]{testcmdvrb}
+
+\noindent\hrulefill
+
+Test \verb+\meaningsc[2]{testcmdvrb}+:\par
+
+\meaningsc[2]{testcmdvrb}
+
+\noindent\hrulefill
+
+Test \verb+\meaningsc[1]{othervrb}+:\par
+
+\meaningsc[1]{othervrb}
+
+\noindent\hrulefill
+
+\subsection{Test \texttt{\textbackslash typestored*[index]\{seq name\}}}
+
+\noindent\hrulefill
+
+Test \verb+\typestored*[1]{testcmdvrb}+:\par
+
+\typestored*[1]{testcmdvrb}
+
+\noindent\hrulefill
+
+Test \verb+\typestored*[2]{testcmdvrb}+:\par
+
+\typestored*[2]{testcmdvrb}
+
+\noindent\hrulefill
+
+Test \verb+\typestored*[1]{othervrb}+:\par
+
+\typestored*[1]{othervrb}
+
+\noindent\hrulefill
+
+\section{Test \texttt{\textbackslash Scontents*} and \texttt{\textbackslash Scontents} back to default}
+
+\Scontents[store-cmd=contents]{Using \texttt{\textbackslash Scontents} command whit braces,
+save in seq \texttt{contents} with index $3$.}
+\getstored[3]{contents}
+
+\Scontents*|Using \texttt{\textbackslash Scontents*} command (verbatimized), save in seq \texttt{testcmdvrb} with index $3$.|
+\getstored[3]{testcmdvrb}
+
+\section{Test on mobile arguments}
+
+\noindent\hrulefill
+
+Test \verb+\subsection{\getstored[3]{testcmdvrb}}+:\par
+
+\subsection{\getstored[3]{testcmdvrb}}
+
+\noindent\hrulefill
+
+Test \verb+\subsection{\getstored[3]{contents}}+:\par
+
+\subsection{\getstored[3]{contents}}
+
+\noindent\hrulefill
+
+\section{Test \texttt{\{scontents\}} environment}
+\setupsc{store-env=testenv, print-env=false}
+\subsection{no \texttt{[key=val]}}
+Test \verb+scontents+ no \verb+[key=val]+\par
+
+\begin{scontents}
+Using \verb+scontents+ env no \verb+[key=val]+, save in seq \verb+testenv+ index 1.\par
+We have coded this in \LaTeX: $E=mc^2$.
+
+Prove new \Verb*{ verbatim from fvextra whit braces } and environment \verb+Verbatim*+.
+\begin{Verbatim*}
+      (A) verbatim
+          environment
+\end{Verbatim*}
+\end{scontents}
+
+\subsubsection{\Verb{\getstored[1]{testenv}}}
+\getstored[1]{testenv}
+
+\subsubsection{\Verb{\meaningsc[1]{testenv}}}
+\meaningsc[1]{testenv}
+
+\subsubsection{\Verb{\typestored[1]{testenv}}}
+\typestored[1]{testenv}
+
+\subsection{whit \texttt{[key=val]}}
+
+\subsubsection{\Verb{[write-env=\jobname.tsc]}}
+
+\begin{scontents}[write-env=\jobname.tsc]
+Using \verb+scontents+ env with \verb+[write-env=\jobname.tsc]+, save in
+seq \verb+testenv+ with index 2 and write env body in file \verb+\jobname.tsc+.
+
+We have coded this in \LaTeX: $E=mc^2$.\par
+\begin{verbatim*}
+      (B) verbatim
+          environment
+\end{verbatim*}
+\end{scontents}
+
+\subsubsection{\Verb{\getstored[2]{testenv}}}
+\getstored[2]{testenv}
+
+\subsubsection{\Verb{\meaningsc[2]{testenv}}}
+\meaningsc[2]{testenv}
+
+\subsubsection{\Verb{\typestored[2]{testenv}}}
+\typestored[2]{testenv}
+
+\subsubsection{\Verb{\VerbatimInput{\jobname.tsc}}}
+
+\VerbatimInput[frame=single,numbers=left,numbersep=3pt]{\jobname.tsc}
+
+\subsubsection{\Verb{[print-env=true]}}
+
+\begin{scontents}[print-env=true]
+Using \verb+scontents+ env with \verb+[print-env=true]+, save in
+seq \verb+testenv+ with index 3.
+
+We have coded this in \LaTeX: $E=mc^2$.\par
+\begin{verbatim*}
+      (C) verbatim
+          environment
+\end{verbatim*}
+\end{scontents}
+
+\Verb{\getstored[3]{testenv}}\par
+\getstored[3]{testenv}\par
+
+\Verb{\meaningsc[3]{testenv}}\par
+\meaningsc[3]{testenv}\par
+
+\Verb{\typestored[3]{testenv}}\par
+\typestored[3]{testenv}
+
+\subsubsection{\Verb{[print-env=true,write-env=\jobname-1.tsc]}}
+
+\begin{scontents}[print-env=true,write-env=\jobname-1.tsc]
+Using \verb+scontents+ env with \verb+[print-env=true,write-env=\jobname-1.tsc]+, save in
+seq \verb+testenv+ with index 4.
+
+We have coded this in \LaTeX: $E=mc^2$.\par
+\begin{verbatim*}
+      (D) verbatim
+          environment
+\end{verbatim*}
+\end{scontents}
+
+\Verb{\getstored[4]{testenv}}\par
+\getstored[4]{testenv}\par
+
+\Verb{\meaningsc[4]{testenv}}\par
+\meaningsc[4]{testenv}\par
+
+\Verb{\typestored[4]{testenv}}\par
+\typestored[4]{testenv}
+
+\Verb{\VerbatimInput{\jobname-1.tsc}}\par
+
+\VerbatimInput[frame=single,numbers=left,numbersep=3pt]{\jobname-1.tsc}
+
+\subsection{\Verb{[write-out=\jobname-2.tsc]}}
+
+\begin{scontents}[write-out=\jobname-2.tsc]
+Using \verb+scontents+ env with \verb+[write-out=\jobname-2.tsc]+,
+not added to seq, only write a external file
+We have coded this in \LaTeX: $E=mc^2$.\par
+\begin{verbatim}
+      (E) verbatim
+          environment
+\end{verbatim}
+\end{scontents}
+
+\Verb{\VerbatimInput{\jobname-2.tsc}}\par
+
+\VerbatimInput[frame=single,numbers=left,numbersep=3pt]{\jobname-2.tsc}
+
+\subsubsection{\Verb{[print-env=true,store-env=other]}}
+
+\begin{scontents}[print-env=true,store-env=other]
+Using \verb+scontents+ env with \verb+[print-env=true,store-env=other]+, save in
+seq \verb+other+ with index 1.
+
+We have coded this in \LaTeX: $E=mc^2$.\par
+\begin{verbatim*}
+      (F) verbatim
+          environment
+\end{verbatim*}
+\end{scontents}
+
+\Verb{\getstored[1]{other}}\par
+\getstored[1]{other}\par
+
+\Verb{\meaningsc[1]{other}}\par
+\meaningsc[1]{other}\par
+
+\Verb{\typestored[1]{other}}\par
+\typestored[1]{other}
+
+\section{A simple aplication}
+\setupsc{ store-env=answers, store-cmd= answers }
+
+\newcounter{exeNr}
+\newenvironment{exercise}
+  {\refstepcounter{exeNr}\par\noindent This is exercise~\theexeNr}
+  {\par}
+\subsection{Exercises}
+\begin{exercise}
+\end{exercise}
+\begin{scontents}
+This is the answer to exercise 1, the shebang line for a Perl script
+
+\begin{verbatim}
+#!/usr/bin/env perl
+\end{verbatim}
+\end{scontents}
+
+\begin{exercise}
+\end{exercise}
+\Scontents*{This is the answer to exercise 2}
+
+\begin{exercise}
+\end{exercise}
+\Scontents[unknow]{This is the answer to exercise 3}
+
+\subsection{Answers}
+\newcounter{ansNr}
+\newenvironment{answer}
+  {\refstepcounter{ansNr}\par\noindent Answer~\theansNr:}
+  {\par}
+
+\foreach \i in {1,...,\countsc{answers}} {
+\begin{answer}
+\getstored[\i]{answers}
+\end{answer}
+}
+\subsection{typestored}
+% custom :)
+\makeatletter
+\let\verbatimsc\@undefined
+\let\endverbatimsc\@undefined
+\makeatother
+\DefineVerbatimEnvironment{verbatimsc}{Verbatim}{numbers=left,frame=single}
+\typestored[1]{answers}
+\typestored[2]{answers}
+\end{document}

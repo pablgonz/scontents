@@ -1276,7 +1276,7 @@
 \RequirePackage{filecontentsdef}[2019/04/20]
 \RequirePackage{l3keys2e}
 \RequirePackage{xparse}[2019/05/28]
-\ProvidesExplPackage{scontents}{2019/09/06}{1.2b}
+\ProvidesExplPackage{scontents}{2019/09/06}{1.2c}
   {Stores LaTeX contents in memory or files}
 %    \end{macrocode}
 % A check to make sure that \pkg{xparse} is not too old
@@ -1456,6 +1456,27 @@
 %    \end{macrocode}
 % \end{macro}
 %
+% \begin{macro}{\@@_stored_to_seq:}
+%   The \cs{@@_stored_to_seq:} function replaces a carriage return
+%   (\textsc{ascii} 13) by a new line character (\textsc{ascii} 10) for
+%   optionally logging the contents of the current \env{scontents}
+%   environment.
+%
+%^^A TODO: Perhaps replace the regex by a delimited macro to improve
+%^^A       performance... Or temporarily redefine ^^M to mean ^^J...
+%^^A Reply: Or Changing \regex_replace_all for \tl_replace_all 
+%%^^A Storing content in seq
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_stored_to_seq:
+  {
+    \regex_replace_all:nnN { \^^M } { \^^J } \l_@@_macro_tmp_tl
+    \tl_log:N \l_@@_macro_tmp_tl
+    \@@_append_contents:Vx \l_@@_name_seq_env_tl
+      { \exp_not:N \@@_rescan_tokens:w { \tl_use:N \l_@@_macro_tmp_tl } }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
 % \subsection{Construction of environment scontents}
 %
 % We define the environment \env{scontents}, next to the system |key=val|.
@@ -1518,8 +1539,6 @@
 %
 % \subsubsection{The environment itself}
 %
-% The environment itself
-%
 %%^^A First start_environment/stop_environment
 % \begin{macro}{\@@_start_environment:w,\@@_stop_environment:}
 %   Here we make |^^M| an active character so that the end of line can
@@ -1555,19 +1574,10 @@
 %
 % \subsubsection{Recording of the content in the sequence}
 %
-% \begin{macro}{\@@_atend_environment:,\@@_stored_to_seq:}
+% \begin{macro}{\@@_atend_environment:}
 %   Finishes the environment by optionally calling \cs{@@_stored_to_seq:}
 %   and then clearing the temporary token list.
 %
-%   The \cs{@@_stored_to_seq:} function replaces a carriage return
-%   (\textsc{ascii} 13) by a new line character (\textsc{ascii} 10) for
-%   optionally logging the contents of the current \env{scontents}
-%   environment.
-%
-%^^A TODO: Perhaps replace the regex by a delimited macro to improve
-%^^A       performance... Or temporarily redefine ^^M to mean ^^J...
-%^^A Reply: Or maybe it is better to preserve the end of line with
-%^^A       \tex_newlinechar:D = 13 \scan_stop:
 %%^^A Second atend_environment/stored_to_seq
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_atend_environment:
@@ -1579,13 +1589,6 @@
           { \@@_getfrom_seq:nn { -1 } { \l_@@_name_seq_env_tl } }
       }
     \tl_clear:N \l_@@_macro_tmp_tl
-  }
-\cs_new_protected:Npn \@@_stored_to_seq:
-  {
-    \regex_replace_all:nnN { \^^M } { \^^J } \l_@@_macro_tmp_tl
-    \tl_log:N \l_@@_macro_tmp_tl
-    \@@_append_contents:Vx \l_@@_name_seq_env_tl
-      { \exp_not:N \@@_rescan_tokens:w { \tl_use:N \l_@@_macro_tmp_tl } }
   }
 %    \end{macrocode}
 % \end{macro}

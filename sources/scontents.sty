@@ -1,7 +1,7 @@
 \RequirePackage{filecontentsdef}[2019/04/20]
 \RequirePackage{l3keys2e}
 \RequirePackage{xparse}[2019/05/28]
-\ProvidesExplPackage{scontents}{2019/09/03}{1.2a}
+\ProvidesExplPackage{scontents}{2019/09/06}{1.2c}
   {Stores LaTeX contents in memory or files}
 \@ifpackagelater { xparse } { 2019/05/03 }
   { }
@@ -92,6 +92,14 @@
 \cs_generate_variant:Nn \__scontents_append_contents:nn { Vx }
 \cs_new:Npn \__scontents_getfrom_seq:nn #1#2
   { \seq_item:cn { g__scontents_seq_name_#2_seq } {#1} }
+%%^^A Storing content in seq
+\cs_new_protected:Npn \__scontents_stored_to_seq:
+  {
+    \regex_replace_all:nnN { \^^M } { \^^J } \l__scontents_macro_tmp_tl
+    \tl_log:N \l__scontents_macro_tmp_tl
+    \__scontents_append_contents:Vx \l__scontents_name_seq_env_tl
+      { \exp_not:N \__scontents_rescan_tokens:w { \tl_use:N \l__scontents_macro_tmp_tl } }
+  }
 %%^^A Define |scontents| whit [key=val] (delaying)
 \NewDocumentEnvironment { scontents } { }
   {
@@ -157,13 +165,6 @@
       }
     \tl_clear:N \l__scontents_macro_tmp_tl
   }
-\cs_new_protected:Npn \__scontents_stored_to_seq:
-  {
-    \regex_replace_all:nnN { \^^M } { \^^J } \l__scontents_macro_tmp_tl
-    \tl_log:N \l__scontents_macro_tmp_tl
-    \__scontents_append_contents:Vx \l__scontents_name_seq_env_tl
-      { \exp_not:N \__scontents_rescan_tokens:w { \tl_use:N \l__scontents_macro_tmp_tl } }
-  }
 %%^^A User command \Scontents to stored content
 \NewDocumentCommand { \Scontents }{ !s !O{} }
   {
@@ -181,10 +182,11 @@
        { \__scontents_getfrom_seq:nn { -1 } { \l__scontents_name_seq_cmd_tl } }
    \group_end:
   }
+\cs_generate_variant:Nn \tl_replace_all:Nnn { Nxx }
 \NewDocumentCommand { \__scontents_verb:w } { +v }
   {
       \tl_set:Nn \l__scontents_temp_tl {#1}
-      \regex_replace_all:nnN { \^^M } { \^^J } \l__scontents_temp_tl
+      \tl_replace_all:Nxx \l__scontents_temp_tl { \iow_char:N \^^M } { \iow_char:N \^^J }
       \tl_log:N \l__scontents_temp_tl
       \exp_args:NVx \__scontents_append_contents:nn \l__scontents_name_seq_cmd_tl
         { \exp_not:N \__scontents_rescan_tokens:w { \tl_use:N \l__scontents_temp_tl } }
@@ -271,7 +273,7 @@
       \tl_set:Nx \l__scontents_temp_tl { \__scontents_getfrom_seq:nn {#1} {#2} }
       \tl_log:N \l__scontents_temp_tl
       \tl_set:Nx \l__scontents_temp_tl { \__scontents_strip_scantokens:N \l__scontents_temp_tl }
-      \regex_replace_all:nnN { \v{1,} } {   } \l__scontents_temp_tl
+      \tl_replace_all:Nxx \l__scontents_temp_tl { \iow_char:N \^^J } { \c_space_tl }
       \ttfamily
       \cs_replacement_spec:N \l__scontents_temp_tl
     \group_end:

@@ -8,6 +8,12 @@
 \usepackage{fvextra}
 \usepackage{listings}
 \setlength{\parindent}{0pt}
+% custom :)
+\makeatletter
+\let\verbatimsc\@undefined
+\let\endverbatimsc\@undefined
+\makeatother
+\DefineVerbatimEnvironment{verbatimsc}{Verbatim}{numbers=left,frame=single}
 \begin{document}
 % These outputs should look the same
 FIRST\par
@@ -45,6 +51,8 @@ No tab
           environment
 \end{verbatim}
 \end{scontents}This text is removed from the output because it is on the same line.
+
+\typestored[1]{newattempt}
 
 \section{Test \texttt{\textbackslash Scontents[key=val]}}
 
@@ -401,9 +409,7 @@ This is the answer to exercise 1, the shebang line for a Perl script
 
 \begin{exercise}
 \end{exercise}
-\begin{scontents}
-This is the answer to exercise 2
-\end{scontents}
+\Scontents*{This is the answer to exercise 2}
 
 \begin{exercise}
 \end{exercise}
@@ -422,11 +428,7 @@ This is the answer to exercise 2
 }
 \subsection{typestored}
 % custom :)
-\makeatletter
-\let\verbatimsc\@undefined
-\let\endverbatimsc\@undefined
-\makeatother
-\DefineVerbatimEnvironment{verbatimsc}{Verbatim}{numbers=left,frame=single}
+\RecustomVerbatimEnvironment{verbatimsc}{Verbatim}{frame=single,numbers=left}
 \typestored[1]{answers}
-\typestored[2]{answers}
+\typestored*[2]{answers}
 \end{document}
