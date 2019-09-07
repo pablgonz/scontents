@@ -1337,8 +1337,8 @@
 % \begin{macro}{\l_@@_macro_tmp_tl,\l_@@_fname_out_tl,\l_@@_temp_tl,\c_@@_hidden_space_tl}
 %   \cs{l_@@_macro_tmp_tl} is a temporary token list to hold the contents
 %   of the macro/environment, \cs{l_@@_fname_out_tl} is used as the name
-%   of the output file, when there's one, \cs{l_@@_temp_tl} is a
-%   generic temporary token list and \cs{c_@@_hidden_space_tl} is a constant token list.
+%   of the output file, when there's one, \cs{l_@@_temp_tl} is a generic
+%   temporary token list and \cs{c_@@_hidden_space_tl} is a constant token list.
 %    \begin{macrocode}
 \tl_new:N \l_@@_macro_tmp_tl
 \tl_new:N \l_@@_fname_out_tl
@@ -1355,7 +1355,7 @@
 %   starred variant of the \cs{typestored} macro was used,
 %   \cs{l_@@_writing_bool} if we should write to a file, and
 %   \cs{l_@@_storing_bool} determines whether it is in write-only mode
-%    when the |write-out| option is used.
+%   when the |write-out| option is used.
 %    \begin{macrocode}
 \bool_new:N \l_@@_typeverb_env_bool
 \bool_set_true:N  \l_@@_typevrb_env_bool
@@ -1389,7 +1389,7 @@
 %
 %%^^A Definition of verbatimsc
 % \begin{macro}{\g_@@_end_verbatimsc_tl}
-%   A token list to match when ending verbatim environments.
+%   A token list to match when ending \env{verbatimsc} environment.
 %    \begin{macrocode}
 \tl_new:N \g_@@_end_verbatimsc_tl
 \tl_gset_rescan:Nnn
@@ -1471,7 +1471,9 @@
 %
 %^^A TODO: Perhaps replace the regex by a delimited macro to improve
 %^^A       performance... Or temporarily redefine ^^M to mean ^^J...
-%^^A Reply: Or Changing \regex_replace_all for \tl_replace_all 
+%^^A Reply: Or Changing \regex_replace_all for \tl_replace_all
+%^^A       I think this function could be used in both {scontents} and
+%^^A       \Scontents*. 
 %%^^A Storing content in seq
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_stored_to_seq:
@@ -1490,7 +1492,7 @@
 % The environment is divided into three parts.  This implementation is taken
 % from answer by Enrico Gregorio in \url{https://tex.stackexchange.com/a/487746/7832}.
 %
-%%^^A Define |scontents| whit [key=val] (delaying)
+%%^^A Define {scontents} whit [key=val] (delaying)
 % \begin{macro}{scontents}
 %   This is the main environment used in the document.
 %    \begin{macrocode}
@@ -1657,7 +1659,7 @@
 %
 % \subsection{The command \cs{getstored}}
 %
-%%^^A User command \getstored to extract stored content in |seq|
+%%^^A User command \getstored
 % \begin{macro}{\getstored}
 %   User command \cs{getstored} to extract stored content in |seq|
 %   (robust).
@@ -1672,13 +1674,13 @@
 % This implementation is an adaptation taken from answer by Phelype Oleinik
 % in (\url{https://tex.stackexchange.com/a/497651/7832}).
 %
-%%^^A User command \typestored 
+%%^^A User command \typestored
 % \begin{macro}{\typestored,\@@_fcdef_print:N,\@@_xverb:w,verbatimsc}
 %   The \cs{typestored} commands fetches a buffer from memory, prints it
 %   to the log file,
 %^^A NOTE: Perhaps this logging should be optional, with a key to switch
 %^^A       it on and off.
-%^^A Reply:I used * because it's easier to associate it with \Scontents*
+%^^A Reply:It will be removed once the new patch is adapted.
 %   and then calls \pkg{filecontentsdef}'s \tn{filecontentsdef@get} macro
 %   to read the contents of the token list and pass them to
 %   \cs{@@_fcdef_print:N}.
@@ -1781,7 +1783,7 @@
 % \subsection{The command \cs{setupsc}}
 %
 % User command \cs{setupsc} to setup module.
-%%^^A User command to setup module
+%%^^A User command \setupsc
 % \begin{macro}{\setupsc}
 %   A user-level wrapper for \cs{keys_set:nn}|{ scontents }|
 %    \begin{macrocode}
@@ -1792,7 +1794,8 @@
 %
 % \subsection{The command meaningsc}
 %
-% \begin{macro}[do-not-index=\v]{\meaningsc}
+%%^^A User command \meaningsc
+% \begin{macro}{\meaningsc}
 %   User command \cs{meaningsc} to see content stored in seq.
 %    \begin{macrocode}
 \NewDocumentCommand { \meaningsc } { O{1} m }
@@ -1812,6 +1815,7 @@
 %
 % \subsection{The command \cs{countsc}}
 %
+%%^^A User command \countsc
 % \begin{macro}{\countsc}
 %   User command \cs{countsc} to count number of contents stored in seq.
 %    \begin{macrocode}
@@ -1822,6 +1826,7 @@
 %
 % \subsection{The command \cs{cleanseqsc}}
 %
+%%^^A User command \cleanseqsc
 % \begin{macro}{\cleanseqsc}
 %   A user command \cs{cleanseqsc} to clear (remove) a defined seq
 %    \begin{macrocode}
@@ -1858,6 +1863,7 @@
 %    \end{macrocode}
 %
 % \subsection{Finish package}
+%
 % Finish package
 %%^^A Finish package
 %    \begin{macrocode}

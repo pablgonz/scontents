@@ -102,7 +102,7 @@
     \__scontents_append_contents:Vx \l__scontents_name_seq_env_tl
       { \exp_not:N \__scontents_rescan_tokens:w { \tl_use:N \l__scontents_macro_tmp_tl } }
   }
-%%^^A Define |scontents| whit [key=val] (delaying)
+%%^^A Define {scontents} whit [key=val] (delaying)
 \NewDocumentEnvironment { scontents } { }
   {
     \char_set_catcode_active:N \^^M
@@ -197,7 +197,7 @@
         { \__scontents_getfrom_seq:nn { -1 } { \l__scontents_name_seq_cmd_tl } }
     \group_end:
   }
-%%^^A User command \getstored to extract stored content in |seq|
+%%^^A User command \getstored
 \NewDocumentCommand { \getstored } { O{1} m }
   { \__scontents_getfrom_seq:nn {#1} {#2} }
 %%^^A User command \typestored
@@ -269,9 +269,10 @@
       { \prg_return_true: }
       { \prg_return_false: }
   }
-%%^^A User command to setup module
+%%^^A User command \setupsc
 \NewDocumentCommand { \setupsc } { m }
   { \keys_set:nn { scontents } {#1} }
+%%^^A User command \meaningsc
 \NewDocumentCommand { \meaningsc } { O{1} m }
   {
     \group_begin:
@@ -284,8 +285,10 @@
       \cs_replacement_spec:N \l__scontents_temp_tl
     \group_end:
   }
+%%^^A User command \countsc
 \NewExpandableDocumentCommand { \countsc } { m }
   { \seq_count:c { g__scontents_seq_name_#1_seq } }
+%%^^A User command \cleanseqsc
 \NewDocumentCommand { \cleanseqsc } { m }
   { \seq_clear_new:c { g__scontents_seq_name_#1_seq } }
 %%^^A Messages
