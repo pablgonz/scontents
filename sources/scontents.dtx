@@ -494,7 +494,7 @@
 % Fran\c{c}ois Burnol} who was kind enough to take my requirements into account
 % and add the \myenv{filecontentsdefmacro} environment. Also a special thanks to
 % Phelype Oleinik who has collaborated and adapted a large part of the code and
-% all  \hologo{LaTeX3} team for their great work and to the different members
+% all \hologo{LaTeX3} team for their great work and to the different members
 % of the \href{https://tex.stackexchange.com}{TeX-SX} community who have provided
 % great answers and ideas. Here a note of the main ones:
 %
@@ -518,10 +518,9 @@
 % (\url{http://www.latex-project.org/lppl.txt}). The software has the status
 % \enquote{maintained}.
 %
-% The \mypkg*{scontents} package loads \mypkg{xparse},
-% \mypkg{filecontentsdef} and \mypkg{l3keys2e}. This package can be used
-% with |xelatex|, |lualatex|, |pdflatex| and the classical workflow
-% |latex|-|dvips|-|ps2pdf|.
+% The \mypkg*{scontents} package loads \mypkg{xparse}, \mypkg{filecontentsdef}
+% and \mypkg{l3keys2e}. This package can be used with |xelatex|, |lualatex|
+% , |pdflatex| and the classical workflow |latex|-|dvips|-|ps2pdf|.
 %
 % \thispagestyle{plain}
 %
@@ -1387,7 +1386,7 @@
 %    \end{macrocode}
 % \end{macro}
 %
-%%^^A Definition of verbatimsc
+%%^^A A token list to match when ending \env{verbatimsc}
 % \begin{macro}{\g_@@_end_verbatimsc_tl}
 %   A token list to match when ending \env{verbatimsc} environment.
 %    \begin{macrocode}
@@ -1473,7 +1472,7 @@
 %^^A       performance... Or temporarily redefine ^^M to mean ^^J...
 %^^A Reply: Or Changing \regex_replace_all for \tl_replace_all
 %^^A       I think this function could be used in both {scontents} and
-%^^A       \Scontents*. 
+%^^A       \Scontents*.
 %%^^A Storing content in seq
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_stored_to_seq:
@@ -1836,9 +1835,10 @@
 % \end{macro}
 %
 % \subsection{Messages}
-% Messages used throughout the package.
-%%^^A Messages
 %
+% Messages used throughout the package.
+%
+%%^^A Messages
 %    \begin{macrocode}
 \msg_new:nnn { scontents } { junk-after-begin }
   {
