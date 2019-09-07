@@ -1,7 +1,7 @@
 \RequirePackage{filecontentsdef}[2019/04/20]
 \RequirePackage{l3keys2e}
 \RequirePackage{xparse}[2019/05/28]
-\ProvidesExplPackage{scontents}{2019/09/06}{1.2d}
+\ProvidesExplPackage{scontents}{2019/09/07}{1.2e}
   {Stores LaTeX contents in memory or files}
 \@ifpackagelater { xparse } { 2019/05/03 }
   { }
@@ -37,8 +37,6 @@
 \tl_new:N \l__scontents_macro_tmp_tl
 \tl_new:N \l__scontents_fname_out_tl
 \tl_new:N \l__scontents_temp_tl
-\tl_const:Nx \c__scontents_hidden_space_tl
-  { \c_percent_str scontentshs \c_percent_str }
 %%^^A Internal bool vars
 \bool_new:N \l__scontents_typeverb_env_bool
 \bool_set_true:N  \l__scontents_typevrb_env_bool
@@ -46,12 +44,7 @@
 \bool_set_false:N \l__scontents_writing_bool
 \bool_new:N \l__scontents_storing_bool
 \bool_set_true:N  \l__scontents_storing_bool
-%%^^A Internal quarks
-\quark_new:N \q__scontents_stop
-\quark_new:N \q__scontents_mark
-%%^^A Copy of \scantokens
-\cs_new_eq:NN \__scontents_rescan_tokens:w \tex_scantokens:D
-%%^^A A token list to match when ending \env{verbatimsc}
+%%^^A A token list to match \env{verbatimsc}
 \tl_new:N \g__scontents_end_verbatimsc_tl
 \tl_gset_rescan:Nnn
   \g__scontents_end_verbatimsc_tl
@@ -61,6 +54,14 @@
     \char_set_catcode_other:N \}
   }
   { \end{verbatimsc} }
+%%^^A A token list to hidden space tl before grab argument
+\tl_const:Nx \c__scontents_hidden_space_tl
+  { \c_percent_str scontentshs \c_percent_str }
+%%^^A Internal quarks
+\quark_new:N \q__scontents_stop
+\quark_new:N \q__scontents_mark
+%%^^A Copy of \scantokens
+\cs_new_eq:NN \__scontents_rescan_tokens:w \tex_scantokens:D
 %%^^A Add keys to scontents environnment
 \keys_define:nn { scontents }
   {
@@ -201,12 +202,13 @@
 \NewDocumentCommand { \getstored } { O{1} m }
   { \__scontents_getfrom_seq:nn {#1} {#2} }
 %%^^A User command \typestored
+\cs_generate_variant:Nn \tl_remove_once:Nn { Nx }
 \NewDocumentCommand { \typestored } { s O{1} m }
   {
     \group_begin:
       \tl_set:Nx \l__scontents_temp_tl { \__scontents_getfrom_seq:nn {#2} {#3} }
       \tl_set:Nx \l__scontents_temp_tl { \__scontents_strip_scantokens:N \l__scontents_temp_tl }
-      \tl_replace_all:Nxx \l__scontents_temp_tl { \c__scontents_hidden_space_tl } { }
+      \tl_remove_once:Nx \l__scontents_temp_tl { \c__scontents_hidden_space_tl }
       \tl_log:N \l__scontents_temp_tl
       \IfBooleanTF {#1}
         { \bool_set_false:N \l__scontents_typeverb_env_bool }
@@ -279,7 +281,7 @@
       \tl_set:Nx \l__scontents_temp_tl { \__scontents_getfrom_seq:nn {#1} {#2} }
       \tl_set:Nx \l__scontents_temp_tl { \__scontents_strip_scantokens:N \l__scontents_temp_tl }
       \tl_replace_all:Nxx \l__scontents_temp_tl { \iow_char:N \^^J } { \c_space_tl }
-      \tl_replace_all:Nxx \l__scontents_temp_tl { \c__scontents_hidden_space_tl } { }
+      \tl_remove_once:Nx  \l__scontents_temp_tl { \c__scontents_hidden_space_tl }
       \tl_log:N \l__scontents_temp_tl
       \ttfamily
       \cs_replacement_spec:N \l__scontents_temp_tl

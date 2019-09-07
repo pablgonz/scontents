@@ -1,13 +1,13 @@
 ## scontents — Stores LaTeX contents in memory or files
-- Version: 1.2
-- Date: 2019/08/28
+- Version: 1.2e
+- Date: 2019/09/07
 - Author: Pablo González
 
 ## Description
 The `scontents` package stores valid `LaTeX` code in memory (sequences) using the
-`l3seq` module of `expl3`. The stored content (including verbatim) can be
+`l3seq` module of `expl3`. The stored content, including `verbatim` material, can be
 used as many times as desired in the document, additionally can be written
-to external files if desired.
+to external files.
 
 ## Requirements
 The package requires the following packages:
