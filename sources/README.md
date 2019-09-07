@@ -1,4 +1,4 @@
-## scontents — Stores LaTeX contents in memory or files
+## scontents — Stores LaTeX content in memory or files
 - Version: 1.2e
 - Date: 2019/09/07
 - Author: Pablo González
