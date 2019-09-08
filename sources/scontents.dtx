@@ -443,7 +443,6 @@
 }
 \makeatother
 \begin{document}
-  \overfullrule=5pt
   \DocInput{\jobname.dtx}
 \end{document}
 %</driver>
@@ -1278,7 +1277,6 @@
 % Then, we can give the traditional declaration of a package written with
 % \pkg{expl3} and the necessary packages for its operation.
 %    \begin{macrocode}
-\RequirePackage{filecontentsdef}[2019/04/20]
 \RequirePackage{l3keys2e}
 \RequirePackage{xparse}[2019/05/28]
 \ProvidesExplPackage{scontents}{2019/09/07}{1.2e}
@@ -1605,14 +1603,14 @@
   \char_set_catcode_active:N \^^I
   \char_set_catcode_active:N \^^L
   \char_set_catcode_active:N \^^M
-  \cs_gset_protected:Npn \@@_start_environment:w #1 ^^M
+  \cs_new_protected:Npn \@@_start_environment:w #1 ^^M
     {
       \@@_environment_inline:w #1 \q_@@_mark
       \@@_make_control_chars_active:
       \group_begin:
         \@@_file_tl_write_start:V \l_@@_fname_out_tl
     }
-  \cs_gset_protected:Npn \@@_stop_environment:
+  \cs_new_protected:Npn \@@_stop_environment:
     {
         \@@_file_write_stop:N \l_@@_macro_tmp_tl
         \exp_args:NNNV
@@ -1853,7 +1851,7 @@
 %    \begin{macrocode}
 \use:x
   {
-    \cs_gset_protected:Npn \exp_not:N \@@_xverb:w
+    \cs_new_protected:Npn \exp_not:N \@@_xverb:w
       ##1 \g_@@_end_verbatimsc_tl
   }
       { #1 \end{verbatimsc} }
