@@ -469,9 +469,9 @@
 % \maketitle
 %
 % \begin{abstract}
-% The \mypkg*{scontents} package stores valid \hologo{LaTeX} code in memory 
-% (sequences) using the \mypkg{l3seq} module of \mypkg{expl3}. The stored 
-% content, including \emph{verbatim} material, can be used as many times 
+% The \mypkg*{scontents} package stores valid \hologo{LaTeX} code in memory
+% (sequences) using the \mypkg{l3seq} module of \mypkg{expl3}. The stored
+% content, including \emph{verbatim} material, can be used as many times
 % as desired in the document, additionally can be written to external files.
 % \end{abstract}
 %
@@ -1226,6 +1226,7 @@
 % \begin{description}[font=\small\sffamily, wide=0pt, style=multiline, leftmargin=\descrwidth,  nosep, noitemsep]
 % \item [\fileversion{} (dev), \filedate]
 %    \begin{itemize}
+%        \item Remove \verb+filecontentsdef+ dependency.
 %        \item Changing \verb+\regex_replace_all:+ for \verb+\tl_replace_all:+.
 %        \item The space added by the macro \verb+\Scontents*+ was hidden.
 %    \end{itemize}
@@ -1279,7 +1280,7 @@
 %    \begin{macrocode}
 \RequirePackage{l3keys2e}
 \RequirePackage{xparse}[2019/05/28]
-\ProvidesExplPackage{scontents}{2019/09/07}{1.2e}
+\ProvidesExplPackage{scontents}{2019/09/08}{1.2f}
   {Stores LaTeX contents in memory or files}
 %    \end{macrocode}
 % A check to make sure that \pkg{xparse} is not too old
@@ -1598,6 +1599,7 @@
 %
 %^^A Hm... Apparently this is not the verbatim group, but one level above. Is
 %^^A this group really necessary?
+%^^A Reply : Apparently...yes...many errors if comment this
 %    \begin{macrocode}
 \group_begin:
   \char_set_catcode_active:N \^^I
@@ -1637,7 +1639,7 @@
     {
       \group_begin:
         \bool_if:NT \l_@@_writing_bool
-          { 
+          {
             \file_if_exist:nTF {#1}
               { \msg_warning:nnx { scontents } { rewriting-file } {#1} }
               { \msg_warning:nnx { scontents } { writing-file } {#1} }

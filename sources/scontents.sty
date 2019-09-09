@@ -1,7 +1,6 @@
-\RequirePackage{filecontentsdef}[2019/04/20]
 \RequirePackage{l3keys2e}
 \RequirePackage{xparse}[2019/05/28]
-\ProvidesExplPackage{scontents}{2019/09/07}{1.2e}
+\ProvidesExplPackage{scontents}{2019/09/08}{1.2f}
   {Stores LaTeX contents in memory or files}
 \@ifpackagelater { xparse } { 2019/05/03 }
   { }
@@ -37,9 +36,9 @@
 \tl_new:N \l__scontents_macro_tmp_tl
 \tl_new:N \l__scontents_fname_out_tl
 \tl_new:N \l__scontents_temp_tl
+\tl_new:N \l__scontents_file_tl
+\tl_new:N \g__scontents_temp_tl
 %%^^A Internal bool vars
-\bool_new:N \l__scontents_typeverb_env_bool
-\bool_set_true:N  \l__scontents_typevrb_env_bool
 \bool_new:N \l__scontents_writing_bool
 \bool_set_false:N \l__scontents_writing_bool
 \bool_new:N \l__scontents_storing_bool
@@ -54,14 +53,21 @@
     \char_set_catcode_other:N \}
   }
   { \end{verbatimsc} }
-%%^^A A token list to hidden space tl before grab argument
-\tl_const:Nx \c__scontents_hidden_space_tl
+\tl_const:Nx \c__scontents_end_env_tl
+  { \c_backslash_str end \c_left_brace_str scontents \c_right_brace_str }
+%%^^A A string to hidden space tl before grab argument
+\str_const:Nx \c__scontents_hidden_space_str
   { \c_percent_str scontentshs \c_percent_str }
 %%^^A Internal quarks
 \quark_new:N \q__scontents_stop
 \quark_new:N \q__scontents_mark
+\iow_new:N \l__scontents_file_iow
 %%^^A Copy of \scantokens
 \cs_new_eq:NN \__scontents_rescan_tokens:w \tex_scantokens:D
+\cs_new:Npx \__scontents_tab: { \c_space_tl }
+\cs_new:Npn \__scontents_par: { ^^J ^^J }
+\cs_generate_variant:Nn \tl_remove_once:Nn { NV }
+\cs_generate_variant:Nn \tl_replace_all:Nnn { Nx, Nxx }
 %%^^A Add keys to scontents environnment
 \keys_define:nn { scontents }
   {
@@ -137,34 +143,100 @@
 \cs_generate_variant:Nn \__scontents_environment_junk:nw { x }
 %%^^A First start_environment/stop_environment
 \group_begin:
+  \char_set_catcode_active:N \^^I
+  \char_set_catcode_active:N \^^L
   \char_set_catcode_active:N \^^M
   \cs_new_protected:Npn \__scontents_start_environment:w #1 ^^M
     {
       \__scontents_environment_inline:w #1 \q__scontents_mark
+      \__scontents_make_control_chars_active:
       \group_begin:
-        \bool_if:NTF \l__scontents_writing_bool
-          {
-            \use:c { filecontentsdef* } { \l__scontents_fname_out_tl }
-                                        { \l__scontents_macro_tmp_tl } ^^M
-          }
-          { \filecontentsdefmacro { \l__scontents_macro_tmp_tl } ^^M }
+        \__scontents_file_tl_write_start:V \l__scontents_fname_out_tl
     }
   \cs_new_protected:Npn \__scontents_stop_environment:
     {
-        \bool_if:NTF \l__scontents_writing_bool
-          { \endfilecontentsdef }
-          { \endfilecontentsdefmacro }
+        \__scontents_file_write_stop:N \l__scontents_macro_tmp_tl
+        \exp_args:NNNV
       \group_end:
+      \tl_set:Nn \l__scontents_macro_tmp_tl \l__scontents_macro_tmp_tl
     }
+  \cs_new_protected:Npn \__scontents_file_tl_write_start:n #1
+    {
+      \group_begin:
+        \bool_if:NT \l__scontents_writing_bool
+          {
+            \file_if_exist:nTF {#1}
+              { \msg_warning:nnx { scontents } { rewriting-file } {#1} }
+              { \msg_warning:nnx { scontents } { writing-file } {#1} }
+            \iow_open:Nn \l__scontents_file_iow {#1}
+          }
+        \tl_clear:N \l__scontents_file_tl
+        \seq_map_function:NN \l_char_special_seq \char_set_catcode_other:N
+        \int_step_function:nnN { 128 } { 255 } \char_set_catcode_letter:n
+        \use:x
+          {
+            \cs_set:Npn \exp_not:N \__scontents_tmpa:w
+              ####1 \c__scontents_end_env_tl
+              ####2 \c__scontents_end_env_tl
+              ####3 \exp_not:N \q_stop
+              {
+                \exp_not:N \tl_if_blank:nTF {####3}
+                  {
+                    \bool_if:NT \l__scontents_writing_bool
+                      { \iow_now:Nn \l__scontents_file_iow {####1} }
+                    \bool_if:NT \l__scontents_storing_bool
+                      {
+                        \tl_put_right:Nn \exp_not:N \l__scontents_file_tl
+                          { \exp_not:N ^^M ####1 }
+                      }
+                  }
+                  {
+                    \cs_set:Npn \exp_not:N \__scontents_ret:w { \exp_not:N \end{scontents} }
+                    \char_set_active_eq:NN \exp_not:N ^^M \exp_not:N \__scontents_ret:w
+                  }
+                \exp_not:N ^^M
+              }
+          }
+        \cs_set_protected:Npx \__scontents_ret:w ##1 ^^M
+          {
+            \exp_not:N \__scontents_tmpa:w
+            ##1 \c__scontents_end_env_tl
+                \c__scontents_end_env_tl
+                \exp_not:N \q_stop
+          }
+        \__scontents_make_control_chars_active:
+        \__scontents_ret:w
+    }
+  \cs_new_protected:Npn \__scontents_file_write_stop:N #1
+    {
+      \bool_if:NT \l__scontents_writing_bool
+        { \iow_close:N \l__scontents_file_iow }
+      \use:x
+        {
+          \group_end:
+          \bool_if:NT \l__scontents_storing_bool
+            {
+              \tl_set:Nn \exp_not:N #1
+                { \exp_args:NV \__scontents_remove_leading_cr:n \l__scontents_file_tl }
+            }
+        }
+    }
+  \cs_new:Npn \__scontents_remove_leading_cr:n #1
+    { \exp_not:o { \__scontents_remove_leading_cr:w #1 } }
+  \cs_new:Npn \__scontents_remove_leading_cr:w ^^M { }
 \group_end:
+\cs_generate_variant:Nn \__scontents_file_tl_write_start:n { V }
 %%^^A Second atend_environment/stored_to_seq
 \cs_new_protected:Npn \__scontents_atend_environment:
   {
     \bool_if:NT \l__scontents_storing_bool
+      { \__scontents_stored_to_seq: }
+    \bool_if:NT \l__scontents_print_env_bool
       {
-        \__scontents_stored_to_seq:
-        \bool_if:NT \l__scontents_print_env_bool
+        \tl_gset:Nx \g__scontents_temp_tl
           { \__scontents_getfrom_seq:nn { -1 } { \l__scontents_name_seq_env_tl } }
+        \tl_gput_right:Nn \g__scontents_temp_tl { \tl_gclear:N \g__scontents_temp_tl }
+        \group_insert_after:N \g__scontents_temp_tl
       }
     \tl_clear:N \l__scontents_macro_tmp_tl
   }
@@ -185,11 +257,10 @@
        { \__scontents_getfrom_seq:nn { -1 } { \l__scontents_name_seq_cmd_tl } }
    \group_end:
   }
-\cs_generate_variant:Nn \tl_replace_all:Nnn { Nxx }
 \NewDocumentCommand { \__scontents_verb:w } { +v }
   {
       \tl_set:Nn \l__scontents_temp_tl {#1}
-      \tl_put_right:Nx \l__scontents_temp_tl { \c__scontents_hidden_space_tl }
+      \tl_put_right:Nx \l__scontents_temp_tl { \c__scontents_hidden_space_str }
       \tl_replace_all:Nxx \l__scontents_temp_tl { \iow_char:N \^^M } { \iow_char:N \^^J }
       \tl_log:N \l__scontents_temp_tl
       \exp_args:NVx \__scontents_append_contents:nn \l__scontents_name_seq_cmd_tl
@@ -202,24 +273,20 @@
 \NewDocumentCommand { \getstored } { O{1} m }
   { \__scontents_getfrom_seq:nn {#1} {#2} }
 %%^^A User command \typestored
-\cs_generate_variant:Nn \tl_remove_once:Nn { Nx }
 \NewDocumentCommand { \typestored } { s O{1} m }
   {
     \group_begin:
       \tl_set:Nx \l__scontents_temp_tl { \__scontents_getfrom_seq:nn {#2} {#3} }
       \tl_set:Nx \l__scontents_temp_tl { \__scontents_strip_scantokens:N \l__scontents_temp_tl }
-      \tl_remove_once:Nx \l__scontents_temp_tl { \c__scontents_hidden_space_tl }
+      \tl_remove_once:NV \l__scontents_temp_tl \c__scontents_hidden_space_str
       \tl_log:N \l__scontents_temp_tl
-      \IfBooleanTF {#1}
-        { \bool_set_false:N \l__scontents_typeverb_env_bool }
-        { \bool_set_true:N  \l__scontents_typeverb_env_bool }
-      \use:c { filecontentsdef@get } \__scontents_fcdef_print:N \l__scontents_temp_tl
+      \__scontents_fcdef_print:N \l__scontents_temp_tl
     \group_end:
   }
 %%^^A Internal fcdef_print:N
 \group_begin:
- \char_set_catcode_active:N \^^M
- \cs_new_protected:Npn \__scontents_fcdef_print:N #1
+  \char_set_catcode_active:N \^^M
+  \cs_new_protected:Npn \__scontents_fcdef_print:N #1
     {
       \tl_if_blank:VT #1
         { \msg_error:nnn { scontents } { empty-variable } {#1} }
@@ -230,8 +297,7 @@
           \exp_not:N \__scontents_rescan_tokens:w
             {
               \exp_not:N \begin{verbatimsc} ^^M
-              \__scontents_strip_scantokens:N #1
-              \bool_if:NF \l__scontents_typeverb_env_bool { ^^M }
+              \__scontents_strip_scantokens:N #1 ^^M
               \g__scontents_end_verbatimsc_tl
             }
         }
@@ -240,7 +306,10 @@
 \group_end:
 %%^^A Definition of verbatimsc environment
 \use:x
-  { \cs_gset_protected:Npn \exp_not:N \__scontents_xverb:w ##1 \g__scontents_end_verbatimsc_tl }
+  {
+    \cs_new_protected:Npn \exp_not:N \__scontents_xverb:w
+      ##1 \g__scontents_end_verbatimsc_tl
+  }
       { #1 \end{verbatimsc} }
 \NewDocumentEnvironment { verbatimsc } { }
   {
@@ -271,6 +340,17 @@
       { \prg_return_true: }
       { \prg_return_false: }
   }
+\cs_new_protected:Npn \__scontents_set_active_eq:NN #1
+  {
+    \char_set_catcode_active:N #1
+    \char_set_active_eq:NN #1
+  }
+\cs_new_protected:Npn \__scontents_make_control_chars_active:
+  {
+    \__scontents_set_active_eq:NN \^^I \__scontents_tab:
+    \__scontents_set_active_eq:NN \^^L \__scontents_par:
+    \__scontents_set_active_eq:NN \^^M \__scontents_ret:w
+  }
 %%^^A User command \setupsc
 \NewDocumentCommand { \setupsc } { m }
   { \keys_set:nn { scontents } {#1} }
@@ -279,9 +359,10 @@
   {
     \group_begin:
       \tl_set:Nx \l__scontents_temp_tl { \__scontents_getfrom_seq:nn {#1} {#2} }
-      \tl_set:Nx \l__scontents_temp_tl { \__scontents_strip_scantokens:N \l__scontents_temp_tl }
-      \tl_replace_all:Nxx \l__scontents_temp_tl { \iow_char:N \^^J } { \c_space_tl }
-      \tl_remove_once:Nx  \l__scontents_temp_tl { \c__scontents_hidden_space_tl }
+      \tl_set:Nx \l__scontents_temp_tl
+        { \__scontents_strip_scantokens:N \l__scontents_temp_tl }
+      \tl_replace_all:Nxn \l__scontents_temp_tl { \iow_char:N \^^J } { ~ }
+      \tl_remove_once:NV \l__scontents_temp_tl \c__scontents_hidden_space_str
       \tl_log:N \l__scontents_temp_tl
       \ttfamily
       \cs_replacement_spec:N \l__scontents_temp_tl
