@@ -394,7 +394,7 @@
    pdfsubject         = {Documentation for \fileversion{} [\filedate] },%
    pdfcopyright       = {\textcopyright 2019 by Pablo González},
    pdfcontacturl      = {https://github.com/pablgonz/scontents},
-   pdfkeywords        = {filecontents, filecontentsdef, xparse, expl3, l3seq, Store contents},
+   pdfkeywords        = {contents, external files, expl3, xparse, l3seq, Store contents},
    pdfstartview       = {FitH},%
    bookmarksopenlevel = 1,%
   }
@@ -518,7 +518,7 @@
 % (\url{http://www.latex-project.org/lppl.txt}). The software has the status
 % \enquote{maintained}.
 %
-% The \mypkg*{scontents} package loads \mypkg{xparse}, \mypkg{filecontentsdef}
+% The \mypkg*{scontents} package loads \mypkg{expl3}, \mypkg{xparse}
 % and \mypkg{l3keys2e}. This package can be used with |xelatex|, |lualatex|
 % , |pdflatex| and the classical workflow |latex|-|dvips|-|ps2pdf|.
 %
@@ -533,10 +533,9 @@
 %
 % \subsection{Description}
 %
-% The \mypkg*{scontents} package encapsulates the \mypkg{filecontentsdef}
-% package of \textsc{Jean Fran\c{c}ois Burnol} which allows you to save the
-% content in a |\macro| and save it in external files, adding a user interface
-% style \myoarg{key = val} along with the ability to save content in sequences
+% The \mypkg*{scontents} package allows to store contents in memory (sequence)
+% or in external files, provides a user interface style \myoarg{key = val} 
+% along with the ability to save content in sequences
 % for later use in different parts of the document.
 %
 % \subsection{Loading package}
@@ -622,9 +621,9 @@
 %   \envexamp{scontents}
 %   \end{syntax}
 %
-% The \myenv*{scontents} environment encapsulates the \myenv{filecontentsdef*} and
-% \myenv{filecontentsdefmacro} environments provided by the \mypkg{filecontentsdef}
-% package. This allows you to record content including verbatim for later reuse.
+% The \myenv*{scontents} environment allows you to save the content to memory 
+% or external files in a similar way to the package \myenv{filecontents}. This 
+% allows you to record content including verbatim for later reuse.
 % \end{function}
 %
 % Some considerations to keep in mind:
@@ -641,8 +640,6 @@
 % \ics{relax} or \lstinline[style=inline]|%| at the end of environment.
 % \end{enumerate}
 %
-% For more technical information about the environment it is better to read
-% the documentation of the \mypkg{filecontentsdef} package.
 %
 % \subsection*{Options for environment}
 %

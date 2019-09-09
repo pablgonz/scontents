@@ -11,7 +11,6 @@ to external files.
 
 ## Requirements
 The package requires the following packages:
-- [filecontentsdef](https://ctan.org/pkg/filecontentsdef)
 - [l3keys2e](https://ctan.org/pkg/l3keys2e)
 - [xparse](https://ctan.org/pkg/xparse)
 
