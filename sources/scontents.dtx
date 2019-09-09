@@ -1502,7 +1502,7 @@
 %^^A       performance... Or temporarily redefine ^^M to mean ^^J...
 %^^A Reply: Or Changing \regex_replace_all for \tl_replace_all
 %^^A       I think this function could be used in both {scontents} and
-%^^A       \Scontents*.
+%^^A       \Scontents*. 
 %%^^A Storing content in seq
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_stored_to_seq:
@@ -1596,7 +1596,8 @@
 %
 %^^A Hm... Apparently this is not the verbatim group, but one level above. Is
 %^^A this group really necessary?
-%^^A Reply : Apparently...yes...many errors if comment this
+%^^A Reply : Maybe the groups aren't in the right places, but when you remove 
+%^^A them it just gives you errors...(test-pkg-current.tex)
 %    \begin{macrocode}
 \group_begin:
   \char_set_catcode_active:N \^^I
@@ -1631,6 +1632,9 @@
 %   token list using \cs{@@_remove_leading_cr:n} (which expects an active |^^M|
 %   token at the head of the token list; a low level TeX error is raised
 %   otherwise).
+%^^A Note: Perhaps a key "space-tab={1,2,...9}" that affects (grabed and writing) only if present, 
+%    otherwise write "\t" in the external file and convert to "1 space" in the stored content".
+%
 %    \begin{macrocode}
   \cs_new_protected:Npn \@@_file_tl_write_start:n #1
     {
@@ -1708,6 +1712,7 @@
 %   and then clearing the temporary token list.
 %
 %%^^A Second atend_environment/stored_to_seq
+%^^A NOTE : Maybe \@@_stored_to_seq:nn  \l_@@_name_seq_env_tl \g_@@_temp_tl
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_atend_environment:
   {
@@ -1778,6 +1783,7 @@
   }
 %    \end{macrocode}
 % \end{macro}
+%^^A NOTE : Maybe \@@_stored_to_seq:nn  \l_@@_name_seq_cmd_tl \l_@@_temp_tl
 %
 % \subsection{The command \cs{getstored}}
 %
@@ -1802,7 +1808,7 @@
 %   to the log file,
 %^^A NOTE: Perhaps this logging should be optional, with a key to switch
 %^^A       it on and off.
-%^^A Reply:It will be removed once the new patch is adapted.
+%^^A Reply:It will be removed once the new patch is adapted....working ON
 %   and then calls \pkg{filecontentsdef}'s \tn{filecontentsdef@get} macro
 %   to read the contents of the token list and pass them to
 %   \cs{@@_fcdef_print:N}.
@@ -1982,6 +1988,8 @@
 % Messages used throughout the package.
 %
 %%^^A Messages
+%^^A NOTE: It would be nice to have the messages  
+%^^A { ignoring-text } { tab-to-space } { feed-to-space } like a filecontens
 %    \begin{macrocode}
 \msg_new:nnn { scontents } { junk-after-begin }
   {
