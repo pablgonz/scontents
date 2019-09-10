@@ -1,5 +1,5 @@
 ## scontents — Stores LaTeX contents in memory or files
-- Version: 1.2g
+- Version: 1.2h
 - Date: 2019/09/10
 - Author: Pablo González
 

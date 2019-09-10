@@ -30,25 +30,27 @@ XX\getstored[2]{nospace}YY\par
 
 % These outputs should look the same
 FIRST\par
-This is normal text.
+This ^^J is normal ^^J text.
 \verb|This is from the verb command.|
 \verb*|This is from the verb* command.|
 This is normal text.
 \begin{verbatim}
 This is from the verbatim environment:
 &%{}~
+Soy un ^^J Soy un ^^M text.
 \end{verbatim}
 
 SECOND\par
 % These outputs should look the same whit print-env=true
 \begin{scontents}[store-env=newattempt,print-env=true]
-This is normal text.
+This ^^J is normal ^^J text.
 \verb|This is from the verb command.|
 \verb*|This is from the verb* command.|
 This is normal text.
 \begin{verbatim}
 This is from the verbatim environment:
 &%{}~
+Soy un ^^J Soy un ^^M text.
 \end{verbatim}
 \end{scontents}This text is removed from the output because it is on the same line.
 THIRD\par
@@ -61,7 +63,8 @@ MEANINGSC\par
 \begin{scontents}[write-out=withtab.tsc]
 No tab
 	One tab
-		Two tab
+		Two tab and
+		This ^^J is normal ^^J text.
 \begin{verbatim}
       (E) verbatim
           environment
@@ -267,7 +270,7 @@ Test \verb+\subsection{\getstored[3]{contents}}+:\par
 \noindent\hrulefill
 
 \section{Test \texttt{\{scontents\}} environment}
-\setupsc{store-env=testenv, print-env=false}
+\setupsc{store-env=testenv, print-env=true}
 \subsection{no \texttt{[key=val]}}
 Test \verb+scontents+ no \verb+[key=val]+\par
 
@@ -283,6 +286,7 @@ Prove new \Verb*{ verbatim from fvextra whit braces } and environment \verb+Verb
 \end{scontents}
 
 \subsubsection{\Verb{\getstored[1]{testenv}}}
+%%%
 \getstored[1]{testenv}
 
 \subsubsection{\Verb{\meaningsc[1]{testenv}}}

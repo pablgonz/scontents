@@ -1,13 +1,21 @@
 \documentclass{article}
-\usepackage{scontents}
+\usepackage{scontents-tmp}
 \setlength{\parindent}{0pt}
 \pagestyle{empty}
+% custom :)
+\usepackage{fvextra}
+\makeatletter
+\let\verbatimsc\@undefined
+\let\endverbatimsc\@undefined
+\makeatother
+\DefineVerbatimEnvironment{verbatimsc}{Verbatim}{numbers=left,frame=single}
 \begin{document}
 
 \section{Test \texttt{\textbackslash begin\{scontents\}}}
 Test \verb+\begin{scontents}+ \par
 
-\begin{scontents}
+This text is found just before opening environment 
+\begin{scontents}[print-env=true]
 Using \verb+scontents+ env no \verb+[key=val]+, save in seq \verb+contents+ 
 with index $1$.
 % this line ignore by \getstored
@@ -17,7 +25,7 @@ Prove \verb*| verb inline whit bars | and environment \verb+verbatim*+
        environment
 \end{verbatim}
 A text, no space after dot.
-\end{scontents}
+\end{scontents}This text is found just after closing environment
 
 \section{Test \texttt{\textbackslash Scontents*}}
 
@@ -39,4 +47,5 @@ XX\getstored[2]{contents}YY
 \typestored[1]{contents}
 
 \typestored[2]{contents}
+
 \end{document}
