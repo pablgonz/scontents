@@ -1285,7 +1285,7 @@
 %    \begin{macrocode}
 \RequirePackage{l3keys2e}
 \RequirePackage{xparse}[2019/05/28]
-\ProvidesExplPackage{scontents}{2019/09/10}{1.2g}
+\ProvidesExplPackage{scontents}{2019/09/10}{1.2h}
   {Stores LaTeX contents in memory or files}
 %    \end{macrocode}
 % A check to make sure that \pkg{xparse} is not too old
@@ -1512,10 +1512,11 @@
 %^^A       I think this function could be used in both {scontents} and
 %^^A       \Scontents*. 
 %%^^A Storing content in seq
+%^^A Remove regex after implement % at end of _macro_tmp_tl
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_stored_to_seq:
   {
-    \regex_replace_all:nnN { \^^M } { \^^J } \l_@@_macro_tmp_tl
+    %\regex_replace_all:nnN { \^^M } { \^^J } \l_@@_macro_tmp_tl
     \tl_log:N \l_@@_macro_tmp_tl
     \@@_append_contents:Vx \l_@@_name_seq_env_tl
       { \exp_not:N \@@_rescan_tokens:w { \tl_use:N \l_@@_macro_tmp_tl } }
@@ -1633,7 +1634,7 @@
 %   The macro starts a group, opens the output file, if necessary, sets verbatim
 %   catcodes, and then issues |^^M| (set equal to \cs{@@_ret:w}) to read the
 %   environment line by line until reaching its end. The output token list will
-%   be appended with an active |^^M| character and the line just read, and this
+%   be appended with an active |^^J| character and the line just read, and this
 %   line is written to the output file, if any. At the end of the environment
 %   the output file is closed (if it was open), and the output token list is
 %   smuggled out of the verbatim group. A leading |^^M| is removed from the
@@ -1671,7 +1672,10 @@
                     \bool_if:NT \l_@@_storing_bool
                       {
                         \tl_put_right:Nn \exp_not:N \l_@@_file_tl
-                          { \exp_not:N ^^M ####1 }
+                          { 
+                            %\exp_not:N ^^M ####1 
+                            \exp_not:N ^^J ####1 
+                          }
                       }
                   }
                   {
@@ -1704,14 +1708,16 @@
                 { \exp_args:NV \@@_remove_leading_cr:n \l_@@_file_tl }
             }
         }
-    }
+    }    
   \cs_new:Npn \@@_remove_leading_cr:n #1
     { \exp_not:o { \@@_remove_leading_cr:w #1 } }
-  \cs_new:Npn \@@_remove_leading_cr:w ^^M { }
+  %\cs_new:Npn \@@_remove_leading_cr:w ^^M { }
+  \cs_new:Npn \@@_remove_leading_cr:w ^^J { }
 \group_end:
 \cs_generate_variant:Nn \@@_file_tl_write_start:n { V }
 %    \end{macrocode}
 % \end{macro}
+%^^A remove_leading_cr ... debo estudiarlo 
 %
 % \subsubsection{Recording of the content in the sequence}
 %
@@ -1725,7 +1731,11 @@
 \cs_new_protected:Npn \@@_atend_environment:
   {
     \bool_if:NT \l_@@_storing_bool
-      { \@@_stored_to_seq: }
+      { 
+        % A problem with fancyhdr for now...
+        %\tl_put_right:Nx \l__scontents_macro_tmp_tl { \c__scontents_hidden_space_str }
+        \@@_stored_to_seq: 
+      }
     \bool_if:NT \l_@@_print_env_bool
       {
         \tl_gset:Nx \g_@@_temp_tl

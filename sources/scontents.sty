@@ -1,6 +1,6 @@
 \RequirePackage{l3keys2e}
 \RequirePackage{xparse}[2019/05/28]
-\ProvidesExplPackage{scontents}{2019/09/10}{1.2g}
+\ProvidesExplPackage{scontents}{2019/09/10}{1.2h}
   {Stores LaTeX contents in memory or files}
 \@ifpackagelater { xparse } { 2019/05/03 }
   { }
@@ -104,7 +104,7 @@
 %%^^A Storing content in seq
 \cs_new_protected:Npn \__scontents_stored_to_seq:
   {
-    \regex_replace_all:nnN { \^^M } { \^^J } \l__scontents_macro_tmp_tl
+    %\regex_replace_all:nnN { \^^M } { \^^J } \l__scontents_macro_tmp_tl
     \tl_log:N \l__scontents_macro_tmp_tl
     \__scontents_append_contents:Vx \l__scontents_name_seq_env_tl
       { \exp_not:N \__scontents_rescan_tokens:w { \tl_use:N \l__scontents_macro_tmp_tl } }
@@ -187,7 +187,10 @@
                     \bool_if:NT \l__scontents_storing_bool
                       {
                         \tl_put_right:Nn \exp_not:N \l__scontents_file_tl
-                          { \exp_not:N ^^M ####1 }
+                          {
+                            %\exp_not:N ^^M ####1
+                            \exp_not:N ^^J ####1
+                          }
                       }
                   }
                   {
@@ -223,14 +226,19 @@
     }
   \cs_new:Npn \__scontents_remove_leading_cr:n #1
     { \exp_not:o { \__scontents_remove_leading_cr:w #1 } }
-  \cs_new:Npn \__scontents_remove_leading_cr:w ^^M { }
+  %\cs_new:Npn \__scontents_remove_leading_cr:w ^^M { }
+  \cs_new:Npn \__scontents_remove_leading_cr:w ^^J { }
 \group_end:
 \cs_generate_variant:Nn \__scontents_file_tl_write_start:n { V }
 %%^^A Second atend_environment/stored_to_seq
 \cs_new_protected:Npn \__scontents_atend_environment:
   {
     \bool_if:NT \l__scontents_storing_bool
-      { \__scontents_stored_to_seq: }
+      {
+        % A problem with fancyhdr for now...
+        %\tl_put_right:Nx \l__scontents_macro_tmp_tl { \c__scontents_hidden_space_str }
+        \__scontents_stored_to_seq:
+      }
     \bool_if:NT \l__scontents_print_env_bool
       {
         \tl_gset:Nx \g__scontents_temp_tl

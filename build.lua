@@ -1,5 +1,5 @@
 -- Build script for scontents
-pkgversion   = "1.2g"
+pkgversion   = "1.2h"
 pkgdate      = "2019/09/10"
 
 module       = "scontents"
