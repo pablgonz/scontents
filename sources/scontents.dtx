@@ -750,18 +750,14 @@
 % \begin{function}{\typestored}
 %   \begin{syntax}
 %      \cmdexamp{typestored}[index]{seq name}
-%      \cmdexamp*{typestored}[index]{seq name}
 %   \end{syntax}
 % \end{function}
-%
-% The command \ics*{typestored} shows the content stored in \meta{seq name} in
-% \emph{verbatim} mode. Internally places the content into the \myenv*{verbatimsc} environment.
 %
 % The command \ics*{typestored*} must be used for content stored by \ics*{Scontents*} command.
 % Internally places the content into the \myenv*{verbatimsc} environment.
 %
-% If the optional argument is not passed it defaults to the
-% last element saved in the \meta{seq name}.
+% If the optional argument is not passed it defaults to the last element 
+% saved in the \meta{seq name}.
 %
 % \subsection{The environment \env{verbatimsc}}
 % \label{sec:verbatimsc}
@@ -889,19 +885,23 @@
 % \newtheorem{ex}{Exercise}
 % \begin{document}
 % \section{Problems}
+%
 % \begin{ex}
 %   First exercise
 %    \Scontents{
 %       First solution.
 %    }
 % \end{ex}
+%
 % \begin{ex}
 %   Second exercise
 %   \Scontents{
 %      Second solution.
 %   }
 % \end{ex}
+%
 % \section{Solutions}
+%
 % \foreach \i in {1,...,\countsc{solutions}} {
 % \noindent\textbf{\i} \getstored[\i]{solutions}\par
 % }
@@ -922,11 +922,14 @@
 % \usepackage{pgffor}
 % \pagestyle{empty}
 % \begin{document}
+%
 % \Scontents{
 % Prove that \[x^n+y^n=z^n\] is not solvable in positive integers if $n$ is at
 % most $-3$.\par
 % }
-% \Scontents*{Refute the existence of black holes in less than $140$ characters.\relax}
+%
+% \Scontents*{Refute the existence of black holes in less than $140$ characters.}
+%
 % \begin{scontents}[write-env=\jobname-3.txt]
 % \def\NSA{NSA}%
 % Prove that factorization is easily done via probabilistic algorithms and
@@ -965,15 +968,18 @@
 % \begin{tikzpicture}
 % \getstored[1]{tikz}
 % \end{tikzpicture}
+%
 % \begin{tikzpicture}
 % \getstored[2]{tikz}
 % \end{tikzpicture}
+%
 % \begin{tikzpicture}
 % \getstored[3]{tikz}
 % \end{tikzpicture}
+%
 % \section{source}
 % \foreach \i in {1,...,\countsc{tikz}}{
-% \typestored*[\i]{tikz}}
+% \typestored[\i]{tikz}}
 % \end{document}
 % \end{VerbatimOut}
 % Adapted from \href{https://tex.stackexchange.com/q/5338/7832}{LaTeX equivalent of ConTeXt buffers}
@@ -1026,11 +1032,13 @@
 % \begin{document}
 % \section{Problem stated the first time}
 % \begin{scontents}[print-env=true,store-env=problem]
-% This is normal text. \verb+This is from the verb command+. This is normal text.
-% \verb*|This is from the verb* command|. This is normal text.
+% This is normal text.
+% \verb|This is from the verb command.|
+% \verb*|This is from the verb* command.|
+% This is normal text.
 % \begin{verbatim}
 % This is from the verbatim environment:
-% &%{}
+% &%{}~
 % \end{verbatim}
 % \end{scontents}
 % \section{Problem restated}
@@ -1095,14 +1103,12 @@
 % \section{Test \texttt{\textbackslash meaningsc}}
 %
 % \meaningsc[1]{contents}\par
-%
 % \meaningsc[2]{contents}
 %
 % \section{Test \texttt{\textbackslash typestored}}
 %
 % \typestored[1]{contents}
-%
-% \typestored*[2]{contents}
+% \typestored[2]{contents}
 % \end{document}
 % \end{VerbatimOut}
 % Customization of \myenv*{verbatimsc} using the \mypkg{fancyvrb} and \mypkg{tcolorbox} package
@@ -1157,13 +1163,12 @@
 % \section{Test \texttt{\textbackslash getstored}}
 %
 % \getstored[2]{contents}\par
-%
 % \getstored[1]{contents}
 %
 % \section{Test \texttt{\textbackslash typestored}}
 %
 % \typestored[1]{contents}
-% \typestored*[2]{contents}
+% \typestored[2]{contents}
 % \end{document}
 % \end{VerbatimOut}
 % Customization of \myenv*{verbatimsc} using the \mypkg{listings} package
@@ -1188,7 +1193,8 @@
 % Test \verb+\begin{scontents}+ \par
 %
 % \begin{scontents}
-% Using \verb+scontents+ env no \verb+[key=val]+, save in seq \verb+contents+ with index 1.\par
+% Using \verb+scontents+ env no \verb+[key=val]+, save in seq \verb+contents+ 
+% with index 1.\par
 %
 % Prove new \Verb*{ new fvextra whit braces } and environment \verb+Verbatim*+
 % \begin{verbatim}
@@ -1201,11 +1207,12 @@
 % \Scontents{ We have coded \par this in \LaTeX: $E=mc^2$.}
 %
 % \section{Test \texttt{\textbackslash getstored}}
-% \getstored[2]{contents}\par
-% \getstored[1]{contents}
+% \getstored[1]{contents}\par
+% \getstored[2]{contents}
 %
 % \section{Test \texttt{\textbackslash typestored}}
 % \typestored[1]{contents}
+% \typestored[2]{contents}
 % \end{document}
 % \end{VerbatimOut}
 %
@@ -1223,6 +1230,7 @@
 % \begin{description}[font=\small\sffamily, wide=0pt, style=multiline, leftmargin=\descrwidth,  nosep, noitemsep]
 % \item [\fileversion{} (dev), \filedate]
 %    \begin{itemize}
+%        \item Remove \verb+\typestored*+.
 %        \item Remove \verb+filecontentsdef+ dependency.
 %        \item Changing \verb+\regex_replace_all:+ for \verb+\tl_replace_all:+.
 %        \item The space added by the macro \verb+\Scontents*+ was hidden.
@@ -1277,7 +1285,7 @@
 %    \begin{macrocode}
 \RequirePackage{l3keys2e}
 \RequirePackage{xparse}[2019/05/28]
-\ProvidesExplPackage{scontents}{2019/09/08}{1.2f}
+\ProvidesExplPackage{scontents}{2019/09/10}{1.2g}
   {Stores LaTeX contents in memory or files}
 %    \end{macrocode}
 % A check to make sure that \pkg{xparse} is not too old
@@ -1632,8 +1640,8 @@
 %   token list using \cs{@@_remove_leading_cr:n} (which expects an active |^^M|
 %   token at the head of the token list; a low level TeX error is raised
 %   otherwise).
-%^^A Note: Perhaps a key "space-tab={1,2,...9}" that affects (grabed and writing) only if present, 
-%    otherwise write "\t" in the external file and convert to "1 space" in the stored content".
+%^^A Note: Perhaps a key "space-tab=1,2,...9" that affects (grabed and writing) only if present, 
+%^^A otherwise write "\t" in the external file and convert to "1 space" in the stored content".
 %
 %    \begin{macrocode}
   \cs_new_protected:Npn \@@_file_tl_write_start:n #1
@@ -1737,15 +1745,15 @@
 %
 %%^^A User command \Scontents to stored content
 %
-% \begin{macro}{\Scontents,\@@_norm:n,\@@_verb:w}
+% \begin{macro}{\Scontents,\@@_norm_arg:n,\@@_verb_arg:w}
 %   The \cs{Scontents} macro starts by parsing an optional argument and
-%   then delegates to \cs{@@_verb:w} or \cs{@@_norm:n} depending whether
+%   then delegates to \cs{@@_verb_arg:w} or \cs{@@_norm_arg:n} depending whether
 %   a star argument is present.
 %
-%   \cs{@@_norm:n} grabs a normal argument, adds it to the |seq| varaible,
+%   \cs{@@_norm_arg:n} grabs a normal argument, adds it to the |seq| varaible,
 %   and optionally prints it.
 %
-%   \cs{@@_verb:w} grabs a verbatim argument using \pkg{xparse}'s |v|
+%   \cs{@@_verb_arg:w} grabs a verbatim argument using \pkg{xparse}'s |v|
 %   argument parser.
 %
 %^^A NOTE: Any particular reason why \keys_set_known:nn instead of just
@@ -1759,17 +1767,17 @@
       \IfNoValueF {#2}
         { \keys_set_known:nn { scontents / Scontents } {#2} }
       \IfBooleanTF{#1}
-        { \@@_verb:w }
-        { \@@_norm:n }
+        { \@@_verb_arg:w }
+        { \@@_norm_arg:n }
   }
-\cs_new_protected:Npn \@@_norm:n #1
+\cs_new_protected:Npn \@@_norm_arg:n #1
   {
      \exp_args:NV \@@_append_contents:nn \l_@@_name_seq_cmd_tl {#1}
      \bool_if:NT \l_@@_print_cmd_bool
        { \@@_getfrom_seq:nn { -1 } { \l_@@_name_seq_cmd_tl } }
    \group_end:
   }
-\NewDocumentCommand { \@@_verb:w } { +v }
+\NewDocumentCommand { \@@_verb_arg:w } { +v }
   {
       \tl_set:Nn \l_@@_temp_tl {#1}
       \tl_put_right:Nx \l_@@_temp_tl { \c_@@_hidden_space_str }
@@ -1803,51 +1811,47 @@
 % in (\url{https://tex.stackexchange.com/a/497651/7832}).
 %
 %%^^A User command \typestored
-% \begin{macro}{\typestored,\@@_fcdef_print:N,\@@_xverb:w,verbatimsc}
+% \begin{macro}{\typestored,\@@_verb_print:N,\@@_xverb:w,verbatimsc}
 %   The \cs{typestored} commands fetches a buffer from memory, prints it
-%   to the log file,
-%^^A NOTE: Perhaps this logging should be optional, with a key to switch
-%^^A       it on and off.
-%^^A Reply:It will be removed once the new patch is adapted....working ON
-%   and then calls \pkg{filecontentsdef}'s \tn{filecontentsdef@get} macro
+%   to the log file, and then calls \cs{@@_strip_rescan:N} macro
 %   to read the contents of the token list and pass them to
-%   \cs{@@_fcdef_print:N}.
+%   \cs{@@_verb_print:N}.
 %    \begin{macrocode}
-\NewDocumentCommand { \typestored } { s O{1} m }
+\NewDocumentCommand { \typestored } { O{1} m }
   {
     \group_begin:
-      \tl_set:Nx \l_@@_temp_tl { \@@_getfrom_seq:nn {#2} {#3} }
-      \tl_set:Nx \l_@@_temp_tl { \@@_strip_scantokens:N \l_@@_temp_tl }
+      \tl_set:Nx \l_@@_temp_tl { \@@_getfrom_seq:nn {#1} {#2} }
+      \tl_set:Nx \l_@@_temp_tl { \@@_strip_rescan:N \l_@@_temp_tl }
       \tl_remove_once:NV \l_@@_temp_tl \c_@@_hidden_space_str
       \tl_log:N \l_@@_temp_tl
-      \@@_fcdef_print:N \l_@@_temp_tl
+      \@@_verb_print:N \l_@@_temp_tl
     \group_end:
   }
 %    \end{macrocode}
-%   The \cs{@@_fcdef_print:N} macro is defined with active carriage return
+%   The \cs{@@_verb_print:N} macro is defined with active carriage return
 %   (\textsc{ascii} 13) characters to mimick an actual verbatim environment
-%   ``on the loose''. The contents of the environment are placed in a
-%   \env{verbatimsc} environment and rescanned using \tn{scantokens}.
-%%^^A Internal fcdef_print:N
+%   \enquote{on the loose}. The contents of the environment are placed in a
+%   \env{verbatimsc} environment and rescanned using \cs{@@_rescan_tokens:w}.
+%%^^A Internal verb_print:N
 %    \begin{macrocode}
 \group_begin:
   \char_set_catcode_active:N \^^M
-  \cs_new_protected:Npn \@@_fcdef_print:N #1
+  \cs_new_protected:Npn \@@_verb_print:N #1
     {
       \tl_if_blank:VT #1
         { \msg_error:nnn { scontents } { empty-variable } {#1} }
-      \cs_set_eq:NN \@@_fcdef_saved_EOL: ^^M
+      \cs_set_eq:NN \@@_verb_print_EOL: ^^M
       \cs_set_eq:NN ^^M \scan_stop:
       \use:x
         {
           \exp_not:N \@@_rescan_tokens:w
             {
               \exp_not:N \begin{verbatimsc} ^^M
-              \@@_strip_scantokens:N #1 ^^M
+              \@@_strip_rescan:N #1 ^^M
               \g_@@_end_verbatimsc_tl
             }
         }
-      \cs_set_eq:NN ^^M \@@_fcdef_saved_EOL:
+      \cs_set_eq:NN ^^M \@@_verb_print_EOL:
     }
 \group_end:
 %    \end{macrocode}
@@ -1871,24 +1875,24 @@
 %
 %%^^A Internal check scantokens
 % \begin{macro}{
-%     \@@_strip_scantokens:N,
-%     \@@_strip_scantokens:n,
-%     \@@_if_scantokens:Nw,
+%     \@@_strip_rescan:N,
+%     \@@_strip_rescan:n,
+%     \@@_if_rescan:Nw,
 %   }
-%   The \cs{@@_strip_scantokens:n} (\cs{@@_strip_scantokens:N}) macro
+%   The \cs{@@_strip_rescan:n} (\cs{@@_strip_rescan:N}) macro
 %   takes a token list (variable) as argument and examines it. If the
-%   argument token list is \emph{exactly} |\scantokens{|\meta{stuff}|}|,
+%   argument token list is \emph{exactly} \cs{@@_rescan_tokens:w}{|\meta{stuff}|},
 %   then the function returns \meta{stuff}, otherwise it returns the
 %   input token list without change. The token list is wrapped in
 %   \cs{exp_not:n} to avoid further expansion.
 %    \begin{macrocode}
-\cs_new:Npn \@@_strip_scantokens:N #1
-  { \exp_args:NV \@@_strip_scantokens:n #1 }
-\cs_new:Npn \@@_strip_scantokens:n #1
+\cs_new:Npn \@@_strip_rescan:N #1
+  { \exp_args:NV \@@_strip_rescan:n #1 }
+\cs_new:Npn \@@_strip_rescan:n #1
   {
     \tl_if_head_is_N_type:nTF {#1}
       {
-        \@@_if_scantokens:NwTF #1 \q_@@_mark
+        \@@_if_rescan:NwTF #1 \q_@@_mark
           {
             \exp_args:No \tl_if_single_token:nTF { \use_none:nn #1 ? }
               { \exp_not:o { \use_ii:nn #1 } }
@@ -1898,7 +1902,7 @@
       }
       { \exp_not:n {#1} }
   }
-\prg_new_conditional:Npnn \@@_if_scantokens:Nw #1#2 \q_@@_mark { TF }
+\prg_new_conditional:Npnn \@@_if_rescan:Nw #1#2 \q_@@_mark { TF }
   {
     \token_if_eq_meaning:NNTF \@@_rescan_tokens:w #1
       { \prg_return_true: }
@@ -1943,14 +1947,14 @@
 %
 %%^^A User command \meaningsc
 % \begin{macro}{\meaningsc}
-%   User command \cs{meaningsc} to see content stored in seq.
+%   User command \cs{meaningsc} to see content stored in |seq|.
 %    \begin{macrocode}
 \NewDocumentCommand { \meaningsc } { O{1} m }
   {
     \group_begin:
       \tl_set:Nx \l_@@_temp_tl { \@@_getfrom_seq:nn {#1} {#2} }
       \tl_set:Nx \l_@@_temp_tl
-        { \@@_strip_scantokens:N \l_@@_temp_tl }
+        { \@@_strip_rescan:N \l_@@_temp_tl }
       \tl_replace_all:Nxn \l_@@_temp_tl { \iow_char:N \^^J } { ~ }
       \tl_remove_once:NV \l_@@_temp_tl \c_@@_hidden_space_str
       \tl_log:N \l_@@_temp_tl
@@ -1965,7 +1969,7 @@
 %
 %%^^A User command \countsc
 % \begin{macro}{\countsc}
-%   User command \cs{countsc} to count number of contents stored in seq.
+%   User command \cs{countsc} to count number of contents stored in |seq|.
 %    \begin{macrocode}
 \NewExpandableDocumentCommand { \countsc } { m }
   { \seq_count:c { g_@@_seq_name_#1_seq } }
@@ -1976,7 +1980,7 @@
 %
 %%^^A User command \cleanseqsc
 % \begin{macro}{\cleanseqsc}
-%   A user command \cs{cleanseqsc} to clear (remove) a defined seq
+%   A user command \cs{cleanseqsc} to clear (remove) a defined |seq|.
 %    \begin{macrocode}
 \NewDocumentCommand { \cleanseqsc } { m }
   { \seq_clear_new:c { g_@@_seq_name_#1_seq } }
@@ -1989,7 +1993,7 @@
 %
 %%^^A Messages
 %^^A NOTE: It would be nice to have the messages  
-%^^A { ignoring-text } { tab-to-space } { feed-to-space } like a filecontens
+%^^A { ignoring-text } { tab-to-space } { feed-to-space } like a filecontents
 %    \begin{macrocode}
 \msg_new:nnn { scontents } { junk-after-begin }
   {
