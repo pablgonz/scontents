@@ -22,8 +22,8 @@
 XX\getstored[1]{nospace}YY\par
 XX\getstored[2]{nospace}YY\par
 
-\typestored*[1]{nospace}\par
-\typestored*[2]{nospace}\par
+\typestored[1]{nospace}\par
+\typestored[2]{nospace}\par
 
 \meaningsc[1]{nospace}\par
 \meaningsc[2]{nospace}
@@ -219,25 +219,25 @@ Test \verb+\meaningsc[1]{othervrb}+:\par
 
 \noindent\hrulefill
 
-\subsection{Test \texttt{\textbackslash typestored*[index]\{seq name\}}}
+\subsection{Test \texttt{\textbackslash typestored[index]\{seq name\}}}
 
 \noindent\hrulefill
 
-Test \verb+\typestored*[1]{testcmdvrb}+:\par
+Test \verb+\typestored[1]{testcmdvrb}+:\par
 
-\typestored*[1]{testcmdvrb}
-
-\noindent\hrulefill
-
-Test \verb+\typestored*[2]{testcmdvrb}+:\par
-
-\typestored*[2]{testcmdvrb}
+\typestored[1]{testcmdvrb}
 
 \noindent\hrulefill
 
-Test \verb+\typestored*[1]{othervrb}+:\par
+Test \verb+\typestored[2]{testcmdvrb}+:\par
 
-\typestored*[1]{othervrb}
+\typestored[2]{testcmdvrb}
+
+\noindent\hrulefill
+
+Test \verb+\typestored[1]{othervrb}+:\par
+
+\typestored[1]{othervrb}
 
 \noindent\hrulefill
 
@@ -443,8 +443,7 @@ This is the answer to exercise 1, the shebang line for a Perl script
 \end{answer}
 }
 \subsection{typestored}
-% custom :)
-\RecustomVerbatimEnvironment{verbatimsc}{Verbatim}{frame=single,numbers=left}
+\RecustomVerbatimEnvironment{verbatimsc}{Verbatim}{frame=none,numbers=left}
 \typestored[1]{answers}
-\typestored*[2]{answers}
+\typestored[2]{answers}
 \end{document}

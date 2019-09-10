@@ -1,6 +1,6 @@
 \RequirePackage{l3keys2e}
 \RequirePackage{xparse}[2019/05/28]
-\ProvidesExplPackage{scontents}{2019/09/08}{1.2f}
+\ProvidesExplPackage{scontents}{2019/09/10}{1.2g}
   {Stores LaTeX contents in memory or files}
 \@ifpackagelater { xparse } { 2019/05/03 }
   { }
@@ -247,17 +247,17 @@
       \IfNoValueF {#2}
         { \keys_set_known:nn { scontents / Scontents } {#2} }
       \IfBooleanTF{#1}
-        { \__scontents_verb:w }
-        { \__scontents_norm:n }
+        { \__scontents_verb_arg:w }
+        { \__scontents_norm_arg:n }
   }
-\cs_new_protected:Npn \__scontents_norm:n #1
+\cs_new_protected:Npn \__scontents_norm_arg:n #1
   {
      \exp_args:NV \__scontents_append_contents:nn \l__scontents_name_seq_cmd_tl {#1}
      \bool_if:NT \l__scontents_print_cmd_bool
        { \__scontents_getfrom_seq:nn { -1 } { \l__scontents_name_seq_cmd_tl } }
    \group_end:
   }
-\NewDocumentCommand { \__scontents_verb:w } { +v }
+\NewDocumentCommand { \__scontents_verb_arg:w } { +v }
   {
       \tl_set:Nn \l__scontents_temp_tl {#1}
       \tl_put_right:Nx \l__scontents_temp_tl { \c__scontents_hidden_space_str }
@@ -273,35 +273,35 @@
 \NewDocumentCommand { \getstored } { O{1} m }
   { \__scontents_getfrom_seq:nn {#1} {#2} }
 %%^^A User command \typestored
-\NewDocumentCommand { \typestored } { s O{1} m }
+\NewDocumentCommand { \typestored } { O{1} m }
   {
     \group_begin:
-      \tl_set:Nx \l__scontents_temp_tl { \__scontents_getfrom_seq:nn {#2} {#3} }
-      \tl_set:Nx \l__scontents_temp_tl { \__scontents_strip_scantokens:N \l__scontents_temp_tl }
+      \tl_set:Nx \l__scontents_temp_tl { \__scontents_getfrom_seq:nn {#1} {#2} }
+      \tl_set:Nx \l__scontents_temp_tl { \__scontents_strip_rescan:N \l__scontents_temp_tl }
       \tl_remove_once:NV \l__scontents_temp_tl \c__scontents_hidden_space_str
       \tl_log:N \l__scontents_temp_tl
-      \__scontents_fcdef_print:N \l__scontents_temp_tl
+      \__scontents_verb_print:N \l__scontents_temp_tl
     \group_end:
   }
-%%^^A Internal fcdef_print:N
+%%^^A Internal verb_print:N
 \group_begin:
   \char_set_catcode_active:N \^^M
-  \cs_new_protected:Npn \__scontents_fcdef_print:N #1
+  \cs_new_protected:Npn \__scontents_verb_print:N #1
     {
       \tl_if_blank:VT #1
         { \msg_error:nnn { scontents } { empty-variable } {#1} }
-      \cs_set_eq:NN \__scontents_fcdef_saved_EOL: ^^M
+      \cs_set_eq:NN \__scontents_verb_print_EOL: ^^M
       \cs_set_eq:NN ^^M \scan_stop:
       \use:x
         {
           \exp_not:N \__scontents_rescan_tokens:w
             {
               \exp_not:N \begin{verbatimsc} ^^M
-              \__scontents_strip_scantokens:N #1 ^^M
+              \__scontents_strip_rescan:N #1 ^^M
               \g__scontents_end_verbatimsc_tl
             }
         }
-      \cs_set_eq:NN ^^M \__scontents_fcdef_saved_EOL:
+      \cs_set_eq:NN ^^M \__scontents_verb_print_EOL:
     }
 \group_end:
 %%^^A Definition of verbatimsc environment
@@ -318,13 +318,13 @@
   }
   { }
 %%^^A Internal check scantokens
-\cs_new:Npn \__scontents_strip_scantokens:N #1
-  { \exp_args:NV \__scontents_strip_scantokens:n #1 }
-\cs_new:Npn \__scontents_strip_scantokens:n #1
+\cs_new:Npn \__scontents_strip_rescan:N #1
+  { \exp_args:NV \__scontents_strip_rescan:n #1 }
+\cs_new:Npn \__scontents_strip_rescan:n #1
   {
     \tl_if_head_is_N_type:nTF {#1}
       {
-        \__scontents_if_scantokens:NwTF #1 \q__scontents_mark
+        \__scontents_if_rescan:NwTF #1 \q__scontents_mark
           {
             \exp_args:No \tl_if_single_token:nTF { \use_none:nn #1 ? }
               { \exp_not:o { \use_ii:nn #1 } }
@@ -334,7 +334,7 @@
       }
       { \exp_not:n {#1} }
   }
-\prg_new_conditional:Npnn \__scontents_if_scantokens:Nw #1#2 \q__scontents_mark { TF }
+\prg_new_conditional:Npnn \__scontents_if_rescan:Nw #1#2 \q__scontents_mark { TF }
   {
     \token_if_eq_meaning:NNTF \__scontents_rescan_tokens:w #1
       { \prg_return_true: }
@@ -360,7 +360,7 @@
     \group_begin:
       \tl_set:Nx \l__scontents_temp_tl { \__scontents_getfrom_seq:nn {#1} {#2} }
       \tl_set:Nx \l__scontents_temp_tl
-        { \__scontents_strip_scantokens:N \l__scontents_temp_tl }
+        { \__scontents_strip_rescan:N \l__scontents_temp_tl }
       \tl_replace_all:Nxn \l__scontents_temp_tl { \iow_char:N \^^J } { ~ }
       \tl_remove_once:NV \l__scontents_temp_tl \c__scontents_hidden_space_str
       \tl_log:N \l__scontents_temp_tl
