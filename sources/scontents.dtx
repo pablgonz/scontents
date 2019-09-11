@@ -488,7 +488,7 @@
 % \emph{buffers} that has \hologo{ConTeXt} which allows you to save content in
 % memory, including \emph{verbatim}, to be used later. The package
 % \mypkg{filecontentsdef} solves this problem and since \mypkg{expl3} has an
-% excellent way to manage data, ideas were combined giving rise to this package
+% excellent way to manage data, ideas were combined giving rise to this package.
 %
 % This package would not be possible without the great work of \textsc{Jean
 % Fran\c{c}ois Burnol} who was kind enough to take my requirements into account
@@ -534,9 +534,9 @@
 % \subsection{Description}
 %
 % The \mypkg*{scontents} package allows to store contents in memory (sequence)
-% or in external files, provides a user interface style \myoarg{key = val}
-% along with the ability to save content in sequences
-% for later use in different parts of the document.
+% or external files, provides a user interface style \myoarg{key = val}
+% along with the ability to store contents in sequences for later use in
+% different parts of the document.
 %
 % \subsection{Loading package}
 % \label{sec:loadoptpkg}
@@ -673,21 +673,27 @@
 % \medskip
 %
 % \keyexamp{write-env}{file.ext}{not used}
-% In addition to storing the content of the environment will write this in
-% an external file.
+% In addition to storing the content of the environment will write this
+% in an external \mymeta{file.ext}, if \mymeta{file.ext} exists it will
+% be overwritten. The \mymeta{file.ext} will be created in the working
+% directory, relative or absolute paths are not supported, the way the
+% external \mymeta{file.ext} is recorded is similar to that produced by
+% \myenv{filecontents*} environment.
 %
 % \medskip
 %
 % \keyexamp{write-out}{file.ext}{not used}
-% It will write the contents of the environment in an external file, but,
-% it will not store the contents of this one. It is analogous to the
-% \myenv{filecontents*} environment.
+% It will write the contents in an external \mymeta{file.ext}, but, it
+% will not store the contents of this one. The \mymeta{file.ext} will be
+% created in the working directory, relative or absolute paths are not
+% supported. The way the external \mymeta{file.ext} is recorded is similar
+% to that produced by \myenv{filecontents*} environment.
 %
 % \subsection{The command \cs{Scontents}}
 % \label{sec:Scontents}
 %
-% The command to store content directly in memory, the star version allows to save
-%  \meta{verbatim} contents.
+% The command to store content directly in memory, the star version allows
+% to save \meta{verbatim} contents.
 %
 % \vspace*{-10pt}
 %
@@ -699,27 +705,21 @@
 %   \end{syntax}
 % \end{function}
 %
-% The \ics*{Scontents} command reads the \meta{argument} in standard mode.
+% The \ics*{Scontents} command reads the \mymeta{argument} in standard mode.
 % It is not possible to pass environments such as \meta{verbatim}, but it is
 % possible to use the implementation of \ics{Verb} provided by the
 % \mypkg{fvextra} package for contents on one line and \ics{lstinline} from
 % \mypkg{listings} package, but it is preferable to use the starred version.
 %
-% It can be used anywhere in the document and cannot be used as an \meta{argument}
-% for another command.
+% The \ics*{Scontents*} command reads the \mymeta{argument} under  verbatim
+% category code regimen. If its first delimiter is a brace, it will be assumed
+% that the \mymeta{argument} is nested into braces. Otherwise it will be assumed
+% that the ending of that argument is delimited by that first delimiter-like the
+% argument of \ics{verb}. Blank lines are preserved and escaped |\{| and |\}| must
+% also be balanced if the argument is used with braces.
 %
-% The \ics*{Scontents*} command reads the \meta{argument} under  verbatim
-% category code regimen. If its first delimiter is a brace, it will be assumed that
-% the \meta{argument} is nested into braces. Otherwise it will be assumed that
-% the ending of that argument is delimited by that first delimiter-like the
-% argument of \ics{verb}. Some considerations to keep in mind:
-%
-% \begin{enumerate}[nosep]
-% \item Blank lines are preserved.
-% \item The command cannot be used as an argument for another command.
-% \item If you don't want the extra space added by \hologo{TeX}, you should use
-% \ics{relax} or \lstinline[style=inline]|%| at the end.
-% \end{enumerate}
+% Both versions of the command can be used anywhere in the document and cannot
+% be used as an \mymeta{argument} for another command.
 %
 % \subsection*{Options for command}
 % \label{sec:optcmdsc}
