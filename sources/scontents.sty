@@ -55,7 +55,7 @@
   { \end{verbatimsc} }
 \tl_const:Nx \c__scontents_end_env_tl
   { \c_backslash_str end \c_left_brace_str scontents \c_right_brace_str }
-%%^^A A string to hidden space tl before grab argument
+%%^^A A string to hidden space after grab argument
 \str_const:Nx \c__scontents_hidden_space_str
   { \c_percent_str scontentshs \c_percent_str }
 %%^^A Internal quarks
@@ -83,7 +83,7 @@
     write-env .value_required:n = true,
     write-out .value_required:n = true
   }
-%%^^A A sub/keys for command |\Scontents|
+%%^^A A sub/keys for command \Scontents
 \keys_define:nn { scontents / Scontents }
   {
     print-cmd .meta:nn = { scontents } { print-cmd = #1 },
@@ -104,7 +104,6 @@
 %%^^A Storing content in seq
 \cs_new_protected:Npn \__scontents_stored_to_seq:
   {
-    %\regex_replace_all:nnN { \^^M } { \^^J } \l__scontents_macro_tmp_tl
     \tl_log:N \l__scontents_macro_tmp_tl
     \__scontents_append_contents:Vx \l__scontents_name_seq_env_tl
       { \exp_not:N \__scontents_rescan_tokens:w { \tl_use:N \l__scontents_macro_tmp_tl } }
@@ -187,10 +186,7 @@
                     \bool_if:NT \l__scontents_storing_bool
                       {
                         \tl_put_right:Nn \exp_not:N \l__scontents_file_tl
-                          {
-                            %\exp_not:N ^^M ####1
-                            \exp_not:N ^^J ####1
-                          }
+                          { \exp_not:N ^^J ####1 }
                       }
                   }
                   {
@@ -226,7 +222,6 @@
     }
   \cs_new:Npn \__scontents_remove_leading_cr:n #1
     { \exp_not:o { \__scontents_remove_leading_cr:w #1 } }
-  %\cs_new:Npn \__scontents_remove_leading_cr:w ^^M { }
   \cs_new:Npn \__scontents_remove_leading_cr:w ^^J { }
 \group_end:
 \cs_generate_variant:Nn \__scontents_file_tl_write_start:n { V }
@@ -235,7 +230,7 @@
   {
     \bool_if:NT \l__scontents_storing_bool
       {
-        % A problem with fancyhdr for now...
+        % A problem with fancyvrb for now...but works :)
         %\tl_put_right:Nx \l__scontents_macro_tmp_tl { \c__scontents_hidden_space_str }
         \__scontents_stored_to_seq:
       }
