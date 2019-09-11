@@ -534,7 +534,7 @@
 % \subsection{Description}
 %
 % The \mypkg*{scontents} package allows to store contents in memory (sequence)
-% or in external files, provides a user interface style \myoarg{key = val} 
+% or in external files, provides a user interface style \myoarg{key = val}
 % along with the ability to save content in sequences
 % for later use in different parts of the document.
 %
@@ -621,8 +621,8 @@
 %   \envexamp{scontents}
 %   \end{syntax}
 %
-% The \myenv*{scontents} environment allows you to save the content to memory 
-% or external files in a similar way to the package \myenv{filecontents}. This 
+% The \myenv*{scontents} environment allows you to save the content to memory
+% or external files in a similar way to the package \myenv{filecontents}. This
 % allows you to record content including verbatim for later reuse.
 % \end{function}
 %
@@ -756,7 +756,7 @@
 % The command \ics*{typestored*} must be used for content stored by \ics*{Scontents*} command.
 % Internally places the content into the \myenv*{verbatimsc} environment.
 %
-% If the optional argument is not passed it defaults to the last element 
+% If the optional argument is not passed it defaults to the last element
 % saved in the \meta{seq name}.
 %
 % \subsection{The environment \env{verbatimsc}}
@@ -1193,7 +1193,7 @@
 % Test \verb+\begin{scontents}+ \par
 %
 % \begin{scontents}
-% Using \verb+scontents+ env no \verb+[key=val]+, save in seq \verb+contents+ 
+% Using \verb+scontents+ env no \verb+[key=val]+, save in seq \verb+contents+
 % with index 1.\par
 %
 % Prove new \Verb*{ new fvextra whit braces } and environment \verb+Verbatim*+
@@ -1386,7 +1386,9 @@
 %    \end{macrocode}
 % \end{macro}
 %
-%%^^A A string to hidden space tl before grab argument
+%%^^A A string to hidden space after grab argument
+%^^A NOTE: This is a rather poor trick, the ideal would be to remove the 
+%^^A       forced space added after recording the argument.
 % \begin{macro}{\c_@@_hidden_space_str}
 %   \cs{c_@@_hidden_space_str} is a constant string to used to hide the
 %  \meta{forced space} added by \TeX{} when recording content in a macro.
@@ -1465,7 +1467,7 @@
 %
 % A sub/keys for command |\Scontents| and |\Scontents*|
 %
-%%^^A A sub/keys for command |\Scontents|
+%%^^A A sub/keys for command \Scontents
 %    \begin{macrocode}
 \keys_define:nn { scontents / Scontents }
   {
@@ -1483,7 +1485,7 @@
 %
 %   \cs{@@_append_contents:nn} creates a seq variable if one didn't
 %   exist and appends the contents in the argument to the right of the
-%   sequence.  \cs{@@_getfrom_seq:nn} retrieves the saved item from the
+%   sequence. \cs{@@_getfrom_seq:nn} retrieves the saved item from the
 %   sequence.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_append_contents:nn #1#2
@@ -1506,17 +1508,10 @@
 %   optionally logging the contents of the current \env{scontents}
 %   environment.
 %
-%^^A TODO: Perhaps replace the regex by a delimited macro to improve
-%^^A       performance... Or temporarily redefine ^^M to mean ^^J...
-%^^A Reply: Or Changing \regex_replace_all for \tl_replace_all
-%^^A       I think this function could be used in both {scontents} and
-%^^A       \Scontents*. 
 %%^^A Storing content in seq
-%^^A Remove regex after implement % at end of _macro_tmp_tl
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_stored_to_seq:
   {
-    %\regex_replace_all:nnN { \^^M } { \^^J } \l_@@_macro_tmp_tl
     \tl_log:N \l_@@_macro_tmp_tl
     \@@_append_contents:Vx \l_@@_name_seq_env_tl
       { \exp_not:N \@@_rescan_tokens:w { \tl_use:N \l_@@_macro_tmp_tl } }
@@ -1605,7 +1600,7 @@
 %
 %^^A Hm... Apparently this is not the verbatim group, but one level above. Is
 %^^A this group really necessary?
-%^^A Reply : Maybe the groups aren't in the right places, but when you remove 
+%^^A Reply : Maybe the groups aren't in the right places, but when you remove
 %^^A them it just gives you errors...(test-pkg-current.tex)
 %    \begin{macrocode}
 \group_begin:
@@ -1641,7 +1636,7 @@
 %   token list using \cs{@@_remove_leading_cr:n} (which expects an active |^^M|
 %   token at the head of the token list; a low level TeX error is raised
 %   otherwise).
-%^^A Note: Perhaps a key "space-tab=1,2,...9" that affects (grabed and writing) only if present, 
+%^^A Note: Perhaps a key "space-tab=1,2,...9" that affects (grabed and writing) only if present,
 %^^A otherwise write "\t" in the external file and convert to "1 space" in the stored content".
 %
 %    \begin{macrocode}
@@ -1672,10 +1667,7 @@
                     \bool_if:NT \l_@@_storing_bool
                       {
                         \tl_put_right:Nn \exp_not:N \l_@@_file_tl
-                          { 
-                            %\exp_not:N ^^M ####1 
-                            \exp_not:N ^^J ####1 
-                          }
+                          { \exp_not:N ^^J ####1 }
                       }
                   }
                   {
@@ -1708,16 +1700,14 @@
                 { \exp_args:NV \@@_remove_leading_cr:n \l_@@_file_tl }
             }
         }
-    }    
+    }
   \cs_new:Npn \@@_remove_leading_cr:n #1
     { \exp_not:o { \@@_remove_leading_cr:w #1 } }
-  %\cs_new:Npn \@@_remove_leading_cr:w ^^M { }
   \cs_new:Npn \@@_remove_leading_cr:w ^^J { }
 \group_end:
 \cs_generate_variant:Nn \@@_file_tl_write_start:n { V }
 %    \end{macrocode}
 % \end{macro}
-%^^A remove_leading_cr ... debo estudiarlo 
 %
 % \subsubsection{Recording of the content in the sequence}
 %
@@ -1731,10 +1721,10 @@
 \cs_new_protected:Npn \@@_atend_environment:
   {
     \bool_if:NT \l_@@_storing_bool
-      { 
-        % A problem with fancyhdr for now...
+      {
+        % A problem with fancyvrb for now...but works :)
         %\tl_put_right:Nx \l__scontents_macro_tmp_tl { \c__scontents_hidden_space_str }
-        \@@_stored_to_seq: 
+        \@@_stored_to_seq:
       }
     \bool_if:NT \l_@@_print_env_bool
       {
@@ -2002,7 +1992,7 @@
 % Messages used throughout the package.
 %
 %%^^A Messages
-%^^A NOTE: It would be nice to have the messages  
+%^^A NOTE: It would be nice to have the messages
 %^^A { ignoring-text } { tab-to-space } { feed-to-space } like a filecontents
 %    \begin{macrocode}
 \msg_new:nnn { scontents } { junk-after-begin }
