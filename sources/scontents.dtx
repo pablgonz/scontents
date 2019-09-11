@@ -488,7 +488,7 @@
 % \emph{buffers} that has \hologo{ConTeXt} which allows you to save content in
 % memory, including \emph{verbatim}, to be used later. The package
 % \mypkg{filecontentsdef} solves this problem and since \mypkg{expl3} has an
-% excellent way to manage data, I decided to combine the best of both.
+% excellent way to manage data. The combination of these ideas gives rise to this package.
 %
 % This package would not be possible without the great work of \textsc{Jean
 % Fran\c{c}ois Burnol} who was kind enough to take my requirements into account
@@ -634,12 +634,24 @@
 %  must be on different lines.
 % \item The \myoarg{key=val} options must be passed on one line right after
 %  starting the environment.
-% \item The content of the environment is treated in the same way as
-% \myenv{filecontents*} environment.
+% \item The content of the environment is treated in a similar way to the environment
+%  \myenv{filecontents*}.
 % \item If you don't want the extra space added by \hologo{TeX}, you should use
-% \ics{relax} or \lstinline[style=inline]|%| at the end of environment.
+%  \ics{relax} or \lstinline[style=inline]|%| at the end of environment.
 % \end{enumerate}
 %
+% The |TAB|s characters typed from the keyboard are converted into spaces when
+% they are stored in memory, but, they are preserved when recording in a file,
+% if they are not typed at the end of a line, unfortunately, dependent on the
+% \hologo{TeX} distribution you have and how the formats were initialized.
+%
+% With a \hologo{TeX}Live distribution, the formats for |latex|, |pdflatex| and
+% |lualatex| are prepared feeding the option |-translate-file=cp227.tcx|, that
+% makes the |TAB| character \enquote{printable}.
+%
+% To write a literal |TAB| character using |xelatex| you must add the |-8bit|
+% option on command line, otherwise you will get \hologo{TeX}-|TAB|s (|^^I|) in
+% the output file.
 %
 % \subsection*{Options for environment}
 %
@@ -1387,7 +1399,7 @@
 % \end{macro}
 %
 %%^^A A string to hidden space after grab argument
-%^^A NOTE: This is a rather poor trick, the ideal would be to remove the 
+%^^A NOTE: This is a rather poor trick, the ideal would be to remove the
 %^^A       forced space added after recording the argument.
 % \begin{macro}{\c_@@_hidden_space_str}
 %   \cs{c_@@_hidden_space_str} is a constant string to used to hide the
