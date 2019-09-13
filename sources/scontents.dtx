@@ -715,11 +715,14 @@
 % category code regimen. If its first delimiter is a brace, it will be assumed
 % that the \mymeta{argument} is nested into braces. Otherwise it will be assumed
 % that the ending of that argument is delimited by that first delimiter-like the
-% argument of \ics{verb}. Blank lines are preserved and escaped |\{| and |\}| must
-% also be balanced if the argument is used with braces.
+% argument of \ics{verb}. Blank lines are preserved, escaped |\{| and |\}| must
+% also be balanced if the argument is used with braces and |TAB|s characters typed
+% from the keyboard are converted into spaces. If you don't want the extra space
+% added by \hologo{TeX}, you should use \ics{relax} or \lstinline[style=inline]|%|
+% at the end of \mymeta{argument}.
 %
 % Both versions of the command can be used anywhere in the document and cannot
-% be used as an \mymeta{argument} for another command.
+% be used as an \mymeta{argument} for other command.
 %
 % \subsection*{Options for command}
 % \label{sec:optcmdsc}
@@ -1249,7 +1252,6 @@
 %        \item Remove \verb+\typestored*+.
 %        \item Remove \verb+filecontentsdef+ dependency.
 %        \item Changing \verb+\regex_replace_all:+ for \verb+\tl_replace_all:+.
-%        \item The space added by the macro \verb+\Scontents*+ was hidden.
 %    \end{itemize}
 % \item [v1.2 (ctan), 2019/08/28]
 %    \begin{itemize}
@@ -1301,7 +1303,7 @@
 %    \begin{macrocode}
 \RequirePackage{l3keys2e}
 \RequirePackage{xparse}[2019/05/28]
-\ProvidesExplPackage{scontents}{2019/09/10}{1.2h}
+\ProvidesExplPackage{scontents}{2019/09/18}{1.3}
   {Stores LaTeX contents in memory or files}
 %    \end{macrocode}
 % A check to make sure that \pkg{xparse} is not too old
@@ -1538,7 +1540,7 @@
 % \subsection{Construction of environment scontents}
 %
 % We define the environment \env{scontents}, next to the system |key=val|.
-% The environment is divided into three parts.  This implementation is taken
+% The environment is divided into three parts. This implementation is taken
 % from answer by Enrico Gregorio in \url{https://tex.stackexchange.com/a/487746/7832}.
 %
 %%^^A Define {scontents} whit [key=val] (delaying)
@@ -1652,7 +1654,7 @@
 %   token list using \cs{@@_remove_leading_cr:n} (which expects an active |^^M|
 %   token at the head of the token list; a low level TeX error is raised
 %   otherwise).
-%^^A Note: Perhaps a key "space-tab=1,2,...9" that affects (grabed and writing) only if present,
+%^^A Note: Perhaps a key "space-tab=1,2,...9" that affects (grabed or grabed and writing) only if present,
 %^^A otherwise write "\t" in the external file and convert to "1 space" in the stored content".
 %
 %    \begin{macrocode}
@@ -1738,7 +1740,7 @@
   {
     \bool_if:NT \l_@@_storing_bool
       {
-        % A problem with fancyvrb for now...but works :)
+        % A problem with fancyvrb \end{Verbatim}% raise on error
         %\tl_put_right:Nx \l__scontents_macro_tmp_tl { \c__scontents_hidden_space_str }
         \@@_stored_to_seq:
       }
@@ -1796,7 +1798,7 @@
 \NewDocumentCommand { \@@_verb_arg:w } { +v }
   {
       \tl_set:Nn \l_@@_temp_tl {#1}
-      \tl_put_right:Nx \l_@@_temp_tl { \c_@@_hidden_space_str }
+      %\tl_put_right:Nx \l_@@_temp_tl { \c_@@_hidden_space_str }
       \tl_replace_all:Nxx \l_@@_temp_tl { \iow_char:N \^^M } { \iow_char:N \^^J }
       \tl_log:N \l_@@_temp_tl
       \exp_args:NVx \@@_append_contents:nn \l_@@_name_seq_cmd_tl
@@ -1838,7 +1840,7 @@
     \group_begin:
       \tl_set:Nx \l_@@_temp_tl { \@@_getfrom_seq:nn {#1} {#2} }
       \tl_set:Nx \l_@@_temp_tl { \@@_strip_rescan:N \l_@@_temp_tl }
-      \tl_remove_once:NV \l_@@_temp_tl \c_@@_hidden_space_str
+      %\tl_remove_once:NV \l_@@_temp_tl \c_@@_hidden_space_str
       \tl_log:N \l_@@_temp_tl
       \@@_verb_print:N \l_@@_temp_tl
     \group_end:
@@ -1972,7 +1974,7 @@
       \tl_set:Nx \l_@@_temp_tl
         { \@@_strip_rescan:N \l_@@_temp_tl }
       \tl_replace_all:Nxn \l_@@_temp_tl { \iow_char:N \^^J } { ~ }
-      \tl_remove_once:NV \l_@@_temp_tl \c_@@_hidden_space_str
+      %\tl_remove_once:NV \l_@@_temp_tl \c_@@_hidden_space_str
       \tl_log:N \l_@@_temp_tl
       \ttfamily
       \cs_replacement_spec:N \l_@@_temp_tl
