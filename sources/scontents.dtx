@@ -1862,8 +1862,6 @@
 %   \env{verbatimsc} environment and rescanned using \cs{@@_rescan_tokens:w}.
 %%^^A Internal verb_print:N
 %    \begin{macrocode}
-\cs_new:Npn \eshow:n #1 { \exp_args:No \use_none:n { \:_: #1> } }
-\cs_generate_variant:Nn \eshow:n { o, v, f, x, V }
 \group_begin:
   \char_set_catcode_active:N \^^M
   \cs_new_protected:Npn \@@_verb_print:N #1
