@@ -1,5 +1,8 @@
 % arara: pdflatex: { interaction: batchmode }
 % arara: clean: { extensions: [ aux, log] }
+\pdfinfoomitdate1
+\pdfsuppressptexinfo-1
+\pdftrailerid{}
 \documentclass{article}
 \usepackage{scontents}
 % only for test
@@ -13,20 +16,54 @@
 \let\verbatimsc\@undefined
 \let\endverbatimsc\@undefined
 \makeatother
-\DefineVerbatimEnvironment{verbatimsc}{Verbatim}{numbers=left,frame=single}
+\ExplSyntaxOn
+\use:n
+  {
+\ExplSyntaxOff
+\DefineVerbatimEnvironment{verbatimsc}{Verbatim}
+  {
+    numbers=left,
+    frame=single,
+    codes*=
+      {
+        \char_set_catcode_active:N \,
+        \char_set_catcode_active:n { 9 }
+        \char_set_active_eq:nN { 9 } \__scontents_tabs_to_spaces:
+        \char_set_active_eq:NN \, \commacomma
+      }
+  }
+  }
+\def\commacomma{\show\ImAComma {X}}
 \begin{document}
 \Scontents*[store-cmd=nospace]{Write in one line \LaTeX: $E=mc^2$, no space after dot.}
 
 \Scontents*[store-cmd=nospace]|Other in one line, no space after dot.|
 
+\Scontents*[store-cmd=nospace]|Other	in	one	line,	no	space	after	dot.|
+
+\Scontents*[store-cmd=nospace]|TODO: Tab after comma:,	.|
+
 XX\getstored[1]{nospace}YY\par
 XX\getstored[2]{nospace}YY\par
+XX\getstored[3]{nospace}YY\par
 
 \typestored[1]{nospace}\par
 \typestored[2]{nospace}\par
+\typestored[3]{nospace}\par
+\typestored[3][tab-width=1]{nospace}\par
+\typestored[3][tab-width=2]{nospace}\par
+\typestored[3][tab-width=3]{nospace}\par
+\typestored[3][tab-width=4]{nospace}\par
+\typestored[4][tab-width=1]{nospace}\par
 
 \meaningsc[1]{nospace}\par
-\meaningsc[2]{nospace}
+\meaningsc[2]{nospace}\par
+\meaningsc[3]{nospace}\par
+\meaningsc[3][tab-width=1]{nospace}\par
+\meaningsc[3][tab-width=2]{nospace}\par
+\meaningsc[3][tab-width=3]{nospace}\par
+\meaningsc[3][tab-width=4]{nospace}\par
+\meaningsc[4][tab-width=1]{nospace}\par
 
 % These outputs should look the same
 FIRST\par

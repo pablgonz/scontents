@@ -24,11 +24,14 @@
     print-cmd .bool_set:N       = \l__scontents_print_cmd_bool,
     print-cmd .initial:n        = false,
     print-all .meta:n           = { print-env = true , print-cmd = true },
+    tab-width .int_set:N        = \l__scontents_tab_width_int,
+    tab-width .initial:n        = 1,
     store-env .value_required:n = true,
-    store-cmd .value_required:n = true,
     print-env .value_required:n = true,
+    store-cmd .value_required:n = true,
     print-cmd .value_required:n = true,
-    print-all .value_required:n = true
+    print-all .value_required:n = true,
+    tab-width .value_required:n = true,
   }
 %%^^A Process options for pkg
 \ProcessKeysOptions { scontents }
@@ -67,7 +70,7 @@
 \cs_new:Npx \__scontents_tab: { \c_space_tl }
 \cs_new:Npn \__scontents_par: { ^^J ^^J }
 \cs_generate_variant:Nn \tl_remove_once:Nn { NV }
-\cs_generate_variant:Nn \tl_replace_all:Nnn { Nx, Nxx }
+\cs_generate_variant:Nn \tl_replace_all:Nnn { Nx, Nxx, Nnx }
 %%^^A Add keys to scontents environnment
 \keys_define:nn { scontents }
   {
@@ -216,13 +219,13 @@
           \bool_if:NT \l__scontents_storing_bool
             {
               \tl_set:Nn \exp_not:N #1
-                { \exp_args:NV \__scontents_remove_leading_cr:n \l__scontents_file_tl }
+                { \exp_args:NV \__scontents_remove_leading_nl:n \l__scontents_file_tl }
             }
         }
     }
-  \cs_new:Npn \__scontents_remove_leading_cr:n #1
-    { \exp_not:o { \__scontents_remove_leading_cr:w #1 } }
-  \cs_new:Npn \__scontents_remove_leading_cr:w ^^J { }
+  \cs_new:Npn \__scontents_remove_leading_nl:n #1
+    { \exp_not:o { \__scontents_remove_leading_nl:w #1 } }
+  \cs_new:Npn \__scontents_remove_leading_nl:w ^^J { }
 \group_end:
 \cs_generate_variant:Nn \__scontents_file_tl_write_start:n { V }
 %%^^A Second atend_environment/stored_to_seq
@@ -249,10 +252,14 @@
     \group_begin:
       \IfNoValueF {#2}
         { \keys_set_known:nn { scontents / Scontents } {#2} }
-      \IfBooleanTF{#1}
+      \char_set_catcode_active:n { 9 }
+      \char_set_catcode_other:N \,
+      \IfBooleanTF {#1}
         { \__scontents_verb_arg:w }
         { \__scontents_norm_arg:n }
   }
+\cs_new:Npn \__scontents_tabs_to_spaces:
+  { \prg_replicate:nn { \l__scontents_tab_width_int } { ~ } }
 \cs_new_protected:Npn \__scontents_norm_arg:n #1
   {
      \exp_args:NV \__scontents_append_contents:nn \l__scontents_name_seq_cmd_tl {#1}
@@ -267,7 +274,7 @@
       \tl_replace_all:Nxx \l__scontents_temp_tl { \iow_char:N \^^M } { \iow_char:N \^^J }
       \tl_log:N \l__scontents_temp_tl
       \exp_args:NVx \__scontents_append_contents:nn \l__scontents_name_seq_cmd_tl
-        { \exp_not:N \__scontents_rescan_tokens:w { \tl_use:N \l__scontents_temp_tl } }
+        { \exp_not:N \__scontents_rescan_tokens:w { \exp_not:V \l__scontents_temp_tl } }
       \bool_if:NT \l__scontents_print_cmd_bool
         { \__scontents_getfrom_seq:nn { -1 } { \l__scontents_name_seq_cmd_tl } }
     \group_end:
@@ -276,10 +283,11 @@
 \NewDocumentCommand { \getstored } { O{1} m }
   { \__scontents_getfrom_seq:nn {#1} {#2} }
 %%^^A User command \typestored
-\NewDocumentCommand { \typestored } { O{1} m }
+\NewDocumentCommand { \typestored } { O{1} o m }
   {
     \group_begin:
-      \tl_set:Nx \l__scontents_temp_tl { \__scontents_getfrom_seq:nn {#1} {#2} }
+      \IfValueT {#2} { \keys_set:nn { scontents } {#2} }
+      \tl_set:Nx \l__scontents_temp_tl { \__scontents_getfrom_seq:nn {#1} {#3} }
       \tl_set:Nx \l__scontents_temp_tl { \__scontents_strip_rescan:N \l__scontents_temp_tl }
       %\tl_remove_once:NV \l__scontents_temp_tl \c__scontents_hidden_space_str
       \tl_log:N \l__scontents_temp_tl
@@ -287,6 +295,8 @@
     \group_end:
   }
 %%^^A Internal verb_print:N
+\cs_new:Npn \eshow:n #1 { \exp_args:No \use_none:n { \:_: #1> } }
+\cs_generate_variant:Nn \eshow:n { o, v, f, x, V }
 \group_begin:
   \char_set_catcode_active:N \^^M
   \cs_new_protected:Npn \__scontents_verb_print:N #1
@@ -308,6 +318,13 @@
     }
 \group_end:
 %%^^A Definition of verbatimsc environment
+\cs_new_protected:Npn \__scontents_xverb:
+  {
+    \char_set_catcode_other:N \,
+    \char_set_catcode_active:n { 9 }
+    \char_set_active_eq:nN { 9 } \__scontents_tabs_to_spaces:
+    \__scontents_xverb:w
+  }
 \use:x
   {
     \cs_new_protected:Npn \exp_not:N \__scontents_xverb:w
@@ -316,7 +333,7 @@
       { #1 \end{verbatimsc} }
 \NewDocumentEnvironment { verbatimsc } { }
   {
-    \cs_set_eq:cN { @xverbatim } \__scontents_xverb:w
+    \cs_set_eq:cN { @xverbatim } \__scontents_xverb:
     \verbatim
   }
   { }
@@ -358,9 +375,17 @@
 \NewDocumentCommand { \setupsc } { m }
   { \keys_set:nn { scontents } {#1} }
 %%^^A User command \meaningsc
-\NewDocumentCommand { \meaningsc } { O{1} m }
+\NewDocumentCommand { \meaningsc } { O{1} o m }
   {
     \group_begin:
+      \IfValueT {#2} { \keys_set:nn { scontents } {#2} }
+      \__scontents_meaningsc:nn {#1} {#3}
+    \group_end:
+  }
+\group_begin:
+  \char_set_catcode_active:N \^^I
+  \cs_new_protected:Npn \__scontents_meaningsc:nn #1 #2
+    {
       \tl_set:Nx \l__scontents_temp_tl { \__scontents_getfrom_seq:nn {#1} {#2} }
       \tl_set:Nx \l__scontents_temp_tl
         { \__scontents_strip_rescan:N \l__scontents_temp_tl }
@@ -368,9 +393,10 @@
       %\tl_remove_once:NV \l__scontents_temp_tl \c__scontents_hidden_space_str
       \tl_log:N \l__scontents_temp_tl
       \ttfamily
+      \tl_replace_all:Nnx \l__scontents_temp_tl { ^^I } { \__scontents_tabs_to_spaces: }
       \cs_replacement_spec:N \l__scontents_temp_tl
-    \group_end:
-  }
+    }
+\group_end:
 %%^^A User command \countsc
 \NewExpandableDocumentCommand { \countsc } { m }
   { \seq_count:c { g__scontents_seq_name_#1_seq } }
