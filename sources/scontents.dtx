@@ -1337,11 +1337,14 @@
     print-cmd .bool_set:N       = \l_@@_print_cmd_bool,
     print-cmd .initial:n        = false,
     print-all .meta:n           = { print-env = true , print-cmd = true },
+    tab-width .int_set:N        = \l_@@_tab_width_int,
+    tab-width .initial:n        = 1,
     store-env .value_required:n = true,
-    store-cmd .value_required:n = true,
     print-env .value_required:n = true,
+    store-cmd .value_required:n = true,
     print-cmd .value_required:n = true,
-    print-all .value_required:n = true
+    print-all .value_required:n = true,
+    tab-width .value_required:n = true,
   }
 %    \end{macrocode}
 %
@@ -1452,11 +1455,12 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\tl_remove_once:NV,\tl_replace_all:Nxx,\tl_replace_all:Nxn}
+% \begin{macro}{\tl_remove_once:NV,\tl_replace_all:Nxx,
+%     \tl_replace_all:Nxn,\tl_replace_all:Nnx}
 %   Some nonstandard variants.
 %    \begin{macrocode}
 \cs_generate_variant:Nn \tl_remove_once:Nn { NV }
-\cs_generate_variant:Nn \tl_replace_all:Nnn { Nx, Nxx }
+\cs_generate_variant:Nn \tl_replace_all:Nnn { Nx, Nxx, Nnx }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -1642,7 +1646,8 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\@@_file_tl_write_start:n,\@@_file_tl_write_start:V,\@@_file_write_stop:N}
+% \begin{macro}{\@@_file_tl_write_start:n,\@@_file_tl_write_start:V,
+%     \@@_file_write_stop:N,\@@_remove_leading_nl:n,\@@_remove_leading_nl:w}
 %   This is the main macro to collect the contents of a verbatim environment.
 %   The macro starts a group, opens the output file, if necessary, sets verbatim
 %   catcodes, and then issues |^^M| (set equal to \cs{@@_ret:w}) to read the
@@ -1651,7 +1656,7 @@
 %   line is written to the output file, if any. At the end of the environment
 %   the output file is closed (if it was open), and the output token list is
 %   smuggled out of the verbatim group. A leading |^^M| is removed from the
-%   token list using \cs{@@_remove_leading_cr:n} (which expects an active |^^M|
+%   token list using \cs{@@_remove_leading_nl:n} (which expects an active |^^M|
 %   token at the head of the token list; a low level TeX error is raised
 %   otherwise).
 %^^A Note: Perhaps a key "space-tab=1,2,...9" that affects (grabed or grabed and writing) only if present,
@@ -1715,13 +1720,13 @@
           \bool_if:NT \l_@@_storing_bool
             {
               \tl_set:Nn \exp_not:N #1
-                { \exp_args:NV \@@_remove_leading_cr:n \l_@@_file_tl }
+                { \exp_args:NV \@@_remove_leading_nl:n \l_@@_file_tl }
             }
         }
     }
-  \cs_new:Npn \@@_remove_leading_cr:n #1
-    { \exp_not:o { \@@_remove_leading_cr:w #1 } }
-  \cs_new:Npn \@@_remove_leading_cr:w ^^J { }
+  \cs_new:Npn \@@_remove_leading_nl:n #1
+    { \exp_not:o { \@@_remove_leading_nl:w #1 } }
+  \cs_new:Npn \@@_remove_leading_nl:w ^^J { }
 \group_end:
 \cs_generate_variant:Nn \@@_file_tl_write_start:n { V }
 %    \end{macrocode}
@@ -1784,10 +1789,14 @@
     \group_begin:
       \IfNoValueF {#2}
         { \keys_set_known:nn { scontents / Scontents } {#2} }
-      \IfBooleanTF{#1}
+      \char_set_catcode_active:n { 9 }
+      \char_set_catcode_other:N \,
+      \IfBooleanTF {#1}
         { \@@_verb_arg:w }
         { \@@_norm_arg:n }
   }
+\cs_new:Npn \@@_tabs_to_spaces:
+  { \prg_replicate:nn { \l_@@_tab_width_int } { ~ } }
 \cs_new_protected:Npn \@@_norm_arg:n #1
   {
      \exp_args:NV \@@_append_contents:nn \l_@@_name_seq_cmd_tl {#1}
@@ -1802,7 +1811,7 @@
       \tl_replace_all:Nxx \l_@@_temp_tl { \iow_char:N \^^M } { \iow_char:N \^^J }
       \tl_log:N \l_@@_temp_tl
       \exp_args:NVx \@@_append_contents:nn \l_@@_name_seq_cmd_tl
-        { \exp_not:N \@@_rescan_tokens:w { \tl_use:N \l_@@_temp_tl } }
+        { \exp_not:N \@@_rescan_tokens:w { \exp_not:V \l_@@_temp_tl } }
       \bool_if:NT \l_@@_print_cmd_bool
         { \@@_getfrom_seq:nn { -1 } { \l_@@_name_seq_cmd_tl } }
     \group_end:
@@ -1835,10 +1844,11 @@
 %   to read the contents of the token list and pass them to
 %   \cs{@@_verb_print:N}.
 %    \begin{macrocode}
-\NewDocumentCommand { \typestored } { O{1} m }
+\NewDocumentCommand { \typestored } { O{1} o m }
   {
     \group_begin:
-      \tl_set:Nx \l_@@_temp_tl { \@@_getfrom_seq:nn {#1} {#2} }
+      \IfValueT {#2} { \keys_set:nn { scontents } {#2} }
+      \tl_set:Nx \l_@@_temp_tl { \@@_getfrom_seq:nn {#1} {#3} }
       \tl_set:Nx \l_@@_temp_tl { \@@_strip_rescan:N \l_@@_temp_tl }
       %\tl_remove_once:NV \l_@@_temp_tl \c_@@_hidden_space_str
       \tl_log:N \l_@@_temp_tl
@@ -1852,6 +1862,8 @@
 %   \env{verbatimsc} environment and rescanned using \cs{@@_rescan_tokens:w}.
 %%^^A Internal verb_print:N
 %    \begin{macrocode}
+\cs_new:Npn \eshow:n #1 { \exp_args:No \use_none:n { \:_: #1> } }
+\cs_generate_variant:Nn \eshow:n { o, v, f, x, V }
 \group_begin:
   \char_set_catcode_active:N \^^M
   \cs_new_protected:Npn \@@_verb_print:N #1
@@ -1876,6 +1888,13 @@
 %   Finally, the \env{verbatimsc} environment is defined.
 %%^^A Definition of verbatimsc environment
 %    \begin{macrocode}
+\cs_new_protected:Npn \@@_xverb:
+  {
+    \char_set_catcode_other:N \,
+    \char_set_catcode_active:n { 9 }
+    \char_set_active_eq:nN { 9 } \@@_tabs_to_spaces:
+    \@@_xverb:w
+  }
 \use:x
   {
     \cs_new_protected:Npn \exp_not:N \@@_xverb:w
@@ -1884,7 +1903,7 @@
       { #1 \end{verbatimsc} }
 \NewDocumentEnvironment { verbatimsc } { }
   {
-    \cs_set_eq:cN { @xverbatim } \@@_xverb:w
+    \cs_set_eq:cN { @xverbatim } \@@_xverb:
     \verbatim
   }
   { }
@@ -1967,9 +1986,17 @@
 % \begin{macro}{\meaningsc}
 %   User command \cs{meaningsc} to see content stored in |seq|.
 %    \begin{macrocode}
-\NewDocumentCommand { \meaningsc } { O{1} m }
+\NewDocumentCommand { \meaningsc } { O{1} o m }
   {
     \group_begin:
+      \IfValueT {#2} { \keys_set:nn { scontents } {#2} }
+      \@@_meaningsc:nn {#1} {#3}
+    \group_end:
+  }
+\group_begin:
+  \char_set_catcode_active:N \^^I
+  \cs_new_protected:Npn \@@_meaningsc:nn #1 #2
+    {
       \tl_set:Nx \l_@@_temp_tl { \@@_getfrom_seq:nn {#1} {#2} }
       \tl_set:Nx \l_@@_temp_tl
         { \@@_strip_rescan:N \l_@@_temp_tl }
@@ -1977,9 +2004,10 @@
       %\tl_remove_once:NV \l_@@_temp_tl \c_@@_hidden_space_str
       \tl_log:N \l_@@_temp_tl
       \ttfamily
+      \tl_replace_all:Nnx \l_@@_temp_tl { ^^I } { \@@_tabs_to_spaces: }
       \cs_replacement_spec:N \l_@@_temp_tl
-    \group_end:
-  }
+    }
+\group_end:
 %    \end{macrocode}
 % \end{macro}
 %
