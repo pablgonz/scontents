@@ -4,7 +4,6 @@
 \pdfsuppressptexinfo-1
 \pdftrailerid{}
 \documentclass{article}
-\usepackage{trace}
 \usepackage{scontents}
 % only for test
 \usepackage[top=0.5in,bottom=0.5in, left=1in, right=1in]{geometry}
@@ -102,6 +101,9 @@ THIRD\par
 % These outputs should look the same
 \getstored[1]{newattempt}\par
 
+% Should these raise errors?
+\edef\tmpa{\the\interactionmode}
+\scrollmode
 \begin{scontents}[store-env=nowhere]
 hey
 blub\end{scontents}
@@ -113,6 +115,7 @@ hey
 \begin{scontents}[store-env=nowhere]
 hey
 blub\end{scontents}blob
+\interactionmode=\tmpa
 
 MEANINGSC\par
 \meaningsc[1]{newattempt}\par
