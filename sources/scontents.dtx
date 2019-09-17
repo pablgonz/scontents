@@ -651,7 +651,6 @@
 %  \ics{relax} or \lstinline[style=inline]|%| at the end of environment.
 % \end{enumerate}
 %
-%
 % \subsection*{Options for environment}
 %
 % The environment options can be configured globally using option
@@ -1344,23 +1343,43 @@
 %    \begin{macrocode}
 \keys_define:nn { scontents }
   {
-    store-env .tl_set:N         = \l_@@_name_seq_env_tl,
-    store-env .initial:n        = contents,
-    print-env .bool_set:N       = \l_@@_print_env_bool,
-    print-env .initial:n        = false,
-    store-cmd .tl_set:N         = \l_@@_name_seq_cmd_tl,
-    store-cmd .initial:n        = contents,
-    print-cmd .bool_set:N       = \l_@@_print_cmd_bool,
-    print-cmd .initial:n        = false,
-    print-all .meta:n           = { print-env = true , print-cmd = true },
-    tab-width .int_set:N        = \l_@@_tab_width_int,
-    tab-width .initial:n        = 1,
-    store-env .value_required:n = true,
-    print-env .value_required:n = true,
-    store-cmd .value_required:n = true,
-    print-cmd .value_required:n = true,
-    print-all .value_required:n = true,
-    tab-width .value_required:n = true,
+    % .tl keys:
+      % store-env
+    , store-env .tl_set:N         = \l_@@_name_seq_env_tl
+    , store-env .initial:n        = contents
+    , store-env .value_required:n = true
+      % store-cmd
+    , store-cmd .tl_set:N         = \l_@@_name_seq_cmd_tl
+    , store-cmd .initial:n        = contents
+    , store-cmd .value_required:n = true
+      % verb-font
+    , verb-font .tl_set:N         = \l_@@_verb_font_tl
+    , verb-font .initial:n        = \ttfamily
+    , verb-font .value_required:n = true
+    % .bool keys:
+      % print-env
+    , print-env .bool_set:N       = \l_@@_print_env_bool
+    , print-env .initial:n        = false
+    , print-env .default:n        = true
+      % print-cmd
+    , print-cmd .bool_set:N       = \l_@@_print_cmd_bool
+    , print-cmd .initial:n        = false
+    , print-cmd .default:n        = true
+      % print-cmd
+    , force-eol .bool_set:N       = \l_@@_forced_eol_bool
+    , force-eol .initial:n        = false
+    , print-cmd .default:n        = true
+    % .int keys
+      % tab-width
+    , tab-width .int_set:N        = \l_@@_tab_width_int
+    , tab-width .initial:n        = 1
+    , tab-width .value_required:n = true
+    % other keys:
+      % print-all
+    , print-all .meta:n           = { print-env = #1 , print-cmd = #1 }
+    , print-all .default:n        = true
+      % unknown
+    , unknown   .code:n           = { \@@_parse_unknown_key:n {#1} }
   }
 %    \end{macrocode}
 %
@@ -1388,6 +1407,15 @@
 \tl_new:N \l_@@_temp_tl
 \tl_new:N \l_@@_file_tl
 \tl_new:N \g_@@_temp_tl
+%    \end{macrocode}
+% \end{macro}
+%
+%%^^A Internal int vars
+% \begin{macro}{\l_@@_seq_item_int}
+%   \cs{l_@@_seq_item_int} stores the index in the sequence of the item
+%   requested to \cs{\typestored} or \cs{meaningsc}.
+%    \begin{macrocode}
+\int_new:N \l_@@_seq_item_int
 %    \end{macrocode}
 % \end{macro}
 %
@@ -1452,14 +1480,15 @@
 % \end{macro}
 %
 %%^^A Copy of \scantokens
-% \begin{macro}{\@@_rescan_tokens:w}
+% \begin{macro}{\@@_rescan_tokens:n}
 %   \cs{tl_rescan:nn} doesn't fit the needs of this package because
 %   it does not allow catcode changes inside the argument, so verbatim
 %   commands used inside one of \mypkg*{scontents}'s commands/environments
 %   will not work. Here we create a private copy of \cs{tex_scantokens:D}
 %   which will serve our purposes:
 %    \begin{macrocode}
-\cs_new_eq:NN \@@_rescan_tokens:w \tex_scantokens:D
+\cs_new:Npn \@@_rescan_tokens:n #1 { \tex_scantokens:D {#1} }
+\cs_generate_variant:Nn \@@_rescan_tokens:n { V, x }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -1472,11 +1501,12 @@
 % \end{macro}
 %
 % \begin{macro}{\tl_remove_once:NV,\tl_replace_all:Nxx,
-%     \tl_replace_all:Nxn,\tl_replace_all:Nnx}
+%     \tl_replace_all:Nxn,\tl_replace_all:Nnx,\tl_if_empty:fTF}
 %   Some nonstandard variants.
 %    \begin{macrocode}
 \cs_generate_variant:Nn \tl_remove_once:Nn { NV }
 \cs_generate_variant:Nn \tl_replace_all:Nnn { Nx, Nxx, Nnx }
+\prg_generate_conditional_variant:Nnn \tl_if_empty:n { f } { TF }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -1514,10 +1544,47 @@
   }
 %    \end{macrocode}
 %
+% \subsection{Handling undefined keys}
+%
+% \begin{macro}{\@@_parse_unknown_key:n,\@@_parse_unknown_key:nn}
+%   The commands \cs{typestored} and \cs{meaningsc} accept an optional
+%   argument for setting the \texttt{tab-width} to print the stored
+%   contents. However their optional argument also contains the number
+%   of the item to retrieve from the stored sequence. To avoid the
+%   awkward \verb|\typestored[][<options>]{...}| syntax, we'll make the
+%   commands have a single optional argument which is processed by
+%   \pkg{l3keys}, and the unknown keys are brought here to
+%   \cs{@@_parse_unknown_key:n} to process.
+%
+%   The key is stored in the token list variable \cs{l_keys_key_tl}, and
+%   the value (if any) is passed as argument to this function.
+%
+%   First we check if the key is an integer using \cs{int_to_roman:n}.
+%   If it is, we
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_parse_unknown_key:n #1
+  { \exp_args:NV \@@_parse_unknown_key:nn \l_keys_key_tl {#1} }
+\cs_new_protected:Npn \@@_parse_unknown_key:nn #1 #2
+  {
+    \tl_if_empty:fTF { \int_to_roman:n { -0 #1 } }
+      {
+        \tl_if_blank:nTF {#2}
+          { \int_set:Nn \l_@@_seq_item_int {#1} }
+          { \msg_error:nnnn { scontents } { key-value-unknown } {#1} {#2} }
+      }
+      {
+        \tl_if_blank:nTF {#2}
+          { \msg_error:nnn { scontents } { key-unknown } {#1} }
+          { \msg_error:nnnn { scontents } { key-value-unknown } {#1} {#2} }
+      }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
 % \subsection{Programming of the sequences}
 %
 %%^^A Append content to seq
-% \begin{macro}{\@@_append_contents:nn,\@@_getfrom_seq:nn}
+% \begin{macro}{\@@_append_contents:nn,\@@_getfrom_seq:nn,\@@_getfrom_seq:nnn}
 %   The storage of the package is done using |seq| variables.  Here we
 %   set up the macros that will manage the variables.
 %
@@ -1536,23 +1603,38 @@
   }
 \cs_generate_variant:Nn \@@_append_contents:nn { Vx }
 \cs_new:Npn \@@_getfrom_seq:nn #1#2
-  { \seq_item:cn { g_@@_seq_name_#2_seq } {#1} }
+  {
+    \seq_if_exist:cTF { g_@@_seq_name_#2_seq }
+      {
+        \exp_args:Nf \@@_getfrom_seq:nnn
+          { \seq_count:c { g_@@_seq_name_#2_seq } }
+          {#1} {#2}
+      }
+      { \msg_expandable_error:nnn { scontents } { undefined-storage } {#2} }
+  }
+\cs_new:Npn \eshow:n #1 { \exp_args:No \use_none:n { \_:_ <#1> } }
+\cs_new:Npn \@@_getfrom_seq:nnn #1 #2 #3
+  {
+    % \eshow:n {#1//#2//#3}
+    \bool_lazy_or:nnTF
+      { \int_compare_p:nNn {#2} = { 0 } }
+      { \int_compare_p:nNn { \int_abs:n {#2} } > {#1} }
+      { \msg_expandable_error:nnnnn { scontents } { index-out-of-range } {#2} {#3} {#1} }
+      { \seq_item:cn { g_@@_seq_name_#3_seq } {#2} }
+  }
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\@@_stored_to_seq:}
-%   The \cs{@@_stored_to_seq:} function replaces a carriage return
-%   (\textsc{ascii} 13) by a new line character (\textsc{ascii} 10) for
-%   optionally logging the contents of the current \env{scontents}
-%   environment.
+% \begin{macro}{\@@_store_to_seq:NN}
+%   The \cs{@@_store_to_seq:NN} writes the recorded contents
+%   in |#1| to the log and stores it in |#2|.
 %
 %%^^A Storing content in seq
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_stored_to_seq:
+\cs_new_protected:Npn \@@_store_to_seq:NN #1 #2
   {
-    \tl_log:N \l_@@_macro_tmp_tl
-    \@@_append_contents:Vx \l_@@_name_seq_env_tl
-      { \exp_not:N \@@_rescan_tokens:w { \tl_use:N \l_@@_macro_tmp_tl } }
+    \tl_log:N #1
+    \@@_append_contents:Vx #2 { \exp_not:V #1 }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -1694,34 +1776,44 @@
         \int_step_function:nnN { 128 } { 255 } \char_set_catcode_letter:n
         \use:x
           {
-            \cs_set:Npn \exp_not:N \@@_tmpa:w
+            \cs_set:Npx \exp_not:N \@@_tmpa:w
               ####1 \c_@@_end_env_tl
               ####2 \c_@@_end_env_tl
-              ####3 \exp_not:N \q_stop
-              {
-                \exp_not:N \tl_if_blank:nTF {####3}
-                  {
-                    \bool_if:NT \l_@@_writing_bool
-                      { \iow_now:Nn \l_@@_file_iow {####1} }
-                    \bool_if:NT \l_@@_storing_bool
-                      {
-                        \tl_put_right:Nn \exp_not:N \l_@@_file_tl
-                          { \exp_not:N ^^J ####1 }
-                      }
-                  }
-                  {
-                    \cs_set:Npn \exp_not:N \@@_ret:w { \exp_not:N \end{scontents} }
-                    \char_set_active_eq:NN \exp_not:N ^^M \exp_not:N \@@_ret:w
-                  }
-                \exp_not:N ^^M
-              }
-          }
+              ####3 \exp_not:N \q_@@_stop
+          } {
+              \exp_not:N \tl_if_blank:nTF {##3}
+                {
+                  \bool_if:NT \l_@@_writing_bool
+                    { \iow_now:Nn \l_@@_file_iow {##1} }
+                  \bool_if:NT \l_@@_storing_bool
+                    {
+                      \tl_put_right:Nn \exp_not:N \l_@@_file_tl
+                        { \exp_not:N ^^J ##1 }
+                    }
+                }
+                {
+                  \exp_not:N \tl_if_blank:nF {##1}
+                    {
+                      \msg_error:nnnn { scontents }
+                        { ignoring-text } { before } {##1}
+                    }
+                  \exp_not:N \tl_if_blank:nF {##2}
+                    {
+                      \msg_error:nnnn { scontents }
+                        { ignoring-text } { after } {##2}
+                    }
+                  \cs_set_protected:Npn \exp_not:N \@@_ret:w
+                    { \exp_not:N \end{scontents} }
+                  \char_set_active_eq:NN \exp_not:N ^^M \exp_not:N \@@_ret:w
+                }
+              \exp_not:N ^^M
+            }
         \cs_set_protected:Npx \@@_ret:w ##1 ^^M
           {
             \exp_not:N \@@_tmpa:w
             ##1 \c_@@_end_env_tl
                 \c_@@_end_env_tl
-                \exp_not:N \q_stop
+                \exp_not:N \q_@@_stop
           }
         \@@_make_control_chars_active:
         \@@_ret:w
@@ -1736,7 +1828,10 @@
           \bool_if:NT \l_@@_storing_bool
             {
               \tl_set:Nn \exp_not:N #1
-                { \exp_args:NV \@@_remove_leading_nl:n \l_@@_file_tl }
+                {
+                  \exp_args:NV \@@_remove_leading_nl:n \l_@@_file_tl
+                  \bool_if:NT \l_@@_forced_eol_bool { \exp_not:N ^^J }
+                }
             }
         }
     }
@@ -1751,11 +1846,10 @@
 % \subsubsection{Recording of the content in the sequence}
 %
 % \begin{macro}{\@@_atend_environment:}
-%   Finishes the environment by optionally calling \cs{@@_stored_to_seq:}
+%   Finishes the environment by optionally calling \cs{@@_store_to_seq:}
 %   and then clearing the temporary token list.
 %
 %%^^A Second atend_environment/stored_to_seq
-%^^A NOTE : Maybe \@@_stored_to_seq:nn  \l_@@_name_seq_env_tl \g_@@_temp_tl
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_atend_environment:
   {
@@ -1763,13 +1857,15 @@
       {
         % A problem with fancyvrb \end{Verbatim}% raise on error
         %\tl_put_right:Nx \l__scontents_macro_tmp_tl { \c__scontents_hidden_space_str }
-        \@@_stored_to_seq:
+        \@@_store_to_seq:NN \l_@@_macro_tmp_tl \l_@@_name_seq_env_tl
       }
     \bool_if:NT \l_@@_print_env_bool
       {
-        \tl_gset:Nx \g_@@_temp_tl
-          { \@@_getfrom_seq:nn { -1 } { \l_@@_name_seq_env_tl } }
-        \tl_gput_right:Nn \g_@@_temp_tl { \tl_gclear:N \g_@@_temp_tl }
+        \tl_gset_eq:NN \g_@@_temp_tl \l_@@_macro_tmp_tl
+        % \tl_gset:Nx \g_@@_temp_tl
+        %   { \@@_getfrom_seq:nn { -1 } { \l_@@_name_seq_env_tl } }
+        \tl_gput_right:NV \g_@@_temp_tl \c_percent_str
+        \group_insert_after:N \@@_rescan_tokens:V
         \group_insert_after:N \g_@@_temp_tl
       }
     \tl_clear:N \l_@@_macro_tmp_tl
@@ -1806,35 +1902,28 @@
       \IfNoValueF {#2}
         { \keys_set_known:nn { scontents / Scontents } {#2} }
       \char_set_catcode_active:n { 9 }
-      \char_set_catcode_other:N \,
       \IfBooleanTF {#1}
         { \@@_verb_arg:w }
         { \@@_norm_arg:n }
   }
-\cs_new:Npn \@@_tabs_to_spaces:
-  { \prg_replicate:nn { \l_@@_tab_width_int } { ~ } }
 \cs_new_protected:Npn \@@_norm_arg:n #1
   {
-     \exp_args:NV \@@_append_contents:nn \l_@@_name_seq_cmd_tl {#1}
-     \bool_if:NT \l_@@_print_cmd_bool
-       { \@@_getfrom_seq:nn { -1 } { \l_@@_name_seq_cmd_tl } }
-   \group_end:
+      \exp_args:NV \@@_append_contents:nn \l_@@_name_seq_cmd_tl {#1}
+      \bool_if:NT \l_@@_print_cmd_bool { \@@_rescan_tokens:n {#1} }
+    \group_end:
   }
 \NewDocumentCommand { \@@_verb_arg:w } { +v }
   {
       \tl_set:Nn \l_@@_temp_tl {#1}
       %\tl_put_right:Nx \l_@@_temp_tl { \c_@@_hidden_space_str }
       \tl_replace_all:Nxx \l_@@_temp_tl { \iow_char:N \^^M } { \iow_char:N \^^J }
-      \tl_log:N \l_@@_temp_tl
-      \exp_args:NVx \@@_append_contents:nn \l_@@_name_seq_cmd_tl
-        { \exp_not:N \@@_rescan_tokens:w { \exp_not:V \l_@@_temp_tl } }
+      \@@_store_to_seq:NN \l_@@_temp_tl \l_@@_name_seq_cmd_tl
       \bool_if:NT \l_@@_print_cmd_bool
-        { \@@_getfrom_seq:nn { -1 } { \l_@@_name_seq_cmd_tl } }
+        { \@@_rescan_tokens:V \l_@@_temp_tl }
     \group_end:
   }
 %    \end{macrocode}
 % \end{macro}
-%^^A NOTE : Maybe \@@_stored_to_seq:nn  \l_@@_name_seq_cmd_tl \l_@@_temp_tl
 %
 % \subsection{The command \cs{getstored}}
 %
@@ -1844,7 +1933,15 @@
 %   (robust).
 %    \begin{macrocode}
 \NewDocumentCommand { \getstored } { O{1} m }
-  { \@@_getfrom_seq:nn {#1} {#2} }
+  {
+    \group_begin:
+      \@@_rescan_tokens:x
+        {
+          \@@_getfrom_seq:nn {#1} {#2}
+          \c_percent_str
+        }
+    \group_end:
+  }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -1856,17 +1953,14 @@
 %%^^A User command \typestored
 % \begin{macro}{\typestored,\@@_verb_print:N,\@@_xverb:w,verbatimsc}
 %   The \cs{typestored} commands fetches a buffer from memory, prints it
-%   to the log file, and then calls \cs{@@_strip_rescan:N} macro
-%   to read the contents of the token list and pass them to
-%   \cs{@@_verb_print:N}.
+%   to the log file, and then calls \cs{@@_verb_print:N}.
 %    \begin{macrocode}
-\NewDocumentCommand { \typestored } { O{1} o m }
+\NewDocumentCommand { \typestored } { o m }
   {
     \group_begin:
-      \IfValueT {#2} { \keys_set:nn { scontents } {#2} }
-      \tl_set:Nx \l_@@_temp_tl { \@@_getfrom_seq:nn {#1} {#3} }
-      \tl_set:Nx \l_@@_temp_tl { \@@_strip_rescan:N \l_@@_temp_tl }
-      %\tl_remove_once:NV \l_@@_temp_tl \c_@@_hidden_space_str
+      \int_set:Nn \l_@@_seq_item_int { 1 }
+      \IfValueT {#1} { \keys_set:nn { scontents } {#1} }
+      \tl_set:Nx \l_@@_temp_tl { \exp_args:NV \@@_getfrom_seq:nn \l_@@_seq_item_int {#2} }
       \tl_log:N \l_@@_temp_tl
       \@@_verb_print:N \l_@@_temp_tl
     \group_end:
@@ -1875,7 +1969,7 @@
 %   The \cs{@@_verb_print:N} macro is defined with active carriage return
 %   (\textsc{ascii} 13) characters to mimick an actual verbatim environment
 %   \enquote{on the loose}. The contents of the environment are placed in a
-%   \env{verbatimsc} environment and rescanned using \cs{@@_rescan_tokens:w}.
+%   \env{verbatimsc} environment and rescanned using \cs{@@_rescan_tokens:x}.
 %%^^A Internal verb_print:N
 %    \begin{macrocode}
 \group_begin:
@@ -1886,14 +1980,12 @@
         { \msg_error:nnn { scontents } { empty-variable } {#1} }
       \cs_set_eq:NN \@@_verb_print_EOL: ^^M
       \cs_set_eq:NN ^^M \scan_stop:
-      \use:x
+      \cs_set_eq:cN { do@noligs } \@@_do_noligs:N
+      \@@_rescan_tokens:x
         {
-          \exp_not:N \@@_rescan_tokens:w
-            {
-              \exp_not:N \begin{verbatimsc} ^^M
-              \@@_strip_rescan:N #1 ^^M
-              \g_@@_end_verbatimsc_tl
-            }
+          \exp_not:N \begin{verbatimsc} ^^M
+          \exp_not:V #1 ^^M
+          \g_@@_end_verbatimsc_tl
         }
       \cs_set_eq:NN ^^M \@@_verb_print_EOL:
     }
@@ -1904,7 +1996,6 @@
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_xverb:
   {
-    \char_set_catcode_other:N \,
     \char_set_catcode_active:n { 9 }
     \char_set_active_eq:nN { 9 } \@@_tabs_to_spaces:
     \@@_xverb:w
@@ -1924,40 +2015,36 @@
 %    \end{macrocode}
 % \end{macro}
 %
-%%^^A Internal check scantokens
-% \begin{macro}{
-%     \@@_strip_rescan:N,
-%     \@@_strip_rescan:n,
-%     \@@_if_rescan:Nw,
-%   }
-%   The \cs{@@_strip_rescan:n} (\cs{@@_strip_rescan:N}) macro
-%   takes a token list (variable) as argument and examines it. If the
-%   argument token list is \emph{exactly} \cs{@@_rescan_tokens:w}{|\meta{stuff}|},
-%   then the function returns \meta{stuff}, otherwise it returns the
-%   input token list without change. The token list is wrapped in
-%   \cs{exp_not:n} to avoid further expansion.
+% \subsection{Some auxiliaries}
+%
+% \begin{macro}{\@@_tabs_to_spaces:}
+%   In a verbatim context the tab character is made active and set
+%   equal to \cs{@@_tabs_to_spaces:}, to produce as many spaces as
+%   the |tab-width| key was set to.
 %    \begin{macrocode}
-\cs_new:Npn \@@_strip_rescan:N #1
-  { \exp_args:NV \@@_strip_rescan:n #1 }
-\cs_new:Npn \@@_strip_rescan:n #1
+\cs_new:Npn \@@_tabs_to_spaces:
+  { \prg_replicate:nn { \l_@@_tab_width_int } { ~ } }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_do_noligs:N}
+%   \cs{@@_do_noligs:N} is an alternative definition for \LaTeXe's
+%   \cs{do@noligs} which makes sure to not consume following space
+%   tokens. The \LaTeXe{} version ends with \cs{char}|`#1|, which
+%   leaves \TeX{} still looking for an \meta{optional~space}.
+%   This version uses \cs{char_generate:nn} to ensure that doesn't
+%   happen.
+%    \begin{macrocode}
+\cs_new:Npn \@@_do_noligs:N #1
   {
-    \tl_if_head_is_N_type:nTF {#1}
+    \char_set_catcode_active:N #1
+    \char_set_active_eq:Nc #1 { @@_active_char_ \token_to_str:N #1 : }
+    \cs_set:cpx { @@_active_char_ \token_to_str:N #1 : }
       {
-        \@@_if_rescan:NwTF #1 \q_@@_mark
-          {
-            \exp_args:No \tl_if_single_token:nTF { \use_none:nn #1 ? }
-              { \exp_not:o { \use_ii:nn #1 } }
-              { \exp_not:n {#1} }
-          }
-          { \exp_not:n {#1} }
+        \mode_leave_vertical:
+        \tex_kern:D \c_zero_dim
+        \char_generate:nn { `#1 } { 12 }
       }
-      { \exp_not:n {#1} }
-  }
-\prg_new_conditional:Npnn \@@_if_rescan:Nw #1#2 \q_@@_mark { TF }
-  {
-    \token_if_eq_meaning:NNTF \@@_rescan_tokens:w #1
-      { \prg_return_true: }
-      { \prg_return_false: }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -2000,24 +2087,22 @@
 % \begin{macro}{\meaningsc}
 %   User command \cs{meaningsc} to see content stored in |seq|.
 %    \begin{macrocode}
-\NewDocumentCommand { \meaningsc } { O{1} o m }
+\NewDocumentCommand { \meaningsc } { o m }
   {
     \group_begin:
-      \IfValueT {#2} { \keys_set:nn { scontents } {#2} }
-      \@@_meaningsc:nn {#1} {#3}
+      \int_set:Nn \l_@@_seq_item_int { 1 }
+      \IfValueT {#1} { \keys_set:nn { scontents } {#1} }
+      \@@_meaningsc:n {#2}
     \group_end:
   }
 \group_begin:
   \char_set_catcode_active:N \^^I
-  \cs_new_protected:Npn \@@_meaningsc:nn #1 #2
+  \cs_new_protected:Npn \@@_meaningsc:n #1
     {
-      \tl_set:Nx \l_@@_temp_tl { \@@_getfrom_seq:nn {#1} {#2} }
-      \tl_set:Nx \l_@@_temp_tl
-        { \@@_strip_rescan:N \l_@@_temp_tl }
+      \tl_set:Nx \l_@@_temp_tl { \exp_args:NV \@@_getfrom_seq:nn \l_@@_seq_item_int {#1} }
       \tl_replace_all:Nxn \l_@@_temp_tl { \iow_char:N \^^J } { ~ }
-      %\tl_remove_once:NV \l_@@_temp_tl \c_@@_hidden_space_str
       \tl_log:N \l_@@_temp_tl
-      \ttfamily
+      \tl_use:N \l_@@_verb_font_tl
       \tl_replace_all:Nnx \l_@@_temp_tl { ^^I } { \@@_tabs_to_spaces: }
       \cs_replacement_spec:N \l_@@_temp_tl
     }
@@ -2070,11 +2155,35 @@
 \msg_new:nnn { scontents } { writing-file }
   { Writing ~ file ~ `#1' }
 \msg_new:nnn { scontents } { ignoring-text }
-  { Ignoring~text~`#1'~after~\c_backslash_str end{scontents}~\msg_line_context:.}
+  { Ignoring~text~`#2'~#1~\c_backslash_str end{scontents}~\msg_line_context:.}
 \msg_new:nnn { scontents } { tab-to-space }
-  { Tab has been converted to Blank Space }
+  { Tab~has~been~converted~to~Blank~Space }
 \msg_new:nnn { scontents } { feed-to-space }
-  { Form Feed has been converted to Blank Space }
+  { Form~Feed~has~been~converted~to~Blank~Space }
+\msg_new:nnnn { scontents } { key-unknown }
+  { The~key~'#1'~is~unknown~and~is~being~ignored. }
+  {
+    The~module~'scontents'~does~not~have~a~key~called~'#1'.\\
+    Check~that~you~have~spelled~the~key~name~correctly.
+  }
+\msg_new:nnnn { scontents } { key-value-unknown }
+  { The~key~'#1'~to~which~you~passed~'#2'~is~unknown~and~is~being~ignored. }
+  {
+    The~module~'scontents'~does~not~have~a~key~called~'#1'.\\
+    Check~that~you~have~spelled~the~key~name~correctly.
+  }
+\msg_new:nnn { scontents } { undefined-storage }
+  { Storage~named~'#1'~is~not~defined. }
+\msg_new:nnn { scontents } { index-out-of-range }
+  {
+    \int_compare:nNnTF {#1} = { 0 }
+      { Index~of~sequence~cannot~be~zero. }
+      {
+        Index~'#1'~out~of~range~for~'#2'.~
+        \int_compare:nNnTF {#1} > { 0 }
+          { Max = } { Min = -} #3.
+      }
+  }
 %    \end{macrocode}
 %
 % \subsection{Finish package}
