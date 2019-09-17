@@ -10,7 +10,8 @@ used as many times as desired in the document, additionally can be written
 to external files.
 
 ## Requirements
-The package requires the following packages:
+The package loads and depends on updated versions of:
+- [expl3](https://ctan.org/pkg/expl3)
 - [l3keys2e](https://ctan.org/pkg/l3keys2e)
 - [xparse](https://ctan.org/pkg/xparse)
 
