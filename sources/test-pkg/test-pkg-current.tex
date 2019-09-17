@@ -4,6 +4,7 @@
 \pdfsuppressptexinfo-1
 \pdftrailerid{}
 \documentclass{article}
+\usepackage{trace}
 \usepackage{scontents}
 % only for test
 \usepackage[top=0.5in,bottom=0.5in, left=1in, right=1in]{geometry}
@@ -26,13 +27,13 @@
     frame=single,
     codes*=
       {
-        \char_set_catcode_active:N \,
         \char_set_catcode_active:n { 9 }
         \char_set_active_eq:nN { 9 } \__scontents_tabs_to_spaces:
       }
   }
   }
 \begin{document}
+
 \Scontents*[store-cmd=nospace]{Write in one line \LaTeX: $E=mc^2$, no space after dot.}
 
 \Scontents*[store-cmd=nospace]|Other in one line, no space after dot.|
@@ -48,20 +49,29 @@ XX\getstored[3]{nospace}YY\par
 \typestored[1]{nospace}\par
 \typestored[2]{nospace}\par
 \typestored[3]{nospace}\par
-\typestored[3][tab-width=1]{nospace}\par
-\typestored[3][tab-width=2]{nospace}\par
-\typestored[3][tab-width=3]{nospace}\par
-\typestored[3][tab-width=4]{nospace}\par
-\typestored[4][tab-width=1]{nospace}\par
+\typestored[3, tab-width=1]{nospace}\par
+\typestored[3, tab-width=2]{nospace}\par
+\typestored[3, tab-width=3]{nospace}\par
+\typestored[3, tab-width=4]{nospace}\par
+\typestored[4, tab-width=1]{nospace}\par
 
 \meaningsc[1]{nospace}\par
 \meaningsc[2]{nospace}\par
 \meaningsc[3]{nospace}\par
-\meaningsc[3][tab-width=1]{nospace}\par
-\meaningsc[3][tab-width=2]{nospace}\par
-\meaningsc[3][tab-width=3]{nospace}\par
-\meaningsc[3][tab-width=4]{nospace}\par
-\meaningsc[4][tab-width=1]{nospace}\par
+\meaningsc[3, tab-width=1]{nospace}\par
+\meaningsc[3, tab-width=2]{nospace}\par
+\meaningsc[3, tab-width=3]{nospace}\par
+\meaningsc[3, tab-width=4]{nospace}\par
+\meaningsc[4, tab-width=1]{nospace}\par
+
+% These should raise errors
+\edef\tmpa{\the\interactionmode}
+\scrollmode
+\getstored[0]{nospace}
+\getstored[5]{nospace}
+\getstored[-5]{nospace}
+\getstored[1]{blub}
+\interactionmode=\tmpa
 
 % These outputs should look the same
 FIRST\par
@@ -91,6 +101,18 @@ Soy un ^^J Soy un ^^M text.
 THIRD\par
 % These outputs should look the same
 \getstored[1]{newattempt}\par
+
+\begin{scontents}[store-env=nowhere]
+hey
+blub\end{scontents}
+
+\begin{scontents}[store-env=nowhere]
+hey
+\end{scontents}blob
+
+\begin{scontents}[store-env=nowhere]
+hey
+blub\end{scontents}blob
 
 MEANINGSC\par
 \meaningsc[1]{newattempt}\par
@@ -309,7 +331,7 @@ Test \verb+\subsection{\getstored[3]{contents}}+:\par
 \subsection{no \texttt{[key=val]}}
 Test \verb+scontents+ no \verb+[key=val]+\par
 
-\begin{scontents}
+\begin{scontents}[force-eol]
 Using \verb+scontents+ env no \verb+[key=val]+, save in seq \verb+testenv+ index 1.\par
 We have coded this in \LaTeX: $E=mc^2$.
 
@@ -319,6 +341,8 @@ Prove new \Verb*{ verbatim from fvextra whit braces } and environment \verb+Verb
           environment
 \end{Verbatim*}
 \end{scontents}
+
+\enlargethispage{1.5em}
 
 \subsubsection{\Verb{\getstored[1]{testenv}}}
 %%%
