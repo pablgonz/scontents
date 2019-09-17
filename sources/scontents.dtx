@@ -538,9 +538,6 @@
 % along with the ability to store contents in sequences for later use in
 % different parts of the document.
 %
-% \subsection{Loading package}
-% \label{sec:loadoptpkg}
-%
 % The package is loaded in the usual way:
 %
 % \iffalse
@@ -562,6 +559,18 @@
 % \iffalse
 %</example>
 % \fi
+%
+% \subsection{The TAB character}
+% \label{sec:tabcharacter}
+%
+% The |TAB|s characters typed from the keyboard are converted into spaces when
+% they are stored in memory, but, they are preserved when recording in a file,
+% if they are not typed at the end of a line, unfortunately, dependent on the
+% \hologo{TeX} distribution you have and how the formats were initialized.
+%
+% With a \hologo{TeX}Live distribution, the formats for |latex|, |pdflatex| and
+% |lualatex| are prepared feeding the option |-translate-file=cp227.tcx|, that
+% makes the |TAB| character \enquote{printable}.
 %
 % \subsection{Configuration of the options}
 % \label{sec:confopt}
@@ -601,6 +610,8 @@
 %  \texttt{print-all} & \cmark  & \cmark        &  \cmark             & \xmark          & \xmark          \\
 %  \texttt{write-env} & \xmark  & \xmark        &  \cmark             & \xmark          & \xmark          \\
 %  \texttt{write-out} & \xmark  & \xmark        &  \cmark             & \xmark          & \xmark          \\
+%  \texttt{width-tab} & \cmark  & \cmark        &  \cmark             & \cmark          & \cmark          \\
+%  \texttt{write-tab} & \cmark  & \cmark        &  \cmark             & \xmark          & \xmark          \\
 % \bottomrule
 % \end{tabular}
 %
@@ -640,18 +651,6 @@
 %  \ics{relax} or \lstinline[style=inline]|%| at the end of environment.
 % \end{enumerate}
 %
-% The |TAB|s characters typed from the keyboard are converted into spaces when
-% they are stored in memory, but, they are preserved when recording in a file,
-% if they are not typed at the end of a line, unfortunately, dependent on the
-% \hologo{TeX} distribution you have and how the formats were initialized.
-%
-% With a \hologo{TeX}Live distribution, the formats for |latex|, |pdflatex| and
-% |lualatex| are prepared feeding the option |-translate-file=cp227.tcx|, that
-% makes the |TAB| character \enquote{printable}.
-%
-% To write a literal |TAB| character using |xelatex| you must add the |-8bit|
-% option on command line, otherwise you will get \hologo{TeX}-|TAB|s (|^^I|) in
-% the output file.
 %
 % \subsection*{Options for environment}
 %
@@ -669,6 +668,23 @@
 %
 % \keyexamp{print-env}{true\textbar false}{false}
 % It will show the current content of the environment.
+%
+% \medskip
+%
+% \keyexamp{width-tab}{positive integer}{ 1 }
+% Establishes the equivalence in \mymeta{spaces} for the character |TAB|
+% typed from the keyboard. The value must be a \mymeta{positive integer}.
+%
+% \medskip
+%
+% \keyexamp{write-tab}{true\textbar false}{false}
+% Sets the literal typing of the character |TAB| typed from the keyboard
+% in the \mymeta{output file}. If it is \mymeta{false} the character |TAB|
+% will be converted to \mymeta{spaces} according to the value of |width-tab|.
+%
+% To write a literal |TAB| character using |xelatex| you must add the |-8bit|
+% option on command line, otherwise you will get \hologo{TeX}-|TAB|s (|^^I|) in
+% the \mymeta{output file}.
 %
 % \medskip
 %
