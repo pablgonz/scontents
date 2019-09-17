@@ -1560,7 +1560,10 @@
 %   the value (if any) is passed as argument to this function.
 %
 %   First we check if the key is an integer using \cs{int_to_roman:n}.
-%   If it is, we
+%   If it is, we check that the value passed to the key is blank
+%   (otherwise something odd as |1=1| might have been used). If everything
+%   is correct, then set the value of the integer which holds the index.
+%   Otherwise raise an error about an unknown option.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_parse_unknown_key:n #1
   { \exp_args:NV \@@_parse_unknown_key:nn \l_keys_key_tl {#1} }
@@ -1612,10 +1615,8 @@
       }
       { \msg_expandable_error:nnn { scontents } { undefined-storage } {#2} }
   }
-\cs_new:Npn \eshow:n #1 { \exp_args:No \use_none:n { \_:_ <#1> } }
 \cs_new:Npn \@@_getfrom_seq:nnn #1 #2 #3
   {
-    % \eshow:n {#1//#2//#3}
     \bool_lazy_or:nnTF
       { \int_compare_p:nNn {#2} = { 0 } }
       { \int_compare_p:nNn { \int_abs:n {#2} } > {#1} }
