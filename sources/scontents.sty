@@ -114,7 +114,8 @@
 \keys_define:nn { scontents / Scontents }
   {
     print-cmd .meta:nn = { scontents } { print-cmd = #1 },
-    store-cmd .meta:nn = { scontents } { store-cmd = #1 }
+    store-cmd .meta:nn = { scontents } { store-cmd = #1 },
+    force-eol .meta:nn = { scontents } { force-eol = #1 }
   }
 \cs_new_protected:Npn \__scontents_parse_unknown_key:n #1
   { \exp_args:NV \__scontents_parse_unknown_key:nn \l_keys_key_tl {#1} }

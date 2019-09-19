@@ -593,7 +593,7 @@
 %
 % As a recommendation, if you use this package (and in general) \enquote{Do not use |TAB|s
 % unless strictly necessary}, for example within a verbatim environment that
-% supports this character such as |Verbatim| or |lstings| or when you want to generate
+% supports this character such as |Verbatim| or |lstlisting| or when you want to generate
 % a |MakeFile| file.
 %
 % \subsection{Configuration of the options}
@@ -623,29 +623,31 @@
 %
 % Summary table of available options.
 %
-% \begin{tabular}{ccccccc}
+% \setlength{\tabcolsep}{0.5em}
+% \begin{tabular}{cccccccc}
 % \toprule
-%  \texttt{key}       & package & \ics{setupsc} & \myenv*{scontents}  & \ics*{Scontents} & \ics*{Scontents*} & \ics*{typestored}\\
+%  \texttt{key} &package &\ics{setupsc} &\myenv*{scontents} &\ics*{Scontents} &\ics*{Scontents*} &\ics*{typestored} &\ics*{meaningsc}\\
 % \midrule
-%  \texttt{store-env} & \cmark  & \cmark        &  \cmark             & \xmark          & \xmark          & \xmark          \\
-%  \texttt{store-cmd} & \cmark  & \cmark        &  \xmark             & \cmark          & \cmark          & \xmark          \\
-%  \texttt{print-env} & \cmark  & \cmark        &  \cmark             & \xmark          & \xmark          & \xmark          \\
-%  \texttt{print-cmd} & \cmark  & \cmark        &  \xmark             & \cmark          & \cmark          & \xmark          \\
-%  \texttt{print-all} & \cmark  & \cmark        &  \cmark             & \xmark          & \xmark          & \xmark          \\
-%  \texttt{write-env} & \xmark  & \xmark        &  \cmark             & \xmark          & \xmark          & \xmark          \\
-%  \texttt{write-out} & \xmark  & \xmark        &  \cmark             & \xmark          & \xmark          & \xmark          \\
-%  \texttt{width-tab} & \cmark  & \cmark        &  \cmark             & \cmark          & \cmark          & \cmark          \\
-%  \texttt{force-eol} & \cmark  & \cmark        &  \cmark             & \xmark          & \cmark          & \xmark          \\
-%  \texttt{verb-font} & \cmark  & \cmark        &  \cmark             & \xmark          & \xmark          & \cmark          \\
+%  \texttt{store-env} & \cmark  & \cmark  &  \cmark  & \xmark  & \xmark  & \xmark  & \xmark \\
+%  \texttt{store-cmd} & \cmark  & \cmark  &  \xmark  & \cmark  & \cmark  & \xmark  & \xmark \\
+%  \texttt{print-env} & \cmark  & \cmark  &  \cmark  & \xmark  & \xmark  & \xmark  & \xmark \\
+%  \texttt{print-cmd} & \cmark  & \cmark  &  \xmark  & \cmark  & \cmark  & \xmark  & \xmark \\
+%  \texttt{print-all} & \cmark  & \cmark  &  \cmark  & \xmark  & \xmark  & \xmark  & \xmark \\
+%  \texttt{write-env} & \xmark  & \xmark  &  \cmark  & \xmark  & \xmark  & \xmark  & \xmark \\
+%  \texttt{write-out} & \xmark  & \xmark  &  \cmark  & \xmark  & \xmark  & \xmark  & \xmark \\
+%  \texttt{width-tab} & \cmark  & \cmark  &  \cmark  & \cmark  & \cmark  & \cmark  & \cmark \\
+%  \texttt{force-eol} & \cmark  & \cmark  &  \cmark  & \xmark  & \cmark  & \xmark  & \xmark \\
+%  \texttt{verb-font} & \cmark  & \cmark  &  \cmark  & \xmark  & \xmark  & \cmark  & \cmark \\
 % \bottomrule
 % \end{tabular}
 %
 % \section{User interface}
 % \label{sec:interface}
 %
-% The \emph{user interface} provided by this package consists in \myenv*{scontents} environment,
-% \ics*{Scontents} and \ics*{Scontents*} commands to stored contents and \ics*{getstored} command
-% to get the \meta{stored content} along with other utilities described in this documentation.
+% The \emph{user interface} provided by this package consists in \myenv*{scontents}
+% environment, \ics*{Scontents} and \ics*{Scontents*} commands to stored
+% contents and \ics*{getstored} command to get the \meta{stored content}
+% along with other utilities described in this documentation.
 %
 % \subsection{The environment \env{scontents}}
 % \label{sec:scontents}
@@ -739,9 +741,6 @@
 % \subsection{The command \cs{Scontents}}
 % \label{sec:Scontents}
 %
-% The command to store content directly in memory, the star version allows
-% to save \meta{verbatim} contents.
-%
 % \vspace*{-10pt}
 %
 % \begin{function}{\Scontents}
@@ -752,22 +751,24 @@
 %   \end{syntax}
 % \end{function}
 %
-% The \ics*{Scontents} command reads the \mymeta{argument} in standard mode.
-% It is not possible to pass environments such as \meta{verbatim}, but it is
-% possible to use the implementation of \ics{Verb} provided by the
-% \mypkg{fvextra} package for contents on one line and \ics{lstinline} from
-% \mypkg{listings} package, but it is preferable to use the starred version.
+% The \ics*{Scontents} command reads the \mymeta{argument} in standard
+% mode. It is not possible to pass environments such as \meta{verbatim},
+% but it is possible to use the implementation of \ics{Verb} provided by
+% the \mypkg{fvextra} package for contents on one line and \ics{lstinline}
+% from \mypkg{listings} package, but it is preferable to use the starred
+% version.
 %
 % The \ics*{Scontents*} command reads the \mymeta{argument} under  verbatim
-% category code regimen. If its first delimiter is a brace, it will be assumed
-% that the \mymeta{argument} is nested into braces. Otherwise it will be assumed
-% that the ending of that argument is delimited by that first delimiter-like the
-% argument of \ics{verb}. Blank lines are preserved, escaped |\{| and |\}| must
-% also be balanced if the argument is used with braces and |TAB|s characters typed
-% from the keyboard are converted into spaces.
+% category code regimen. If its first delimiter is a brace, it will be
+% assumed that the \mymeta{argument} is nested into braces. Otherwise it
+% will be assumed that the ending of that argument is delimited by that
+% first delimiter-like the argument of \ics{verb}. Blank lines are preserved,
+% escaped |\{| and |\}| must also be balanced if the argument is used
+% with braces and |TAB|s characters typed from the keyboard are converted
+% into spaces.
 %
-% Both versions of the command can be used anywhere in the document and cannot
-% be used as an \mymeta{argument} for other command.
+% Both versions can be used anywhere in the document and cannot be used
+% as an \mymeta{argument} for other command.
 %
 % \subsection*{Options for command}
 % \label{sec:optcmdsc}
@@ -806,8 +807,9 @@
 %
 % The command \ics*{getstored} gets the content stored in \meta{seq name}
 % according to the index in which it was stored. The command is robust
-% and can be used as an \meta{argument} for another command. If the optional argument
-% is not passed it defaults to the last element saved in the \meta{seq name}.
+% and can be used as an \meta{argument} for another command. If the optional
+% argument is not passed it defaults to the last element saved in the
+% \meta{seq name}.
 %
 % \subsection{The command \cs{typestored}}
 % \label{sec:typestored}
@@ -822,7 +824,8 @@
 %
 % The command \ics*{typestored} internally places the content stored in
 % the \meta{seq name} into the \myenv*{verbatimsc} environment. The \mymeta{index}
-% number corresponds to the position in which the content is stored in the \meta{seq name}.
+% number corresponds to the position in which the content is stored in
+% the \meta{seq name}.
 %
 % If the optional argument is not passed it defaults to the last element
 % saved in the \meta{seq name}.
@@ -843,12 +846,14 @@
 % \vspace*{-10pt}
 %
 % \begin{function}{verbatimsc}
-% Internal environment used by \cs{typestored} to display \meta{verbatim style} contents.
+% Internal environment used by \cs{typestored} to display \meta{verbatim style}
+% contents.
 % \end{function}
 %
-% One consideration to keep in mind is that this is a \emph{representation} of the content
-% in a \meta{verbatim} environment and not a real \meta{verbatim} environment, the line ends
-% are not respected. The \myenv*{verbatimsc} environment can be in the following ways:
+% One consideration to keep in mind is that this is a \emph{representation}
+% of the content in a \meta{verbatim} environment and not a real \meta{verbatim}
+% environment. The \myenv*{verbatimsc} environment can be customized in the
+% following ways:
 %
 % Using the package \mypkg{fancyvrb}:
 % \iffalse
@@ -1312,7 +1317,7 @@
 % \section{Change history}
 % \label{sec:changes}
 %
-% In this section you will find some (not all) of the changes in \mypkg*{scontent}
+% In this section you will find some (not all) of the changes in \mypkg*{scontents}
 % development, from the first public implementation using the \mypkg{filecontentsdef}
 % package to the current version with only \mypkg{expl3}.
 %
@@ -1323,6 +1328,7 @@
 % \begin{description}[font=\small\sffamily, wide=0pt, style=multiline, leftmargin=\descrwidth,  nosep, noitemsep]
 % \item [\fileversion{} (dev), \filedate]
 %    \begin{itemize}
+%        \item Added \verb+force-eol+, \verb+verb-font+ and \verb+width-tab+ keys.
 %        \item The extra space has been removed when you run \verb+\getstored+.
 %        \item Internal code has been rewritten more efficiently.
 %        \item Remove \verb+\typestored*+.
@@ -1601,7 +1607,8 @@
 \keys_define:nn { scontents / Scontents }
   {
     print-cmd .meta:nn = { scontents } { print-cmd = #1 },
-    store-cmd .meta:nn = { scontents } { store-cmd = #1 }
+    store-cmd .meta:nn = { scontents } { store-cmd = #1 },
+    force-eol .meta:nn = { scontents } { force-eol = #1 }
   }
 %    \end{macrocode}
 %
@@ -1609,7 +1616,7 @@
 %
 % \begin{macro}{\@@_parse_unknown_key:n,\@@_parse_unknown_key:nn}
 %   The commands \cs{typestored} and \cs{meaningsc} accept an optional
-%   argument for setting the \texttt{tab-width} to print the stored
+%   argument for setting the \texttt{width-tab} to print the stored
 %   contents. However their optional argument also contains the number
 %   of the item to retrieve from the stored sequence. To avoid the
 %   awkward \verb|\typestored[][<options>]{...}| syntax, we'll make the
@@ -1777,8 +1784,10 @@
 %   function, which will then read the contents of the environment and
 %   optionally store them in a token list or write to an external file.
 %
-%   When that's done, \cs{@@_file_write_stop:N} does the cleanup and the read
-%   token list is smuggled out of the verbatim group.
+%   When that's done, \cs{@@_file_write_stop:N} does the cleanup and the
+%   read token list is smuggled out of the verbatim group. This part of
+%   the code is inspired and adapted from the code of the package \pkg{xsimverb}
+%   by Clemens Niederberger.
 %
 %^^A Hm... Apparently this is not the verbatim group, but one level above. Is
 %^^A this group really necessary?
@@ -2080,9 +2089,9 @@
 % \subsection{Some auxiliaries}
 %
 % \begin{macro}{\@@_tabs_to_spaces:}
-%   In a verbatim context the tab character is made active and set
+%   In a verbatim context the |tab| character is made active and set
 %   equal to \cs{@@_tabs_to_spaces:}, to produce as many spaces as
-%   the |tab-width| key was set to.
+%   the |width-tab| key was set to.
 %    \begin{macrocode}
 \cs_new:Npn \@@_tabs_to_spaces:
   { \prg_replicate:nn { \l_@@_tab_width_int } { ~ } }
@@ -2136,7 +2145,7 @@
 % User command \cs{setupsc} to setup module.
 %%^^A User command \setupsc
 % \begin{macro}{\setupsc}
-%   A user-level wrapper for \cs{keys_set:nn}|{ scontents }|
+%   A user-level wrapper for \cs{keys_set:nn}|{ scontents }|.
 %    \begin{macrocode}
 \NewDocumentCommand { \setupsc } { m }
   { \keys_set:nn { scontents } {#1} }
