@@ -32,20 +32,20 @@
       % print-env
     , print-env .bool_set:N       = \l__scontents_print_env_bool
     , print-env .initial:n        = false
-    % , print-env .value_required:n = true
+    , print-env .default:n        = true
       % print-cmd
     , print-cmd .bool_set:N       = \l__scontents_print_cmd_bool
     , print-cmd .initial:n        = false
-    % , print-cmd .value_required:n = true
+    , print-cmd .default:n        = true
       % print-cmd
     , force-eol .bool_set:N       = \l__scontents_forced_eol_bool
     , force-eol .initial:n        = false
-    % , print-cmd .value_required:n = true
+    , print-cmd .default:n        = true
     % .int keys
-      % tab-width
-    , tab-width .int_set:N        = \l__scontents_tab_width_int
-    , tab-width .initial:n        = 1
-    , tab-width .value_required:n = true
+      % width-tab
+    , width-tab .int_set:N        = \l__scontents_tab_width_int
+    , width-tab .initial:n        = 1
+    , width-tab .value_required:n = true
     % other keys:
       % print-all
     , print-all .meta:n           = { print-env = #1 , print-cmd = #1 }
@@ -152,10 +152,8 @@
       }
       { \msg_expandable_error:nnn { scontents } { undefined-storage } {#2} }
   }
-\cs_new:Npn \eshow:n #1 { \exp_args:No \use_none:n { \_:_ <#1> } }
 \cs_new:Npn \__scontents_getfrom_seq:nnn #1 #2 #3
   {
-    % \eshow:n {#1//#2//#3}
     \bool_lazy_or:nnTF
       { \int_compare_p:nNn {#2} = { 0 } }
       { \int_compare_p:nNn { \int_abs:n {#2} } > {#1} }

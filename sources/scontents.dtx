@@ -536,7 +536,9 @@
 % The \mypkg*{scontents} package allows to store contents in memory (sequence)
 % or external files, provides a user interface style \myoarg{key = val}
 % along with the ability to store contents in sequences for later use in
-% different parts of the document.
+% different parts of the document. In some ways it works very much like
+% the \mypkg{filecontentsdef} package, with the difference that it preserves
+% the |TAB|s characters in the output files (see \ref{sec:tabcharacter}).
 %
 % The package is loaded in the usual way:
 %
@@ -563,14 +565,36 @@
 % \subsection{The TAB character}
 % \label{sec:tabcharacter}
 %
-% The |TAB|s characters typed from the keyboard are converted into spaces when
-% they are stored in memory, but, they are preserved when recording in a file,
-% if they are not typed at the end of a line, unfortunately, dependent on the
-% \hologo{TeX} distribution you have and how the formats were initialized.
+% In a standard \hologo{LaTeX} document, horizontal |TAB|s (\LKeyTab) typed from the
+% keyboard are treated as explicit spaces in most contexts. Some users use
+% this character to indented the source code of the document and depending on
+% the text editor used, some will use real |TAB|s (sometimes called  \enquote{hard tabs}),
+% others with \enquote{soft tabs}(\textvisiblespace\textvisiblespace or \textvisiblespace
+% \textvisiblespace\textvisiblespace\textvisiblespace) or both.
+%
+% At first glance it may seem the same, but the way in which |TAB|s (\enquote{hard tabs})
+% are processed according to the context in which they are found within a file,
+% both in reading\footnote{Check the answer given by Ulrich Diez in
+% \href{https://tex.stackexchange.com/a/508103/7832}{Keyboard TAB character in
+% argument v (xparse)}.} and writing\footnote{Check the answer given by Enrico Gregorio
+% in \href{https://tex.stackexchange.com/a/58740/7832}{How to output a
+% tabulation into a file}.}, are different and may have adverse consequences.
+%
+% The behavior of this character for the \emph{stored} content can be configured
+% with the |widht-tab| key, but, these will be preserved by writing an output file,
+% unfortunately, dependent on the \hologo{TeX} distribution you have
+% and how the formats were initialized.
 %
 % With a \hologo{TeX}Live distribution, the formats for |latex|, |pdflatex| and
 % |lualatex| are prepared feeding the option |-translate-file=cp227.tcx|, that
-% makes the |TAB| character \enquote{printable}.
+% makes the |TAB| character \enquote{printable}. To write a literal |TAB| character
+% using |xelatex| you must add the |-8bit| option on command line, otherwise you will
+% get \hologo{TeX}-|TAB|s (|^^I|) in the \mymeta{output file}.
+%
+% As a recommendation, if you use this package (and in general) \enquote{Do not use |TAB|s
+% unless strictly necessary}, for example within a verbatim environment that
+% supports this character such as |Verbatim| or |lstings| or when you want to generate
+% a |MakeFile| file.
 %
 % \subsection{Configuration of the options}
 % \label{sec:confopt}
@@ -599,19 +623,20 @@
 %
 % Summary table of available options.
 %
-% \begin{tabular}{cccccc}
+% \begin{tabular}{ccccccc}
 % \toprule
-%  \texttt{key}       & package & \ics{setupsc} & \myenv*{scontents}  & \ics*{Scontents} & \ics*{Scontents*}\\
+%  \texttt{key}       & package & \ics{setupsc} & \myenv*{scontents}  & \ics*{Scontents} & \ics*{Scontents*} & \ics*{typestored}\\
 % \midrule
-%  \texttt{store-env} & \cmark  & \cmark        &  \cmark             & \xmark          & \xmark          \\
-%  \texttt{store-cmd} & \cmark  & \cmark        &  \xmark             & \cmark          & \cmark          \\
-%  \texttt{print-env} & \cmark  & \cmark        &  \cmark             & \xmark          & \xmark          \\
-%  \texttt{print-cmd} & \cmark  & \cmark        &  \xmark             & \cmark          & \cmark          \\
-%  \texttt{print-all} & \cmark  & \cmark        &  \cmark             & \xmark          & \xmark          \\
-%  \texttt{write-env} & \xmark  & \xmark        &  \cmark             & \xmark          & \xmark          \\
-%  \texttt{write-out} & \xmark  & \xmark        &  \cmark             & \xmark          & \xmark          \\
-%  \texttt{width-tab} & \cmark  & \cmark        &  \cmark             & \cmark          & \cmark          \\
-%  \texttt{write-tab} & \cmark  & \cmark        &  \cmark             & \xmark          & \xmark          \\
+%  \texttt{store-env} & \cmark  & \cmark        &  \cmark             & \xmark          & \xmark          & \xmark          \\
+%  \texttt{store-cmd} & \cmark  & \cmark        &  \xmark             & \cmark          & \cmark          & \xmark          \\
+%  \texttt{print-env} & \cmark  & \cmark        &  \cmark             & \xmark          & \xmark          & \xmark          \\
+%  \texttt{print-cmd} & \cmark  & \cmark        &  \xmark             & \cmark          & \cmark          & \xmark          \\
+%  \texttt{print-all} & \cmark  & \cmark        &  \cmark             & \xmark          & \xmark          & \xmark          \\
+%  \texttt{write-env} & \xmark  & \xmark        &  \cmark             & \xmark          & \xmark          & \xmark          \\
+%  \texttt{write-out} & \xmark  & \xmark        &  \cmark             & \xmark          & \xmark          & \xmark          \\
+%  \texttt{width-tab} & \cmark  & \cmark        &  \cmark             & \cmark          & \cmark          & \cmark          \\
+%  \texttt{force-eol} & \cmark  & \cmark        &  \cmark             & \xmark          & \cmark          & \xmark          \\
+%  \texttt{verb-font} & \cmark  & \cmark        &  \cmark             & \xmark          & \xmark          & \cmark          \\
 % \bottomrule
 % \end{tabular}
 %
@@ -633,8 +658,8 @@
 %   \end{syntax}
 %
 % The \myenv*{scontents} environment allows you to save the content to memory
-% or external files in a similar way to the package \myenv{filecontents}. This
-% allows you to record content including verbatim for later reuse.
+% or external files in a similar way to the package \myenv{filecontentsdef}. This
+% allows you to record content, including \emph{verbatim}, for later reuse.
 % \end{function}
 %
 % Some considerations to keep in mind:
@@ -645,10 +670,7 @@
 %  must be on different lines.
 % \item The \myoarg{key=val} options must be passed on one line right after
 %  starting the environment.
-% \item The content of the environment is treated in a similar way to the environment
-%  \myenv{filecontents*}.
-% \item If you don't want the extra space added by \hologo{TeX}, you should use
-%  \ics{relax} or \lstinline[style=inline]|%| at the end of environment.
+% \item |TAB|s characters are preserved when writing an \mymeta{external file}.
 % \end{enumerate}
 %
 % \subsection*{Options for environment}
@@ -660,8 +682,8 @@
 % \medskip
 %
 % \keyexamp{store-env}{seq name}{contents}
-% The name of the sequence in which the content recorded by the environment
-% was stored.
+% The name of the \mymeta{sequence} in which the content recorded by the
+% environment was stored.
 %
 % \medskip
 %
@@ -670,20 +692,19 @@
 %
 % \medskip
 %
-% \keyexamp{width-tab}{positive integer}{ 1 }
-% Establishes the equivalence in \mymeta{spaces} for the character |TAB|
-% typed from the keyboard. The value must be a \mymeta{positive integer}.
+% \keyexamp{force-eol}{true\textbar false}{false}
+% This key is only necessary if the last line inside the environment is
+% |\end{Verbatim}| or the |\end{...}| of some environment created with
+% the package \mypkg{fancyvrb}.
 %
-% \medskip
-%
-% \keyexamp{write-tab}{true\textbar false}{false}
-% Sets the literal typing of the character |TAB| typed from the keyboard
-% in the \mymeta{output file}. If it is \mymeta{false} the character |TAB|
-% will be converted to \mymeta{spaces} according to the value of |width-tab|.
-%
-% To write a literal |TAB| character using |xelatex| you must add the |-8bit|
-% option on command line, otherwise you will get \hologo{TeX}-|TAB|s (|^^I|) in
-% the \mymeta{output file}.
+%^^A \keyexamp{write-tab}{true\textbar false}{false}
+%^^A Sets the literal typing of the character |TAB| typed from the keyboard
+%^^A in the \mymeta{output file}. If it is \mymeta{false} the character |TAB|
+%^^A will be converted to \mymeta{spaces} according to the value of |width-tab|.
+%^^A
+%^^A To write a literal |TAB| character using |xelatex| you must add the |-8bit|
+%^^A option on command line, otherwise you will get \hologo{TeX}-|TAB|s (|^^I|) in
+%^^A the \mymeta{output file}.
 %
 % \medskip
 %
@@ -693,7 +714,12 @@
 % be overwritten. The \mymeta{file.ext} will be created in the working
 % directory, relative or absolute paths are not supported, the way the
 % external \mymeta{file.ext} is recorded is similar to that produced by
-% \myenv{filecontents*} environment.
+% \myenv{filecontents*} environment. If the content within the environment
+% has literal |TAB|s they will be recorded in \mymeta{file.ext}.
+%
+% To write a literal |TAB| character using |xelatex| you must add the |-8bit|
+% option on command line, otherwise you will get \hologo{TeX}-|TAB|s (|^^I|) in
+% the \mymeta{output file}.
 %
 % \medskip
 %
@@ -702,7 +728,13 @@
 % will not store the contents of this one. The \mymeta{file.ext} will be
 % created in the working directory, relative or absolute paths are not
 % supported. The way the external \mymeta{file.ext} is recorded is similar
-% to that produced by \myenv{filecontents*} environment.
+% to that produced by \myenv{filecontents*} environment. If the content
+% within the environment has literal |TAB|s they will be recorded in
+% \mymeta{file.ext}.
+%
+% To write a literal |TAB| character using |xelatex| you must add the |-8bit|
+% option on command line, otherwise you will get \hologo{TeX}-|TAB|s (|^^I|) in
+% the \mymeta{output file}.
 %
 % \subsection{The command \cs{Scontents}}
 % \label{sec:Scontents}
@@ -732,9 +764,7 @@
 % that the ending of that argument is delimited by that first delimiter-like the
 % argument of \ics{verb}. Blank lines are preserved, escaped |\{| and |\}| must
 % also be balanced if the argument is used with braces and |TAB|s characters typed
-% from the keyboard are converted into spaces. If you don't want the extra space
-% added by \hologo{TeX}, you should use \ics{relax} or \lstinline[style=inline]|%|
-% at the end of \mymeta{argument}.
+% from the keyboard are converted into spaces.
 %
 % Both versions of the command can be used anywhere in the document and cannot
 % be used as an \mymeta{argument} for other command.
@@ -755,6 +785,13 @@
 %
 % \keyexamp{print-cmd}{true\textbar false}{false}
 % It will show the current content of \ics*{Scontents}.
+%
+% \medskip
+%
+% \keyexamp{force-eol}{true\textbar false}{false}
+% This key is only necessary if the last line inside the command is
+% |\end{Verbatim}| or the |\end{...}| of some environment created with
+% the package \mypkg{fancyvrb}.
 %
 % \subsection{The command \cs{getstored}}
 % \label{sec:getstored}
@@ -779,15 +816,26 @@
 %
 % \begin{function}{\typestored}
 %   \begin{syntax}
-%      \cmdexamp{typestored}[index]{seq name}
+%      \cmdexamp{typestored}[index, width-tab=..., verb-font=...]{seq name}
 %   \end{syntax}
 % \end{function}
 %
-% The command \ics*{typestored*} must be used for content stored by \ics*{Scontents*} command.
-% Internally places the content into the \myenv*{verbatimsc} environment.
+% The command \ics*{typestored} internally places the content stored in
+% the \meta{seq name} into the \myenv*{verbatimsc} environment. The \mymeta{index}
+% number corresponds to the position in which the content is stored in the \meta{seq name}.
 %
 % If the optional argument is not passed it defaults to the last element
 % saved in the \meta{seq name}.
+% \medskip
+%
+% \keyexamp{width-tab}{number}{ 1 }
+% Establishes the equivalence in \mymeta{spaces} for the character |TAB|
+% typed from the keyboard. The value must be a \mymeta{positive integer}.
+%
+% \medskip
+%
+% \keyexamp{verb-font}{number}{ \textbackslash{}ttfamily }
+% Sets the type of font with which to display the content.
 %
 % \subsection{The environment \env{verbatimsc}}
 % \label{sec:verbatimsc}
@@ -795,8 +843,7 @@
 % \vspace*{-10pt}
 %
 % \begin{function}{verbatimsc}
-% Internal environment used by \cs{typestored} and \cs{typestored*}  to display
-% \meta{verbatim style} contents.
+% Internal environment used by \cs{typestored} to display \meta{verbatim style} contents.
 % \end{function}
 %
 % One consideration to keep in mind is that this is a \emph{representation} of the content
@@ -868,12 +915,24 @@
 %
 % \begin{function}{\meaningsc}
 %   \begin{syntax}
-%      \cmdexamp{meaningsc}[index]{seq name}
+%      \cmdexamp{meaningsc}[index, width-tab=..., verb-font=...]{seq name}
 %   \end{syntax}
 % The command \ics*{meaningsc} executes \ics{meaning} on the content stored
-% in \meta{seq name}. If the optional argument is not passed it defaults to the
-% last element saved in the \meta{seq name}.
+% in \meta{seq name}. The \mymeta{index} number corresponds to the position
+% in which the content is stored in the \meta{seq name}. If the optional
+% argument is not passed it defaults to the last element saved in the \meta{seq name}.
 % \end{function}
+%
+% \medskip
+%
+% \keyexamp{width-tab}{number}{ 1 }
+% Establishes the equivalence in \mymeta{spaces} for the character |TAB|
+% typed from the keyboard. The value must be a \mymeta{positive integer}.
+%
+% \medskip
+%
+% \keyexamp{verb-font}{number}{ \textbackslash{}ttfamily }
+% Sets the type of font with which to display the content.
 %
 % \subsection{The command \cs{countsc}}
 % \label{sec:countsc}
@@ -1264,6 +1323,8 @@
 % \begin{description}[font=\small\sffamily, wide=0pt, style=multiline, leftmargin=\descrwidth,  nosep, noitemsep]
 % \item [\fileversion{} (dev), \filedate]
 %    \begin{itemize}
+%        \item The extra space has been removed when you run \verb+\getstored+.
+%        \item Internal code has been rewritten more efficiently.
 %        \item Remove \verb+\typestored*+.
 %        \item Remove \verb+filecontentsdef+ dependency.
 %        \item Changing \verb+\regex_replace_all:+ for \verb+\tl_replace_all:+.
@@ -1370,10 +1431,10 @@
     , force-eol .initial:n        = false
     , print-cmd .default:n        = true
     % .int keys
-      % tab-width
-    , tab-width .int_set:N        = \l_@@_tab_width_int
-    , tab-width .initial:n        = 1
-    , tab-width .value_required:n = true
+      % width-tab
+    , width-tab .int_set:N        = \l_@@_tab_width_int
+    , width-tab .initial:n        = 1
+    , width-tab .value_required:n = true
     % other keys:
       % print-all
     , print-all .meta:n           = { print-env = #1 , print-cmd = #1 }
@@ -1413,7 +1474,7 @@
 %%^^A Internal int vars
 % \begin{macro}{\l_@@_seq_item_int}
 %   \cs{l_@@_seq_item_int} stores the index in the sequence of the item
-%   requested to \cs{\typestored} or \cs{meaningsc}.
+%   requested to \cs{typestored} or \cs{meaningsc}.
 %    \begin{macrocode}
 \int_new:N \l_@@_seq_item_int
 %    \end{macrocode}
