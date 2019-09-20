@@ -35,6 +35,7 @@
     print-cmd .default:n        = true,
     force-eol .bool_set:N       = \l__scontents_forced_eol_bool,
     force-eol .initial:n        = false,
+    force-eol .default:n        = true,
     width-tab .int_set:N        = \l__scontents_tab_width_int,
     width-tab .initial:n        = 1,
     width-tab .value_required:n = true,
@@ -52,6 +53,7 @@
 \tl_new:N \g__scontents_temp_tl
 %%^^A Internal int vars
 \int_new:N \l__scontents_seq_item_int
+\int_new:N \l__scontents_env_nesting_int
 %%^^A Internal bool vars
 \bool_new:N \l__scontents_writing_bool
 \bool_set_false:N \l__scontents_writing_bool
@@ -75,7 +77,7 @@
 %%^^A Stream for saving the contents
 \iow_new:N \l__scontents_file_iow
 %%^^A Copy of scantokens in expl3
-\cs_new:Npn \__scontents_rescan_tokens:n #1 { \tex_scantokens:D {#1} }
+\cs_new_protected:Npn \__scontents_rescan_tokens:n #1 { \tex_scantokens:D {#1} }
 \cs_generate_variant:Nn \__scontents_rescan_tokens:n { V, x }
 %%^^A Internal \tab and \par
 \cs_new:Npx \__scontents_tab: { \c_space_tl }
@@ -222,43 +224,9 @@
         \tl_clear:N \l__scontents_file_tl
         \seq_map_function:NN \l_char_special_seq \char_set_catcode_other:N
         \int_step_function:nnN { 128 } { 255 } \char_set_catcode_letter:n
-        \use:x
-          {
-            \cs_set:Npx \exp_not:N \__scontents_tmpa:w
-              ####1 \c__scontents_end_env_tl
-              ####2 \c__scontents_end_env_tl
-              ####3 \exp_not:N \q__scontents_stop
-          } {
-              \exp_not:N \tl_if_blank:nTF {##3}
-                {
-                  \bool_if:NT \l__scontents_writing_bool
-                    { \iow_now:Nn \l__scontents_file_iow {##1} }
-                  \bool_if:NT \l__scontents_storing_bool
-                    {
-                      \tl_put_right:Nn \exp_not:N \l__scontents_file_tl
-                        { \exp_not:N ^^J ##1 }
-                    }
-                }
-                {
-                  \exp_not:N \tl_if_blank:nF {##1}
-                    {
-                      \msg_error:nnnn { scontents }
-                        { ignoring-text } { before } {##1}
-                    }
-                  \exp_not:N \tl_if_blank:nF {##2}
-                    {
-                      \msg_error:nnnn { scontents }
-                        { ignoring-text } { after } {##2}
-                    }
-                  \cs_set_protected:Npn \exp_not:N \__scontents_ret:w
-                    { \exp_not:N \end{scontents} }
-                  \char_set_active_eq:NN \exp_not:N ^^M \exp_not:N \__scontents_ret:w
-                }
-              \exp_not:N ^^M
-            }
         \cs_set_protected:Npx \__scontents_ret:w ##1 ^^M
           {
-            \exp_not:N \__scontents_tmpa:w
+            \exp_not:N \__scontents_verb_processor_iterate:w
             ##1 \c__scontents_end_env_tl
                 \c__scontents_end_env_tl
                 \exp_not:N \q__scontents_stop
@@ -266,6 +234,44 @@
         \__scontents_make_control_chars_active:
         \__scontents_ret:w
     }
+  \use:x
+    {
+      \cs_new:Npn \exp_not:N \__scontents_verb_processor_iterate:w
+        ##1 \c__scontents_end_env_tl
+        ##2 \c__scontents_end_env_tl
+        ##3 \exp_not:N \q__scontents_stop
+    } {
+        \tl_if_blank:nTF {#3}
+          {
+            \__scontents_analyse_nesting:n {#1}
+            \__scontents_verb_processor_output:n {#1}
+          }
+          {
+            \__scontents_if_nested:TF
+              {
+                \__scontents_nesting_decr:
+                \__scontents_verb_processor_output:x
+                  { \exp_not:n {#1} \c__scontents_end_env_tl \exp_not:n {#2} }
+              }
+              {
+                \tl_if_blank:nF {#1}
+                  { \__scontents_verb_processor_output:n {#1} }
+                \cs_set_protected:Npx \__scontents_ret:w
+                  {
+                    \exp_not:N \end{scontents}
+                    \bool_lazy_or:nnF
+                      { \tl_if_blank_p:n {#2} }
+                      { \str_if_eq_p:ee {#2} { \c_percent_str } }
+                      {
+                        \msg_warning:nnn { scontents } { rescanning-text } {#2}
+                        \__scontents_rescan_tokens:n {#2}
+                      }
+                  }
+                \char_set_active_eq:NN ^^M \__scontents_ret:w
+              }
+          }
+        ^^M
+      }
   \cs_new_protected:Npn \__scontents_file_write_stop:N #1
     {
       \bool_if:NT \l__scontents_writing_bool
@@ -286,6 +292,50 @@
   \cs_new:Npn \__scontents_remove_leading_nl:n #1
     { \exp_not:o { \__scontents_remove_leading_nl:w #1 } }
   \cs_new:Npn \__scontents_remove_leading_nl:w ^^J { }
+  \cs_new_protected:Npn \__scontents_verb_processor_output:n #1
+    {
+      \bool_if:NT \l__scontents_writing_bool
+        { \iow_now:Nn \l__scontents_file_iow {#1} }
+      \bool_if:NT \l__scontents_storing_bool
+        { \tl_put_right:Nn \l__scontents_file_tl { ^^J #1 } }
+    }
+  \cs_generate_variant:Nn \__scontents_verb_processor_output:n { x }
+  \cs_new_protected:Npx \__scontents_analyse_nesting:n #1
+    {
+      \exp_not:N \__scontents_analyse_nesting:w #1
+        \c_backslash_str begin
+          \c_left_brace_str \exp_not:N \q__scontents_mark \c_right_brace_str
+      \exp_not:N \q__scontents_stop
+    }
+  \use:x
+    {
+      \cs_new_protected:Npn \exp_not:N \__scontents_analyse_nesting:w ##1
+        \c_backslash_str begin \c_left_brace_str ##2 \c_right_brace_str
+    }   {
+          \if_meaning:w \q__scontents_mark #2
+            \exp_after:wN \use_i:nn
+          \else:
+            \exp_after:wN \use_ii:nn
+          \fi:
+            { \__scontents_use_none_delimit_by_q_stop:w }
+            {
+              \str_if_eq:eeT {#2} {scontents}
+                {
+                  \int_incr:N \l__scontents_env_nesting_int
+                  \__scontents_analyse_nesting:w
+                }
+              \__scontents_analyse_nesting:w
+            }
+        }
+  \cs_new_protected:Npn \__scontents_nesting_decr:
+    { \int_decr:N \l__scontents_env_nesting_int }
+  \prg_new_protected_conditional:Npnn \__scontents_if_nested: { TF }
+    {
+      \int_compare:nNnTF { \l__scontents_env_nesting_int } > { \c_zero_int }
+        { \prg_return_true: }
+        { \prg_return_false: }
+    }
+  \cs_new:Npn \__scontents_use_none_delimit_by_q_stop:w #1 \q__scontents_stop { }
 \group_end:
 \cs_generate_variant:Nn \__scontents_file_tl_write_start:n { V }
 %%^^A Second atend_environment/stored_to_seq
@@ -323,12 +373,11 @@
   }
 \NewDocumentCommand { \__scontents_verb_arg:w } { +v }
   {
-      \tl_set:Nn \l__scontents_temp_tl {#1}
-       %\tl_set:Nx \l__scontents_temp_tl
-       %  {
-       %     \exp_not:n {#1}
-       %     \bool_if:NT \l__scontents_forced_eol_bool { \exp_not:N ^^J }
-       %  }
+      \tl_set:Nx \l__scontents_temp_tl
+        {
+           \exp_not:n {#1}
+           \bool_if:NT \l__scontents_forced_eol_bool { \exp_not:N ^^J }
+        }
       \tl_replace_all:Nxx \l__scontents_temp_tl { \iow_char:N \^^M } { \iow_char:N \^^J }
       \__scontents_store_to_seq:NN \l__scontents_temp_tl \l__scontents_name_seq_cmd_tl
       \bool_if:NT \l__scontents_print_cmd_bool
@@ -354,7 +403,8 @@
       \IfValueT {#1} { \keys_set:nn { scontents } {#1} }
       \tl_set:Nx \l__scontents_temp_tl { \exp_args:NV \__scontents_getfrom_seq:nn \l__scontents_seq_item_int {#2} }
       \tl_log:N \l__scontents_temp_tl
-      \__scontents_verb_print:N \l__scontents_temp_tl
+      \tl_if_empty:NF \l__scontents_temp_tl
+        { \__scontents_verb_print:N \l__scontents_temp_tl }
     \group_end:
   }
 %%^^A Internal verb_print:N, need to verbatimized content
@@ -467,8 +517,8 @@
   { Overwriting ~ file ~ `#1' }
 \msg_new:nnn { scontents } { writing-file }
   { Writing ~ file ~ `#1' }
-\msg_new:nnn { scontents } { ignoring-text }
-  { Ignoring~text~`#2'~#1~\c_backslash_str end{scontents}~\msg_line_context:.}
+\msg_new:nnn { scontents } { rescanning-text }
+  { Rescanning~text~`#1'~after~\c_backslash_str end{scontents}~\msg_line_context:.}
 \msg_new:nnn { scontents } { tab-to-space }
   { Tab~has~been~converted~to~Blank~Space }
 \msg_new:nnn { scontents } { feed-to-space }
