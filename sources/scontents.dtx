@@ -1464,7 +1464,7 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\l_@@_seq_item_int,\l_@@_env_nesting_int}
+% \begin{macro}{\l_@@_seq_item_int,\l_@@_env_nesting_int,\l_@@_tmpa_int}
 %   \cs{l_@@_seq_item_int} stores the index in the sequence of the item
 %   requested to \cs{typestored} or \cs{meaningsc}. \cs{l_@@_env_nesting_int}
 %   stores the current nesting level of the \env{scontents} environment.
@@ -1473,6 +1473,7 @@
 %    \begin{macrocode}
 \int_new:N \l_@@_seq_item_int
 \int_new:N \l_@@_env_nesting_int
+\int_new:N \l_@@_tmpa_int
 %    \end{macrocode}
 % \end{macro}
 %
@@ -1949,10 +1950,13 @@
   \cs_generate_variant:Nn \@@_verb_processor_output:n { x }
   \cs_new_protected:Npx \@@_analyse_nesting:n #1
     {
+      \int_zero:N \l_@@_tmpa_int
       \exp_not:N \@@_analyse_nesting:w #1
         \c_backslash_str begin
           \c_left_brace_str \exp_not:N \q_@@_mark \c_right_brace_str
       \exp_not:N \q_@@_stop
+      \int_compare:nNnT { \l_@@_tmpa_int } > { 1 }
+        { \msg_warning:nn { scontents } { multiple-begin } }
     }
   \use:x
     {
@@ -1969,6 +1973,7 @@
               \str_if_eq:eeT {#2} {scontents}
                 {
                   \int_incr:N \l_@@_env_nesting_int
+                  \int_incr:N \l_@@_tmpa_int
                   \@@_analyse_nesting:w
                 }
               \@@_analyse_nesting:w
@@ -2320,6 +2325,8 @@
   { Writing ~ file ~ `#1' }
 \msg_new:nnn { scontents } { rescanning-text }
   { Rescanning~text~`#1'~after~\c_backslash_str end{scontents}~\msg_line_context:.}
+\msg_new:nnn { scontents } { multiple-begin }
+  { Multiple~\c_backslash_str begin{scontents}~\msg_line_context:.}
 \msg_new:nnn { scontents } { tab-to-space }
   { Tab~has~been~converted~to~Blank~Space }
 \msg_new:nnn { scontents } { feed-to-space }
