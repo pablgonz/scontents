@@ -1059,8 +1059,9 @@
 % \end{tikzpicture}
 %
 % \section{source}
-% \foreach \i in {1,...,\countsc{tikz}}{
-% \typestored[\i]{tikz}}
+% \typestored[1]{tikz}
+% \typestored[2]{tikz}
+% \typestored[3]{tikz}
 % \end{document}
 % \end{VerbatimOut}
 % Adapted from \href{https://tex.stackexchange.com/q/5338/7832}{LaTeX equivalent of ConTeXt buffers}
@@ -1273,14 +1274,17 @@
 % \section{Test \texttt{\textbackslash begin\{scontents\}} whit \texttt{minted}}
 % Test \verb+\begin{scontents}+ \par
 %
-% \begin{scontents}
+% \begin{scontents}[write-env=usingtab.tex,force-eol=true]
 % Using \verb+scontents+ env no \verb+[key=val]+, save in seq \verb+contents+
-% with index 1.\par
+% with index 1.\par % replace space by real TAB
 %
 % Prove new \Verb*{ new fvextra whit braces } and environment \verb+Verbatim*+
-% \begin{verbatim}
-%      verbatim environment
-% \end{verbatim}
+% 
+% \begin{Verbatim}[obeytabs, showtabs, tab=\rightarrowfill, tabcolor=red,showspaces, spacecolor=blue]
+% No tab
+% 	One real tab
+% 		Two real Tab plus 	one tab and one more 	
+% \end{Verbatim}
 % \end{scontents}
 %
 % \section{Test \texttt{\textbackslash Scontents} whit \texttt{minted}}
