@@ -1059,8 +1059,9 @@
 % \end{tikzpicture}
 %
 % \section{source}
-% \foreach \i in {1,...,\countsc{tikz}}{
-% \typestored[\i]{tikz}}
+% \typestored[1]{tikz}
+% \typestored[2]{tikz}
+% \typestored[3]{tikz}
 % \end{document}
 % \end{VerbatimOut}
 % Adapted from \href{https://tex.stackexchange.com/q/5338/7832}{LaTeX equivalent of ConTeXt buffers}
@@ -1273,14 +1274,17 @@
 % \section{Test \texttt{\textbackslash begin\{scontents\}} whit \texttt{minted}}
 % Test \verb+\begin{scontents}+ \par
 %
-% \begin{scontents}
+% \begin{scontents}[write-env=usingtab.tex,force-eol=true]
 % Using \verb+scontents+ env no \verb+[key=val]+, save in seq \verb+contents+
-% with index 1.\par
+% with index 1.\par % replace space by real TAB
 %
 % Prove new \Verb*{ new fvextra whit braces } and environment \verb+Verbatim*+
-% \begin{verbatim}
-%      verbatim environment
-% \end{verbatim}
+%
+% \begin{Verbatim}[obeytabs, showtabs, tab=\rightarrowfill, tabcolor=red,showspaces, spacecolor=blue]
+% No tab
+%   One real tab
+%     Two real Tab plus   one tab and one more  
+% \end{Verbatim}
 % \end{scontents}
 %
 % \section{Test \texttt{\textbackslash Scontents} whit \texttt{minted}}
@@ -1421,6 +1425,7 @@
     print-cmd .default:n        = true,
     force-eol .bool_set:N       = \l_@@_forced_eol_bool,
     force-eol .initial:n        = false,
+    force-eol .default:n        = true,
     width-tab .int_set:N        = \l_@@_tab_width_int,
     width-tab .initial:n        = 1,
     width-tab .value_required:n = true,
@@ -1459,13 +1464,15 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\l_@@_seq_item_int}
+% \begin{macro}{\l_@@_seq_item_int,\l_@@_env_nesting_int}
 %   \cs{l_@@_seq_item_int} stores the index in the sequence of the item
-%   requested to \cs{typestored} or \cs{meaningsc}.
+%   requested to \cs{typestored} or \cs{meaningsc}. \cs{l_@@_env_nesting_int}
+%   stores the current nesting level of the \env{scontents} environment.
 %
 %%^^A Internal int vars
 %    \begin{macrocode}
 \int_new:N \l_@@_seq_item_int
+\int_new:N \l_@@_env_nesting_int
 %    \end{macrocode}
 % \end{macro}
 %
@@ -1532,7 +1539,7 @@
 %
 %%^^A Copy of scantokens in expl3
 %    \begin{macrocode}
-\cs_new:Npn \@@_rescan_tokens:n #1 { \tex_scantokens:D {#1} }
+\cs_new_protected:Npn \@@_rescan_tokens:n #1 { \tex_scantokens:D {#1} }
 \cs_generate_variant:Nn \@@_rescan_tokens:n { V, x }
 %    \end{macrocode}
 % \end{macro}
@@ -1805,8 +1812,14 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\@@_file_tl_write_start:n,\@@_file_tl_write_start:V,
-%     \@@_file_write_stop:N,\@@_remove_leading_nl:n,\@@_remove_leading_nl:w}
+% \begin{macro}{
+%     \@@_file_tl_write_start:n,
+%     \@@_file_tl_write_start:V,
+%     \@@_verb_processor_iterate:w,
+%     \@@_file_write_stop:N,
+%     \@@_remove_leading_nl:n,
+%     \@@_remove_leading_nl:w,
+%   }
 %   This is the main macro to collect the contents of a verbatim environment.
 %   The macro starts a group, opens the output file, if necessary, sets verbatim
 %   catcodes, and then issues |^^M| (set equal to \cs{@@_ret:w}) to read the
@@ -1834,43 +1847,9 @@
         \tl_clear:N \l_@@_file_tl
         \seq_map_function:NN \l_char_special_seq \char_set_catcode_other:N
         \int_step_function:nnN { 128 } { 255 } \char_set_catcode_letter:n
-        \use:x
-          {
-            \cs_set:Npx \exp_not:N \@@_tmpa:w
-              ####1 \c_@@_end_env_tl
-              ####2 \c_@@_end_env_tl
-              ####3 \exp_not:N \q_@@_stop
-          } {
-              \exp_not:N \tl_if_blank:nTF {##3}
-                {
-                  \bool_if:NT \l_@@_writing_bool
-                    { \iow_now:Nn \l_@@_file_iow {##1} }
-                  \bool_if:NT \l_@@_storing_bool
-                    {
-                      \tl_put_right:Nn \exp_not:N \l_@@_file_tl
-                        { \exp_not:N ^^J ##1 }
-                    }
-                }
-                {
-                  \exp_not:N \tl_if_blank:nF {##1}
-                    {
-                      \msg_error:nnnn { scontents }
-                        { ignoring-text } { before } {##1}
-                    }
-                  \exp_not:N \tl_if_blank:nF {##2}
-                    {
-                      \msg_error:nnnn { scontents }
-                        { ignoring-text } { after } {##2}
-                    }
-                  \cs_set_protected:Npn \exp_not:N \@@_ret:w
-                    { \exp_not:N \end{scontents} }
-                  \char_set_active_eq:NN \exp_not:N ^^M \exp_not:N \@@_ret:w
-                }
-              \exp_not:N ^^M
-            }
         \cs_set_protected:Npx \@@_ret:w ##1 ^^M
           {
-            \exp_not:N \@@_tmpa:w
+            \exp_not:N \@@_verb_processor_iterate:w
             ##1 \c_@@_end_env_tl
                 \c_@@_end_env_tl
                 \exp_not:N \q_@@_stop
@@ -1878,6 +1857,44 @@
         \@@_make_control_chars_active:
         \@@_ret:w
     }
+  \use:x
+    {
+      \cs_new:Npn \exp_not:N \@@_verb_processor_iterate:w
+        ##1 \c_@@_end_env_tl
+        ##2 \c_@@_end_env_tl
+        ##3 \exp_not:N \q_@@_stop
+    } {
+        \tl_if_blank:nTF {#3}
+          {
+            \@@_analyse_nesting:n {#1}
+            \@@_verb_processor_output:n {#1}
+          }
+          {
+            \@@_if_nested:TF
+              {
+                \@@_nesting_decr:
+                \@@_verb_processor_output:x
+                  { \exp_not:n {#1} \c_@@_end_env_tl \exp_not:n {#2} }
+              }
+              {
+                \tl_if_blank:nF {#1}
+                  { \@@_verb_processor_output:n {#1} }
+                \cs_set_protected:Npx \@@_ret:w
+                  {
+                    \exp_not:N \end{scontents}
+                    \bool_lazy_or:nnF
+                      { \tl_if_blank_p:n {#2} }
+                      { \str_if_eq_p:ee {#2} { \c_percent_str } }
+                      {
+                        \msg_warning:nnn { scontents } { rescanning-text } {#2}
+                        \@@_rescan_tokens:n {#2}
+                      }
+                  }
+                \char_set_active_eq:NN ^^M \@@_ret:w
+              }
+          }
+        ^^M
+      }
   \cs_new_protected:Npn \@@_file_write_stop:N #1
     {
       \bool_if:NT \l_@@_writing_bool
@@ -1898,9 +1915,78 @@
   \cs_new:Npn \@@_remove_leading_nl:n #1
     { \exp_not:o { \@@_remove_leading_nl:w #1 } }
   \cs_new:Npn \@@_remove_leading_nl:w ^^J { }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{
+%     \@@_verb_processor_output:n,
+%     \@@_verb_processor_output:x,
+%     \@@_analyse_nesting:n,
+%     \@@_analyse_nesting:w,
+%     \@@_nesting_decr:,
+%     \@@_use_none_delimit_by_q_stop:w,
+%   }
+% \begin{macro}[TF]{\@@_if_nested:}
+%   \cs{@@_verb_processor_output:n} does the output of each line read,
+%   to a token list and to a file, depending on the booleans
+%   \cs{l_@@_writing_bool} and \cs{l_@@_storing_bool}.
+%
+%   \cs{@@_analyse_nesting:n} looks for nested \cs{begin}|{scontents}|
+%   and adds to a \cs{l_@@_env_nesting_int} counter. The \cs{@@_if_nested:}
+%   conditional tests if we're in a nested environment, and
+%   \cs{@@_nesting_decr:} reduces the nesting level, if an \cs{end}|{scontents}|
+%   is found.
+%
+%   Multiple \cs{end}|{scontents}| in the same line are not supported...
+%    \begin{macrocode}
+  \cs_new_protected:Npn \@@_verb_processor_output:n #1
+    {
+      \bool_if:NT \l_@@_writing_bool
+        { \iow_now:Nn \l_@@_file_iow {#1} }
+      \bool_if:NT \l_@@_storing_bool
+        { \tl_put_right:Nn \l_@@_file_tl { ^^J #1 } }
+    }
+  \cs_generate_variant:Nn \@@_verb_processor_output:n { x }
+  \cs_new_protected:Npx \@@_analyse_nesting:n #1
+    {
+      \exp_not:N \@@_analyse_nesting:w #1
+        \c_backslash_str begin
+          \c_left_brace_str \exp_not:N \q_@@_mark \c_right_brace_str
+      \exp_not:N \q_@@_stop
+    }
+  \use:x
+    {
+      \cs_new_protected:Npn \exp_not:N \@@_analyse_nesting:w ##1
+        \c_backslash_str begin \c_left_brace_str ##2 \c_right_brace_str
+    }   {
+          \if_meaning:w \q_@@_mark #2
+            \exp_after:wN \use_i:nn
+          \else:
+            \exp_after:wN \use_ii:nn
+          \fi:
+            { \@@_use_none_delimit_by_q_stop:w }
+            {
+              \str_if_eq:eeT {#2} {scontents}
+                {
+                  \int_incr:N \l_@@_env_nesting_int
+                  \@@_analyse_nesting:w
+                }
+              \@@_analyse_nesting:w
+            }
+        }
+  \cs_new_protected:Npn \@@_nesting_decr:
+    { \int_decr:N \l_@@_env_nesting_int }
+  \prg_new_protected_conditional:Npnn \@@_if_nested: { TF }
+    {
+      \int_compare:nNnTF { \l_@@_env_nesting_int } > { \c_zero_int }
+        { \prg_return_true: }
+        { \prg_return_false: }
+    }
+  \cs_new:Npn \@@_use_none_delimit_by_q_stop:w #1 \q_@@_stop { }
 \group_end:
 \cs_generate_variant:Nn \@@_file_tl_write_start:n { V }
 %    \end{macrocode}
+% \end{macro}
 % \end{macro}
 %
 % \subsubsection{Recording of the content in the sequence}
@@ -1970,12 +2056,11 @@
   }
 \NewDocumentCommand { \@@_verb_arg:w } { +v }
   {
-      \tl_set:Nn \l_@@_temp_tl {#1}
-       %\tl_set:Nx \l_@@_temp_tl
-       %  {
-       %     \exp_not:n {#1}
-       %     \bool_if:NT \l_@@_forced_eol_bool { \exp_not:N ^^J }
-       %  }
+      \tl_set:Nx \l_@@_temp_tl
+        {
+           \exp_not:n {#1}
+           \bool_if:NT \l_@@_forced_eol_bool { \exp_not:N ^^J }
+        }
       \tl_replace_all:Nxx \l_@@_temp_tl { \iow_char:N \^^M } { \iow_char:N \^^J }
       \@@_store_to_seq:NN \l_@@_temp_tl \l_@@_name_seq_cmd_tl
       \bool_if:NT \l_@@_print_cmd_bool
@@ -2025,7 +2110,8 @@
       \IfValueT {#1} { \keys_set:nn { scontents } {#1} }
       \tl_set:Nx \l_@@_temp_tl { \exp_args:NV \@@_getfrom_seq:nn \l_@@_seq_item_int {#2} }
       \tl_log:N \l_@@_temp_tl
-      \@@_verb_print:N \l_@@_temp_tl
+      \tl_if_empty:NF \l_@@_temp_tl
+        { \@@_verb_print:N \l_@@_temp_tl }
     \group_end:
   }
 %    \end{macrocode}
@@ -2232,8 +2318,8 @@
   { Overwriting ~ file ~ `#1' }
 \msg_new:nnn { scontents } { writing-file }
   { Writing ~ file ~ `#1' }
-\msg_new:nnn { scontents } { ignoring-text }
-  { Ignoring~text~`#2'~#1~\c_backslash_str end{scontents}~\msg_line_context:.}
+\msg_new:nnn { scontents } { rescanning-text }
+  { Rescanning~text~`#1'~after~\c_backslash_str end{scontents}~\msg_line_context:.}
 \msg_new:nnn { scontents } { tab-to-space }
   { Tab~has~been~converted~to~Blank~Space }
 \msg_new:nnn { scontents } { feed-to-space }

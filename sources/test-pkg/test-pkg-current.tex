@@ -11,6 +11,59 @@
 \usepackage{fvextra}
 \usepackage{listings}
 \setlength{\parindent}{0pt}
+\begin{document}
+
+\edef\tmpa{\the\interactionmode}
+\scrollmode
+\def\testthis#1{\meaningsc[#1]{nowhere}\par\hrulefill}
+
+Nothing:
+\begin{scontents}[store-env=nowhere]
+hey
+blub\end{scontents}
+
+Verbatim (hey blub):
+\testthis{1}
+
+Math-mode ($blob$):
+\begin{scontents}[store-env=nowhere]
+hey
+\end{scontents}$blob$
+
+Verbatim (hey):
+\testthis{2}
+
+Math-mode ($blob$):
+\begin{scontents}[store-env=nowhere]
+hey
+blub\end{scontents}$blob$
+
+Verbatim (hey blub):
+\testthis{3}
+
+Nothing:
+\begin{scontents}[store-env=nowhere]
+\begin{scontents}[store-env=nowhere]
+  hello
+\end{scontents}
+\end{scontents}
+
+Verbatim (\texttt{\string\begin}\dots):
+\testthis{4}
+
+Multi-line verbatim (\texttt{\string\begin}\dots):
+\typestored[4]{nowhere}
+
+Nothing (+error):
+\typestored[5]{nowhere} % Error
+
+Nothing:
+\getstored[4]{nowhere} % Process the inner environment
+
+Multi-line verbatim (hello):
+\typestored[5]{nowhere} % Not an error anymore
+\interactionmode=\tmpa
+
 % custom :)
 \makeatletter
 \let\verbatimsc\@undefined
@@ -31,7 +84,6 @@
       }
   }
   }
-\begin{document}
 
 \Scontents*[store-cmd=nospace]{Write in one line \LaTeX: $E=mc^2$, no space after dot.}
 
@@ -100,22 +152,6 @@ Soy un ^^J Soy un ^^M text.
 THIRD\par
 % These outputs should look the same
 \getstored[1]{newattempt}\par
-
-% Should these raise errors?
-\edef\tmpa{\the\interactionmode}
-\scrollmode
-\begin{scontents}[store-env=nowhere]
-hey
-blub\end{scontents}
-
-\begin{scontents}[store-env=nowhere]
-hey
-\end{scontents}blob
-
-\begin{scontents}[store-env=nowhere]
-hey
-blub\end{scontents}blob
-\interactionmode=\tmpa
 
 MEANINGSC\par
 \meaningsc[1]{newattempt}\par
