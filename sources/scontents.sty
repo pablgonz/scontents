@@ -1,7 +1,9 @@
+%%^^A Initial declaration of the package
 \RequirePackage{l3keys2e}
 \RequirePackage{xparse}[2019/05/28]
 \ProvidesExplPackage{scontents}{2019/09/18}{1.3}
   {Stores LaTeX contents in memory or files}
+%%^^A Checking the version of xparse
 \@ifpackagelater { xparse } { 2019/05/03 }
   { }
   {
@@ -13,49 +15,36 @@
       }
     \file_input_stop:
   }
+%%^^A Common keys available as package options
 \keys_define:nn { scontents }
   {
-    % .tl keys:
-      % store-env
-    , store-env .tl_set:N         = \l__scontents_name_seq_env_tl
-    , store-env .initial:n        = contents
-    , store-env .value_required:n = true
-      % store-cmd
-    , store-cmd .tl_set:N         = \l__scontents_name_seq_cmd_tl
-    , store-cmd .initial:n        = contents
-    , store-cmd .value_required:n = true
-      % verb-font
-    , verb-font .tl_set:N         = \l__scontents_verb_font_tl
-    , verb-font .initial:n        = \ttfamily
-    , verb-font .value_required:n = true
-    % .bool keys:
-      % print-env
-    , print-env .bool_set:N       = \l__scontents_print_env_bool
-    , print-env .initial:n        = false
-    , print-env .default:n        = true
-      % print-cmd
-    , print-cmd .bool_set:N       = \l__scontents_print_cmd_bool
-    , print-cmd .initial:n        = false
-    , print-cmd .default:n        = true
-      % print-cmd
-    , force-eol .bool_set:N       = \l__scontents_forced_eol_bool
-    , force-eol .initial:n        = false
-    , print-cmd .default:n        = true
-    % .int keys
-      % width-tab
-    , width-tab .int_set:N        = \l__scontents_tab_width_int
-    , width-tab .initial:n        = 1
-    , width-tab .value_required:n = true
-    % other keys:
-      % print-all
-    , print-all .meta:n           = { print-env = #1 , print-cmd = #1 }
-    , print-all .default:n        = true
-      % unknown
-    , unknown   .code:n           = { \__scontents_parse_unknown_key:n {#1} }
+    store-env .tl_set:N         = \l__scontents_name_seq_env_tl,
+    store-env .initial:n        = contents,
+    store-env .value_required:n = true,
+    store-cmd .tl_set:N         = \l__scontents_name_seq_cmd_tl,
+    store-cmd .initial:n        = contents,
+    store-cmd .value_required:n = true,
+    verb-font .tl_set:N         = \l__scontents_verb_font_tl,
+    verb-font .initial:n        = \ttfamily,
+    verb-font .value_required:n = true,
+    print-env .bool_set:N       = \l__scontents_print_env_bool,
+    print-env .initial:n        = false,
+    print-env .default:n        = true,
+    print-cmd .bool_set:N       = \l__scontents_print_cmd_bool,
+    print-cmd .initial:n        = false,
+    print-cmd .default:n        = true,
+    force-eol .bool_set:N       = \l__scontents_forced_eol_bool,
+    force-eol .initial:n        = false,
+    width-tab .int_set:N        = \l__scontents_tab_width_int,
+    width-tab .initial:n        = 1,
+    width-tab .value_required:n = true,
+    print-all .meta:n           = { print-env = #1 , print-cmd = #1 },
+    print-all .default:n        = true,
+    unknown   .code:n           = { \__scontents_parse_unknown_key:n {#1} }
   }
-%%^^A Process options for pkg
+%%^^A Process options for package
 \ProcessKeysOptions { scontents }
-%%^^A Internal tl vars
+%%^^A Internal token list vars
 \tl_new:N \l__scontents_macro_tmp_tl
 \tl_new:N \l__scontents_fname_out_tl
 \tl_new:N \l__scontents_temp_tl
@@ -68,7 +57,7 @@
 \bool_set_false:N \l__scontents_writing_bool
 \bool_new:N \l__scontents_storing_bool
 \bool_set_true:N  \l__scontents_storing_bool
-%%^^A A token list to match \env{verbatimsc}
+%%^^A  A token list to match \env{verbatimsc} and \env{scontents}
 \tl_new:N \g__scontents_end_verbatimsc_tl
 \tl_gset_rescan:Nnn
   \g__scontents_end_verbatimsc_tl
@@ -80,18 +69,18 @@
   { \end{verbatimsc} }
 \tl_const:Nx \c__scontents_end_env_tl
   { \c_backslash_str end \c_left_brace_str scontents \c_right_brace_str }
-%%^^A A string to hidden space after grab argument
-\str_const:Nx \c__scontents_hidden_space_str
-  { \c_percent_str scontentshs \c_percent_str }
 %%^^A Internal quarks
 \quark_new:N \q__scontents_stop
 \quark_new:N \q__scontents_mark
+%%^^A Stream for saving the contents
 \iow_new:N \l__scontents_file_iow
-%%^^A Copy of \scantokens
+%%^^A Copy of scantokens in expl3
 \cs_new:Npn \__scontents_rescan_tokens:n #1 { \tex_scantokens:D {#1} }
 \cs_generate_variant:Nn \__scontents_rescan_tokens:n { V, x }
+%%^^A Internal \tab and \par
 \cs_new:Npx \__scontents_tab: { \c_space_tl }
 \cs_new:Npn \__scontents_par: { ^^J ^^J }
+%%^^A Some nonstandard variants
 \cs_generate_variant:Nn \tl_remove_once:Nn { NV }
 \cs_generate_variant:Nn \tl_replace_all:Nnn { Nx, Nxx, Nnx }
 \prg_generate_conditional_variant:Nnn \tl_if_empty:n { f } { TF }
@@ -117,6 +106,7 @@
     store-cmd .meta:nn = { scontents } { store-cmd = #1 },
     force-eol .meta:nn = { scontents } { force-eol = #1 }
   }
+%%^^A Parse unknown keys
 \cs_new_protected:Npn \__scontents_parse_unknown_key:n #1
   { \exp_args:NV \__scontents_parse_unknown_key:nn \l_keys_key_tl {#1} }
 \cs_new_protected:Npn \__scontents_parse_unknown_key:nn #1 #2
@@ -133,7 +123,7 @@
           { \msg_error:nnnn { scontents } { key-value-unknown } {#1} {#2} }
       }
   }
-%%^^A Append content to seq
+%%^^A Programming of the sequences
 \cs_new_protected:Npn \__scontents_append_contents:nn #1#2
   {
     \tl_if_blank:nT {#1}
@@ -161,13 +151,13 @@
       { \msg_expandable_error:nnnnn { scontents } { index-out-of-range } {#2} {#3} {#1} }
       { \seq_item:cn { g__scontents_seq_name_#3_seq } {#2} }
   }
-%%^^A Storing content in seq
+%%^^A Storing content in sequences
 \cs_new_protected:Npn \__scontents_store_to_seq:NN #1 #2
   {
     \tl_log:N #1
     \__scontents_append_contents:Vx #2 { \exp_not:V #1 }
   }
-%%^^A Define {scontents} whit [key=val] (delaying)
+%%^^A Definition of {scontents}[key=val] env
 \NewDocumentEnvironment { scontents } { }
   {
     \char_set_catcode_active:N \^^M
@@ -218,6 +208,7 @@
       \group_end:
       \tl_set:Nn \l__scontents_macro_tmp_tl \l__scontents_macro_tmp_tl
     }
+%%^^A File write start/File write stop
   \cs_new_protected:Npn \__scontents_file_tl_write_start:n #1
     {
       \group_begin:
@@ -302,15 +293,11 @@
   {
     \bool_if:NT \l__scontents_storing_bool
       {
-        % A problem with fancyvrb \end{Verbatim}% raise on error
-        %\tl_put_right:Nx \l__scontents_macro_tmp_tl { \c__scontents_hidden_space_str }
         \__scontents_store_to_seq:NN \l__scontents_macro_tmp_tl \l__scontents_name_seq_env_tl
       }
     \bool_if:NT \l__scontents_print_env_bool
       {
         \tl_gset_eq:NN \g__scontents_temp_tl \l__scontents_macro_tmp_tl
-        % \tl_gset:Nx \g__scontents_temp_tl
-        %   { \__scontents_getfrom_seq:nn { -1 } { \l__scontents_name_seq_env_tl } }
         \tl_gput_right:NV \g__scontents_temp_tl \c_percent_str
         \group_insert_after:N \__scontents_rescan_tokens:V
         \group_insert_after:N \g__scontents_temp_tl
@@ -337,14 +324,18 @@
 \NewDocumentCommand { \__scontents_verb_arg:w } { +v }
   {
       \tl_set:Nn \l__scontents_temp_tl {#1}
-      %\tl_put_right:Nx \l__scontents_temp_tl { \c__scontents_hidden_space_str }
+       %\tl_set:Nx \l__scontents_temp_tl
+       %  {
+       %     \exp_not:n {#1}
+       %     \bool_if:NT \l__scontents_forced_eol_bool { \exp_not:N ^^J }
+       %  }
       \tl_replace_all:Nxx \l__scontents_temp_tl { \iow_char:N \^^M } { \iow_char:N \^^J }
       \__scontents_store_to_seq:NN \l__scontents_temp_tl \l__scontents_name_seq_cmd_tl
       \bool_if:NT \l__scontents_print_cmd_bool
         { \__scontents_rescan_tokens:V \l__scontents_temp_tl }
     \group_end:
   }
-%%^^A User command \getstored
+%%^^A User command \getstored to get content
 \NewDocumentCommand { \getstored } { O{1} m }
   {
     \group_begin:
@@ -355,7 +346,7 @@
         }
     \group_end:
   }
-%%^^A User command \typestored
+%%^^A User command \typestored to verbatimized content
 \NewDocumentCommand { \typestored } { o m }
   {
     \group_begin:
@@ -366,7 +357,7 @@
       \__scontents_verb_print:N \l__scontents_temp_tl
     \group_end:
   }
-%%^^A Internal verb_print:N
+%%^^A Internal verb_print:N, need to verbatimized content
 \group_begin:
   \char_set_catcode_active:N \^^M
   \cs_new_protected:Npn \__scontents_verb_print:N #1
@@ -404,8 +395,10 @@
     \verbatim
   }
   { }
+%%^^A Tab to space
 \cs_new:Npn \__scontents_tabs_to_spaces:
   { \prg_replicate:nn { \l__scontents_tab_width_int } { ~ } }
+%%^^A Patch do_noligs for ligatures
 \cs_new:Npn \__scontents_do_noligs:N #1
   {
     \char_set_catcode_active:N #1
@@ -417,6 +410,7 @@
         \char_generate:nn { `#1 } { 12 }
       }
   }
+%%^^A Common catcode changes
 \cs_new_protected:Npn \__scontents_set_active_eq:NN #1
   {
     \char_set_catcode_active:N #1
@@ -458,7 +452,7 @@
 %%^^A User command \cleanseqsc
 \NewDocumentCommand { \cleanseqsc } { m }
   { \seq_clear_new:c { g__scontents_seq_name_#1_seq } }
-%%^^A Messages
+%%^^A Messages used throughout the package
 \msg_new:nnn { scontents } { junk-after-begin }
   {
     Junk~characters~#1~\msg_line_context: :
@@ -503,5 +497,5 @@
           { Max = } { Min = -} #3.
       }
   }
-%%^^A Finish package
+%%^^A Finish package :)
 \file_input_stop:

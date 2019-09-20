@@ -60,7 +60,6 @@
 \usepackage{scontents} % main
 \usepackage[contents]{colordoc}
 
-
 % Patching colordoc.sty to work with l3doc.cls
 \ExplSyntaxOn
 \cs_new_eq:cN { liii@xmacro@code } \__codedoc_xmacro_code:n
@@ -103,13 +102,13 @@
 
 \setlength{\parindent}{0pt}
 
-%^^A------------------- ONLY FOR DOCUMENTATION ------------------------%%
-%^^A Colors for options
+%%-------------------- ONLY FOR DOCUMENTATION ------------------------%%
+% Colors for options
 \definecolor{optcolor}{rgb}{0.281,0.275,0.485}
 \definecolor{mypkgcolor}{RGB}{0,128,128}%
-%^^A Custom \meta[...]{...}, \marg[...]{...} and \oarg[...]{...} with color
+% Custom \meta[...]{...}, \marg[...]{...} and \oarg[...]{...} with color
 \ExplSyntaxOn
-%^^A user level commands
+% User level commands
 \NewDocumentCommand{\mymeta}{O{}m}
   {
    \userdoc_meta_generic:Nnn \userdoc_meta:n { #1 } { #2 }
@@ -122,7 +121,7 @@
   {
    \userdoc_meta_generic:Nnn \userdoc_oarg:n { #1 } { #2 }
   }
-%^^A variables and keys
+% Variables and keys
 \tl_new:N \l_userdoc_meta_font_tl
 
 \keys_define:nn { userdoc / mymeta }
@@ -140,7 +139,7 @@
    cbc .tl_set:N = \l_userdoc_meta_bracecolor_tl,
    cbc .initial:n = black,
   }
-%^^A internal commands
+% Internal commands
 \cs_new_protected:Npn \userdoc_meta_generic:Nnn #1 #2 #3
   {
    \group_begin:
@@ -191,7 +190,7 @@
    \textcolor{\l_userdoc_meta_brackcolor_tl}{#1}
   }
 
-%^^A \envexamp{m}
+% \envexamp{m}
 \newsavebox{\boxexaenv}
 \NewDocumentCommand{\envexamp}{m}
   {
@@ -207,7 +206,7 @@
    \usebox{\boxexaenv}
   }
 
-%^^A \cmdexamp{s m o m o}
+% \cmdexamp{s m o m o}
 \DeclareDocumentCommand{\cmdexamp}{s m o m o}
   {
   \group_begin:
@@ -227,7 +226,7 @@
   \MYSortIndex{Commands}{Commands ~ provide  ~ by  ~ \textcolor{gray}{scontents}>\texttt{\textbackslash#2}}%
   }
 
-%^^A \keyexamp{mmm}
+% \keyexamp{mmm}
 \DeclareDocumentCommand{\keyexamp}{ m m m }
   {
   \par
@@ -239,7 +238,7 @@
   \MYSortIndex{Keys}{Keys>\texttt{#1}}%
   }
 
-%^^A \mypkg{sm}
+% \mypkg{sm}
 \NewDocumentCommand{\mypkg}{sm}
   {
    \IfBooleanTF{#1}
@@ -253,7 +252,7 @@
     }
   }
 
-%^^A \myenv{sm}
+% \myenv{sm}
 \DeclareDocumentCommand{\myenv}{sm}
   {
    \IfBooleanTF{#1}
@@ -267,7 +266,7 @@
     }
   }
 
-%^^A \ics{sm}
+% \ics{sm}
 \DeclareDocumentCommand{\ics}{sm}
   {
     \IfBooleanTF{#1}
@@ -282,7 +281,7 @@
   }
 \ExplSyntaxOff
 
-%^^A email https://tex.stackexchange.com/a/663
+% email https://tex.stackexchange.com/a/663
 \catcode`\_=11\relax%
 \newcommand\email[1]{\_email #1\q_nil}%
 \def\_email#1@#2\q_nil{%
@@ -293,7 +292,7 @@
 \catcode`\_=8\relax%
 
 \makeatletter
-%^^A Logo whit fetamont font for title
+% Logo whit fetamont font for title
 \newsavebox{\logobox}
 \savebox{\logobox}{%
   \normalsize\fetamontotf{\textcolor{mypkgcolor}{s}\textcolor{OrangeRed}{content}\textcolor{mypkgcolor}{s}}}
@@ -303,10 +302,10 @@
  }
 \makeatother
 
-%^^A Don't copy numbers in code example
+% Don't copy numbers in code example
 \newcommand*{\noaccsupp}[1]{\BeginAccSupp{ActualText={}}#1\EndAccSupp{}}
 
-%^^A Create a language for documentation
+% Create a language for documentation
 \lstdefinelanguage{scontents-doc}{
     texcsstyle=*,%
     escapechar=`,%
@@ -347,7 +346,7 @@
               {=}{{\textcolor{red}{=}}}{1},%
 }[keywords,tex,comments,strings]% end languaje
 
-%^^A \begin{examplecode}[key=val]...\end{examplecode}
+% \begin{examplecode}[key=val]...\end{examplecode}
 \lstnewenvironment{examplecode}[1][]{%
 \lstset{
     language=scontents-doc,%
@@ -364,7 +363,7 @@
     }% close lstset
 }{}% close examplecode
 
-%^^A \lstinline[style=inline]|...|
+% \lstinline[style=inline]|...|
 \lstdefinestyle{inline}
   {
    language=scontents-doc,%
@@ -376,13 +375,13 @@
    literate=*{\%}{{\bfseries\textcolor{gray}{\%}}}{1}
   }
 
-%^^A Set default style
+% Set default \lstinline style
 \lstset{style=inline}
 
-%^^A Get file info
+% Get file info
 \GetFileInfo{\jobname.sty}
 
-%^^A Config hyperref
+% Config hyperref
 \hypersetup{
    linkcolor          = blue!50,
    citecolor          = red!50,%
@@ -399,7 +398,7 @@
    bookmarksopenlevel = 1,%
   }
 
-%^^A Configuration titleps and titlesec
+% Configuration titleps and titlesec
 \settitlemarks{section}
 \renewpagestyle{plain}[\color{gray}\small\sffamily]{
 \setfoot{}{}{\thepage/\pageref{LastPage}}}
@@ -425,7 +424,7 @@
     {\hspace*{-11mm}}% numberless
     {\hspace{0.25em}\titlerule*[6pt]{.}\contentspage}%
 
-%^^A Table of contents
+% Table of contents
 \makeatletter
 \renewcommand\tableofcontents{%
 \begingroup%
@@ -518,8 +517,8 @@
 % (\url{http://www.latex-project.org/lppl.txt}). The software has the status
 % \enquote{maintained}.
 %
-% The \mypkg*{scontents} package loads \mypkg{expl3}, \mypkg{xparse}
-% and \mypkg{l3keys2e}. This package can be used with |xelatex|, |lualatex|
+% The \mypkg*{scontents} package loads \mypkg{expl3}, \mypkg{xparse} and
+% \mypkg{l3keys2e}. This package can be used with |xelatex|, |lualatex|
 % , |pdflatex| and the classical workflow |latex|-|dvips|-|ps2pdf|.
 %
 % \thispagestyle{plain}
@@ -565,42 +564,43 @@
 % \subsection{The TAB character}
 % \label{sec:tabcharacter}
 %
-% In a standard \hologo{LaTeX} document, horizontal |TAB|s (\LKeyTab) typed from the
-% keyboard are treated as explicit spaces in most contexts. Some users use
-% this character to indented the source code of the document and depending on
-% the text editor used, some will use real |TAB|s (sometimes called  \enquote{hard tabs}),
-% others with \enquote{soft tabs}(\textvisiblespace\textvisiblespace or \textvisiblespace
+% In a standard \hologo{LaTeX} document, horizontal |TAB|s (\LKeyTab) typed
+% from the keyboard are treated as explicit spaces in most contexts. Some
+% users use this character to indented the source code of the document and
+% depending on the text editor used, some will use real |TAB|s (sometimes
+% called  \enquote{hard tabs}), others with \enquote{soft tabs}
+% (\textvisiblespace\textvisiblespace or \textvisiblespace
 % \textvisiblespace\textvisiblespace\textvisiblespace) or both.
 %
 % At first glance it may seem the same, but the way in which |TAB|s (\enquote{hard tabs})
-% are processed according to the context in which they are found within a file,
-% both in reading\footnote{Check the answer given by Ulrich Diez in
-% \href{https://tex.stackexchange.com/a/508103/7832}{Keyboard TAB character in
-% argument v (xparse)}.} and writing\footnote{Check the answer given by Enrico Gregorio
-% in \href{https://tex.stackexchange.com/a/58740/7832}{How to output a
+% are processed according to the context in which they are found within
+% a file, both in reading\footnote{Check the answer given by Ulrich Diez
+% in \href{https://tex.stackexchange.com/a/508103/7832}{Keyboard TAB
+% character in argument v (xparse)}.} and writing\footnote{Check the answer
+% given by Enrico Gregorio in \href{https://tex.stackexchange.com/a/58740/7832}{How to output a
 % tabulation into a file}.}, are different and may have adverse consequences.
 %
-% The behavior of this character for the \emph{stored} content can be configured
-% with the |widht-tab| key, but, these will be preserved by writing an output file,
-% unfortunately, dependent on the \hologo{TeX} distribution you have
-% and how the formats were initialized.
+% The behavior of this character for the \emph{stored} content can be
+% configured with the |widht-tab| key, but, these will be preserved by
+% writing an output file, unfortunately, dependent on the \hologo{TeX}
+% distribution you have and how the formats were initialized.
 %
-% With a \hologo{TeX}Live distribution, the formats for |latex|, |pdflatex| and
-% |lualatex| are prepared feeding the option |-translate-file=cp227.tcx|, that
-% makes the |TAB| character \enquote{printable}. To write a literal |TAB| character
-% using |xelatex| you must add the |-8bit| option on command line, otherwise you will
-% get \hologo{TeX}-|TAB|s (|^^I|) in the \mymeta{output file}.
+% With a \hologo{TeX}Live distribution, the formats for |latex|, |pdflatex|
+% and |lualatex| are prepared feeding the option |-translate-file=cp227.tcx|,
+% that makes the |TAB| character \enquote{printable}. To write a literal
+% |TAB| character using |xelatex| you must add the |-8bit| option on command
+% line, otherwise you will get \hologo{TeX}-|TAB|s (|^^I|) in the \mymeta{output file}.
 %
-% As a recommendation, if you use this package (and in general) \enquote{Do not use |TAB|s
-% unless strictly necessary}, for example within a verbatim environment that
-% supports this character such as |Verbatim| or |lstlisting| or when you want to generate
-% a |MakeFile| file.
+% As a general recommendation \enquote{Do not use |TAB|s unless strictly
+% necessary}, for example within a verbatim environment that supports
+% this character such as |Verbatim| or |lstlisting| or when you want to
+% generate a |MakeFile| file.
 %
 % \subsection{Configuration of the options}
 % \label{sec:confopt}
 %
-% Most of the options can be passed directly to the package or can be
-% configured by means of the command \ics*{setupsc}.
+% Most of the options can be passed directly to the package or using the
+% command the command \ics*{setupsc}.
 %
 % \vspace*{-10pt}
 %
@@ -610,10 +610,16 @@
 %   \end{syntax}
 %
 % The command \ics*{setupsc} configures the options in a global way,
-% for \ics*{Scontents}, \ics*{Scontents*} and environment \myenv*{scontents}.
 % it can be used both in the preamble and in the body of the document
 % as many times as desired.
 % \end{function}
+%
+% \medskip
+%
+% \keyexamp{verb-font}{number}{ \textbackslash{}ttfamily }
+% Sets the font type used to display the stored content for the commands
+% \ics*{typestored} and \ics*{meaningsc}. This key is only available as
+% a package option or using \ics*{setupsc}.
 %
 % \subsection{Options Overview}
 % \label{sec:optover}
@@ -623,7 +629,7 @@
 %
 % Summary table of available options.
 %
-% \setlength{\tabcolsep}{0.5em}
+% \setlength{\tabcolsep}{0.25em}
 % \begin{tabular}{cccccccc}
 % \toprule
 %  \texttt{key} &package &\ics{setupsc} &\myenv*{scontents} &\ics*{Scontents} &\ics*{Scontents*} &\ics*{typestored} &\ics*{meaningsc}\\
@@ -635,9 +641,9 @@
 %  \texttt{print-all} & \cmark  & \cmark  &  \cmark  & \xmark  & \xmark  & \xmark  & \xmark \\
 %  \texttt{write-env} & \xmark  & \xmark  &  \cmark  & \xmark  & \xmark  & \xmark  & \xmark \\
 %  \texttt{write-out} & \xmark  & \xmark  &  \cmark  & \xmark  & \xmark  & \xmark  & \xmark \\
-%  \texttt{width-tab} & \cmark  & \cmark  &  \cmark  & \cmark  & \cmark  & \cmark  & \cmark \\
+%  \texttt{width-tab} & \cmark  & \cmark  &  \xmark  & \xmark  & \xmark  & \cmark  & \cmark \\
 %  \texttt{force-eol} & \cmark  & \cmark  &  \cmark  & \xmark  & \cmark  & \xmark  & \xmark \\
-%  \texttt{verb-font} & \cmark  & \cmark  &  \cmark  & \xmark  & \xmark  & \cmark  & \cmark \\
+%  \texttt{verb-font} & \cmark  & \cmark  &  \xmark  & \xmark  & \xmark  & \xmark  & \xmark \\
 % \bottomrule
 % \end{tabular}
 %
@@ -660,8 +666,8 @@
 %   \end{syntax}
 %
 % The \myenv*{scontents} environment allows you to save the content to memory
-% or external files in a similar way to the package \myenv{filecontentsdef}. This
-% allows you to record content, including \emph{verbatim}, for later reuse.
+% or external files in a similar way to the package \mypkg{filecontentsdef}.
+% This allows you to record content, including \emph{verbatim}, for later reuse.
 % \end{function}
 %
 % Some considerations to keep in mind:
@@ -698,15 +704,6 @@
 % This key is only necessary if the last line inside the environment is
 % |\end{Verbatim}| or the |\end{...}| of some environment created with
 % the package \mypkg{fancyvrb}.
-%
-%^^A \keyexamp{write-tab}{true\textbar false}{false}
-%^^A Sets the literal typing of the character |TAB| typed from the keyboard
-%^^A in the \mymeta{output file}. If it is \mymeta{false} the character |TAB|
-%^^A will be converted to \mymeta{spaces} according to the value of |width-tab|.
-%^^A
-%^^A To write a literal |TAB| character using |xelatex| you must add the |-8bit|
-%^^A option on command line, otherwise you will get \hologo{TeX}-|TAB|s (|^^I|) in
-%^^A the \mymeta{output file}.
 %
 % \medskip
 %
@@ -784,12 +781,12 @@
 %
 % \medskip
 %
-% \keyexamp{print-cmd}{true\textbar false}{false}
+% \keyexamp{print-cmd}{true\textbar{}false}{false}
 % It will show the current content of \ics*{Scontents}.
 %
 % \medskip
 %
-% \keyexamp{force-eol}{true\textbar false}{false}
+% \keyexamp{force-eol}{true\textbar{}false}{false}
 % This key is only necessary if the last line inside the command is
 % |\end{Verbatim}| or the |\end{...}| of some environment created with
 % the package \mypkg{fancyvrb}.
@@ -818,7 +815,7 @@
 %
 % \begin{function}{\typestored}
 %   \begin{syntax}
-%      \cmdexamp{typestored}[index, width-tab=..., verb-font=...]{seq name}
+%      \cmdexamp{typestored}[index, width-tab=number]{seq name}
 %   \end{syntax}
 % \end{function}
 %
@@ -834,11 +831,6 @@
 % \keyexamp{width-tab}{number}{ 1 }
 % Establishes the equivalence in \mymeta{spaces} for the character |TAB|
 % typed from the keyboard. The value must be a \mymeta{positive integer}.
-%
-% \medskip
-%
-% \keyexamp{verb-font}{number}{ \textbackslash{}ttfamily }
-% Sets the type of font with which to display the content.
 %
 % \subsection{The environment \env{verbatimsc}}
 % \label{sec:verbatimsc}
@@ -920,7 +912,7 @@
 %
 % \begin{function}{\meaningsc}
 %   \begin{syntax}
-%      \cmdexamp{meaningsc}[index, width-tab=..., verb-font=...]{seq name}
+%      \cmdexamp{meaningsc}[index, width-tab=number]{seq name}
 %   \end{syntax}
 % The command \ics*{meaningsc} executes \ics{meaning} on the content stored
 % in \meta{seq name}. The \mymeta{index} number corresponds to the position
@@ -933,11 +925,6 @@
 % \keyexamp{width-tab}{number}{ 1 }
 % Establishes the equivalence in \mymeta{spaces} for the character |TAB|
 % typed from the keyboard. The value must be a \mymeta{positive integer}.
-%
-% \medskip
-%
-% \keyexamp{verb-font}{number}{ \textbackslash{}ttfamily }
-% Sets the type of font with which to display the content.
 %
 % \subsection{The command \cs{countsc}}
 % \label{sec:countsc}
@@ -1382,13 +1369,18 @@
 %
 % Then, we can give the traditional declaration of a package written with
 % \pkg{expl3} and the necessary packages for its operation.
+%
+%%^^A Initial declaration of the package
 %    \begin{macrocode}
 \RequirePackage{l3keys2e}
 \RequirePackage{xparse}[2019/05/28]
 \ProvidesExplPackage{scontents}{2019/09/18}{1.3}
   {Stores LaTeX contents in memory or files}
 %    \end{macrocode}
+%
 % A check to make sure that \pkg{xparse} is not too old
+%
+%%^^A Checking the version of xparse
 %    \begin{macrocode}
 \@ifpackagelater { xparse } { 2019/05/03 }
   { }
@@ -1407,51 +1399,40 @@
 %
 % We create some common keys that will be used by the options passed to
 % the package as well as by the environments and commands defined.
+%
+%%^^A Common keys available as package options
 %    \begin{macrocode}
 \keys_define:nn { scontents }
   {
-    % .tl keys:
-      % store-env
-    , store-env .tl_set:N         = \l_@@_name_seq_env_tl
-    , store-env .initial:n        = contents
-    , store-env .value_required:n = true
-      % store-cmd
-    , store-cmd .tl_set:N         = \l_@@_name_seq_cmd_tl
-    , store-cmd .initial:n        = contents
-    , store-cmd .value_required:n = true
-      % verb-font
-    , verb-font .tl_set:N         = \l_@@_verb_font_tl
-    , verb-font .initial:n        = \ttfamily
-    , verb-font .value_required:n = true
-    % .bool keys:
-      % print-env
-    , print-env .bool_set:N       = \l_@@_print_env_bool
-    , print-env .initial:n        = false
-    , print-env .default:n        = true
-      % print-cmd
-    , print-cmd .bool_set:N       = \l_@@_print_cmd_bool
-    , print-cmd .initial:n        = false
-    , print-cmd .default:n        = true
-      % print-cmd
-    , force-eol .bool_set:N       = \l_@@_forced_eol_bool
-    , force-eol .initial:n        = false
-    , print-cmd .default:n        = true
-    % .int keys
-      % width-tab
-    , width-tab .int_set:N        = \l_@@_tab_width_int
-    , width-tab .initial:n        = 1
-    , width-tab .value_required:n = true
-    % other keys:
-      % print-all
-    , print-all .meta:n           = { print-env = #1 , print-cmd = #1 }
-    , print-all .default:n        = true
-      % unknown
-    , unknown   .code:n           = { \@@_parse_unknown_key:n {#1} }
+    store-env .tl_set:N         = \l_@@_name_seq_env_tl,
+    store-env .initial:n        = contents,
+    store-env .value_required:n = true,
+    store-cmd .tl_set:N         = \l_@@_name_seq_cmd_tl,
+    store-cmd .initial:n        = contents,
+    store-cmd .value_required:n = true,
+    verb-font .tl_set:N         = \l_@@_verb_font_tl,
+    verb-font .initial:n        = \ttfamily,
+    verb-font .value_required:n = true,
+    print-env .bool_set:N       = \l_@@_print_env_bool,
+    print-env .initial:n        = false,
+    print-env .default:n        = true,
+    print-cmd .bool_set:N       = \l_@@_print_cmd_bool,
+    print-cmd .initial:n        = false,
+    print-cmd .default:n        = true,
+    force-eol .bool_set:N       = \l_@@_forced_eol_bool,
+    force-eol .initial:n        = false,
+    width-tab .int_set:N        = \l_@@_tab_width_int,
+    width-tab .initial:n        = 1,
+    width-tab .value_required:n = true,
+    print-all .meta:n           = { print-env = #1 , print-cmd = #1 },
+    print-all .default:n        = true,
+    unknown   .code:n           = { \@@_parse_unknown_key:n {#1} }
   }
 %    \end{macrocode}
 %
 % We process the keys as options passed on to the package.
-%%^^A Process options for pkg
+%
+%%^^A Process options for package
 %    \begin{macrocode}
 \ProcessKeysOptions { scontents }
 %    \end{macrocode}
@@ -1460,7 +1441,6 @@
 %
 % Now we declare the internal variables we will use.
 %
-%%^^A Internal tl vars
 % \begin{macro}{\l_@@_macro_tmp_tl,\l_@@_fname_out_tl,\l_@@_temp_tl,
 %     \l_@@_file_tl,\g_@@_temp_tl}
 %   \cs{l_@@_macro_tmp_tl} is a temporary token list to hold the contents
@@ -1468,6 +1448,8 @@
 %   of the output file, when there's one, \cs{l_@@_file_tl} holds the contents
 %   of an environment as it's being read, and \cs{l_@@_temp_tl} and
 %   \cs{g_@@_temp_tl} are generic temporary token lists.
+%
+%%^^A Internal token list vars
 %    \begin{macrocode}
 \tl_new:N \l_@@_macro_tmp_tl
 \tl_new:N \l_@@_fname_out_tl
@@ -1477,20 +1459,22 @@
 %    \end{macrocode}
 % \end{macro}
 %
-%%^^A Internal int vars
 % \begin{macro}{\l_@@_seq_item_int}
 %   \cs{l_@@_seq_item_int} stores the index in the sequence of the item
 %   requested to \cs{typestored} or \cs{meaningsc}.
+%
+%%^^A Internal int vars
 %    \begin{macrocode}
 \int_new:N \l_@@_seq_item_int
 %    \end{macrocode}
 % \end{macro}
 %
-%%^^A Internal bool vars
 % \begin{macro}{\l_@@_writing_bool,\l_@@_storing_bool}
 %   The boolean \cs{l_@@_writing_bool} keeps track of whether we should write
 %   to a file, and \cs{l_@@_storing_bool} determines whether it is in write-only
 %   mode when the |write-out| option is used.
+%
+%%^^A Internal bool vars
 %    \begin{macrocode}
 \bool_new:N \l_@@_writing_bool
 \bool_set_false:N \l_@@_writing_bool
@@ -1499,10 +1483,11 @@
 %    \end{macrocode}
 % \end{macro}
 %
-%%^^A A token list to match \env{verbatimsc}
 % \begin{macro}{\g_@@_end_verbatimsc_tl,\c_@@_end_env_tl}
 %   A token list to match when ending \env{verbatimsc} and \env{scontents}
 %   environments.
+%
+%%^^A  A token list to match \env{verbatimsc} and \env{scontents}
 %    \begin{macrocode}
 \tl_new:N \g_@@_end_verbatimsc_tl
 \tl_gset_rescan:Nnn
@@ -1518,21 +1503,11 @@
 %    \end{macrocode}
 % \end{macro}
 %
-%%^^A A string to hidden space after grab argument
-%^^A NOTE: This is a rather poor trick, the ideal would be to remove the
-%^^A       forced space added after recording the argument.
-% \begin{macro}{\c_@@_hidden_space_str}
-%   \cs{c_@@_hidden_space_str} is a constant string to used to hide the
-%  \meta{forced space} added by \TeX{} when recording content in a macro.
-%    \begin{macrocode}
-\str_const:Nx \c_@@_hidden_space_str
-  { \c_percent_str scontentshs \c_percent_str }
-%    \end{macrocode}
-% \end{macro}
 %
-%%^^A Internal quarks
 % \begin{macro}{\q_@@_stop,\q_@@_mark}
 %   Some quarks used along the code as macro delimiters.
+%
+%%^^A Internal quarks
 %    \begin{macrocode}
 \quark_new:N \q_@@_stop
 \quark_new:N \q_@@_mark
@@ -1541,18 +1516,21 @@
 %
 % \begin{macro}{\l_@@_file_iow}
 %   An output stream for saving the contents of an environment to a file.
+%
+%%^^A Stream for saving the contents
 %    \begin{macrocode}
 \iow_new:N \l_@@_file_iow
 %    \end{macrocode}
 % \end{macro}
 %
-%%^^A Copy of \scantokens
 % \begin{macro}{\@@_rescan_tokens:n}
 %   \cs{tl_rescan:nn} doesn't fit the needs of this package because
 %   it does not allow catcode changes inside the argument, so verbatim
 %   commands used inside one of \mypkg*{scontents}'s commands/environments
 %   will not work. Here we create a private copy of \cs{tex_scantokens:D}
-%   which will serve our purposes:
+%   which will serve our purposes.
+%
+%%^^A Copy of scantokens in expl3
 %    \begin{macrocode}
 \cs_new:Npn \@@_rescan_tokens:n #1 { \tex_scantokens:D {#1} }
 \cs_generate_variant:Nn \@@_rescan_tokens:n { V, x }
@@ -1561,6 +1539,8 @@
 %
 % \begin{macro}{\@@_tab:,\@@_par:}
 %   Control sequences to replace tab (|^^I|) and form feed (|^^L|) characters.
+%
+%%^^A Internal \tab and \par
 %    \begin{macrocode}
 \cs_new:Npx \@@_tab: { \c_space_tl }
 \cs_new:Npn \@@_par: { ^^J ^^J }
@@ -1570,6 +1550,8 @@
 % \begin{macro}{\tl_remove_once:NV,\tl_replace_all:Nxx,
 %     \tl_replace_all:Nxn,\tl_replace_all:Nnx,\tl_if_empty:fTF}
 %   Some nonstandard variants.
+%
+%%^^A Some nonstandard variants
 %    \begin{macrocode}
 \cs_generate_variant:Nn \tl_remove_once:Nn { NV }
 \cs_generate_variant:Nn \tl_replace_all:Nnn { Nx, Nxx, Nnx }
@@ -1580,6 +1562,7 @@
 % \subsection{Add keys for environment}
 %
 % We define a set of keys for environment \env{scontents}.
+%
 %%^^A Add keys to scontents environnment
 %    \begin{macrocode}
 \keys_define:nn { scontents }
@@ -1632,6 +1615,8 @@
 %   (otherwise something odd as |1=1| might have been used). If everything
 %   is correct, then set the value of the integer which holds the index.
 %   Otherwise raise an error about an unknown option.
+%
+%%^^A Parse unknown keys
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_parse_unknown_key:n #1
   { \exp_args:NV \@@_parse_unknown_key:nn \l_keys_key_tl {#1} }
@@ -1654,7 +1639,6 @@
 %
 % \subsection{Programming of the sequences}
 %
-%%^^A Append content to seq
 % \begin{macro}{\@@_append_contents:nn,\@@_getfrom_seq:nn,\@@_getfrom_seq:nnn}
 %   The storage of the package is done using |seq| variables.  Here we
 %   set up the macros that will manage the variables.
@@ -1663,6 +1647,8 @@
 %   exist and appends the contents in the argument to the right of the
 %   sequence. \cs{@@_getfrom_seq:nn} retrieves the saved item from the
 %   sequence.
+%
+%%^^A Programming of the sequences
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_append_contents:nn #1#2
   {
@@ -1698,7 +1684,7 @@
 %   The \cs{@@_store_to_seq:NN} writes the recorded contents
 %   in |#1| to the log and stores it in |#2|.
 %
-%%^^A Storing content in seq
+%%^^A Storing content in sequences
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_store_to_seq:NN #1 #2
   {
@@ -1714,9 +1700,11 @@
 % The environment is divided into three parts. This implementation is taken
 % from answer by Enrico Gregorio in \url{https://tex.stackexchange.com/a/487746/7832}.
 %
-%%^^A Define {scontents} whit [key=val] (delaying)
+%
 % \begin{macro}{scontents}
 %   This is the main environment used in the document.
+%
+%%^^A Definition of {scontents}[key=val] env
 %    \begin{macrocode}
 \NewDocumentEnvironment { scontents } { }
   {
@@ -1734,7 +1722,6 @@
 %
 % Define a |key=val| for environment \env{scontents}
 %
-%%^^A Test [key=val] for environment scontents
 % \begin{macro}{\@@_environment_inline:w,\@@_environment_keys:w,
 %      \@@_environment_junk:nw,\@@_environment_junk:xw}
 %   The macro \cs{@@_environment_inline:w} is called from the
@@ -1743,6 +1730,8 @@
 %   is a |[|, then we look for an optional argument delimited by a |]|.
 %   All the remaining tokens are treated as junk and an error is raised
 %   if they are non-blank.
+%
+%%^^A Test [key=val] for environment scontents
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_environment_inline:w
   {
@@ -1770,7 +1759,6 @@
 %
 % \subsubsection{The environment itself}
 %
-%%^^A First start_environment/stop_environment
 % \begin{macro}{\@@_start_environment:w,\@@_stop_environment:}
 %   Here we make |^^I|, |^^L|, and |^^M| active characters so that the end of
 %   line can be ``seen'' to be used as a delimiter, and TeX doesn't try to
@@ -1793,6 +1781,8 @@
 %^^A this group really necessary?
 %^^A Reply : Maybe the groups aren't in the right places, but when you remove
 %^^A them it just gives you errors...(test-pkg-current.tex)
+%
+%%^^A First start_environment/stop_environment
 %    \begin{macrocode}
 \group_begin:
   \char_set_catcode_active:N \^^I
@@ -1828,9 +1818,8 @@
 %   token list using \cs{@@_remove_leading_nl:n} (which expects an active |^^M|
 %   token at the head of the token list; a low level TeX error is raised
 %   otherwise).
-%^^A Note: Perhaps a key "space-tab=1,2,...9" that affects (grabed or grabed and writing) only if present,
-%^^A otherwise write "\t" in the external file and convert to "1 space" in the stored content".
 %
+%%^^A File write start/File write stop
 %    \begin{macrocode}
   \cs_new_protected:Npn \@@_file_tl_write_start:n #1
     {
@@ -1926,15 +1915,11 @@
   {
     \bool_if:NT \l_@@_storing_bool
       {
-        % A problem with fancyvrb \end{Verbatim}% raise on error
-        %\tl_put_right:Nx \l__scontents_macro_tmp_tl { \c__scontents_hidden_space_str }
         \@@_store_to_seq:NN \l_@@_macro_tmp_tl \l_@@_name_seq_env_tl
       }
     \bool_if:NT \l_@@_print_env_bool
       {
         \tl_gset_eq:NN \g_@@_temp_tl \l_@@_macro_tmp_tl
-        % \tl_gset:Nx \g_@@_temp_tl
-        %   { \@@_getfrom_seq:nn { -1 } { \l_@@_name_seq_env_tl } }
         \tl_gput_right:NV \g_@@_temp_tl \c_percent_str
         \group_insert_after:N \@@_rescan_tokens:V
         \group_insert_after:N \g_@@_temp_tl
@@ -1949,8 +1934,6 @@
 % User command to stored content, adapted from
 % \url{https://tex.stackexchange.com/a/500281/7832}.
 %
-%%^^A User command \Scontents to stored content
-%
 % \begin{macro}{\Scontents,\@@_norm_arg:n,\@@_verb_arg:w}
 %   The \cs{Scontents} macro starts by parsing an optional argument and
 %   then delegates to \cs{@@_verb_arg:w} or \cs{@@_norm_arg:n} depending whether
@@ -1959,13 +1942,15 @@
 %   \cs{@@_norm_arg:n} grabs a normal argument, adds it to the |seq| varaible,
 %   and optionally prints it.
 %
-%   \cs{@@_verb_arg:w} grabs a verbatim argument using \pkg{xparse}'s |v|
+%   \cs{@@_verb_arg:w} grabs a verbatim argument using \pkg{xparse}'s |+v|
 %   argument parser.
 %
 %^^A NOTE: Any particular reason why \keys_set_known:nn instead of just
 %^^A       \keys_set:nn? The latter reports if an unknown key is used...
 %^^A Reply: The redirection of error messages has never worked well for me
 %^^A       perhaps it would be better to implement it.
+%
+%%^^A User command \Scontents to stored content
 %    \begin{macrocode}
 \NewDocumentCommand { \Scontents }{ !s !O{} }
   {
@@ -1986,7 +1971,11 @@
 \NewDocumentCommand { \@@_verb_arg:w } { +v }
   {
       \tl_set:Nn \l_@@_temp_tl {#1}
-      %\tl_put_right:Nx \l_@@_temp_tl { \c_@@_hidden_space_str }
+       %\tl_set:Nx \l_@@_temp_tl
+       %  {
+       %     \exp_not:n {#1}
+       %     \bool_if:NT \l_@@_forced_eol_bool { \exp_not:N ^^J }
+       %  }
       \tl_replace_all:Nxx \l_@@_temp_tl { \iow_char:N \^^M } { \iow_char:N \^^J }
       \@@_store_to_seq:NN \l_@@_temp_tl \l_@@_name_seq_cmd_tl
       \bool_if:NT \l_@@_print_cmd_bool
@@ -1998,10 +1987,12 @@
 %
 % \subsection{The command \cs{getstored}}
 %
-%%^^A User command \getstored
+%
 % \begin{macro}{\getstored}
 %   User command \cs{getstored} to extract stored content in |seq|
 %   (robust).
+%
+%%^^A User command \getstored to get content
 %    \begin{macrocode}
 \NewDocumentCommand { \getstored } { O{1} m }
   {
@@ -2021,10 +2012,11 @@
 % This implementation is an adaptation taken from answer by Phelype Oleinik
 % in (\url{https://tex.stackexchange.com/a/497651/7832}).
 %
-%%^^A User command \typestored
 % \begin{macro}{\typestored,\@@_verb_print:N,\@@_xverb:w,verbatimsc}
 %   The \cs{typestored} commands fetches a buffer from memory, prints it
 %   to the log file, and then calls \cs{@@_verb_print:N}.
+%
+%%^^A User command \typestored to verbatimized content
 %    \begin{macrocode}
 \NewDocumentCommand { \typestored } { o m }
   {
@@ -2041,7 +2033,8 @@
 %   (\textsc{ascii} 13) characters to mimick an actual verbatim environment
 %   \enquote{on the loose}. The contents of the environment are placed in a
 %   \env{verbatimsc} environment and rescanned using \cs{@@_rescan_tokens:x}.
-%%^^A Internal verb_print:N
+%
+%%^^A Internal verb_print:N, need to verbatimized content
 %    \begin{macrocode}
 \group_begin:
   \char_set_catcode_active:N \^^M
@@ -2062,7 +2055,9 @@
     }
 \group_end:
 %    \end{macrocode}
+%
 %   Finally, the \env{verbatimsc} environment is defined.
+%
 %%^^A Definition of verbatimsc environment
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_xverb:
@@ -2092,6 +2087,8 @@
 %   In a verbatim context the |tab| character is made active and set
 %   equal to \cs{@@_tabs_to_spaces:}, to produce as many spaces as
 %   the |width-tab| key was set to.
+%
+%%^^A Tab to space
 %    \begin{macrocode}
 \cs_new:Npn \@@_tabs_to_spaces:
   { \prg_replicate:nn { \l_@@_tab_width_int } { ~ } }
@@ -2105,6 +2102,8 @@
 %   leaves \TeX{} still looking for an \meta{optional~space}.
 %   This version uses \cs{char_generate:nn} to ensure that doesn't
 %   happen.
+%
+%%^^A Patch do_noligs for ligatures
 %    \begin{macrocode}
 \cs_new:Npn \@@_do_noligs:N #1
   {
@@ -2125,6 +2124,8 @@
 %     \@@_make_control_chars_active:,
 %   }
 %   Shortcut definitions for common catcode changes.
+%
+%%^^A Common catcode changes
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_set_active_eq:NN #1
   {
@@ -2143,9 +2144,11 @@
 % \subsection{The command \cs{setupsc}}
 %
 % User command \cs{setupsc} to setup module.
-%%^^A User command \setupsc
+%
 % \begin{macro}{\setupsc}
 %   A user-level wrapper for \cs{keys_set:nn}|{ scontents }|.
+%
+%%^^A User command \setupsc
 %    \begin{macrocode}
 \NewDocumentCommand { \setupsc } { m }
   { \keys_set:nn { scontents } {#1} }
@@ -2154,9 +2157,11 @@
 %
 % \subsection{The command meaningsc}
 %
-%%^^A User command \meaningsc
+%
 % \begin{macro}{\meaningsc}
 %   User command \cs{meaningsc} to see content stored in |seq|.
+%
+%%^^A User command \meaningsc
 %    \begin{macrocode}
 \NewDocumentCommand { \meaningsc } { o m }
   {
@@ -2183,9 +2188,11 @@
 %
 % \subsection{The command \cs{countsc}}
 %
-%%^^A User command \countsc
+%
 % \begin{macro}{\countsc}
 %   User command \cs{countsc} to count number of contents stored in |seq|.
+%
+%%^^A User command \countsc
 %    \begin{macrocode}
 \NewExpandableDocumentCommand { \countsc } { m }
   { \seq_count:c { g_@@_seq_name_#1_seq } }
@@ -2194,9 +2201,11 @@
 %
 % \subsection{The command \cs{cleanseqsc}}
 %
-%%^^A User command \cleanseqsc
+%
 % \begin{macro}{\cleanseqsc}
 %   A user command \cs{cleanseqsc} to clear (remove) a defined |seq|.
+%
+%%^^A User command \cleanseqsc
 %    \begin{macrocode}
 \NewDocumentCommand { \cleanseqsc } { m }
   { \seq_clear_new:c { g_@@_seq_name_#1_seq } }
@@ -2207,9 +2216,7 @@
 %
 % Messages used throughout the package.
 %
-%%^^A Messages
-%^^A NOTE: It would be nice to have the messages
-%^^A { ignoring-text } { tab-to-space } { feed-to-space } like a filecontents
+%%^^A Messages used throughout the package
 %    \begin{macrocode}
 \msg_new:nnn { scontents } { junk-after-begin }
   {
@@ -2260,7 +2267,8 @@
 % \subsection{Finish package}
 %
 % Finish package
-%%^^A Finish package
+%
+%%^^A Finish package :)
 %    \begin{macrocode}
 \file_input_stop:
 %    \end{macrocode}
