@@ -668,18 +668,33 @@
 % The \myenv*{scontents} environment allows you to save the content to memory
 % or external files in a similar way to the package \mypkg{filecontentsdef}.
 % This allows you to record content, including \emph{verbatim}, for later reuse.
+%
+% Some considerations to keep in mind, |\begin{scontents}| and |\end{scontents}|
+% must be on different lines, the \myoarg{key=val} options must be passed on
+% \mymeta{one line} right after starting the environment and |TAB|s characters
+% are preserved when writing an \mymeta{external file}.
 % \end{function}
 %
-% Some considerations to keep in mind:
+% The environment can be nested complying with the above considerations
+% and bearing in mind that within it should not be written literally, as a
+% comment or within verbatim environments |\begin{scontents}| and |\end{scontents}|.
+% For example:
 %
-% \begin{enumerate}[nosep]
-% \item The environment cannot be nested.
-% \item Both \lstinline[style=inline]|\begin| and \lstinline[style=inline]|\end|
-%  must be on different lines.
-% \item The \myoarg{key=val} options must be passed on one line right after
-%  starting the environment.
-% \item |TAB|s characters are preserved when writing an \mymeta{external file}.
-% \end{enumerate}
+% \iffalse
+%<*example>
+% \fi
+\begin{examplecode}[frame=single]
+\begin{scontents}[store-env=outer]
+This text is in the outermost environment.
+\begin{scontents}[store-env=inner]
+This text is found in the most inner environment.
+\end{scontents}
+This text is in the outermost environment.
+\end{scontents}
+\end{examplecode}
+% \iffalse
+%</example>
+% \fi
 %
 % \subsection*{Options for environment}
 %
@@ -959,35 +974,41 @@
 %
 % \subsubsection*{Example 1}
 %
-% \begin{VerbatimOut}{scexamp1.ltx}
-% \documentclass[12pt,a4paper]{article}
-% \usepackage[store-cmd=solutions]{scontents}
-% \usepackage{pgffor}
-% \newtheorem{ex}{Exercise}
-% \begin{document}
-% \section{Problems}
-%
-% \begin{ex}
-%   First exercise
-%    \Scontents{
-%       First solution.
-%    }
-% \end{ex}
-%
-% \begin{ex}
-%   Second exercise
-%   \Scontents{
-%      Second solution.
-%   }
-% \end{ex}
-%
-% \section{Solutions}
-%
-% \foreach \i in {1,...,\countsc{solutions}} {
-% \noindent\textbf{\i} \getstored[\i]{solutions}\par
-% }
-% \end{document}
-% \end{VerbatimOut}
+% \iffalse
+%<*example>
+% \fi
+\begin{scontents}[write-out=scexamp1.ltx]
+\documentclass[12pt,a4paper]{article}
+\usepackage[store-cmd=solutions]{scontents}
+\usepackage{pgffor}
+\newtheorem{ex}{Exercise}
+\begin{document}
+\section{Problems}
+
+\begin{ex}
+First exercise
+\Scontents{
+   First solution.
+}
+\end{ex}
+
+\begin{ex}
+Second exercise
+\Scontents{
+  Second solution.
+}
+\end{ex}
+
+\section{Solutions}
+
+\foreach \i in {1,...,\countsc{solutions}} {
+\noindent\textbf{\i} \getstored[\i]{solutions}\par
+}
+\end{document}
+\end{scontents}
+% \iffalse
+%</example>
+% \fi
 %
 % Adaptation of example 1 (ansexam1) of the package \mypkg{answers}
 % \textattachfile[color=0 0 1]{scexamp1.ltx}{\faFile*[regular]}.
@@ -997,35 +1018,41 @@
 %
 % \subsubsection*{Example 2}
 %
-% \begin{VerbatimOut}{scexamp2.ltx}
-% \documentclass{article}
-% \usepackage[store-env=defexercise,store-cmd=defexercise]{scontents}
-% \usepackage{pgffor}
-% \pagestyle{empty}
-% \begin{document}
-%
-% \Scontents{
-% Prove that \[x^n+y^n=z^n\] is not solvable in positive integers if $n$ is at
-% most $-3$.\par
-% }
-%
-% \Scontents*{Refute the existence of black holes in less than $140$ characters.}
-%
-% \begin{scontents}[write-env=\jobname-3.txt]
-% \def\NSA{NSA}%
-% Prove that factorization is easily done via probabilistic algorithms and
-% advance evidence from knowledge of the names of its employees in the
-% seventies that the \NSA\ has known that for 40 years.\par
-% \end{scontents}
-%
-% \foreach \i in {1,...,3} {
-% \begin{itemize}
-% \item \getstored[\i]{defexercise}
-% \end{itemize}}
-%
-% \section{\getstored[2]{defexercise}} % \getstored are robust :)
-% \end{document}
-% \end{VerbatimOut}
+% \iffalse
+%<*example>
+% \fi
+\begin{scontents}[write-out=scexamp2.ltx]
+\documentclass{article}
+\usepackage[store-env=defexercise,store-cmd=defexercise]{scontents}
+\usepackage{pgffor}
+\pagestyle{empty}
+\begin{document}
+
+\Scontents{
+Prove that \[x^n+y^n=z^n\] is not solvable in positive integers if $n$ is at
+most $-3$.\par
+}
+
+\Scontents*{Refute the existence of black holes in less than $140$ characters.}
+
+\begin{scontents}[write-env=\jobname-3.txt]
+\def\NSA{NSA}%
+Prove that factorization is easily done via probabilistic algorithms and
+advance evidence from knowledge of the names of its employees in the
+seventies that the \NSA\ has known that for 40 years.\par
+\end{scontents}
+
+\foreach \i in {1,...,3} {
+\begin{itemize}
+\item \getstored[\i]{defexercise}
+\end{itemize}}
+
+\section{\getstored[2]{defexercise}} % \getstored are robust :)
+\end{document}
+\end{scontents}
+% \iffalse
+%</example>
+% \fi
 %
 % Adaptation of example from package \mypkg{filecontentsdef}
 % \textattachfile[color=0 0 1]{scexamp2.ltx}{\faFile*[regular]}.
@@ -1035,70 +1062,83 @@
 %
 % \subsubsection*{Example 3}
 %
-% \begin{VerbatimOut}{scexamp3.ltx}
-% \documentclass{article}
-% \usepackage[store-cmd=tikz]{scontents}
-% \usepackage{tikz}
-% \pagestyle{empty}
-% \Scontents*{\matrix{ \node (a) {$a$} ; & \node (b) {$b$} ; \\ } ;}
-% \Scontents*{\matrix[ampersand replacement=\&]
-%    { \node (a) {$a$} ; \& \node (b) {$b$} ; \\ } ;}
-% \Scontents*{\matrix{\node (a) {$a$} ; & \node (b) {$b$} ; \\ } ; }
-% \begin{document}
-% \section{tikzpicture}
-% \begin{tikzpicture}
-% \getstored[1]{tikz}
-% \end{tikzpicture}
+% \iffalse
+%<*example>
+% \fi
+\begin{scontents}[write-out=scexamp3.ltx]
+\documentclass{article}
+\usepackage[store-cmd=tikz]{scontents}
+\usepackage{tikz}
+\pagestyle{empty}
+\Scontents*{\matrix{ \node (a) {$a$} ; & \node (b) {$b$} ; \\ } ;}
+\Scontents*{\matrix[ampersand replacement=\&]
+{ \node (a) {$a$} ; \& \node (b) {$b$} ; \\ } ;}
+\Scontents*{\matrix{\node (a) {$a$} ; & \node (b) {$b$} ; \\ } ; }
+\begin{document}
+\section{tikzpicture}
+\begin{tikzpicture}
+\getstored[1]{tikz}
+\end{tikzpicture}
+
+\begin{tikzpicture}
+\getstored[2]{tikz}
+\end{tikzpicture}
+
+\begin{tikzpicture}
+\getstored[3]{tikz}
+\end{tikzpicture}
+
+\section{source}
+\typestored[1]{tikz}
+\typestored[2]{tikz}
+\typestored[3]{tikz}
+\end{document}
+\end{scontents}
+% \iffalse
+%</example>
+% \fi
 %
-% \begin{tikzpicture}
-% \getstored[2]{tikz}
-% \end{tikzpicture}
-%
-% \begin{tikzpicture}
-% \getstored[3]{tikz}
-% \end{tikzpicture}
-%
-% \section{source}
-% \typestored[1]{tikz}
-% \typestored[2]{tikz}
-% \typestored[3]{tikz}
-% \end{document}
-% \end{VerbatimOut}
 % Adapted from \href{https://tex.stackexchange.com/q/5338/7832}{LaTeX equivalent of ConTeXt buffers}
 % \textattachfile[color=0 0 1]{scexamp3.ltx}{\faFile*[regular]}.
 % \lstinputlisting[language=scontents-doc,numbers=left]{scexamp3.ltx}
 %
 % \subsubsection*{Example 4}
 %
-% \begin{VerbatimOut}{scexamp4.ltx}
-% \documentclass{article}
-% \usepackage{scontents}
-% \usepackage{pgffor}
-% \pagestyle{empty}
-% \begin{document}
-% \begin{scontents}[store-env=a]
-% Something for a
-% \end{scontents}
-%
-% \begin{scontents}[store-env=a]
-% Something for b
-% \end{scontents}
-%
-% \begin{scontents}[store-env=a]
-% Something with no label
-% \end{scontents}
-%
-% \textbf{Let's print them}
-%
-% This is a: \getstored[1]{a}
-%
-% This is b: \getstored[2]{a}
-%
-% \textbf{Print all of them}
-%
-% \foreach \i in {1,...,\countsc{a}} {\getstored[\i]{a}\par}
-% \end{document}
-% \end{VerbatimOut}
+% \iffalse
+%<*example>
+% \fi
+\begin{scontents}[write-out=scexamp4.ltx]
+\documentclass{article}
+\usepackage{scontents}
+\usepackage{pgffor}
+\pagestyle{empty}
+\begin{document}
+\begin{scontents}[store-env=a]
+Something for a
+\end{scontents}
+
+\begin{scontents}[store-env=a]
+Something for b
+\end{scontents}
+
+\begin{scontents}[store-env=a]
+Something with no label
+\end{scontents}
+
+\textbf{Let's print them}
+
+This is a: \getstored[1]{a}
+
+This is b: \getstored[2]{a}
+
+\textbf{Print all of them}
+
+\foreach \i in {1,...,\countsc{a}} {\getstored[\i]{a}\par}
+\end{document}
+\end{scontents}
+% \iffalse
+%</example>
+% \fi
 %
 % Adapted from \href{https://tex.stackexchange.com/q/184503/7832}{Collecting contents of environment and store them for later retrieval}
 % \textattachfile[color=0 0 1]{scexamp4.ltx}{\faFile*[regular]}.
@@ -1106,29 +1146,35 @@
 %
 % \subsubsection*{Example 5}
 %
-% \begin{VerbatimOut}{scexamp5.ltx}
-% \documentclass{article}
-% \usepackage{scontents}
-% \pagestyle{empty}
-% \setlength{\parindent}{0pt}
-% \begin{document}
-% \section{Problem stated the first time}
-% \begin{scontents}[print-env=true,store-env=problem]
-% This is normal text.
-% \verb|This is from the verb command.|
-% \verb*|This is from the verb* command.|
-% This is normal text.
-% \begin{verbatim}
-% This is from the verbatim environment:
-% &%{}~
-% \end{verbatim}
-% \end{scontents}
-% \section{Problem restated}
-% \getstored[1]{problem}
-% \section{Problem restated once more}
-% \getstored[1]{problem}
-% \end{document}
-% \end{VerbatimOut}
+% \iffalse
+%<*example>
+% \fi
+\begin{scontents}[write-out=scexamp5.ltx]
+\documentclass{article}
+\usepackage{scontents}
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\begin{document}
+\section{Problem stated the first time}
+\begin{scontents}[print-env=true,store-env=problem]
+This is normal text.
+\verb|This is from the verb command.|
+\verb*|This is from the verb* command.|
+This is normal text.
+\begin{verbatim}
+This is from the verbatim environment:
+&%{}~
+\end{verbatim}
+\end{scontents}
+\section{Problem restated}
+\getstored[1]{problem}
+\section{Problem restated once more}
+\getstored[1]{problem}
+\end{document}
+\end{scontents}
+% \iffalse
+%</example>
+% \fi
 %
 % Adapted from \href{https://tex.stackexchange.com/q/373647/7832}{Collect contents of an environment (that contains verbatim content)}
 % \textattachfile[color=0 0 1]{scexamp5.ltx}{\faFile*[regular]}.
@@ -1138,168 +1184,187 @@
 %
 % \subsubsection*{Example 6}
 %
-% \begin{VerbatimOut}{scexamp6.ltx}
-% \documentclass{article}
-% \usepackage{scontents}
-% \makeatletter
-% \let\verbatimsc\@undefined
-% \let\endverbatimsc\@undefined
-% \makeatother
-% \usepackage{fvextra}
-% \usepackage{xcolor}
-% \definecolor{mygray}{gray}{0.9}
-% \usepackage{tcolorbox}
-% \newenvironment{verbatimsc}%
-% {\VerbatimEnvironment
-%  \begin{tcolorbox}[colback=mygray, boxsep=0pt, arc=0pt, boxrule=0pt]
-%  \begin{Verbatim}[fontsize=\scriptsize, breaklines, breakafter=*, breaksymbolsep=0.5em,
-%    breakaftersymbolpre={\,\tiny\ensuremath{\rfloor}}]}%
-% {\end{Verbatim}%
-%  \end{tcolorbox}}
-% \setlength{\parindent}{0pt}
-% \pagestyle{empty}
-% \begin{document}
+% \iffalse
+%<*example>
+% \fi
+\begin{scontents}[write-out=scexamp6.ltx]
+\documentclass{article}
+\usepackage{scontents}
+\makeatletter
+\let\verbatimsc\@undefined
+\let\endverbatimsc\@undefined
+\makeatother
+\usepackage{fvextra}
+\usepackage{xcolor}
+\definecolor{mygray}{gray}{0.9}
+\usepackage{tcolorbox}
+\newenvironment{verbatimsc}%
+{\VerbatimEnvironment
+\begin{tcolorbox}[colback=mygray, boxsep=0pt, arc=0pt, boxrule=0pt]
+\begin{Verbatim}[fontsize=\scriptsize, breaklines, breakafter=*, breaksymbolsep=0.5em,
+breakaftersymbolpre={\,\tiny\ensuremath{\rfloor}}]}%
+{\end{Verbatim}%
+\end{tcolorbox}}
+\setlength{\parindent}{0pt}
+\pagestyle{empty}
+\begin{document}
+\section{Test \texttt{\textbackslash begin\{scontents\}} whit \texttt{fancyvrb}}
+Test \verb+{scontents}+ \par
+
+\begin{scontents}
+Using \verb+scontents+ env no \verb+[key=val]+, save in seq \verb+contents+
+with index 1.
+
+Prove new \Verb*{ fancyvrb whit braces } and environment \verb+Verbatim*+
+\begin{verbatim}
+ verbatim  environment
+\end{verbatim}
+\end{scontents}
+
+\section{Test \texttt{\textbackslash Scontents} whit \texttt{fancyvrb}}
+
+\Scontents{ We have coded this in \LaTeX: $E=mc^2$.}
+
+\section{Test \texttt{\textbackslash getstored}}
+
+\getstored[1]{contents}\par
+\getstored[2]{contents}
+
+\section{Test \texttt{\textbackslash meaningsc}}
+
+\meaningsc[1]{contents}\par
+\meaningsc[2]{contents}
+
+\section{Test \texttt{\textbackslash typestored}}
+
+\typestored[1]{contents}
+\typestored[2]{contents}
+\end{document}
+\end{scontents}
+% \iffalse
+%</example>
+% \fi
 %
-% \section{Test \texttt{\textbackslash begin\{scontents\}} whit \texttt{fancyvrb}}
-% Test \verb+\begin{scontents}+ \par
-%
-% \begin{scontents}
-% Using \verb+scontents+ env no \verb+[key=val]+, save in seq \verb+contents+
-% with index 1.
-%
-% Prove new \Verb*{ fancyvrb whit braces } and environment \verb+Verbatim*+
-% \begin{verbatim}
-%     verbatim  environment
-% \end{verbatim}
-% \end{scontents}
-%
-% \section{Test \texttt{\textbackslash Scontents} whit \texttt{fancyvrb}}
-%
-% \Scontents{ We have coded this in \LaTeX: $E=mc^2$.}
-%
-% \section{Test \texttt{\textbackslash getstored}}
-%
-% \getstored[1]{contents}\par
-% \getstored[2]{contents}
-%
-% \section{Test \texttt{\textbackslash meaningsc}}
-%
-% \meaningsc[1]{contents}\par
-% \meaningsc[2]{contents}
-%
-% \section{Test \texttt{\textbackslash typestored}}
-%
-% \typestored[1]{contents}
-% \typestored[2]{contents}
-% \end{document}
-% \end{VerbatimOut}
 % Customization of \myenv*{verbatimsc} using the \mypkg{fancyvrb} and \mypkg{tcolorbox} package
 % \textattachfile[color=0 0 1]{scexamp6.ltx}{\faFile*[regular]}.
 % \lstinputlisting[language=scontents-doc,numbers=left]{scexamp6.ltx}
 %
 % \subsubsection*{Example 7}
 %
-% \begin{VerbatimOut}{scexamp7.ltx}
-% \documentclass{article}
-% \usepackage{scontents}
-% \makeatletter
-% \let\verbatimsc\@undefined
-% \let\endverbatimsc\@undefined
-% \makeatother
-% \usepackage{xcolor}
-% \usepackage{listings}
-% \lstnewenvironment{verbatimsc}
-%  {
-%   \lstset{
-%           basicstyle=\small\ttfamily,
-%           breaklines=true,
-%           columns=fullflexible,
-%           language=[LaTeX]TeX,
-%           numbers=left,
-%           numbersep=1em,
-%           numberstyle=\tiny\color{gray},
-%           keywordstyle=\color{red}
-%           }
-%  }{}
-% \setlength{\parindent}{0pt}
-% \pagestyle{empty}
-% \begin{document}
+% \iffalse
+%<*example>
+% \fi
+\begin{scontents}[write-out=scexamp7.ltx]
+\documentclass{article}
+\usepackage{scontents}
+\makeatletter
+\let\verbatimsc\@undefined
+\let\endverbatimsc\@undefined
+\makeatother
+\usepackage{xcolor}
+\usepackage{listings}
+\lstnewenvironment{verbatimsc}
+  {
+   \lstset{
+           basicstyle=\small\ttfamily,
+           breaklines=true,
+           columns=fullflexible,
+           language=[LaTeX]TeX,
+           numbers=left,
+           numbersep=1em,
+           numberstyle=\tiny\color{gray},
+           keywordstyle=\color{red}
+          }
+  }{}
+\setlength{\parindent}{0pt}
+\pagestyle{empty}
+\begin{document}
+
+\section{Test \texttt{\textbackslash begin\{scontents\}} whit \texttt{listings}}
+Test \verb+{scontents}+ \par
+
+\begin{scontents}
+Using \verb+scontents+ env no \verb+[key=val]+, save in seq \verb+contents+ with index 1.\par
+
+Prove \lstinline[basicstyle=\ttfamily]| lstinline | and environment \verb+Verbatim*+
+\begin{verbatim}
+  verbatim  environment
+\end{verbatim}
+\end{scontents}
+
+\section{Test \texttt{\textbackslash Scontents*} whit \texttt{listings}}
+
+\Scontents*+ We have coded this in \lstinline[basicstyle=\ttfamily]|\LaTeX: $E=mc^2$|
+and more.+
+
+\section{Test \texttt{\textbackslash getstored}}
+
+\getstored[2]{contents}\par
+\getstored[1]{contents}
+
+\section{Test \texttt{\textbackslash typestored}}
+
+\typestored[1]{contents}
+\typestored[2]{contents}
+\end{document}
+\end{scontents}
+% \iffalse
+%</example>
+% \fi
 %
-% \section{Test \texttt{\textbackslash begin\{scontents\}} whit \texttt{listings}}
-% Test \verb+\begin{scontents}+ \par
-%
-% \begin{scontents}
-% Using \verb+scontents+ env no \verb+[key=val]+, save in seq \verb+contents+ with index 1.\par
-%
-% Prove \lstinline[basicstyle=\ttfamily]| lstinline | and environment \verb+Verbatim*+
-% \begin{verbatim}
-%      verbatim  environment
-% \end{verbatim}
-% \end{scontents}
-%
-% \section{Test \texttt{\textbackslash Scontents*} whit \texttt{listings}}
-%
-% \Scontents*+ We have coded this in \lstinline[basicstyle=\ttfamily]|\LaTeX: $E=mc^2$|
-% and more.+
-%
-% \section{Test \texttt{\textbackslash getstored}}
-%
-% \getstored[2]{contents}\par
-% \getstored[1]{contents}
-%
-% \section{Test \texttt{\textbackslash typestored}}
-%
-% \typestored[1]{contents}
-% \typestored[2]{contents}
-% \end{document}
-% \end{VerbatimOut}
 % Customization of \myenv*{verbatimsc} using the \mypkg{listings} package
 % \textattachfile[color=0 0 1]{scexamp7.ltx}{\faFile*[regular]}.
 % \lstinputlisting[language=scontents-doc,numbers=left]{scexamp7.ltx}
 %
 % \subsubsection*{Example 8}
 %
-% \begin{VerbatimOut}{scexamp8.ltx}
-% \documentclass{article} % need shell-escape
-% \usepackage{scontents}
-% \makeatletter
-% \let\verbatimsc\@undefined
-% \let\endverbatimsc\@undefined
-% \makeatother
-% \usepackage{minted}
-% \newminted{tex}{linenos}
-% \newenvironment{verbatimsc}{\VerbatimEnvironment\begin{texcode}}{\end{texcode}}
-% \pagestyle{empty}
-% \begin{document}
-% \section{Test \texttt{\textbackslash begin\{scontents\}} whit \texttt{minted}}
-% Test \verb+\begin{scontents}+ \par
-%
-% \begin{scontents}[write-env=usingtab.tex,force-eol=true]
-% Using \verb+scontents+ env no \verb+[key=val]+, save in seq \verb+contents+
-% with index 1.\par % replace space by real TAB
-%
-% Prove new \Verb*{ new fvextra whit braces } and environment \verb+Verbatim*+
-% 
-% \begin{Verbatim}[obeytabs, showtabs, tab=\rightarrowfill, tabcolor=red,showspaces, spacecolor=blue]
-% No tab
-% 	One real tab
-% 		Two real Tab plus 	one tab and one more 	
-% \end{Verbatim}
-% \end{scontents}
-%
-% \section{Test \texttt{\textbackslash Scontents} whit \texttt{minted}}
-%
-% \Scontents{ We have coded \par this in \LaTeX: $E=mc^2$.}
-%
-% \section{Test \texttt{\textbackslash getstored}}
-% \getstored[1]{contents}\par
-% \getstored[2]{contents}
-%
-% \section{Test \texttt{\textbackslash typestored}}
-% \typestored[1]{contents}
-% \typestored[2]{contents}
-% \end{document}
-% \end{VerbatimOut}
+% \iffalse
+%<*example>
+% \fi
+\begin{scontents}[write-out=scexamp8.ltx]
+\documentclass{article} % need --shell-escape
+\usepackage{scontents}
+\makeatletter
+\let\verbatimsc\@undefined
+\let\endverbatimsc\@undefined
+\makeatother
+\usepackage{minted}
+\newminted{tex}{linenos}
+\newenvironment{verbatimsc}{\VerbatimEnvironment\begin{texcode}}{\end{texcode}}
+\pagestyle{empty}
+\begin{document}
+\section{Test \texttt{\textbackslash begin\{scontents\}} whit \texttt{minted}}
+Test \verb+{scontents}+ \par
+
+\begin{scontents}[write-env=usingtab.tex,force-eol=true]
+Using \verb+scontents+ env no \verb+[key=val]+, save in seq \verb+contents+
+with index 1.\par
+
+Prove new \Verb*{ new fvextra whit braces } and environment \verb+Verbatim*+
+% Real TABs here :)
+\begin{Verbatim}[obeytabs, showtabs, tab=\rightarrowfill, tabcolor=red,showspaces, spacecolor=blue]
+No tab
+	One real tab
+		Two real Tab plus 	one tab
+\end{Verbatim}
+\end{scontents}
+
+\section{Test \texttt{\textbackslash Scontents} whit \texttt{minted}}
+
+\Scontents{ We have coded \par this in \LaTeX: $E=mc^2$.}
+
+\section{Test \texttt{\textbackslash getstored}}
+\getstored[1]{contents}\par
+\getstored[2]{contents}
+
+\section{Test \texttt{\textbackslash typestored}}
+\typestored[1]{contents}
+\typestored[2]{contents}
+\end{document}
+\end{scontents}
+% \iffalse
+%</example>
+% \fi
 %
 % Customization of \myenv*{verbatimsc} using the \mypkg{minted} package
 % \textattachfile[color=0 0 1]{scexamp8.ltx}{\faFile*[regular]}.
@@ -1317,8 +1382,9 @@
 % \settowidth{\descrwidth}{\textsf{v1.0, (ctan), 2019/07/30} }
 %
 % \begin{description}[font=\small\sffamily, wide=0pt, style=multiline, leftmargin=\descrwidth,  nosep, noitemsep]
-% \item [\fileversion{} (dev), \filedate]
+% \item [\fileversion{} (ctan), \filedate]
 %    \begin{itemize}
+%        \item The environment can now nest.
 %        \item Added \verb+force-eol+, \verb+verb-font+ and \verb+width-tab+ keys.
 %        \item The extra space has been removed when you run \verb+\getstored+.
 %        \item Internal code has been rewritten more efficiently.
@@ -1378,7 +1444,7 @@
 %    \begin{macrocode}
 \RequirePackage{l3keys2e}
 \RequirePackage{xparse}[2019/05/28]
-\ProvidesExplPackage{scontents}{2019/09/18}{1.3}
+\ProvidesExplPackage{scontents}{2019/09/23}{1.3}
   {Stores LaTeX contents in memory or files}
 %    \end{macrocode}
 %
