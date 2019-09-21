@@ -517,13 +517,12 @@ We have coded this in \LaTeX: $E=mc^2$.\par
 \subsection{Exercises}
 \begin{exercise}
 \end{exercise}
-\begin{scontents}
-This is the answer to exercise 1, the shebang line for a Perl script
 
-\begin{verbatim}
+\Scontents*[print-cmd=true, force-eol=true]{This is the answer to exercise 1, the shebang line for a Perl script
+
+\begin{Verbatim}
 #!/usr/bin/env perl
-\end{verbatim}
-\end{scontents}
+\end{Verbatim}}
 
 \begin{exercise}
 \end{exercise}
@@ -548,4 +547,24 @@ This is the answer to exercise 1, the shebang line for a Perl script
 \RecustomVerbatimEnvironment{verbatimsc}{Verbatim}{frame=none,numbers=left}
 \typestored[1]{answers}
 \typestored[2]{answers}
+% nested
+\subsection{Nested}
+
+\begin{scontents}[print-env=false, store-env=outer]
+This text is in the outermost environment.
+\begin{scontents}[print-env=false, store-env=inner]
+This text is found in the most inner environment.
+\end{scontents}
+This text is in the outermost environment.
+\end{scontents}
+
+\subsubsection{getstored}
+% \getstored[1]{outer}
+\getstored[1]{outer}\par
+\getstored[1]{inner}\par
+
+\subsubsection{count}
+% count
+Number of items stored in  \verb+outer+ \countsc{outer}\par
+Number of items stored in  \verb+inner+ \countsc{inner}
 \end{document}
