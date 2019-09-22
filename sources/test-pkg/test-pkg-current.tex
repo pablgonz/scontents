@@ -371,7 +371,7 @@ Test \verb+\subsection{\getstored[3]{contents}}+:\par
 Test \verb+scontents+ no \verb+[key=val]+\par
 
 \begin{scontents}[force-eol]
-Using \verb+scontents+ env no \verb+[key=val]+, save in seq \verb+testenv+ index 1.\par
+Using \verb+scontents+ env, \verb+[force-eol]+, save in seq \verb+testenv+ index 1.\par
 We have coded this in \LaTeX: $E=mc^2$.
 
 Prove new \Verb*{ verbatim from fvextra whit braces } and environment \verb+Verbatim*+.
@@ -384,8 +384,8 @@ Prove new \Verb*{ verbatim from fvextra whit braces } and environment \verb+Verb
 \enlargethispage{1.5em}
 
 \subsubsection{\Verb{\getstored[1]{testenv}}}
-%%%
-\getstored[1]{testenv}
+%
+XX\getstored[1]{testenv}YY
 
 \subsubsection{\Verb{\meaningsc[1]{testenv}}}
 \meaningsc[1]{testenv}
@@ -518,7 +518,7 @@ We have coded this in \LaTeX: $E=mc^2$.\par
 \begin{exercise}
 \end{exercise}
 
-\Scontents*[print-cmd=true, force-eol=true]{This is the answer to exercise 1, the shebang line for a Perl script
+\Scontents*[print-cmd, force-eol=true]{This is the answer to exercise 1, the shebang line for a Perl script
 
 \begin{Verbatim}
 #!/usr/bin/env perl
