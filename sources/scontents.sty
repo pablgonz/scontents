@@ -1,13 +1,13 @@
 %%^^A Initial declaration of the package
 \RequirePackage{l3keys2e}
 \RequirePackage{xparse}[2019/05/28]
-\ProvidesExplPackage{scontents}{2019/09/24}{1.3}
+\ProvidesExplPackage{scontents}{2019/09/25}{1.4}
   {Stores LaTeX contents in memory or files}
-%%^^A Checking the version of xparse
-\@ifpackagelater { xparse } { 2019/05/03 }
+%%^^A Checking the version of expl3
+\@ifpackagelater { expl3 } { 2019/09/19 }
   { }
   {
-    \PackageError { scontents } { Support~package~xparse~too~old }
+    \PackageError { scontents } { Support~package~expl3~too~old }
       {
         You~need~to~update~your~installation~of~the~bundles~
         'l3kernel'~and~'l3packages'.\MessageBreak
@@ -286,9 +286,7 @@
           \bool_if:NT \l__scontents_storing_bool
             {
               \tl_set:Nn \exp_not:N #1
-                {
-                  \exp_args:NV \__scontents_remove_leading_nl:n \l__scontents_file_tl
-                }
+                { \exp_args:NV \__scontents_remove_leading_nl:n \l__scontents_file_tl }
             }
         }
     }
@@ -351,18 +349,14 @@
     \bool_if:NT \l__scontents_storing_bool
       {
         \bool_if:NF \l__scontents_forced_eol_bool
-          {
-            \tl_put_right:Nx \l__scontents_macro_tmp_tl { \c__scontents_hidden_space_str }
-          }
+          { \tl_put_right:Nx \l__scontents_macro_tmp_tl { \c__scontents_hidden_space_str } }
         \__scontents_store_to_seq:NN \l__scontents_macro_tmp_tl \l__scontents_name_seq_env_tl
       }
     \bool_if:NT \l__scontents_print_env_bool
       {
         \tl_gset_eq:NN \g__scontents_temp_tl \l__scontents_macro_tmp_tl
         \bool_if:NF \l__scontents_forced_eol_bool
-              {
-                 \tl_gput_right:Nx \g__scontents_temp_tl { \c__scontents_hidden_space_str }
-              }
+          { \tl_gput_right:Nx \g__scontents_temp_tl { \c__scontents_hidden_space_str } }
         \group_insert_after:N \__scontents_rescan_tokens:V
         \group_insert_after:N \g__scontents_temp_tl
       }
@@ -381,8 +375,11 @@
   }
 \cs_new_protected:Npn \__scontents_norm_arg:n #1
   {
-      \exp_args:NV \__scontents_append_contents:nn \l__scontents_name_seq_cmd_tl {#1}
-      \bool_if:NT \l__scontents_print_cmd_bool { \__scontents_rescan_tokens:n {#1} }
+      \tl_set:Nx \l__scontents_temp_tl { \exp_not:n {#1} }
+      \tl_put_right:Nx \l__scontents_temp_tl { \c__scontents_hidden_space_str }
+      \__scontents_store_to_seq:NN \l__scontents_temp_tl \l__scontents_name_seq_cmd_tl
+      \bool_if:NT \l__scontents_print_cmd_bool
+        { \__scontents_rescan_tokens:V \l__scontents_temp_tl }
     \group_end:
   }
 \NewDocumentCommand { \__scontents_verb_arg:w } { +v }
@@ -390,16 +387,12 @@
       \tl_set:Nx \l__scontents_temp_tl { \exp_not:n {#1} }
       \tl_replace_all:Nxx \l__scontents_temp_tl { \iow_char:N \^^M } { \iow_char:N \^^J }
       \bool_if:NF \l__scontents_forced_eol_bool
-        {
-          \tl_put_right:Nx \l__scontents_temp_tl { \c__scontents_hidden_space_str }
-        }
+        { \tl_put_right:Nx \l__scontents_temp_tl { \c__scontents_hidden_space_str } }
       \__scontents_store_to_seq:NN \l__scontents_temp_tl \l__scontents_name_seq_cmd_tl
       \bool_if:NT \l__scontents_print_cmd_bool
         {
           \bool_if:NT \l__scontents_forced_eol_bool
-            {
-              \tl_remove_once:NV \l__scontents_temp_tl \c__scontents_hidden_space_str
-            }
+            { \tl_remove_once:NV \l__scontents_temp_tl \c__scontents_hidden_space_str }
           \__scontents_rescan_tokens:V \l__scontents_temp_tl
         }
     \group_end:
@@ -542,10 +535,6 @@
   { Rescanning~text~`#1'~after~\c_backslash_str end{scontents}~\msg_line_context:.}
 \msg_new:nnn { scontents } { multiple-begin }
   { Multiple~\c_backslash_str begin{scontents}~\msg_line_context:.}
-\msg_new:nnn { scontents } { tab-to-space }
-  { Tab~has~been~converted~to~Blank~Space }
-\msg_new:nnn { scontents } { feed-to-space }
-  { Form~Feed~has~been~converted~to~Blank~Space }
 \msg_new:nnnn { scontents } { key-unknown }
   { The~key~'#1'~is~unknown~and~is~being~ignored. }
   {
