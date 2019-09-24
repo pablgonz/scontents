@@ -72,6 +72,9 @@
   { \end{verbatimsc} }
 \tl_const:Nx \c__scontents_end_env_tl
   { \c_backslash_str end \c_left_brace_str scontents \c_right_brace_str }
+%%^^A A string to hidden trailing space after grab argument
+\str_const:Nx \c__scontents_hidden_space_str
+  { \c_percent_str scheol \c_percent_str }
 %%^^A Internal quarks
 \quark_new:N \q__scontents_stop
 \quark_new:N \q__scontents_mark
@@ -285,7 +288,6 @@
               \tl_set:Nn \exp_not:N #1
                 {
                   \exp_args:NV \__scontents_remove_leading_nl:n \l__scontents_file_tl
-                  \bool_if:NT \l__scontents_forced_eol_bool { \exp_not:N ^^J }
                 }
             }
         }
@@ -348,12 +350,19 @@
   {
     \bool_if:NT \l__scontents_storing_bool
       {
+        \bool_if:NF \l__scontents_forced_eol_bool
+          {
+            \tl_put_right:Nx \l__scontents_macro_tmp_tl { \c__scontents_hidden_space_str }
+          }
         \__scontents_store_to_seq:NN \l__scontents_macro_tmp_tl \l__scontents_name_seq_env_tl
       }
     \bool_if:NT \l__scontents_print_env_bool
       {
         \tl_gset_eq:NN \g__scontents_temp_tl \l__scontents_macro_tmp_tl
-        \tl_gput_right:NV \g__scontents_temp_tl \c_percent_str
+        \bool_if:NF \l__scontents_forced_eol_bool
+              {
+                 \tl_gput_right:Nx \g__scontents_temp_tl { \c__scontents_hidden_space_str }
+              }
         \group_insert_after:N \__scontents_rescan_tokens:V
         \group_insert_after:N \g__scontents_temp_tl
       }
@@ -378,15 +387,21 @@
   }
 \NewDocumentCommand { \__scontents_verb_arg:w } { +v }
   {
-      \tl_set:Nx \l__scontents_temp_tl
-        {
-           \exp_not:n {#1}
-           \bool_if:NT \l__scontents_forced_eol_bool { \exp_not:N ^^J }
-        }
+      \tl_set:Nx \l__scontents_temp_tl { \exp_not:n {#1} }
       \tl_replace_all:Nxx \l__scontents_temp_tl { \iow_char:N \^^M } { \iow_char:N \^^J }
+      \bool_if:NF \l__scontents_forced_eol_bool
+        {
+          \tl_put_right:Nx \l__scontents_temp_tl { \c__scontents_hidden_space_str }
+        }
       \__scontents_store_to_seq:NN \l__scontents_temp_tl \l__scontents_name_seq_cmd_tl
       \bool_if:NT \l__scontents_print_cmd_bool
-        { \__scontents_rescan_tokens:V \l__scontents_temp_tl }
+        {
+          \bool_if:NT \l__scontents_forced_eol_bool
+            {
+              \tl_remove_once:NV \l__scontents_temp_tl \c__scontents_hidden_space_str
+            }
+          \__scontents_rescan_tokens:V \l__scontents_temp_tl
+        }
     \group_end:
   }
 %%^^A User command \getstored to get content
@@ -396,7 +411,6 @@
       \__scontents_rescan_tokens:x
         {
           \__scontents_getfrom_seq:nn {#1} {#2}
-          \c_percent_str
         }
     \group_end:
   }
@@ -407,6 +421,7 @@
       \int_set:Nn \l__scontents_seq_item_int { 1 }
       \IfValueT {#1} { \keys_set:nn { scontents } {#1} }
       \tl_set:Nx \l__scontents_temp_tl { \exp_args:NV \__scontents_getfrom_seq:nn \l__scontents_seq_item_int {#2} }
+      \tl_remove_once:NV \l__scontents_temp_tl \c__scontents_hidden_space_str
       \tl_log:N \l__scontents_temp_tl
       \tl_if_empty:NF \l__scontents_temp_tl
         { \__scontents_verb_print:N \l__scontents_temp_tl }
@@ -495,6 +510,7 @@
     {
       \tl_set:Nx \l__scontents_temp_tl { \exp_args:NV \__scontents_getfrom_seq:nn \l__scontents_seq_item_int {#1} }
       \tl_replace_all:Nxn \l__scontents_temp_tl { \iow_char:N \^^J } { ~ }
+      \tl_remove_once:NV  \l__scontents_temp_tl \c__scontents_hidden_space_str
       \tl_log:N \l__scontents_temp_tl
       \tl_use:N \l__scontents_verb_font_tl
       \tl_replace_all:Nnx \l__scontents_temp_tl { ^^I } { \__scontents_tabs_to_spaces: }
