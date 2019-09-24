@@ -29,7 +29,7 @@ hello
 
 \begin{scontents}[print-env=false,force-eol]
 We know that we cannot place text (or anything) on the same line that 
-closes Verbatim (fancyfvr), it would be an Error.
+closes Verbatim (fancyvrb), it would be an Error.
 \begin{Verbatim*}
 Good bye
 \end{Verbatim*}
@@ -40,7 +40,7 @@ Good bye
 
 
 \Scontents*[print-cmd=false,force-eol=true]{We know that we cannot place text (or anything) on the same line that 
-closes Verbatim (fancyfvr), it would be an Error.
+closes Verbatim (fancyvrb), it would be an Error.
 \begin{Verbatim*}
 Good bye again, whit command
 \end{Verbatim*}}ZZZZZ
@@ -83,18 +83,19 @@ XX\typestored[5]{contents}YY\par
 XX\typestored[6]{contents}YY
 
 
-\end{document}
-
-
 \Scontents*[store-cmd=nospace]{Write in one line \LaTeX: $E=mc^2$, no space after dot.}
 
-\Scontents*[store-cmd=nospace]{Other whit in one no space after dot.}
+\Scontents[store-cmd=nospace]{Other whit in \{one\} no \}space\{ after dot.}
 
 XX\getstored[1]{nospace}YY\par
 XX\getstored[2]{nospace}YY\par
 
 \typestored[1]{nospace}
 \typestored[2]{nospace}
+
+\end{document}
+
+
 % These outputs should look the same
 FIRST\par
 This is normal text.

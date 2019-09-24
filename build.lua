@@ -1,6 +1,6 @@
 -- Build script for scontents
-pkgversion   = "1.3"
-pkgdate      = "2019/09/24"
+pkgversion   = "1.4"
+pkgdate      = "2019/09/25"
 
 module       = "scontents"
 ctanpkg      = "scontents"
@@ -22,7 +22,7 @@ function update_tag (file,content,tagname,tagdate)
   return content 
  elseif string.match (file, "README.md") then
    content = string.gsub (content,  
-                         "Version: %d%.%d.%s- ",
+                         "Version: %d%.%d.%s-",
                          "Version: " .. pkgversion  )
    content = string.gsub (content,  
                          "Date: %d%d%d%d%/%d%d%/%d%d",
