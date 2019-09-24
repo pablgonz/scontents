@@ -1581,6 +1581,16 @@ No tab
 %    \end{macrocode}
 % \end{macro}
 %
+% \begin{macro}{\c_@@_hidden_space_str}
+%   \cs{c_@@_hidden_space_str} is a constant string to used to hide the
+%  \meta{forced space} added by \TeX{} when recording content in a macro.
+%
+%%^^A A string to hidden trailing space after grab argument
+%    \begin{macrocode}
+\str_const:Nx \c_@@_hidden_space_str
+  { \c_percent_str scheol \c_percent_str }
+%    \end{macrocode}
+% \end{macro}
 %
 % \begin{macro}{\q_@@_stop,\q_@@_mark}
 %   Some quarks used along the code as macro delimiters.
@@ -1898,8 +1908,8 @@ No tab
 %   be appended with an active |^^J| character and the line just read, and this
 %   line is written to the output file, if any. At the end of the environment
 %   the output file is closed (if it was open), and the output token list is
-%   smuggled out of the verbatim group. A leading |^^M| is removed from the
-%   token list using \cs{@@_remove_leading_nl:n} (which expects an active |^^M|
+%   smuggled out of the verbatim group. A leading |^^J| is removed from the
+%   token list using \cs{@@_remove_leading_nl:n} (which expects an active |^^J|
 %   token at the head of the token list; a low level TeX error is raised
 %   otherwise).
 %
@@ -1978,7 +1988,6 @@ No tab
               \tl_set:Nn \exp_not:N #1
                 {
                   \exp_args:NV \@@_remove_leading_nl:n \l_@@_file_tl
-                  \bool_if:NT \l_@@_forced_eol_bool { \exp_not:N ^^J }
                 }
             }
         }
@@ -2076,12 +2085,19 @@ No tab
   {
     \bool_if:NT \l_@@_storing_bool
       {
+        \bool_if:NF \l_@@_forced_eol_bool 
+          {
+            \tl_put_right:Nx \l_@@_macro_tmp_tl { \c_@@_hidden_space_str }
+          }
         \@@_store_to_seq:NN \l_@@_macro_tmp_tl \l_@@_name_seq_env_tl
       }
     \bool_if:NT \l_@@_print_env_bool
       {
         \tl_gset_eq:NN \g_@@_temp_tl \l_@@_macro_tmp_tl
-        \tl_gput_right:NV \g_@@_temp_tl \c_percent_str
+        \bool_if:NF \l__scontents_forced_eol_bool 
+              {
+                 \tl_gput_right:Nx \g_@@_temp_tl { \c__scontents_hidden_space_str }
+              }
         \group_insert_after:N \@@_rescan_tokens:V
         \group_insert_after:N \g_@@_temp_tl
       }
@@ -2131,15 +2147,21 @@ No tab
   }
 \NewDocumentCommand { \@@_verb_arg:w } { +v }
   {
-      \tl_set:Nx \l_@@_temp_tl
-        {
-           \exp_not:n {#1}
-           \bool_if:NT \l_@@_forced_eol_bool { \exp_not:N ^^J }
-        }
+      \tl_set:Nx \l_@@_temp_tl { \exp_not:n {#1} }
       \tl_replace_all:Nxx \l_@@_temp_tl { \iow_char:N \^^M } { \iow_char:N \^^J }
+      \bool_if:NF \l_@@_forced_eol_bool
+        { 
+          \tl_put_right:Nx \l_@@_temp_tl { \c_@@_hidden_space_str }
+        }
       \@@_store_to_seq:NN \l_@@_temp_tl \l_@@_name_seq_cmd_tl
       \bool_if:NT \l_@@_print_cmd_bool
-        { \@@_rescan_tokens:V \l_@@_temp_tl }
+        {
+          \bool_if:NT \l_@@_forced_eol_bool
+            { 
+              \tl_remove_once:NV \l_@@_temp_tl \c_@@_hidden_space_str
+            } 
+          \@@_rescan_tokens:V \l_@@_temp_tl 
+        }
     \group_end:
   }
 %    \end{macrocode}
@@ -2160,7 +2182,6 @@ No tab
       \@@_rescan_tokens:x
         {
           \@@_getfrom_seq:nn {#1} {#2}
-          \c_percent_str
         }
     \group_end:
   }
@@ -2184,6 +2205,7 @@ No tab
       \int_set:Nn \l_@@_seq_item_int { 1 }
       \IfValueT {#1} { \keys_set:nn { scontents } {#1} }
       \tl_set:Nx \l_@@_temp_tl { \exp_args:NV \@@_getfrom_seq:nn \l_@@_seq_item_int {#2} }
+      \tl_remove_once:NV \l_@@_temp_tl \c_@@_hidden_space_str
       \tl_log:N \l_@@_temp_tl
       \tl_if_empty:NF \l_@@_temp_tl
         { \@@_verb_print:N \l_@@_temp_tl }
@@ -2338,6 +2360,7 @@ No tab
     {
       \tl_set:Nx \l_@@_temp_tl { \exp_args:NV \@@_getfrom_seq:nn \l_@@_seq_item_int {#1} }
       \tl_replace_all:Nxn \l_@@_temp_tl { \iow_char:N \^^J } { ~ }
+      \tl_remove_once:NV  \l_@@_temp_tl \c_@@_hidden_space_str
       \tl_log:N \l_@@_temp_tl
       \tl_use:N \l_@@_verb_font_tl
       \tl_replace_all:Nnx \l_@@_temp_tl { ^^I } { \@@_tabs_to_spaces: }

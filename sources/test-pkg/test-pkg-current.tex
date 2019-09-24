@@ -518,11 +518,18 @@ We have coded this in \LaTeX: $E=mc^2$.\par
 \begin{exercise}
 \end{exercise}
 
-\Scontents*[print-cmd, force-eol=true]{This is the answer to exercise 1, the shebang line for a Perl script
+\begin{scontents}[print-env=true, force-eol=true]
+This is the answer to exercise 1, the shebang line for a Perl script
 
 \begin{Verbatim}
 #!/usr/bin/env perl
-\end{Verbatim}}
+\end{Verbatim}
+\end{scontents}YYYYYYYYYYxxx
+
+\typestored[1]{answers}
+
+YYY\getstored[1]{answers}XXX
+
 
 \begin{exercise}
 \end{exercise}
@@ -551,15 +558,16 @@ We have coded this in \LaTeX: $E=mc^2$.\par
 \subsection{Nested}
 
 \begin{scontents}[print-env=false, store-env=outer]
-This text is in the outermost environment.
+This text is in the outermost environment (before nested).
 \begin{scontents}[print-env=false, store-env=inner]
 This text is found in the most inner environment.
 \end{scontents}
-This text is in the outermost environment.
+This text is in the outermost environment (after nested).
 \end{scontents}
 
 \subsubsection{getstored}
 % \getstored[1]{outer}
+
 \getstored[1]{outer}\par
 \getstored[1]{inner}\par
 

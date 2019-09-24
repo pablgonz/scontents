@@ -15,6 +15,77 @@
 \makeatother
 \DefineVerbatimEnvironment{verbatimsc}{Verbatim}{numbers=left,frame=single}
 \begin{document}
+
+\begin{scontents}[print-env,force-eol]
+Some text here?
+\begin{filecontents}[overwrite]{somefile.tex}
+hello
+\end{filecontents}LaTeX didn't say this shouldn't be here.
+\end{scontents}XXXX
+
+\getstored[1]{contents}YYYY
+\typestored[1]{contents}
+
+
+\begin{scontents}[print-env=false,force-eol]
+We know that we cannot place text (or anything) on the same line that 
+closes Verbatim (fancyfvr), it would be an Error.
+\begin{Verbatim*}
+Good bye
+\end{Verbatim*}
+\end{scontents}ZZZZZ
+
+\getstored[2]{contents}WWWW
+\typestored[2]{contents}
+
+
+\Scontents*[print-cmd=false,force-eol=true]{We know that we cannot place text (or anything) on the same line that 
+closes Verbatim (fancyfvr), it would be an Error.
+\begin{Verbatim*}
+Good bye again, whit command
+\end{Verbatim*}}ZZZZZ
+
+AAA\getstored[3]{contents}WWWW
+\typestored[3]{contents}
+
+\begin{scontents}[print-env=false,force-eol=false]
+More text here?
+
+\begin{verbatim*}
+hello again
+\end{verbatim*}LaTeX only moves this text to the next line.
+\end{scontents}ZZZZZ
+
+AAA\getstored[4]{contents}WWWW
+\typestored[4]{contents}
+
+In all these cases it will not be possible to hide the extra space, 
+better not to worry about it and add \% only when force-eol=false
+
+This text is found just before opening environment 
+\begin{scontents}[print-env=false]
+% this line ignore by \getstored
+Prove \verb*| verb inline whit bars | and environment \verb+Verbatim*+
+\begin{Verbatim}
+     A verbatim  
+       environment
+\end{Verbatim}
+A text, no space after dot.
+\end{scontents}This text is found just after closing environment
+
+\Scontents*{Write in one line \LaTeX: $E=mc^2$, no space after dot.}
+
+XX\getstored[5]{contents}YY\par
+XX\getstored[6]{contents}YY
+
+
+XX\typestored[5]{contents}YY\par
+XX\typestored[6]{contents}YY
+
+
+\end{document}
+
+
 \Scontents*[store-cmd=nospace]{Write in one line \LaTeX: $E=mc^2$, no space after dot.}
 
 \Scontents*[store-cmd=nospace]{Other whit in one no space after dot.}
@@ -262,16 +333,7 @@ Test \verb+\subsection{\getstored[3]{contents}}+:\par
 \subsection{no \texttt{[key=val]}}
 Test \verb+scontents+ no \verb+[key=val]+\par
 
-\begin{scontents}
-Using \verb+scontents+ env no \verb+[key=val]+, save in seq \verb+testenv+ index 1.\par
-We have coded this in \LaTeX: $E=mc^2$.
 
-Prove new \Verb*{ verbatim from fvextra whit braces } and environment \verb+Verbatim*+.
-\begin{Verbatim*}
-      (A) verbatim
-          environment
-\end{Verbatim*}
-\end{scontents}
 
 \subsubsection{\Verb{\getstored[1]{testenv}}}
 \getstored[1]{testenv}
@@ -442,4 +504,4 @@ This is the answer to exercise 1, the shebang line for a Perl script
 \DefineVerbatimEnvironment{verbatimsc}{Verbatim}{numbers=left,frame=single}
 \typestored[1]{answers}
 \typestored[2]{answers}
-\end{document}
+
