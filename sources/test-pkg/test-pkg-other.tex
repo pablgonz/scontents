@@ -1,6 +1,6 @@
+% pdflatex-dev
 \documentclass{article}
-\usepackage{scontents} % v1.2 or above
-
+\usepackage{scontents}
 % only for test
 \usepackage[top=0.5in,bottom=0.5in, left=1in, right=1in]{geometry}
 \usepackage{pgffor}
@@ -92,6 +92,11 @@ XX\getstored[2]{nospace}YY\par
 
 \typestored[1]{nospace}
 \typestored[2]{nospace}
+
+% It shouldn't be defined
+\ExplSyntaxOn
+\g__scontents_temp_tl
+\ExplSyntaxOff
 
 \end{document}
 
