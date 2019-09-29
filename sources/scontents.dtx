@@ -721,12 +721,12 @@
 % the start of the environment.
 % \end{function}
 %
-% Comments \enquote{\textcolor{gray}{\%}} at the end of the line after
-% §\begin{scontents}§ or \myoarg{keyval list} are not supported and |TAB|s characters
-% are preserved when writing an \mymeta{external file}. The environment
-% can be \mymeta{nested} if it is properly balanced and does not appear
-% \enquote{literally} in comments or in some \emph{verbatim} environment
-% or command. As an example:
+% Comments \enquote{\textcolor{gray}{\%}} or \enquote{text} after 
+% §\begin{scontents}§ or \myoarg{keyval list} on the same line are not 
+% supported, the "TAB" character are preserved when writing an 
+% \mymeta{external file}. The environment can be \mymeta{nested} if it 
+% is properly balanced and does not appear \enquote{literally} in commented
+% lines or in some \emph{verbatim} environment or command. As an example:
 %
 % \iffalse
 %<*example>
@@ -830,10 +830,9 @@ This text is in the outer environment (after nested).
 % \subsection*{Options for command}
 % \label{sec:optcmdsc}
 %
-% The command options (including starred version) can be configured globally
-% using option in package or the \ics*{setupsc} command and locally
-% using \myoarg{key \textnormal{\textcolor{gray}{=}} val}. The key §force-eol§
-% is available for this command.
+% The command options can be configured globally using option in package 
+% or the \ics*{setupsc} command and locally using \myoarg{key \textnormal{\textcolor{gray}{=}} val}. 
+% The key §force-eol§ is available for this command.
 %
 % \keyexamp{store-cmd}{seq name}{contents}
 % Sets the name of the \mymeta{sequence} in which the contents will be stored.
@@ -859,7 +858,7 @@ This text is in the outer environment (after nested).
 % The command \ics*{getstored} gets the content stored in \mymeta{seq name}
 % according to the \mymeta{index} in which it was stored. The command is
 % robust and can be used as an \mymeta{argument} for another command. If the
-% optional argument is not passed it defaults to the last element saved
+% optional argument is not passed it defaults to the first element stored
 % in the \mymeta{seq name}.
 %
 % \subsection{The command \cs{typestored}}
@@ -877,8 +876,8 @@ This text is in the outer environment (after nested).
 % the \mymeta{seq name}.
 % \end{function}
 %
-% If the optional argument is not passed it defaults to the last element
-% saved in the \mymeta{seq name}. The key §width-tab§ is available for
+% If the optional argument is not passed it defaults to the first element
+% stored in the \mymeta{seq name}. The key §width-tab§ is available for
 % this command.
 %
 % \subsection{The environment \env{verbatimsc}}
@@ -972,8 +971,8 @@ This text is in the outer environment (after nested).
 % in which the content is stored in the \mymeta{seq name}.
 % \end{function}
 %
-% If the optional argument is not passed it defaults to the last element
-% saved in the \mymeta{seq name}. The key §width-tab§ is available for
+% If the optional argument is not passed it defaults to the first element
+% stored in the \mymeta{seq name}. The key §width-tab§ is available for
 % this command.
 %
 % \subsection{The command \cs{countsc}}
@@ -1536,8 +1535,9 @@ No tab
   }
 %    \end{macrocode}
 %
-% We process the \mymeta{keys} as options passed on to the package.
-% All unknown keys will return an error.
+% We process the \mymeta{keys} as options passed on to the package, the 
+% package \pkg{l3keys2e} will verify the \mymeta{keys} and will return 
+% an error when they are \emph{unknown}.
 %
 %    \begin{macrocode}
 \ProcessKeysOptions { scontents }
@@ -2189,8 +2189,9 @@ No tab
           }
         \group_insert_after:N \@@_rescan_tokens:V
         \group_insert_after:N \g_@@_temp_tl
+        \group_insert_after:N \tl_gclear:N
+        \group_insert_after:N \g_@@_temp_tl
       }
-    \tl_clear:N \l_@@_macro_tmp_tl
   }
 %    \end{macrocode}
 % \end{macro}

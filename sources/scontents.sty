@@ -370,8 +370,9 @@
           }
         \group_insert_after:N \__scontents_rescan_tokens:V
         \group_insert_after:N \g__scontents_temp_tl
+        \group_insert_after:N \tl_gclear:N
+        \group_insert_after:N \g__scontents_temp_tl
       }
-    \tl_clear:N \l__scontents_macro_tmp_tl
   }
 \NewDocumentCommand { \Scontents }{ !s !O{} }
   {
