@@ -1864,6 +1864,22 @@ No tab
 %    \end{macrocode}
 % \end{macro}
 %
+% \begin{macro}{\@@_lastfrom_seq:n}
+% Prints the last element stored in |seq| when using "print-env"
+% or "print-cmd".
+%
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_lastfrom_seq:n #1
+  {
+    \tl_gset:Nx \g_@@_temp_tl { \seq_item:cn { g_@@_name_#1_seq } {-1} }
+    \group_insert_after:N \@@_rescan_tokens:V
+    \group_insert_after:N \g_@@_temp_tl
+    \group_insert_after:N \tl_gclear:N
+    \group_insert_after:N \g_@@_temp_tl
+  }
+%    \end{macrocode}
+% \end{macro}
+%
 % \begin{macro}{\@@_store_to_seq:NN}
 %   The \cs{@@_store_to_seq:NN} writes the recorded contents
 %   in |#1| to the log and stores it in |#2|.
@@ -2174,22 +2190,10 @@ No tab
     \bool_if:NT \l_@@_storing_bool
       {
         \bool_if:NF \l_@@_forced_eol_bool
-          {
-            \tl_put_right:Nx \l_@@_macro_tmp_tl { \c_@@_hidden_space_str }
-          }
+          { \tl_put_right:Nx \l_@@_macro_tmp_tl { \c_@@_hidden_space_str } }
         \@@_store_to_seq:NN \l_@@_macro_tmp_tl \l_@@_name_seq_env_tl
         \bool_if:NT \l_@@_print_env_bool
-          {
-            \tl_gset_eq:NN \g_@@_temp_tl \l_@@_macro_tmp_tl
-            \bool_if:NF \l_@@_forced_eol_bool
-              {
-                \tl_gput_right:Nx \g_@@_temp_tl { \c_@@_hidden_space_str }
-              }
-            \group_insert_after:N \@@_rescan_tokens:V
-            \group_insert_after:N \g_@@_temp_tl
-            \group_insert_after:N \tl_gclear:N
-            \group_insert_after:N \g_@@_temp_tl
-          }
+          { \@@_lastfrom_seq:n \l_@@_name_seq_env_tl }
       }
   }
 %    \end{macrocode}
@@ -2228,7 +2232,7 @@ No tab
       \tl_put_right:Nx \l_@@_temp_tl { \c_@@_hidden_space_str }
       \@@_store_to_seq:NN \l_@@_temp_tl \l_@@_name_seq_cmd_tl
       \bool_if:NT \l_@@_print_cmd_bool
-        { \@@_rescan_tokens:V \l_@@_temp_tl }
+        { \@@_lastfrom_seq:n \l_@@_name_seq_cmd_tl }      
     \group_end:
   }
 \NewDocumentCommand { \@@_verb_arg:w } { +v }
@@ -2239,11 +2243,7 @@ No tab
         { \tl_put_right:Nx \l_@@_temp_tl { \c_@@_hidden_space_str } }
       \@@_store_to_seq:NN \l_@@_temp_tl \l_@@_name_seq_cmd_tl
       \bool_if:NT \l_@@_print_cmd_bool
-        {
-          \bool_if:NT \l_@@_forced_eol_bool
-            { \tl_remove_once:NV \l_@@_temp_tl \c_@@_hidden_space_str }
-          \@@_rescan_tokens:V \l_@@_temp_tl
-        }
+        { \@@_lastfrom_seq:n \l_@@_name_seq_cmd_tl }
     \group_end:
   }
 %    \end{macrocode}

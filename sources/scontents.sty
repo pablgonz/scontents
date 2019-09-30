@@ -170,6 +170,14 @@
       { \msg_expandable_error:nnnnn { scontents } { index-out-of-range } {#2} {#3} {#1} }
       { \seq_item:cn { g__scontents_name_#3_seq } {#2} }
   }
+\cs_new_protected:Npn \__scontents_lastfrom_seq:n #1
+  {
+    \tl_gset:Nx \g__scontents_temp_tl { \seq_item:cn { g__scontents_name_#1_seq } {-1} }
+    \group_insert_after:N \__scontents_rescan_tokens:V
+    \group_insert_after:N \g__scontents_temp_tl
+    \group_insert_after:N \tl_gclear:N
+    \group_insert_after:N \g__scontents_temp_tl
+  }
 \cs_new_protected:Npn \__scontents_store_to_seq:NN #1#2
   {
     \tl_log:N #1
@@ -356,22 +364,10 @@
     \bool_if:NT \l__scontents_storing_bool
       {
         \bool_if:NF \l__scontents_forced_eol_bool
-          {
-            \tl_put_right:Nx \l__scontents_macro_tmp_tl { \c__scontents_hidden_space_str }
-          }
+          { \tl_put_right:Nx \l__scontents_macro_tmp_tl { \c__scontents_hidden_space_str } }
         \__scontents_store_to_seq:NN \l__scontents_macro_tmp_tl \l__scontents_name_seq_env_tl
         \bool_if:NT \l__scontents_print_env_bool
-          {
-            \tl_gset_eq:NN \g__scontents_temp_tl \l__scontents_macro_tmp_tl
-            \bool_if:NF \l__scontents_forced_eol_bool
-              {
-                \tl_gput_right:Nx \g__scontents_temp_tl { \c__scontents_hidden_space_str }
-              }
-            \group_insert_after:N \__scontents_rescan_tokens:V
-            \group_insert_after:N \g__scontents_temp_tl
-            \group_insert_after:N \tl_gclear:N
-            \group_insert_after:N \g__scontents_temp_tl
-          }
+          { \__scontents_lastfrom_seq:n \l__scontents_name_seq_env_tl }
       }
   }
 \NewDocumentCommand { \Scontents }{ !s !O{} }
@@ -390,7 +386,7 @@
       \tl_put_right:Nx \l__scontents_temp_tl { \c__scontents_hidden_space_str }
       \__scontents_store_to_seq:NN \l__scontents_temp_tl \l__scontents_name_seq_cmd_tl
       \bool_if:NT \l__scontents_print_cmd_bool
-        { \__scontents_rescan_tokens:V \l__scontents_temp_tl }
+        { \__scontents_lastfrom_seq:n \l__scontents_name_seq_cmd_tl }
     \group_end:
   }
 \NewDocumentCommand { \__scontents_verb_arg:w } { +v }
@@ -401,11 +397,7 @@
         { \tl_put_right:Nx \l__scontents_temp_tl { \c__scontents_hidden_space_str } }
       \__scontents_store_to_seq:NN \l__scontents_temp_tl \l__scontents_name_seq_cmd_tl
       \bool_if:NT \l__scontents_print_cmd_bool
-        {
-          \bool_if:NT \l__scontents_forced_eol_bool
-            { \tl_remove_once:NV \l__scontents_temp_tl \c__scontents_hidden_space_str }
-          \__scontents_rescan_tokens:V \l__scontents_temp_tl
-        }
+        { \__scontents_lastfrom_seq:n \l__scontents_name_seq_cmd_tl }
     \group_end:
   }
 \NewDocumentCommand { \getstored } { O{1} m }
