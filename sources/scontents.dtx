@@ -721,10 +721,10 @@
 % the start of the environment.
 % \end{function}
 %
-% Comments \enquote{\textcolor{gray}{\%}} or \enquote{text} after 
-% §\begin{scontents}§ or \myoarg{keyval list} on the same line are not 
-% supported, the "TAB" character are preserved when writing an 
-% \mymeta{external file}. The environment can be \mymeta{nested} if it 
+% Comments \enquote{\textcolor{gray}{\%}} or \enquote{any character} after
+% §\begin{scontents}§ or \myoarg{keyval list} on the same line are not
+% supported, the "TAB" character are preserved when writing an
+% \mymeta{external file}. The environment can be \mymeta{nested} if it
 % is properly balanced and does not appear \enquote{literally} in commented
 % lines or in some \emph{verbatim} environment or command. As an example:
 %
@@ -788,9 +788,10 @@ This text is in the outer environment (after nested).
 % the environment will be written. The \mymeta{file.ext} will be created
 % in the working directory, if \mymeta{file.ext} exists it will be overwritten,
 % relative or absolute paths are not supported.
-% The characters "TAB"s will be written in \mymeta{file.ext} and the \mymeta{contents}
-% will NOT be stored in any sequence. \hologo{XeLaTeX} users using the "TAB"
-% character must add \texttt{\textcolor{optcolor}{-8bit}} at the command line,
+% The characters "TAB"s will be written in \mymeta{file.ext}, the rest of the
+% \mymeta{keys} will not be available and the \mymeta{contents} will NOT
+% be stored in any sequence. \hologo{XeLaTeX} users using the "TAB" character
+% must add \texttt{\textcolor{optcolor}{-8bit}} at the command line,
 % otherwise you will get \hologo{TeX}-"TAB" (§^^I§) in \mymeta{file.ext}.
 %
 % \subsection{The command \cs{Scontents}}
@@ -830,8 +831,8 @@ This text is in the outer environment (after nested).
 % \subsection*{Options for command}
 % \label{sec:optcmdsc}
 %
-% The command options can be configured globally using option in package 
-% or the \ics*{setupsc} command and locally using \myoarg{key \textnormal{\textcolor{gray}{=}} val}. 
+% The command options can be configured globally using option in package
+% or the \ics*{setupsc} command and locally using \myoarg{key \textnormal{\textcolor{gray}{=}} val}.
 % The key §force-eol§ is available for this command.
 %
 % \keyexamp{store-cmd}{seq name}{contents}
@@ -1535,8 +1536,8 @@ No tab
   }
 %    \end{macrocode}
 %
-% We process the \mymeta{keys} as options passed on to the package, the 
-% package \pkg{l3keys2e} will verify the \mymeta{keys} and will return 
+% We process the \mymeta{keys} as options passed on to the package, the
+% package \pkg{l3keys2e} will verify the \mymeta{keys} and will return
 % an error when they are \emph{unknown}.
 %
 %    \begin{macrocode}
@@ -1734,7 +1735,6 @@ No tab
   }
 %    \end{macrocode}
 %
-%
 % \subsection{Handling undefined keys}
 %
 % The \mymeta{keys} are stored in the token list variable \cs{l_keys_key_tl},
@@ -1752,7 +1752,7 @@ No tab
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_parse_environment_keys:n #1
   { \exp_args:NV \@@_parse_environment_keys:nn \l_keys_key_tl {#1} }
-\cs_new_protected:Npn \@@_parse_environment_keys:nn #1 #2
+\cs_new_protected:Npn \@@_parse_environment_keys:nn #1#2
   {
     \tl_if_blank:nTF {#2}
       { \msg_error:nnn { scontents } { env-key-unknown } {#1} }
@@ -1773,7 +1773,7 @@ No tab
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_parse_command_keys:n #1
   { \exp_args:NV \@@_parse_command_keys:nn \l_keys_key_tl {#1} }
-\cs_new_protected:Npn \@@_parse_command_keys:nn #1 #2
+\cs_new_protected:Npn \@@_parse_command_keys:nn #1#2
   {
     \tl_if_blank:nTF {#2}
       { \msg_error:nnn { scontents } { cmd-key-unknown } {#1} }
@@ -1805,7 +1805,7 @@ No tab
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_parse_type_meaning_key:n #1
   { \exp_args:NV \@@_parse_type_meaning_key:nn \l_keys_key_tl {#1} }
-\cs_new_protected:Npn \@@_parse_type_meaning_key:nn #1 #2
+\cs_new_protected:Npn \@@_parse_type_meaning_key:nn #1#2
   {
     \tl_if_empty:fTF { \int_to_roman:n { -0 #1 } }
       {
@@ -1853,7 +1853,7 @@ No tab
       }
       { \msg_expandable_error:nnn { scontents } { undefined-storage } {#2} }
   }
-\cs_new:Npn \@@_getfrom_seq:nnn #1 #2 #3
+\cs_new:Npn \@@_getfrom_seq:nnn #1#2#3
   {
     \bool_lazy_or:nnTF
       { \int_compare_p:nNn {#2} = { 0 } }
@@ -1869,7 +1869,7 @@ No tab
 %   in |#1| to the log and stores it in |#2|.
 %
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_store_to_seq:NN #1 #2
+\cs_new_protected:Npn \@@_store_to_seq:NN #1#2
   {
     \tl_log:N #1
     \@@_append_contents:Vx #2 { \exp_not:V #1 }
@@ -1961,8 +1961,7 @@ No tab
 %
 %^^A Hm... Apparently this is not the verbatim group, but one level above. Is
 %^^A this group really necessary?
-%^^A Reply : Maybe the groups aren't in the right places, but when you remove
-%^^A them it just gives you errors...(test-pkg-current.tex)
+%^^A Reply : I've checked it several times, it seems to be correct.
 %
 %    \begin{macrocode}
 \group_begin:
@@ -2179,18 +2178,18 @@ No tab
             \tl_put_right:Nx \l_@@_macro_tmp_tl { \c_@@_hidden_space_str }
           }
         \@@_store_to_seq:NN \l_@@_macro_tmp_tl \l_@@_name_seq_env_tl
-      }
-    \bool_if:NT \l_@@_print_env_bool
-      {
-        \tl_gset_eq:NN \g_@@_temp_tl \l_@@_macro_tmp_tl
-        \bool_if:NF \l_@@_forced_eol_bool
+        \bool_if:NT \l_@@_print_env_bool
           {
-            \tl_gput_right:Nx \g_@@_temp_tl { \c_@@_hidden_space_str }
+            \tl_gset_eq:NN \g_@@_temp_tl \l_@@_macro_tmp_tl
+            \bool_if:NF \l_@@_forced_eol_bool
+              {
+                \tl_gput_right:Nx \g_@@_temp_tl { \c_@@_hidden_space_str }
+              }
+            \group_insert_after:N \@@_rescan_tokens:V
+            \group_insert_after:N \g_@@_temp_tl
+            \group_insert_after:N \tl_gclear:N
+            \group_insert_after:N \g_@@_temp_tl
           }
-        \group_insert_after:N \@@_rescan_tokens:V
-        \group_insert_after:N \g_@@_temp_tl
-        \group_insert_after:N \tl_gclear:N
-        \group_insert_after:N \g_@@_temp_tl
       }
   }
 %    \end{macrocode}
@@ -2409,7 +2408,7 @@ No tab
 %   A user-level wrapper for \cs{keys_set:nn}|{ scontents }|.
 %
 %    \begin{macrocode}
-\NewDocumentCommand { \setupsc } { m }
+\NewDocumentCommand { \setupsc } { +m }
   { \keys_set:nn { scontents } {#1} }
 %    \end{macrocode}
 % \end{macro}
