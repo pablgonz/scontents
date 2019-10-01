@@ -242,15 +242,17 @@
 % \mypkg{sm}
 \NewDocumentCommand{\mypkg}{sm}
   {
+    \group_begin:
     \IfBooleanTF{#1}
       {
-        \normalsize{\sffamily\textcolor{mypkgcolor}{s}\textcolor{OrangeRed}{content}\textcolor{mypkgcolor}{s}}
+        \textsf{\textcolor{mypkgcolor}{s}\textcolor{OrangeRed}{content}\textcolor{mypkgcolor}{s}}
         \MYSortIndex{packages}{Packages>\texttt{#2}}
       }
       {
         \textcolor{darkgray}{\textsf{#2}}
         \MYSortIndex{packages}{Packages>\texttt{#2}}%
       }
+     \group_end:
   }
 
 % \myenv{sm}
@@ -477,12 +479,15 @@
 % \date{}
 % \maketitle
 %
+% \begin{scontents}[store-env=abstract,print-env=true]
 % \begin{abstract}
-% The \mypkg*{scontents} package stores valid \hologo{LaTeX} code in memory
-% (\mymeta{sequences}) using the \mypkg{l3seq} module of \mypkg{expl3}. The stored
-% content, including \emph{verbatim} material, can be used as many times
-% as desired in the document, additionally can be written to external files.
+% The \mypkg*{scontents} package stores valid \hologo{(La)TeX} code in
+% \mymeta{sequences} using the \mypkg{l3seq} module of \mypkg{expl3}.
+% The \mymeta{stored content}, including \emph{verbatim}, can be used
+% as many times as desired in the document, additionally can be written
+% to \mymeta{external files}.
 % \end{abstract}
+% \end{scontents}
 %
 % \tableofcontents
 %
@@ -490,7 +495,7 @@
 %
 % \section{Motivation and Acknowledgments}
 %
-% In \hologo{LaTeX} there is no direct way to record content for later use, although
+% In \hologo{(La)TeX} there is no direct way to record content for later use, although
 % you can do this using "\macros", recording \mymeta{verbatim content}  is a
 % problem, usually you can avoid this by creating external files or boxes. The
 % general idea of this package is to try to imitate this implementation
@@ -544,13 +549,14 @@
 %
 % \subsection{Description of the package and load}
 %
+% \begin{scontents}[store-env=description, print-env=true]
 % The \mypkg*{scontents} package allows to \mymeta{store contents} in
-% \mymeta{sequences} or \mymeta{external files}. In some ways it is similar
-% to the \mypkg{filecontentsdef} package, with the difference that it preserves
-% the character "TAB" when writing to \mymeta{external files} and the mode
-% in which the \mymeta{content} is stored. The idea behind this package is
-% to get an approach to \hologo{ConTeXt} \enquote{\emph{buffers}}
+% \mymeta{sequences} or \mymeta{external files}. In some ways it is
+% similar to the \mypkg{filecontentsdef} package, with the difference
+% in which the \mymeta{content} is stored. The idea behind this package
+% is to get an approach to \hologo{ConTeXt} \enquote{\emph{buffers}}
 % by making use \mymeta{sequences}.
+% \end{scontents}
 %
 % The package uses a \myoarg{key \textnormal{\textcolor{gray}{=}} val}
 % system for the options and is loaded in the usual way:
@@ -723,10 +729,13 @@
 %
 % Comments \enquote{\textcolor{gray}{\%}} or \enquote{any character} after
 % §\begin{scontents}§ or \myoarg{keyval list} on the same line are not
-% supported, the "TAB" character are preserved when writing an
-% \mymeta{external file}. The environment can be \mymeta{nested} if it
-% is properly balanced and does not appear \enquote{literally} in commented
-% lines or in some \emph{verbatim} environment or command. As an example:
+% supported, the package will return an \enquote{error} message if this happens.
+% In a similar way comments \enquote{\textcolor{gray}{\%}} or \enquote{any character} after
+% §\end{scontents}§ on the same line the package will return a \enquote{warning} message.
+%
+% The environment can be \mymeta{nested} if it is properly balanced and
+% does not appear \enquote{literally} in commented lines or in some \emph{verbatim}
+% environment or command. As an example:
 %
 % \iffalse
 %<*example>
@@ -766,9 +775,10 @@ This text is in the outer environment (after nested).
 %
 % \keyexamp{print-env}{true \textnormal{\textcolor{lightgray}{\textbar}} false}{false}
 % Sets if the \mymeta{stored content} is displayed or not at the time of
-% running the environment.
+% running the environment. The content is extracted from the \mymeta{sequence}
+% in which it is stored.
 %
-% \medskip
+% \newpage
 %
 % \keyexamp{write-env}{file.ext}{not used}
 % Sets the name of the \mymeta{external file} in which the \mymeta{contents} of
@@ -843,7 +853,8 @@ This text is in the outer environment (after nested).
 %
 % \keyexamp{print-cmd}{true \textnormal{\textcolor{lightgray}{\textbar}} false}{false}
 % Sets if the \mymeta{stored content} is displayed or not at the time of
-% running the command.
+% running the command. The content is extracted from the \mymeta{sequence}
+% in which it is stored.
 %
 % \subsection{The command \cs{getstored}}
 % \label{sec:getstored}
@@ -881,6 +892,8 @@ This text is in the outer environment (after nested).
 % stored in the \mymeta{seq name}. The key §width-tab§ is available for
 % this command.
 %
+% \newpage
+%
 % \subsection{The environment \env{verbatimsc}}
 % \label{sec:verbatimsc}
 %
@@ -895,7 +908,6 @@ This text is in the outer environment (after nested).
 % of the \mymeta{stored content} in a \emph{verbatim} environment and not
 % a real \emph{verbatim} environment.
 %
-% \newpage
 %
 % The \myenv*{verbatimsc} environment can be customized in the
 % following ways:
@@ -999,6 +1011,71 @@ This text is in the outer environment (after nested).
 %   \end{syntax}
 % The command \ics*{cleanseqsc} remove all contents stored in \mymeta{seq name}.
 % \end{function}
+%
+% \newpage
+%
+% \section{The \mypkg*{scontents} package in action}
+%
+% Remember the abstract on the first page?, this is it:
+% \getstored{abstract}
+%
+% and the description of the package?
+%
+% \getstored{description}
+%
+% \medskip
+%
+% I've only written:
+%
+% \typestored{abstract}
+% \medskip
+%
+% and
+%
+% \typestored{description}
+% \medskip
+%
+% Of course, I didn't copy and paste. The real code they were written with is:
+%
+% \iffalse
+%<*example>
+% \fi
+\begin{examplecode}[numbers=left]
+\begin{scontents}[store-env=abstract,print-env=true]
+\begin{abstract}
+The \mypkg*{scontents} package stores valid \hologo{(La)TeX} code in
+\mymeta{sequences} using the \mypkg{l3seq} module of \mypkg{expl3}.
+The \mymeta{stored content}, including \emph{verbatim}, can be used
+as many times as desired in the document, additionally can be written
+to \mymeta{external files}.
+\end{abstract}
+\end{scontents}
+\end{examplecode}
+% \iffalse
+%</example>
+% \fi
+%
+% and
+%
+% \iffalse
+%<*example>
+% \fi
+\begin{examplecode}[numbers=left]
+\begin{scontents}[store-env=description, print-env=true]
+The \mypkg*{scontents} package allows to \mymeta{store contents} in
+\mymeta{sequences} or \mymeta{external files}. In some ways it is
+similar to the \mypkg{filecontentsdef} package, with the difference
+in which the \mymeta{content} is stored. The idea behind this package
+is to get an approach to \hologo{ConTeXt} \enquote{\emph{buffers}}
+by making use \mymeta{sequences}.
+\end{scontents}
+\end{examplecode}
+% \iffalse
+%</example>
+% \fi
+%
+% I stored the content in memory and now I've only run §\getstored§ and 
+% §\typestored§. This is one of the ways you can use \mypkg*{scontents}.
 %
 % \newpage
 %
@@ -1613,12 +1690,12 @@ No tab
 %   \cs{c_@@_hidden_space_str} is a constant \emph{string} to used to hide
 %   the \mymeta{forced space} added by \hologo{TeX} when recording content
 %   in a macro. This \emph{string} contains the \emph{reserved phrase}
-%   ``§%scheol%§'' which is added to the end of the argument stored
+%   ``§%^^Ascheol%§'' which is added to the end of the argument stored
 %   in |seq| when the key §force-eol§ is false.
 %
 %    \begin{macrocode}
 \str_const:Nx \c_@@_hidden_space_str
-  { \c_percent_str scheol \c_percent_str }
+  { \c_percent_str \c_circumflex_str \c_circumflex_str A scheol \c_percent_str }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -1675,11 +1752,11 @@ No tab
 % \subsection{Defining keys for the environment and commands}
 %
 % We add the \mymeta{keys} divided into subgroups to handle errors and
-% unknown \mymeta{keys} separately.
+% \emph{unknown} \mymeta{keys} separately.
 %
-% \subsubsection{Keys for environment scontents}
+% \subsubsection{Keys for environment \env{scontents}}
 %
-% We define a set of \mymeta{keys} for environment \env{scontents}.
+% We define a set of \mymeta{keys} for environment §scontents§.
 %
 %    \begin{macrocode}
 \keys_define:nn { scontents / scontents }
@@ -1706,8 +1783,8 @@ No tab
 %
 % \subsubsection{Keys for command \cs{Scontents}}
 %
-% We define a set of \mymeta{keys} for commands \cs{Scontents} and
-% \cs{Scontents*}.
+% We define a set of \mymeta{keys} for commands §\Scontents§ and
+% §\Scontents*§.
 %
 %    \begin{macrocode}
 \keys_define:nn { scontents / Scontents }
@@ -1723,7 +1800,7 @@ No tab
 %
 % \subsubsection{Key for commands \cs{typestored} and \cs{meaningsc}}
 %
-% We define a \mymeta{key} for command \cs{typestored} and \cs{meaningsc}.
+% We define a \mymeta{key} for command §\typestored§ and §\meaningsc§.
 % Both commands accept the same type of optional arguments, just define
 % a common \mymeta{key}.
 %
@@ -1738,7 +1815,7 @@ No tab
 % \subsection{Handling undefined keys}
 %
 % The \mymeta{keys} are stored in the token list variable \cs{l_keys_key_tl},
-% and the value (if any) is passed as an argument to each \meta{function}.
+% and the value (if any) is passed as an argument to each \mymeta{function}.
 %
 % \subsubsection{Undefined keys for environment \env{scontents}}
 %
@@ -1746,8 +1823,8 @@ No tab
 %               \@@_parse_environment_keys:nn}
 %
 %   We check the \mymeta{keys} passed to the environment
-%   \env{scontents} and process it with \cs{@@_parse_environment_keys:n}
-%   if the \mymeta{key} is unknown we return an error message.
+%   §scontents§ and process it with \cs{@@_parse_environment_keys:n}
+%   if the \mymeta{key} is \emph{unknown} we return an error message.
 %
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_parse_environment_keys:n #1
@@ -1766,9 +1843,9 @@ No tab
 % \begin{macro}{\@@_parse_command_keys:n,
 %               \@@_parse_command_keys:nn}
 %
-%   We check the \meta{keys} passed to commands \cs{Scontents} or
-%   \cs{Scontents*} and process it with \cs{@@_parse_command_keys:n}
-%   if the \mymeta{key} is unknown we return an error message.
+%   We check the \meta{keys} passed to commands §\Scontents§ or
+%   §\Scontents*§ and process it with \cs{@@_parse_command_keys:n}
+%   if the \mymeta{key} is \emph{unknown} we return an error message.
 %
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_parse_command_keys:n #1
@@ -1787,11 +1864,11 @@ No tab
 % \begin{macro}{\@@_parse_type_meaning_key:n,
 %               \@@_parse_type_meaning_key:nn}
 %
-%   The commands \cs{typestored} and \cs{meaningsc} accept an optional
+%   The commands §\typestored§ and §\meaningsc§ accept an optional
 %   argument for setting the §width-tab§ to print the stored
 %   contents. However their optional argument also contains the number
 %   of the item to retrieve from the stored sequence. To avoid the
-%   awkward \verb|\typestored[][<options>]{...}| syntax, we'll make the
+%   awkward §\typestored[]§\myoarg[type=tt]{options}§{...}§ syntax, we'll make the
 %   commands have a single optional argument which is processed by
 %   \pkg{l3keys}, and the unknown keys are brought here to
 %   \cs{@@_parse_typemeaning_key:n} to process.
@@ -1799,8 +1876,8 @@ No tab
 %   First we check if the \mymeta{key} is an integer using \cs{int_to_roman:n}.
 %   If it is, we check that the value passed to the key is blank
 %   (otherwise something odd as |1=1| might have been used). If everything
-%   is correct, then set the value of the integer which holds the index.
-%   Otherwise raise an error about an unknown option.
+%   is correct, then set the value of the integer which holds the \mymeta{index}.
+%   Otherwise raise an error about an \emph{unknown} option.
 %
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_parse_type_meaning_key:n #1
@@ -1865,8 +1942,9 @@ No tab
 % \end{macro}
 %
 % \begin{macro}{\@@_lastfrom_seq:n}
-% Prints the last element stored in |seq| when using "print-env"
-% or "print-cmd".
+%   \cs{@@_lastfrom_seq:n} retrieves the last saved item from the
+%   sequence when \cs{l_@@__print_env_bool} or \cs{l_@@__print_cmd_bool}
+%   is true.
 %
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_lastfrom_seq:n #1
@@ -2205,9 +2283,9 @@ No tab
 % \url{https://tex.stackexchange.com/a/500281/7832}.
 %
 % \begin{macro}{\Scontents,\@@_norm_arg:n,\@@_verb_arg:w}
-%   The \cs{Scontents} macro starts by parsing an optional argument and
+%   The §\Scontents§ macro starts by parsing an optional argument and
 %   then delegates to \cs{@@_verb_arg:w} or \cs{@@_norm_arg:n} depending whether
-%   a star argument is present.
+%   a star (§*§) argument is present.
 %
 %   \cs{@@_norm_arg:n} grabs a normal argument, adds it to the |seq| varaible,
 %   and optionally prints it.
@@ -2232,7 +2310,7 @@ No tab
       \tl_put_right:Nx \l_@@_temp_tl { \c_@@_hidden_space_str }
       \@@_store_to_seq:NN \l_@@_temp_tl \l_@@_name_seq_cmd_tl
       \bool_if:NT \l_@@_print_cmd_bool
-        { \@@_lastfrom_seq:n \l_@@_name_seq_cmd_tl }      
+        { \@@_lastfrom_seq:n \l_@@_name_seq_cmd_tl }
     \group_end:
   }
 \NewDocumentCommand { \@@_verb_arg:w } { +v }
@@ -2252,7 +2330,7 @@ No tab
 % \subsection{The command \cs{getstored}}
 %
 % \begin{macro}{\getstored}
-%   User command \cs{getstored} to extract \mymeta{stored content} in |seq|
+%   User command §\getstored§ to extract \mymeta{stored content} in |seq|
 %   (robust).
 %
 %    \begin{macrocode}
@@ -2272,7 +2350,7 @@ No tab
 % in (\url{https://tex.stackexchange.com/a/497651/7832}).
 %
 % \begin{macro}{\typestored,\@@_verb_print:N,\@@_xverb:w,verbatimsc}
-%   The \cs{typestored} commands fetches a buffer from memory, prints it
+%   The §\typestored§ commands fetches a buffer from memory, prints it
 %   to the log file, and then calls \cs{@@_verb_print:N}.
 %
 %    \begin{macrocode}
@@ -2296,7 +2374,7 @@ No tab
 %   The \cs{@@_verb_print:N} macro is defined with active carriage return
 %   (\textsc{ascii} 13) characters to mimick an actual verbatim environment
 %   \enquote{on the loose}. The contents of the environment are placed in a
-%   \env{verbatimsc} environment and rescanned using \cs{@@_rescan_tokens:x}.
+%   §verbatimsc§ environment and rescanned using \cs{@@_rescan_tokens:x}.
 %
 %    \begin{macrocode}
 \group_begin:
@@ -2319,7 +2397,7 @@ No tab
 \group_end:
 %    \end{macrocode}
 %
-%   Finally, the \env{verbatimsc} environment is defined.
+%   Finally, the §verbatimsc§ environment is defined.
 %
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_xverb:
@@ -2346,7 +2424,7 @@ No tab
 % \subsection{Some auxiliaries}
 %
 % \begin{macro}{\@@_tabs_to_spaces:}
-%   In a verbatim context the |tab| character is made active and set
+%   In a verbatim context the |TAB| character is made active and set
 %   equal to \cs{@@_tabs_to_spaces:}, to produce as many spaces as
 %   the §width-tab§ key was set to.
 %
@@ -2402,10 +2480,10 @@ No tab
 %
 % \subsection{The command \cs{setupsc}}
 %
-% User command \cs{setupsc} to setup module.
+% User command §\setupsc§ to setup module.
 %
 % \begin{macro}{\setupsc}
-%   A user-level wrapper for \cs{keys_set:nn}|{ scontents }|.
+%   A user-level wrapper for \cs{keys_set:nn}§{ scontents }§.
 %
 %    \begin{macrocode}
 \NewDocumentCommand { \setupsc } { +m }
@@ -2416,7 +2494,7 @@ No tab
 % \subsection{The command meaningsc}
 %
 % \begin{macro}{\meaningsc}
-%   User command \cs{meaningsc} to see content stored in |seq|.
+%   User command §\meaningsc§ to see content stored in |seq|.
 %
 %    \begin{macrocode}
 \NewDocumentCommand { \meaningsc } { o m }
@@ -2450,7 +2528,7 @@ No tab
 %
 %
 % \begin{macro}{\countsc}
-%   User command \cs{countsc} to count number of contents stored in |seq|.
+%   User command §\countsc§ to count number of contents stored in |seq|.
 %
 %    \begin{macrocode}
 \NewExpandableDocumentCommand { \countsc } { m }
@@ -2462,7 +2540,7 @@ No tab
 %
 %
 % \begin{macro}{\cleanseqsc}
-%   A user command \cs{cleanseqsc} to clear (remove) a defined |seq|.
+%   A user command §\cleanseqsc§ to clear (remove) a defined |seq|.
 %
 %    \begin{macrocode}
 \NewDocumentCommand { \cleanseqsc } { m }
