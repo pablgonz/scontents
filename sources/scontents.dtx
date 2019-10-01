@@ -307,6 +307,23 @@
  }
 \makeatother
 
+% Custom vertamimsc
+\makeatletter
+\let\verbatimsc\@undefined
+\let\endverbatimsc\@undefined
+\makeatother
+\usepackage{listings}
+\lstnewenvironment{verbatimsc}
+  {
+    \lstset{
+       language=,%
+       basicstyle= \ttfamily,
+       columns   = fullflexible,
+       gobble    = 2,%
+           }
+   }{}
+\makeatother
+
 % Don't copy numbers in code example
 \newcommand*{\noaccsupp}[1]{\BeginAccSupp{ActualText={}}#1\EndAccSupp{}}
 
@@ -334,14 +351,14 @@
 % Reserved words 4 (scontents pkg)
     keywordstyle=[4]{\color{mypkgcolor}},%
     keywords=[4]{scontents,Scontents,getstored,typestored,verbatimsc,%
-                 endverbatimsc,countsc,meaningsc,scheol},%
+                 endverbatimsc,countsc,meaningsc},%
 % Reserved in red
     keywordstyle=[5]{\color{red}},%
     keywords=[5]{makeatletter,makeatother,let},%
 % Reserved in orange
     keywordstyle=[6]{\color{optcolor}},%
     keywords=[6]{verb,myverb,store-cmd,store-env,print-env,write-env,%
-                 write-out,width-tab,force-eol,inner,outer,I,J,M,L},%
+                 write-out,width-tab,force-eol,inner,outer,I,J,M,L,Ascheol},%
 % Reserved in orange
     keywordstyle=[7]{\color{OrangeRed}},%
     keywords=[7]{foreach,DefineVerbatimEnvironment,lstnewenvironment,newminted},%
@@ -1690,7 +1707,7 @@ No tab
 %   \cs{c_@@_hidden_space_str} is a constant \emph{string} to used to hide
 %   the \mymeta{forced space} added by \hologo{TeX} when recording content
 %   in a macro. This \emph{string} contains the \emph{reserved phrase}
-%   ``§%^^Ascheol%§'' which is added to the end of the argument stored
+%   ``§%§§^^Ascheol%§'' which is added to the end of the argument stored
 %   in |seq| when the key §force-eol§ is false.
 %
 %    \begin{macrocode}
@@ -1738,7 +1755,7 @@ No tab
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\tl_remove_once:NV,\tl_replace_all:Nxx,
+% \begin{macro}[int]{\tl_remove_once:NV,\tl_replace_all:Nxx,
 %     \tl_replace_all:Nxn,\tl_replace_all:Nnx,\tl_if_empty:fTF}
 %   Some nonstandard variants.
 %
