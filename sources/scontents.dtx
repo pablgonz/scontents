@@ -1,4 +1,24 @@
 % \iffalse meta-comment
+%
+% Copyright (C) 2019 by Pablo González L <pablgonz@educarchile.cl>
+%
+% This work may be distributed and/or modified under the conditions of the
+% LaTeX Project Public License, either version 1.3c of this license or (at
+% your option) any later version. The latest version of this license is in
+%
+%     http://www.latex-project.org/lppl.txt
+%
+% and version 1.3c or later is part of all distributions of LaTeX version
+% 2005/12/01 or later.
+% 
+% This work is "maintained" (as per the LPPL maintenance status)
+% by Pablo González Luengo.
+% 
+% This work consists of the file  scontents.dtx
+% and the derived files           scontents.ins,
+%                                 scontents.pdf and
+%                                 scontents.sty.
+%
 %<*internal>
 \def\nameofplainTeX{plain}
 \ifx\fmtname\nameofplainTeX\else
@@ -9,7 +29,28 @@
 \input l3docstrip.tex
 \keepsilent
 \askforoverwritefalse
-\nopreamble\nopostamble
+\preamble
+
+Copyright (C) 2019 by Pablo González L <pablgonz@educarchile.cl>
+
+This work may be distributed and/or modified under the conditions of the
+LaTeX Project Public License, either version 1.3c of this license or (at
+your option) any later version. The latest version of this license is in
+
+ http://www.latex-project.org/lppl.txt
+
+and version 1.3c or later is part of all distributions of LaTeX version
+2005/12/01 or later.
+
+This work is "maintained" (as per the LPPL maintenance status)
+by Pablo González Luengo.
+
+This work consists of the file  scontents.dtx
+and the derived files           scontents.ins,
+                                scontents.pdf and
+                                scontents.sty.
+
+\endpreamble
 \usedir{tex/latex/scontents}
 \generate{%
   \file{\jobname.sty}{\from{\jobname.dtx}{package}}%
@@ -368,7 +409,7 @@
               {[}{{\textcolor{gray}{[}}}{1}
               {]}{{\textcolor{gray}{]}}}{1}
               {,}{{\textcolor{gray}{,}}}{1}
-              {\$}{{\textcolor{blue}{\$}}}{1}
+              {>}{{\textcolor{OrangeRed}{\guillemotright}}}{1}
               {*}{{\textcolor{red}{*}}}{1}
               {@}{{\textcolor{red}{@}}}{1}
               {\^}{{\textcolor{optcolor}{\textasciicircum}}}{1}
@@ -553,7 +594,7 @@
 %
 % The \mypkg*{scontents} package loads \mypkg{expl3}, \mypkg{xparse} and
 % \mypkg{l3keys2e}. This package can be used with "xelatex", "lualatex"
-% , "pdflatex" and the classical workflow "latex"-"dvips"-"ps2pdf".
+% , "pdflatex" and the classical workflow §latex>dvips>ps2pdf§.
 %
 % \thispagestyle{plain}
 %
@@ -909,6 +950,11 @@ This text is in the outer environment (after nested).
 % stored in the \mymeta{seq name}. The key §width-tab§ is available for
 % this command.
 %
+% The \mypkg{verbatim} package is not compatible with the implementation
+% of the \myenv{verbatimsc} environment used by this command, if you are
+% a user of that package consider customizing the \myenv{verbatimsc}
+% environment.
+%
 % \newpage
 %
 % \subsection{The environment \env{verbatimsc}}
@@ -1031,12 +1077,15 @@ This text is in the outer environment (after nested).
 %
 % \newpage
 %
+% \pdfstringdefDisableCommands{%
+%      \RenewExpandableDocumentCommand{\mypkg}{sm}{#2}%
+%    }
 % \section{The \mypkg*{scontents} package in action}
-%
 % Remember the abstract on the first page?, this is it:
+%
 % \getstored{abstract}
 %
-% and the description of the package?
+% And the description of the package?
 %
 % \getstored{description}
 %
@@ -1045,12 +1094,10 @@ This text is in the outer environment (after nested).
 % I've only written:
 %
 % \typestored{abstract}
-% \medskip
 %
 % and
 %
 % \typestored{description}
-% \medskip
 %
 % Of course, I didn't copy and paste. The real code they were written with is:
 %
@@ -1091,7 +1138,7 @@ by making use \mymeta{sequences}.
 %</example>
 % \fi
 %
-% I stored the content in memory and now I've only run §\getstored§ and 
+% I stored the content in memory and then ran §\getstored§ and
 % §\typestored§. This is one of the ways you can use \mypkg*{scontents}.
 %
 % \newpage
@@ -1505,12 +1552,12 @@ No tab
 % \settowidth{\descrwidth}{\textsf{v1.0, (ctan), 2019/07/30} }
 %
 % \begin{description}[font=\small\sffamily,wide=0pt,style=multiline,leftmargin=\descrwidth,nosep,noitemsep]
-% \item [\fileversion{} (devp), \filedate]
+% \item [\fileversion{} (ctan), \filedate]
 %    \begin{itemize}
-%        \item Keys and messages were separated.
-%        \item Restructuring of documentation (again).
+%        \item Add |store-all| key.
+%        \item Messages and keys were separated.
+%        \item Restructuring of documentation.
 %        \item Now the version of |expl3| is checked instead of |xparse|.
-%        \item Deleted messages that are not required.
 %        \item The internal behavior of \verb+force-eol+ has been modified.
 %    \end{itemize}
 % \item [v1.3 (ctan), 2019/09/24]
@@ -1574,7 +1621,7 @@ No tab
 %    \begin{macrocode}
 \RequirePackage{l3keys2e}
 \RequirePackage{xparse}[2019/05/28]
-\ProvidesExplPackage{scontents}{2019/09/30}{1.4}
+\ProvidesExplPackage{scontents}{2019/10/03}{1.4}
   {Stores LaTeX contents in memory or files}
 %    \end{macrocode}
 %
@@ -1918,13 +1965,11 @@ No tab
 %
 % \subsection{Programming of the sequences}
 %
-% \begin{macro}{\@@_append_contents:nn,\@@_getfrom_seq:nn,\@@_getfrom_seq:nnn}
 %   The storage of the package is done using |seq| variables.  Here we
 %   set up the macros that will manage the variables.
-%
+% \begin{macro}{\@@_append_contents:nn}
 %   \cs{@@_append_contents:nn} creates a seq variable if one didn't
 %   exist and appends the contents in the argument to the right of the
-%   sequence. \cs{@@_getfrom_seq:nn} retrieves the saved item from the
 %   sequence.
 %
 %    \begin{macrocode}
@@ -1937,6 +1982,14 @@ No tab
     \seq_gput_right:cn { g_@@_name_#1_seq } {#2}
   }
 \cs_generate_variant:Nn \@@_append_contents:nn { Vx }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_getfrom_seq:nn,\@@_getfrom_seq:nnn}
+%   \cs{@@_getfrom_seq:nn} retrieves the saved item from the
+%   sequence.
+%
+%    \begin{macrocode}
 \cs_new:Npn \@@_getfrom_seq:nn #1#2
   {
     \seq_if_exist:cTF { g_@@_name_#2_seq }
