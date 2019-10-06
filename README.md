@@ -1,7 +1,9 @@
 ## scontents — Stores LaTeX contents in memory or files
-- Version: 1.3 
-- Date: 2019/09/24
-- Author: Pablo González
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/pablgonz/scontents?label=version)
+![GitHub Release Date](https://img.shields.io/github/release-date/pablgonz/scontents)
+![GitHub last commit](https://img.shields.io/github/last-commit/pablgonz/scontents)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/w/pablgonz/scontents)
+![GitHub](https://img.shields.io/github/license/pablgonz/scontents)
 
 ## Description
 The `scontents` package stores valid `LaTeX` code in memory (sequences) using the
@@ -21,6 +23,15 @@ The package `scontents` is present in `TeXLive` and `MiKTeX`, use the
 package manager to install. For a manual installation, put `scontents.dtx` 
 in your working directory and run `tex scontents.dtx`.
 
+## Examples
+
+The file `scontents.pdf` contains attached examples, which can be extracted
+from the PDF viewer or using 
+```
+pdfdetach -saveall scontents.pdf
+``` 
+from command line.
+
 ## License
 The scontents package may be modified and distributed under the terms and
 conditions of the [LaTeX Project Public License](https://www.latex-project.org/lppl/), version 1.3c or greater.
@@ -29,3 +40,7 @@ conditions of the [LaTeX Project Public License](https://www.latex-project.org/l
 - README.md (this file)
 - scontents.pdf  (documentation)
 - scontents.dtx  (master file that produced all files)
+
+## Copyright
+
+Copyright 2019 by Pablo González L.
