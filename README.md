@@ -3,7 +3,7 @@
 ![GitHub Release Date](https://img.shields.io/github/release-date/pablgonz/scontents)
 ![GitHub last commit](https://img.shields.io/github/last-commit/pablgonz/scontents)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/w/pablgonz/scontents)
-![GitHub](https://img.shields.io/github/license/pablgonz/scontents)
+![GitHub commits since latest release](https://img.shields.io/github/commits-since/pablgonz/scontents/v1.4)
 
 ## Description
 The `scontents` package stores valid `LaTeX` code in memory (sequences) using the
