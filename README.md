@@ -2,7 +2,6 @@
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/pablgonz/scontents?label=version)
 ![GitHub Release Date](https://img.shields.io/github/release-date/pablgonz/scontents)
 ![GitHub last commit](https://img.shields.io/github/last-commit/pablgonz/scontents)
-![GitHub commit activity](https://img.shields.io/github/commit-activity/w/pablgonz/scontents)
 ![GitHub commits since latest release](https://img.shields.io/github/commits-since/pablgonz/scontents/v1.4)
 
 ## Description
