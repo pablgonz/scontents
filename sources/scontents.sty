@@ -40,6 +40,20 @@
       }
     \file_input_stop:
   }
+\prg_new_conditional:Nnn \__scontents_package_if_loaded:n { p, T, F , TF }
+  {
+    \use:c { @ifpackageloaded } { #1 } { \prg_return_true: } { \prg_return_false: }
+  }
+\__scontents_package_if_loaded:nT { verbatim }
+  {
+    \msg_term:n
+      {
+        The~implementation~of~the~'verbatimsc'~environment~\\
+        used~by~\tl_to_str:n{\typestored} is~not~compatible~with~package\\
+        'verbatim'.~Review~the~documentation~and~redefine~\\
+        the~'verbatimsc'~environment.
+      }
+  }
 \keys_define:nn { scontents }
   {
     store-env .tl_set:N         = \l__scontents_name_seq_env_tl,
