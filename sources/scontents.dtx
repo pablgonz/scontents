@@ -10,10 +10,10 @@
 %
 % and version 1.3c or later is part of all distributions of LaTeX version
 % 2005/12/01 or later.
-% 
+%
 % This work is "maintained" (as per the LPPL maintenance status)
 % by Pablo González Luengo.
-% 
+%
 % This work consists of the file  scontents.dtx
 % and the derived files           scontents.ins,
 %                                 scontents.pdf and
@@ -1625,7 +1625,7 @@ No tab
   {Stores LaTeX contents in memory or files}
 %    \end{macrocode}
 %
-% A check to make sure that \pkg{expl3} is not too old
+% A check to make sure that \pkg{expl3} is not too old.
 %
 %    \begin{macrocode}
 \@ifpackagelater { expl3 } { 2019/09/19 }
@@ -1638,6 +1638,26 @@ No tab
         Loading~scontents~will~abort!
       }
     \file_input_stop:
+  }
+%    \end{macrocode}
+%
+% We check if the \pkg{verbatim} package is loaded and show a compatibility message.
+%
+%^^A I've added a conditional in case a debug key is added in the future.
+%    \begin{macrocode}
+\prg_new_conditional:Nnn \@@_package_if_loaded:n { p, T, F , TF }
+  {
+    \use:c { @ifpackageloaded } { #1 } { \prg_return_true: } { \prg_return_false: }
+  }
+\@@_package_if_loaded:nT { verbatim }
+  {
+    \msg_term:n
+      {
+        The~implementation~of~the~'verbatimsc'~environment~\\
+        used~by~\tl_to_str:n{\typestored} is~not~compatible~with~package\\
+        'verbatim'.~Review~the~documentation~and~redefine~\\
+        the~'verbatimsc'~environment.
+      }
   }
 %    \end{macrocode}
 %
@@ -2347,7 +2367,7 @@ No tab
 %    \end{macrocode}
 % \end{macro}
 %
-% \subsection{The \cs{Scontents} command}
+% \subsection{The command \cs{Scontents}}
 %
 % User command to \mymeta{stored content}, adapted from
 % \url{https://tex.stackexchange.com/a/500281/7832}.
@@ -2414,7 +2434,7 @@ No tab
 %    \end{macrocode}
 % \end{macro}
 %
-% \subsection{The \cs{typestored} command}
+% \subsection{The command \cs{typestored}}
 %
 % This implementation is an adaptation taken from answer by Phelype Oleinik
 % in (\url{https://tex.stackexchange.com/a/497651/7832}).
@@ -2561,7 +2581,7 @@ No tab
 %    \end{macrocode}
 % \end{macro}
 %
-% \subsection{The command meaningsc}
+% \subsection{The command \cs{meaningsc}}
 %
 % \begin{macro}{\meaningsc}
 %   User command §\meaningsc§ to see content stored in |seq|.
