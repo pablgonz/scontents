@@ -27,7 +27,7 @@
 %% 
 \RequirePackage{l3keys2e}
 \RequirePackage{xparse}[2019/05/28]
-\ProvidesExplPackage{scontents}{2019/10/03}{1.4}
+\ProvidesExplPackage{scontents}{2019/10/15}{1.5}
   {Stores LaTeX contents in memory or files}
 \@ifpackagelater { expl3 } { 2019/09/19 }
   { }
@@ -88,6 +88,10 @@
 \tl_new:N \l__scontents_temp_tl
 \tl_new:N \l__scontents_file_tl
 \tl_new:N \g__scontents_temp_tl
+\tl_new:N \l__scontents_foreach_name_seq_tl
+\tl_new:N \l__scontents_foreach_before_tl
+\tl_new:N \l__scontents_foreach_after_tl
+\int_new:N \l__scontents_foreach_stop_int
 \int_new:N \l__scontents_seq_item_int
 \int_new:N \l__scontents_env_nesting_int
 \int_new:N \l__scontents_tmpa_int
@@ -95,6 +99,16 @@
 \bool_set_false:N \l__scontents_writing_bool
 \bool_new:N \l__scontents_storing_bool
 \bool_set_true:N  \l__scontents_storing_bool
+
+\bool_new:N \l__scontents_foreach_before_bool
+\bool_set_false:N \l__scontents_foreach_before_bool
+\bool_new:N \l__scontents_foreach_after_bool
+\bool_set_false:N \l__scontents_foreach_after_bool
+\bool_new:N \l__scontents_foreach_stop_bool
+\bool_set_false:N \l__scontents_foreach_stop_bool
+\bool_new:N \l__scontents_foreach_wrapper_bool
+\bool_set_false:N \l__scontents_foreach_wrapper_bool
+\seq_new:N \l__scontents_foreach_print_seq
 \tl_new:N \g__scontents_end_verbatimsc_tl
 \tl_gset_rescan:Nnn
   \g__scontents_end_verbatimsc_tl
@@ -147,6 +161,39 @@
     force-eol .default:n = true,
     unknown   .code:n    = { \__scontents_parse_command_keys:n {#1} }
   }
+\keys_define:nn { scontents / foreachsc }
+  {
+    before  .code:n           = {
+                                  \bool_set_true:N \l__scontents_foreach_before_bool
+                                  \tl_set:Nn \l__scontents_foreach_before_tl {#1}
+                                },
+    before  .value_required:n = true,
+    after   .code:n           = {
+                                  \bool_set_true:N \l__scontents_foreach_after_bool
+                                  \tl_set:Nn \l__scontents_foreach_after_tl {#1}
+                                },
+    after   .value_required:n = true,
+    start   .int_set:N        = \l__scontents_foreach_start_int,
+    start   .value_required:n = true,
+    start   .initial:n        = 1,
+    stop    .code:n           = {
+                                  \bool_set_true:N \l__scontents_foreach_stop_bool
+                                  \int_set:Nn \l__scontents_foreach_stop_int {#1}
+                                 },
+    stop    .value_required:n = true,
+    step    .int_set:N        = \l__scontents_foreach_step_int,
+    step    .value_required:n = true,
+    step    .initial:n        = 1,
+    wrapper .code:n           = {
+                                  \bool_set_true:N \l__scontents_foreach_wrapper_bool
+                                  \cs_set_protected:Npn \__scontents_foreach_wrapper:n ##1 {#1}
+                                },
+    wrapper .value_required:n = true,
+    sep     .tl_set:N         = \l__scontents_foreach_sep_tl,
+    sep     .initial:n        = {},
+    sep     .value_required:n = true,
+    unknown .code:n           = { \__scontents_parse_foreach_keys:n {#1} }
+  }
 \keys_define:nn { scontents / typemeaning }
   {
     width-tab .meta:nn = { scontents } { width-tab = #1 },
@@ -168,6 +215,14 @@
       { \msg_error:nnn { scontents } { cmd-key-unknown } {#1} }
       { \msg_error:nnnn { scontents } { cmd-key-value-unknown } {#1} {#2} }
   }
+\cs_new_protected:Npn \__scontents_parse_foreach_keys:nn #1#2
+  {
+    \tl_if_blank:nTF {#2}
+      { \msg_error:nnn { scontents } { for-key-unknown } {#1} }
+      { \msg_error:nnnn { scontents } { for-key-value-unknown } {#1} {#2} }
+  }
+\cs_new_protected:Npn \__scontents_parse_foreach_keys:n #1
+  { \exp_args:NV \__scontents_parse_foreach_keys:nn \l_keys_key_tl {#1} }
 \cs_new_protected:Npn \__scontents_parse_type_meaning_key:n #1
   { \exp_args:NV \__scontents_parse_type_meaning_key:nn \l_keys_key_tl {#1} }
 \cs_new_protected:Npn \__scontents_parse_type_meaning_key:nn #1#2
@@ -448,6 +503,39 @@
         { \__scontents_getfrom_seq:nn {#1} {#2} }
     \group_end:
   }
+\NewDocumentCommand { \foreachsc }{ O{} m }
+  {
+    \group_begin:
+      \IfValueT {#1} { \keys_set:nn { scontents / foreachsc } {#1} }
+      \tl_set:Nn \l__scontents_foreach_name_seq_tl {#2}
+      \seq_clear:N \l__scontents_foreach_print_seq
+      \bool_if:NF \l__scontents_foreach_stop_bool
+        {
+          \int_set:Nn \l__scontents_foreach_stop_int
+            { \seq_count:c { g__scontents_name_#2_seq } }
+        }
+      \int_step_function:nnnN
+        { \l__scontents_foreach_start_int }
+        { \l__scontents_foreach_step_int }
+        { \l__scontents_foreach_stop_int }
+        \__scontents_foreach_add_body:n
+      \seq_use:Nn \l__scontents_foreach_print_seq { \tl_use:N \l__scontents_foreach_sep_tl }
+    \group_end:
+  }
+\cs_new_protected:Npn \__scontents_foreach_add_body:n #1
+  {
+    \seq_put_right:Nx \l__scontents_foreach_print_seq
+      {
+        \bool_if:NT \l__scontents_foreach_before_bool
+          { \exp_not:V \l__scontents_foreach_before_tl }
+        \bool_if:NTF \l__scontents_foreach_wrapper_bool
+          { \__scontents_foreach_wrapper:n }
+          { \use:n }
+            { \getstored [#1] { \tl_use:N \l__scontents_foreach_name_seq_tl } }
+        \bool_if:NT \l__scontents_foreach_after_bool
+          { \exp_not:V \l__scontents_foreach_after_tl }
+      }
+  }
 \NewDocumentCommand { \typestored } { o m }
   {
     \group_begin:
@@ -605,6 +693,18 @@
   { The~key~'#1=#2'~is~unknown~by~'\c_backslash_str Scontents'~and~is~being~ignored. }
   {
     The~command~'\c_backslash_str Scontents'~does~not~have~a~key~called~'#1'.\\
+    Check~that~you~have~spelled~the~key~name~correctly.
+  }
+\msg_new:nnnn { scontents } { for-key-unknown }
+  { The~key~'#1'~is~unknown~by~'\c_backslash_str foreachsc'~and~is~being~ignored.}
+  {
+    The~command~'\c_backslash_str foreachsc'~does~not~have~a~key~called~'#1'.\\
+    Check~that~you~have~spelled~the~key~name~correctly.
+  }
+\msg_new:nnnn { scontents } { for-key-value-unknown }
+  { The~key~'#1=#2'~is~unknown~by~'\c_backslash_str foreachsc'~and~is~being~ignored. }
+  {
+    The~command~'\c_backslash_str foreachsc'~does~not~have~a~key~called~'#1'.\\
     Check~that~you~have~spelled~the~key~name~correctly.
   }
 \msg_new:nnnn { scontents } { type-key-unknown }
