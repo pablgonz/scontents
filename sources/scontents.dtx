@@ -385,7 +385,7 @@ and the derived files           scontents.ins,
     commentstyle=\lmmitalic\small\itshape\color{lightgray},%
 % Important words 1
     keywordstyle=[1]{\color{gray}},%
-    keywords=[1]{begin,end},%
+    keywords=[1]{begin,end,Verbatim},%
 % Other words 2
     keywordstyle=[2]{\color{blue!75}},%
     keywords=[2]{usepackage,section,documentclass},%
@@ -395,18 +395,19 @@ and the derived files           scontents.ins,
 % Reserved words 4 (scontents pkg)
     keywordstyle=[4]{\color{mypkgcolor}},%
     keywords=[4]{scontents,Scontents,getstored,typestored,verbatimsc,%
-                 endverbatimsc,countsc,meaningsc,foreachsc,macro},%
+                 endverbatimsc,countsc,meaningsc,foreachsc,macros},%
 % Reserved in red
     keywordstyle=[5]{\color{red}},%
-    keywords=[5]{makeatletter,makeatother,let},%
+    keywords=[5]{makeatletter,makeatother,let,verb,undefined,makebox},%
 % Reserved in orange
     keywordstyle=[6]{\color{optcolor}},%
-    keywords=[6]{verb,myverb,store-cmd,store-env,print-env,write-env,%
-                 write-out,width-tab,force-eol,inner,outer,I,J,M,L,Ascheol},%
+    keywords=[6]{store-cmd,store-env,print-env,write-env,%
+                 start,stopt,wrapper,sep,step,before,after,write-out,%
+                 width-tab,force-eol,inner,outer,I,J,M,L,Ascheol},%
 % Reserved in orange
     keywordstyle=[7]{\color{OrangeRed}},%
-    keywords=[7]{DefineVerbatimEnvironment,lstnewenvironment,newminted},%
-% literateee
+    keywords=[7]{DefineVerbatimEnvironment,lstnewenvironment,newminted,newenvironment},%
+% literate
     literate=*{\{}{{\textcolor{gray}{\{}}}{1}
               {\}}{{\textcolor{gray}{\}}}}{1}
               {[}{{\textcolor{gray}{[}}}{1}
@@ -443,6 +444,7 @@ and the derived files           scontents.ins,
    escapechar=`,%
    upquote=true,%
    numbersep=1em,%
+   columns=fullflexible,%
    numberstyle=\tiny\color{lightgray}\noaccsupp,%
    literate=*{\%}{{\bfseries\textcolor{gray}{\%}}}{1}
   }
@@ -466,7 +468,7 @@ and the derived files           scontents.ins,
    pdfsubject         = {Documentation for \fileversion{} [\filedate] },%
    pdfcopyright       = {\textcopyright 2019 by Pablo González},
    pdfcontacturl      = {https://github.com/pablgonz/scontents},
-   pdfkeywords        = {contents, external files, expl3, xparse, l3seq, Store contents},
+   pdfkeywords        = {sequences, contents, external files, expl3, xparse, l3seq, store contents},
    pdfstartview       = {FitH},%
    bookmarksopenlevel = 1,%
   }
@@ -557,7 +559,7 @@ and the derived files           scontents.ins,
 % \section{Motivation and Acknowledgments}
 %
 % In \hologo{(La)TeX} there is no direct way to record content for later use, although
-% you can do this using "\macros", recording \mymeta{verbatim content}  is a
+% you can do this using §\macros§, recording \mymeta{verbatim content}  is a
 % problem, usually you can avoid this by creating external files or boxes. The
 % general idea of this package is to try to imitate this implementation
 % \emph{buffers} that has \hologo{ConTeXt} which allows you to save content in
@@ -670,7 +672,7 @@ and the derived files           scontents.ins,
 %
 % As a general recommendation \enquote{Do not use "TAB" character unless strictly
 % necessary}, for example within a \emph{verbatim} environment that supports
-% this character such as §Verbatim§ of the package \mypkg{fancyvrb} or §lstlisting§
+% this character such as \myenv{Verbatim} of the package \mypkg{fancyvrb} or \myenv{lstlisting}
 % of the package \mypkg{listings} or when you want to generate a §MakeFile§ file.
 %
 % \subsection{Configuration of the options}
@@ -721,7 +723,7 @@ and the derived files           scontents.ins,
 % This key is necessary only if the last line is the closing of some
 % environment defined by the \mypkg{fancyvrb} package as §\end{Verbatim}§
 % or another environment that does not support a comments \enquote{\textcolor{gray}{\%}}
-% after closing §\end{...}%§. This key is available for the \myenv*{scontents}
+% after closing §\end{§\textcolor{gray}{...}§}%§. This key is available for the \myenv*{scontents}
 % environment and the \ics*{Scontents} command.
 %
 % \keyexamp{width-tab}{integer}{1}
@@ -954,11 +956,11 @@ This text is in the outer environment (after nested).
 %
 % \keyexamp{sep}{code}{empty}
 % Establishes the separation between each content stored in \mymarg{seq name}.
-% For example, you can use "sep={\\[10pt]}" for vertical separation of stored
+% For example, you can use §sep={\\[10pt]}§ for vertical separation of stored
 % contents.
 %
 % \keyexamp{step}{integer}{1}
-% Sets the increment (\mymeta{step}) applied to the value set by key "start".
+% Sets the increment (\mymeta{step}) applied to the value set by key §start§
 % for each element stored in the \mymarg{seq name}. The value must be a
 % \mymeta{positive integer}.
 %
@@ -983,7 +985,7 @@ This text is in the outer environment (after nested).
 % \keyexamp{wrapper}{code \textnormal{\textcolor{gray}{\{\#1\}}} more code}{empty}
 % Wraps the content stored in \mymarg{seq name} referenced by \mymarg{\#1}.
 % The \mymarg{code} must be passed between braces. For example
-% "\foreachsc[wrapper={\makebox[1em][l]{#1}}]{contents}".
+% §\foreachsc[wrapper={\makebox[1em][l]{#1}}]{contents}§.
 %
 %
 % \subsection{The command \cs{typestored}}
