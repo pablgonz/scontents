@@ -372,8 +372,11 @@ and the derived files           scontents.ins,
 \lstdefinelanguage{scontents-doc}{
     texcsstyle=*,%
     escapechar=`,%
-    showstringspaces=false,%
-    extendedchars=true, %
+    extendedchars=true,%
+    breakatwhitespace=true,%
+    breaklines=true,%
+    keepspaces=true,%
+    columns=fullflexible,%
     stringstyle= {\color{red}},%
     basicstyle=\ttfamily\small,%
     alsoletter=-,%
@@ -392,7 +395,7 @@ and the derived files           scontents.ins,
 % Reserved words 4 (scontents pkg)
     keywordstyle=[4]{\color{mypkgcolor}},%
     keywords=[4]{scontents,Scontents,getstored,typestored,verbatimsc,%
-                 endverbatimsc,countsc,meaningsc},%
+                 endverbatimsc,countsc,meaningsc,foreachsc,macro},%
 % Reserved in red
     keywordstyle=[5]{\color{red}},%
     keywords=[5]{makeatletter,makeatother,let},%
@@ -402,7 +405,7 @@ and the derived files           scontents.ins,
                  write-out,width-tab,force-eol,inner,outer,I,J,M,L,Ascheol},%
 % Reserved in orange
     keywordstyle=[7]{\color{OrangeRed}},%
-    keywords=[7]{foreach,DefineVerbatimEnvironment,lstnewenvironment,newminted},%
+    keywords=[7]{DefineVerbatimEnvironment,lstnewenvironment,newminted},%
 % literateee
     literate=*{\{}{{\textcolor{gray}{\{}}}{1}
               {\}}{{\textcolor{gray}{\}}}}{1}
@@ -951,33 +954,36 @@ This text is in the outer environment (after nested).
 %
 % \keyexamp{sep}{code}{empty}
 % Establishes the separation between each content stored in \mymarg{seq name}.
-% For example, you can use "sep={\\[10pt]}".
+% For example, you can use "sep={\\[10pt]}" for vertical separation of stored
+% contents.
 %
-% \keyexamp{step}{code}{1}
-% Sets the \mymeta{step} between each element stored in the \mymarg{seq name}.
-% The value must be a positive integer
+% \keyexamp{step}{integer}{1}
+% Sets the increment (\mymeta{step}) applied to the value set by key "start".
+% for each element stored in the \mymarg{seq name}. The value must be a
+% \mymeta{positive integer}.
 %
-% \keyexamp{start}{number}{1}
+% \keyexamp{start}{integer}{1}
 % Sets the \mymeta{index} number of the \mymarg{seq name} from which execution
-% will start.
+% will start. The value must be a \mymeta{positive integer}.
 %
-% \keyexamp{stop}{number}{total}
+% \keyexamp{stop}{integer}{total}
 % Sets the \mymeta{index} number of the \mymarg{seq name} from which execution
-% it will finish executing.
+% it will finish executing. The value must be a \mymeta{positive integer}.
 %
 % \keyexamp{before}{code}{empty}
 % Sets the \mymarg{code} that will be executed \mymeta{before} each content stored
-% in \mymarg{seq name}.
+% in \mymarg{seq name}. The \mymarg{code} must be passed between braces.
 %
 % \medskip
 %
 % \keyexamp{after}{code}{empty}
 % Sets the \mymarg{code} that will be executed \mymeta{after} each content stored
-% in \mymarg{seq name}.
+% in \mymarg{seq name}. The \mymarg{code} must be passed between braces.
 %
-% \keyexamp{wrapper}{code \textnormal{\textcolor{gray}{\{\#1\}}} code}{empty}
+% \keyexamp{wrapper}{code \textnormal{\textcolor{gray}{\{\#1\}}} more code}{empty}
 % Wraps the content stored in \mymarg{seq name} referenced by \mymarg{\#1}.
-% This key must have braces. For example "\foreachsc[wrapper={\makebox[1em][l]{#1}}]{contents}".
+% The \mymarg{code} must be passed between braces. For example
+% "\foreachsc[wrapper={\makebox[1em][l]{#1}}]{contents}".
 %
 %
 % \subsection{The command \cs{typestored}}
@@ -991,8 +997,7 @@ This text is in the outer environment (after nested).
 %   \end{syntax}
 % The command \ics*{typestored} internally places the content stored in
 % the \mymarg{seq name} into the \myenv*{verbatimsc} environment. The \mymeta{index}
-% number corresponds to the position in which the content is stored in
-% the \mymarg{seq name}.
+% corresponds to the position in which the content is stored in the \mymarg{seq name}.
 % \end{function}
 %
 % If the optional argument is not passed it defaults to the first element
@@ -1090,12 +1095,12 @@ This text is in the outer environment (after nested).
 %      \cmdexamp{meaningsc}[index\textnormal{\textcolor{gray}{,}} width-tab \textnormal{\textcolor{gray}{=}} number]{seq name}
 %   \end{syntax}
 % The command \ics*{meaningsc} executes \ics{meaning} on the content stored
-% in \mymeta{seq name}. The \mymeta{index} number corresponds to the position
-% in which the content is stored in the \mymeta{seq name}.
+% in \mymarg{seq name}. The \mymeta{index} corresponds to the position
+% in which the content is stored in the \mymarg{seq name}.
 % \end{function}
 %
 % If the optional argument is not passed it defaults to the first element
-% stored in the \mymeta{seq name}. The key §width-tab§ is available for
+% stored in the \mymarg{seq name}. The key §width-tab§ is available for
 % this command.
 %
 % \subsection{The command \cs{countsc}}
@@ -1107,7 +1112,7 @@ This text is in the outer environment (after nested).
 %   \begin{syntax}
 %      \cmdexamp{countsc}{seq name}
 %   \end{syntax}
-% The command \ics*{countsc} count a number of contents stored in \mymeta{seq name}.
+% The command \ics*{countsc} count a number of contents stored in \mymarg{seq name}.
 % \end{function}
 %
 % \subsection{The command \cs{cleanseqsc}}
@@ -1119,7 +1124,7 @@ This text is in the outer environment (after nested).
 %   \begin{syntax}
 %      \cmdexamp{cleanseqsc}{seq name}
 %   \end{syntax}
-% The command \ics*{cleanseqsc} remove all contents stored in \mymeta{seq name}.
+% The command \ics*{cleanseqsc} remove all contents stored in \mymarg{seq name}.
 % \end{function}
 %
 % \newpage
@@ -1205,7 +1210,6 @@ by making use \mymeta{sequences}.
 \begin{scontents}[write-out=scexamp1.ltx]
 \documentclass[12pt,a4paper]{article}
 \usepackage[store-cmd=solutions]{scontents}
-\usepackage{pgffor}
 \newtheorem{ex}{Exercise}
 \begin{document}
 \section{Problems}
@@ -1224,9 +1228,7 @@ Second exercise
 \end{ex}
 
 \section{Solutions}
-\foreach \i in {1,...,\countsc{solutions}} {
-\noindent\textbf{\i} \getstored[\i]{solutions}\par
-}
+\foreachsc[sep={\\[10pt]}]{solutions}
 \end{document}
 \end{scontents}
 % \iffalse
@@ -1247,7 +1249,6 @@ Second exercise
 \begin{scontents}[write-out=scexamp2.ltx]
 \documentclass{article}
 \usepackage[store-env=defexercise,store-cmd=defexercise]{scontents}
-\usepackage{pgffor}
 \pagestyle{empty}
 \begin{document}
 % not starred
@@ -1265,10 +1266,9 @@ advance evidence from knowledge of the names of its employees in the
 seventies that the \NSA\ has known that for 40 years.\par
 \end{scontents}
 % see all stored
-\foreach \i in {1,...,3} {
 \begin{itemize}
-\item \getstored[\i]{defexercise}
-\end{itemize}}
+\foreachsc[before={\item }]{defexercise}
+\end{itemize}
 % \getstored are robust :)
 \section{\getstored[2]{defexercise}}
 \end{document}
@@ -1333,7 +1333,6 @@ seventies that the \NSA\ has known that for 40 years.\par
 \begin{scontents}[write-out=scexamp4.ltx]
 \documentclass{article}
 \usepackage{scontents}
-\usepackage{pgffor}
 \pagestyle{empty}
 \begin{document}
 \begin{scontents}[store-env=a]
@@ -1353,9 +1352,8 @@ Something with no label
 This is a: \getstored[1]{a}\par
 This is b: \getstored[2]{a}
 
-\textbf{Print all of them}
-
-\foreach \i in {1,...,\countsc{a}} {\getstored[\i]{a}\par}
+\textbf{Print all of them}\par
+\foreachsc[sep={\\[10pt]}]{a}
 \end{document}
 \end{scontents}
 % \iffalse
@@ -1816,7 +1814,7 @@ No tab
 %    \end{macrocode}
 % \end{macro}
 %
-
+%
 % \begin{macro}{\l_@@_foreach_before_bool,\l_@@_foreach_after_bool
 %               \l_@@_foreach_stop_bool,\l_@@_foreach_wrapper_bool}
 %   Boolean variables used by the §\foreachsc§ loop.
