@@ -5,7 +5,7 @@
 ![GitHub commits since latest release](https://img.shields.io/github/commits-since/pablgonz/scontents/v1.4)
 
 ## Description
-The `scontents` package stores valid `LaTeX` code in memory (sequences) using the
+The `scontents` package stores valid `LaTeX` code in <code>&lt;sequences&gt;</code> using the
 `l3seq` module of `expl3`. The stored content, including `verbatim` material, can be
 used as many times as desired in the document, additionally can be written
 to external files.
@@ -25,10 +25,12 @@ in your working directory and run `tex scontents.dtx`.
 ## Examples
 
 The file `scontents.pdf` contains attached examples, which can be extracted
-from the PDF viewer or using 
-```
+from the PDF viewer or using:
+
+```bash
 pdfdetach -saveall scontents.pdf
-``` 
+```
+ 
 from command line.
 
 ## License
@@ -36,9 +38,9 @@ The scontents package may be modified and distributed under the terms and
 conditions of the [LaTeX Project Public License](https://www.latex-project.org/lppl/), version 1.3c or greater.
 
 ## Contents
-- README.md (this file)
-- scontents.pdf  (documentation)
-- scontents.dtx  (master file that produced all files)
+- README.md
+- scontents.sty
+- scontents.dtx
 
 ## Copyright
 
