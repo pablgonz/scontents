@@ -333,6 +333,8 @@
         \exp_args:NNNV
       \group_end:
       \tl_set:Nn \l__scontents_macro_tmp_tl \l__scontents_macro_tmp_tl
+      \tl_if_empty:NT \l__scontents_macro_tmp_tl
+        { \msg_warning:nnn { scontents } { empty-environment } }
     }
   \cs_new_protected:Npn \__scontents_file_tl_write_start:n #1
     {
@@ -410,7 +412,21 @@
         }
     }
   \cs_new:Npn \__scontents_remove_leading_nl:n #1
-    { \exp_not:o { \__scontents_remove_leading_nl:w #1 } }
+    {
+      \tl_if_head_is_N_type:nTF {#1}
+        {
+          \exp_args:Nf
+            \__scontents_remove_leading_nl:nn
+              { \tl_head:n {#1} } {#1}
+        }
+        { \exp_not:n {#1} }
+    }
+  \cs_new:Npn \__scontents_remove_leading_nl:nn #1 #2
+    {
+      \token_if_eq_meaning:NNTF ^^J #1
+        { \exp_not:o { \__scontents_remove_leading_nl:w #2 } }
+        { \exp_not:n {#2} }
+    }
   \cs_new:Npn \__scontents_remove_leading_nl:w ^^J { }
   \cs_new_protected:Npn \__scontents_verb_processor_output:n #1
     {
@@ -624,7 +640,7 @@
   {
     \group_begin:
       \int_set:Nn \l__scontents_seq_item_int { 1 }
-      \IfValueT {#1} { \keys_set:nn {  scontents / typemeaning } {#1} }
+      \IfValueT {#1} { \keys_set:nn { scontents / typemeaning } {#1} }
       \__scontents_meaningsc:n {#2}
     \group_end:
   }
@@ -726,6 +742,8 @@
     This~command~does~not~have~a~key~called~'#1'.\\
     This~command~only~accepts~the~key~'width-tab'.
   }
+\msg_new:nnn { scontents } { empty-environment }
+  { scontents~environment~empty~\msg_line_context:. }
 \file_input_stop:
 \endinput
 %%
