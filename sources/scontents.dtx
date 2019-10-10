@@ -2002,7 +2002,7 @@ No tab
     step    .initial:n        = 1,
     wrapper .code:n           = {
                                   \bool_set_true:N \l_@@_foreach_wrapper_bool
-                                  \cs_set_protected:Npn \_@@_foreach_wrapper:n ##1 {#1}
+                                  \cs_set_protected:Npn \@@_foreach_wrapper:n ##1 {#1}
                                 },
     wrapper .value_required:n = true,
     sep     .tl_set:N         = \l_@@_foreach_sep_tl,
@@ -2591,7 +2591,7 @@ No tab
 %   User command §\foreachsc§ to loop over \mymeta{stored content} in |seq|.
 %
 %    \begin{macrocode}
-\NewDocumentCommand { \foreachsc }{ O{} m }
+\NewDocumentCommand { \foreachsc }{ o m }
   {
     \group_begin:
       \IfValueT {#1} { \keys_set:nn { scontents / foreachsc } {#1} }
@@ -2606,18 +2606,18 @@ No tab
         { \l_@@_foreach_start_int }
         { \l_@@_foreach_step_int }
         { \l_@@_foreach_stop_int }
-        \_@@_foreach_add_body:n
+        \@@_foreach_add_body:n
       \seq_use:Nn \l_@@_foreach_print_seq { \tl_use:N \l_@@_foreach_sep_tl }
     \group_end:
   }
-\cs_new_protected:Npn \_@@_foreach_add_body:n #1
+\cs_new_protected:Npn \@@_foreach_add_body:n #1
   {
     \seq_put_right:Nx \l_@@_foreach_print_seq
       {
         \bool_if:NT \l_@@_foreach_before_bool
           { \exp_not:V \l_@@_foreach_before_tl }
         \bool_if:NTF \l_@@_foreach_wrapper_bool
-          { \_@@_foreach_wrapper:n }
+          { \@@_foreach_wrapper:n }
           { \use:n }
             { \getstored [#1] { \tl_use:N \l_@@_foreach_name_seq_tl } }
         \bool_if:NT \l_@@_foreach_after_bool

@@ -46,7 +46,7 @@
   }
 \__scontents_package_if_loaded:nT { verbatim }
   {
-    \msg_term:n
+    \iow_term:n
       {
         The~implementation~of~the~'verbatimsc'~environment~\\
         used~by~\tl_to_str:n{\typestored} is~not~compatible~with~package\\
@@ -502,7 +502,7 @@
         { \__scontents_getfrom_seq:nn {#1} {#2} }
     \group_end:
   }
-\NewDocumentCommand { \foreachsc }{ O{} m }
+\NewDocumentCommand { \foreachsc }{ o m }
   {
     \group_begin:
       \IfValueT {#1} { \keys_set:nn { scontents / foreachsc } {#1} }
