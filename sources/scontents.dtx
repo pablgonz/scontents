@@ -1919,6 +1919,7 @@ No tab
 %    \begin{macrocode}
 \cs_generate_variant:Nn \tl_remove_once:Nn { NV }
 \cs_generate_variant:Nn \tl_replace_all:Nnn { Nx, Nxx, Nnx }
+\cs_generate_variant:Nn \msg_error:nnnn { nnx }
 \prg_generate_conditional_variant:Nnn \tl_if_empty:n { f } { TF }
 %    \end{macrocode}
 % \end{macro}
@@ -2240,54 +2241,52 @@ No tab
 % Define a \myoarg{key \textnormal{\textcolor{gray}{=}} val} for
 % environment \env{scontents}
 %
-% \begin{macro}{\@@_environment_inline:w,\@@_environment_keys:w,
-%      \@@_environment_junk:nw,\@@_environment_junk:xw}
-%   The macro \cs{@@_environment_inline:w} is called from the
+% \begin{macro}{\@@_grab_optional:w}
+%   The macro \cs{@@_grab_optional:w} is called from the
 %   \env{scontents} environment with the tokens following the
-%   §\begin{scontents}§. If the immediate next token (ignoring spaces)
-%   is a §[§, then we look for an optional argument delimited by a §]§.
-%   All the remaining tokens are treated as junk and an error is raised
-%   if they are non-blank.
+%   §\begin{scontents}§ when the next character is a §[§. This function
+%   is defined using \mypkg{xparse} to exploit its delimited argument
+%   processor.
 %
+%   The function is called from a context where §^^M§ is active, so
+%   \cs{@@_normalise_line_ends:N} is used to replace active §^^M§
+%   characters by spaces.
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_environment_inline:w
+\NewDocumentCommand \@@_grab_optional:w { r[] }
   {
-    \peek_charcode_ignore_spaces:NTF [ % ]
-      { \@@_environment_keys:w }
+    \IfValueT {#1}
       {
-        \@@_environment_junk:xw
-          { after~\c_backslash_str begin{scontents} }
+        \tl_set:Nn \l_@@_temp_tl {#1}
+        \@@_normalise_line_ends:N \l_@@_temp_tl
+        \keys_set:nV { scontents / scontents } \l_@@_temp_tl
       }
+    \@@_start_after_option:w
   }
-\cs_new_protected:Npn \@@_environment_keys:w [ #1 ]
-  {
-    \keys_set:nn { scontents / scontents } {#1}
-    \@@_environment_junk:xw
-      { after~optional~argument~to~\c_backslash_str begin{scontents} }
-  }
-\cs_new_protected:Npn \@@_environment_junk:nw #1 #2 \q_@@_mark
-  {
-    \tl_if_blank:nF {#2}
-      { \msg_error:nnnn { scontents } { junk-after-begin } {#1} {#2} }
-  }
-\cs_generate_variant:Nn \@@_environment_junk:nw { x }
 %    \end{macrocode}
 % \end{macro}
 %
 % \subsubsection{The environment itself}
 %
-% \begin{macro}{\@@_start_environment:w,\@@_stop_environment:}
+% \begin{macro}{\@@_start_environment:w,\@@_start_after_option:w,
+%     \@@_check_line_and_process:xn,\@@_stop_environment:}
 %   Here we make §^^I§, §^^L§ and §^^M§ active characters so that the end of
 %   line can be \enquote{seen} to be used as a delimiter, and \hologo{TeX} doesn't try to
-%   eliminate space-like characters.  First we check if the line
-%   directly after §\begin{scontents}§ contains an optional argument
-%   enclosed in §[...]§ or other tokens. The trailing tokens are
-%   treated as junk and an error is raised.  The
-%   \cs{@@_environment_inline:w} macro checks for those cases.
+%   eliminate space-like characters.
 %
-%   \cs{@@_start_environment:w} calls the \cs{@@_file_tl_write_start:V}
-%   function, which will then read the contents of the environment and
-%   optionally store them in a token list or write to an external file.
+%   First we check if the immediate next token after §\begin{scontents}§
+%   is a §[§. If it is, then \cs{@@_grab_optional:w} is called
+%   to do the heavy lifting. \cs{@@_grab_optional:w} processes the optional
+%   argument and calls \cs{@@_start_after_option:w}.
+%
+%   \cs{@@_start_after_option:w} also checks for trailing tokens after
+%   the optional argument and issues an error if any.
+%
+%   In all cases \cs{@@_check_line_and_process:xn} is called to check that
+%   the rest of the §\begin{scontents}§ is empty and then process
+%   the environment. \cs{@@_check_line_and_process:xn} calls the
+%   \cs{@@_file_tl_write_start:V} function, which will then read the contents
+%   of the environment and optionally store them in a token list or write to
+%   an external file.
 %
 %   When that's done, \cs{@@_file_write_stop:N} does the cleanup and the
 %   read token list is smuggled out of the verbatim group. This part of
@@ -2303,9 +2302,27 @@ No tab
   \char_set_catcode_active:N \^^I
   \char_set_catcode_active:N \^^L
   \char_set_catcode_active:N \^^M
+  \cs_new_protected:Npn \@@_normalise_line_ends:N #1
+    { \tl_replace_all:Nnn #1 { ^^M } { ~ } }
   \cs_new_protected:Npn \@@_start_environment:w #1 ^^M
     {
-      \@@_environment_inline:w #1 \q_@@_mark
+      \tl_if_head_is_N_type:nTF {#1}
+        {
+          \str_if_eq:eeTF { \tl_head:n {#1} } { [ }
+            { \@@_grab_optional:w #1 ^^M }
+            { \@@_check_line_and_process:xn { } {#1} }
+        }
+        { \@@_check_line_and_process:xn { } {#1} }
+    }
+  \cs_new_protected:Npn \@@_start_after_option:w #1 ^^M
+    { \@@_check_line_and_process:xn { [...] } {#1} }
+  \cs_new_protected:Npn \@@_check_line_and_process:xn #1 #2
+    {
+      \tl_if_blank:nF {#2}
+        {
+          \msg_error:nnxn { scontents } { junk-after-begin }
+            { after~\c_backslash_str begin{scontents} #1 } {#2}
+        }
       \@@_make_control_chars_active:
       \group_begin:
         \@@_file_tl_write_start:V \l_@@_fname_out_tl

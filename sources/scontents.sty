@@ -130,6 +130,7 @@
 \cs_new:Npn \__scontents_par: { ^^J ^^J }
 \cs_generate_variant:Nn \tl_remove_once:Nn { NV }
 \cs_generate_variant:Nn \tl_replace_all:Nnn { Nx, Nxx, Nnx }
+\cs_generate_variant:Nn \msg_error:nnnn { nnx }
 \prg_generate_conditional_variant:Nnn \tl_if_empty:n { f } { TF }
 \keys_define:nn { scontents / scontents }
   {
@@ -287,34 +288,41 @@
     \__scontents_stop_environment:
     \__scontents_atend_environment:
   }
-\cs_new_protected:Npn \__scontents_environment_inline:w
+\NewDocumentCommand \__scontents_grab_optional:w { r[] }
   {
-    \peek_charcode_ignore_spaces:NTF [ % ]
-      { \__scontents_environment_keys:w }
+    \IfValueT {#1}
       {
-        \__scontents_environment_junk:xw
-          { after~\c_backslash_str begin{scontents} }
+        \tl_set:Nn \l__scontents_temp_tl {#1}
+        \__scontents_normalise_line_ends:N \l__scontents_temp_tl
+        \keys_set:nV { scontents / scontents } \l__scontents_temp_tl
       }
+    \__scontents_start_after_option:w
   }
-\cs_new_protected:Npn \__scontents_environment_keys:w [ #1 ]
-  {
-    \keys_set:nn { scontents / scontents } {#1}
-    \__scontents_environment_junk:xw
-      { after~optional~argument~to~\c_backslash_str begin{scontents} }
-  }
-\cs_new_protected:Npn \__scontents_environment_junk:nw #1 #2 \q__scontents_mark
-  {
-    \tl_if_blank:nF {#2}
-      { \msg_error:nnnn { scontents } { junk-after-begin } {#1} {#2} }
-  }
-\cs_generate_variant:Nn \__scontents_environment_junk:nw { x }
 \group_begin:
   \char_set_catcode_active:N \^^I
   \char_set_catcode_active:N \^^L
   \char_set_catcode_active:N \^^M
+  \cs_new_protected:Npn \__scontents_normalise_line_ends:N #1
+    { \tl_replace_all:Nnn #1 { ^^M } { ~ } }
   \cs_new_protected:Npn \__scontents_start_environment:w #1 ^^M
     {
-      \__scontents_environment_inline:w #1 \q__scontents_mark
+      \tl_if_head_is_N_type:nTF {#1}
+        {
+          \str_if_eq:eeTF { \tl_head:n {#1} } { [ }
+            { \__scontents_grab_optional:w #1 ^^M }
+            { \__scontents_check_line_and_process:xn { } {#1} }
+        }
+        { \__scontents_check_line_and_process:xn { } {#1} }
+    }
+  \cs_new_protected:Npn \__scontents_start_after_option:w #1 ^^M
+    { \__scontents_check_line_and_process:xn { [...] } {#1} }
+  \cs_new_protected:Npn \__scontents_check_line_and_process:xn #1 #2
+    {
+      \tl_if_blank:nF {#2}
+        {
+          \msg_error:nnxn { scontents } { junk-after-begin }
+            { after~\c_backslash_str begin{scontents} #1 } {#2}
+        }
       \__scontents_make_control_chars_active:
       \group_begin:
         \__scontents_file_tl_write_start:V \l__scontents_fname_out_tl
