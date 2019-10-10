@@ -67,7 +67,7 @@ Multi-line verbatim (hello):
 \setupsc{store-env=error-storage}
 
 \begin{scontents}[store-env=nowhere]
-\hello\world1
+\1
 \end{scontents}
 Should be 1: \meaningsc[-1]{nowhere}
 
@@ -77,34 +77,34 @@ Should raise an error about ` bzzz':\par
   =
   nowhere
 ] bzzz
-\hello\world2
+\2
 \end{scontents}
 Should be 2: \meaningsc[-1]{nowhere}
 
 Should raise an error about ` [store-env=nowhere]':
 \begin{scontents} [store-env=nowhere]
-\hello\world3
+\3
 \end{scontents}
 Should still be 2: \meaningsc[-1]{nowhere}
 
 \begin{scontents}
 [store-env=nowhere]
-\hello\world4
+\4
 \end{scontents}
 Should be 2: \meaningsc[-1]{nowhere}
 But this should be 4: \meaningsc[-1]{error-storage}
 
 \begin{scontents}%
 [store-env=nowhere]
-\hello\world5
+\5
 \end{scontents}
 Should be 5: \meaningsc[-1]{nowhere}
 
 \begin{scontents}%[store-env=nowhere]
-
-\hello\world6
+\6
 \end{scontents}
 Should still be 5: \meaningsc[-1]{nowhere}
+And this should be empty: [\meaningsc[-1]{error-storage}]
 
 \interactionmode=\tmpa
 
