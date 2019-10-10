@@ -62,7 +62,55 @@ Nothing:
 
 Multi-line verbatim (hello):
 \typestored[5]{nowhere} % Not an error anymore
+
+\hrulefill
+\setupsc{store-env=error-storage}
+
+\begin{scontents}[store-env=nowhere]
+\hello\world1
+\end{scontents}
+Should be 1: \meaningsc[-1]{nowhere}
+
+Should raise an error about ` bzzz':\par
+\begin{scontents}[
+  store-env
+  =
+  nowhere
+] bzzz
+\hello\world2
+\end{scontents}
+Should be 2: \meaningsc[-1]{nowhere}
+
+Should raise an error about ` [store-env=nowhere]':
+\begin{scontents} [store-env=nowhere]
+\hello\world3
+\end{scontents}
+Should still be 2: \meaningsc[-1]{nowhere}
+
+\begin{scontents}
+[store-env=nowhere]
+\hello\world4
+\end{scontents}
+Should be 2: \meaningsc[-1]{nowhere}
+But this should be 4: \meaningsc[-1]{error-storage}
+
+\begin{scontents}%
+[store-env=nowhere]
+\hello\world5
+\end{scontents}
+Should be 5: \meaningsc[-1]{nowhere}
+
+\begin{scontents}%[store-env=nowhere]
+
+\hello\world6
+\end{scontents}
+Should still be 5: \meaningsc[-1]{nowhere}
+
 \interactionmode=\tmpa
+
+\setupsc{store-env=contents}
+
+\hrulefill
 
 % custom :)
 \makeatletter
