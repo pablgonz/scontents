@@ -1,0 +1,28 @@
+
+\input scontents.sty
+
+
+\scontents[store-env=another]
+Leaving:
+\aftergroup\bye :D
+\endscontents
+
+\scontents[store-env=test]
+\begingroup
+  \catcode`\|=0
+  |def|something{I am verbatim!}
+|endgroup
+\something
+\endscontents
+
+\scontents[store-env=test]
+\hello :D
+\endscontents
+
+\typestored[2]{test}
+
+\typestored[1]{test}
+
+\getstored[1]{another}
+
+It should not get here as the getstored above contains a \bye

@@ -1,0 +1,28 @@
+\documentclass{article}
+\usepackage{scontents}
+\begin{document}
+
+\begin{scontents}[store-env=another]
+Leaving:
+\aftergroup\stop :D
+\end{scontents}
+
+\begin{scontents}[store-env=test]
+\begingroup
+  \catcode`\|=0
+  |def|something{I am verbatim!}
+|endgroup
+\something
+\end{scontents}
+
+\begin{scontents}[store-env=test]
+\hello :D
+\end{scontents}
+
+\typestored[2]{test}
+
+\typestored[1]{test}
+
+\getstored[1]{another}
+
+\end{document}
