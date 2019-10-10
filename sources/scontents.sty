@@ -600,7 +600,7 @@
   }
 \cs_new_protected:Npn \__scontents_grab_v_aux:w #1
   {
-    \cs_set_eq:NN \__scontents_run_code: #1
+    \cs_set_eq:NN \__scontents_run_code:n #1
     \group_begin:
       \group_align_safe_begin:
         \int_set:Nn \tex_escapechar:D { 92 }
@@ -658,7 +658,7 @@
 \cs_new_protected:Npn \__scontents_grab_v_aux_loop_end:
   {
     \__scontents_grab_v_group_end:
-    \__scontents_add_arg:x { \tl_tail:N \l__scontents_v_arg_tl }
+    \exp_args:Nx \__scontents_run_code:n { \tl_tail:N \l__scontents_v_arg_tl }
   }
 \int_new:N \l__scontents_v_nesting_int
 \cs_new_protected:Npx \__scontents_grab_v_bgroup:
@@ -1028,7 +1028,7 @@
   {
     \group_begin:
       \int_set:Nn \l__scontents_seq_item_int { 1 }
-      \IfValueT {#1} { \keys_set:nn { scontents / typemeaning } {#1} }
+      \tl_if_novalue:nF {#1} { \keys_set:nn { scontents / typemeaning } {#1} }
       \__scontents_meaningsc:n {#2}
     \group_end:
   }

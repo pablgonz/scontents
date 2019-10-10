@@ -2681,7 +2681,7 @@ No tab
   }
 \cs_new_protected:Npn \@@_grab_v_aux:w #1
   {
-    \cs_set_eq:NN \@@_run_code: #1
+    \cs_set_eq:NN \@@_run_code:n #1
     \group_begin:
       \group_align_safe_begin:
         \int_set:Nn \tex_escapechar:D { 92 }
@@ -2739,7 +2739,7 @@ No tab
 \cs_new_protected:Npn \@@_grab_v_aux_loop_end:
   {
     \@@_grab_v_group_end:
-    \@@_add_arg:x { \tl_tail:N \l_@@_v_arg_tl }
+    \exp_args:Nx \@@_run_code:n { \tl_tail:N \l_@@_v_arg_tl }
   }
 \int_new:N \l_@@_v_nesting_int
 \cs_new_protected:Npx \@@_grab_v_bgroup:
@@ -3234,7 +3234,7 @@ No tab
   {
     \group_begin:
       \int_set:Nn \l_@@_seq_item_int { 1 }
-      \IfValueT {#1} { \keys_set:nn { scontents / typemeaning } {#1} }
+      \tl_if_novalue:nF {#1} { \keys_set:nn { scontents / typemeaning } {#1} }
       \@@_meaningsc:n {#2}
     \group_end:
   }
