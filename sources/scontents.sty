@@ -25,33 +25,91 @@
 %%                                 scontents.pdf and
 %%                                 scontents.sty.
 %% 
-\RequirePackage{l3keys2e}
-\RequirePackage{xparse}[2019/05/28]
-\ProvidesExplPackage{scontents}{2019/10/15}{1.5}
-  {Stores LaTeX contents in memory or files}
-\@ifpackagelater { expl3 } { 2019/09/19 }
-  { }
+\begingroup
+  \def\next{\endgroup}%
+  \expandafter\ifx\csname PackageError\endcsname\relax
+    \begingroup
+      \def\next{\endgroup\endgroup}%
+      \def\PackageError#1#2#3%
+        {%
+          \endgroup
+          \errhelp{#3}%
+          \errmessage{#1 Error: #2!}%
+        }%
+  \fi
+  \expandafter\ifx\csname unless\endcsname\relax
+    \def\next
+      {%
+        \PackageError{scontents}{scontents requires e-TeX.}
+          {scontents requires e-TeX extensions. Loading will abort.}%
+        \endgroup
+        \endinput
+      }%
+  \else
+    \def\SCempty{}
+    \unless\ifnum
+      \expandafter\ifx\csname ver@scontents.sty\endcsname\SCempty 1\else 0\fi % LaTeX
+      \expandafter\ifx\csname ver@scontents.sty\endcsname\relax 1\else 0\fi % plain
+      >0
+      \def\next
+        {%
+          \PackageError{scontents}{scontents already loaded.}
+            {scontents is already loaded. Loading will abort.}%
+          \endgroup
+          \endinput
+        }%
+    \fi
+  \fi
+\next
+\begingroup\expandafter\expandafter\expandafter\endgroup
+\expandafter\ifx\csname RequirePackage\endcsname\relax
+  \input expl3-generic.tex
+\else
+  \RequirePackage{expl3}[2019/05/28]
+\fi
+\ExplSyntaxOn
+\cs_if_exist:NTF \ProvidesExplPackage
   {
-    \PackageError { scontents } { Support~package~expl3~too~old }
+    \cs_new_eq:NN \__scontents_end_package_hook: \prg_do_nothing:
+    \prg_new_conditional:Npnn \__scontents_if_LaTeX: { T, F, TF }
+      { \prg_return_true: }
+    \ExplSyntaxOff
+    \ProvidesExplPackage
+  }
+  {
+    \cs_new_eq:NN \__scontents_end_package_hook: \ExplSyntaxOff
+    \prg_new_conditional:Npnn \__scontents_if_LaTeX: { T, F, TF }
+      { \prg_return_false: }
+    \group_begin:
+    \ExplSyntaxOff
+    \cs_set_protected:Npn \__scontents_tmp:w #1#2#3#4
       {
-        You~need~to~update~your~installation~of~the~bundles~
-        'l3kernel'~and~'l3packages'.\MessageBreak
-        Loading~scontents~will~abort!
+        \group_end:
+        \tl_gset:cx { ver @ #1 . sty } { #2 ~ v#3 ~ #4 }
+        \cs_if_exist_use:NF \wlog { \iow_log:x }
+          { Package: ~ #1 ~ #2 ~ v#3 ~ #4 }
       }
-    \file_input_stop:
+    \__scontents_tmp:w
   }
-\prg_new_conditional:Nnn \__scontents_package_if_loaded:n { p, T, F , TF }
+      {scontents} {2019/10/15} {1.5} {Stores LaTeX contents in memory or files}
+\__scontents_if_LaTeX:T
   {
-    \use:c { @ifpackageloaded } { #1 } { \prg_return_true: } { \prg_return_false: }
-  }
-\__scontents_package_if_loaded:nT { verbatim }
-  {
-    \iow_term:n
+    \RequirePackage{l3keys2e}
+    \RequirePackage{xparse}[2019/05/28]
+    \prg_new_conditional:Nnn \__scontents_package_if_loaded:n { p, T, F , TF }
       {
-        The~implementation~of~the~'verbatimsc'~environment~\\
-        used~by~\tl_to_str:n{\typestored} is~not~compatible~with~package\\
-        'verbatim'.~Review~the~documentation~and~redefine~\\
-        the~'verbatimsc'~environment.
+        \use:c { @ifpackageloaded } { #1 }
+          { \prg_return_true: } { \prg_return_false: }
+      }
+    \__scontents_package_if_loaded:nT { verbatim }
+      {
+        \iow_term:n
+          {
+            The~implementation~of~the~'verbatimsc'~environment~\\
+            used~by~\tl_to_str:n{\typestored} is~not~compatible~with~package\\
+            'verbatim'.~Review~the~documentation~and~redefine~\\
+            the~'verbatimsc'~environment.
+          }
       }
   }
 \keys_define:nn { scontents }
@@ -82,7 +140,12 @@
     store-all .meta:n           = { store-env = #1 , store-cmd = #1 },
     store-all .value_required:n = true
   }
-\ProcessKeysOptions { scontents }
+\__scontents_if_LaTeX:F
+  {
+    \keys_define:nn { scontents }
+      { verb-font .initial:n    = \tt }
+  }
+\__scontents_if_LaTeX:T { \ProcessKeysOptions { scontents } }
 \tl_new:N \l__scontents_macro_tmp_tl
 \tl_new:N \l__scontents_fname_out_tl
 \tl_new:N \l__scontents_temp_tl
@@ -113,12 +176,24 @@
   \g__scontents_end_verbatimsc_tl
   {
     \char_set_catcode_other:N \\
-    \char_set_catcode_other:N \{
-    \char_set_catcode_other:N \}
+    \__scontents_if_LaTeX:TF
+      {
+        \char_set_catcode_other:N \{
+        \char_set_catcode_other:N \}
+      }
+      {
+        \char_set_catcode_ignore:N \{
+        \char_set_catcode_ignore:N \}
+      }
   }
   { \end{verbatimsc} }
 \tl_const:Nx \c__scontents_end_env_tl
-  { \c_backslash_str end \c_left_brace_str scontents \c_right_brace_str }
+  {
+    \c_backslash_str end
+      \__scontents_if_LaTeX:T \c_left_brace_str
+        scontents
+      \__scontents_if_LaTeX:T \c_right_brace_str
+  }
 \str_const:Nx \c__scontents_hidden_space_str
   { \c_percent_str \c_circumflex_str \c_circumflex_str A scheol \c_percent_str }
 \quark_new:N \q__scontents_stop
@@ -279,7 +354,24 @@
     \tl_log:N #1
     \__scontents_append_contents:Vx #2 { \exp_not:V #1 }
   }
-\NewDocumentEnvironment { scontents } { }
+\__scontents_if_LaTeX:TF
+  { \NewDocumentEnvironment { scontents } { } }
+  {
+    \cs_set:Npn \__scontents_tmp:w #1 #2
+      {
+        \cs_new_protected:Npn \scontents
+          {
+            \group_begin:
+              #1
+          }
+        \cs_new_protected:Npn \endscontents
+          {
+              #2
+            \group_end:
+          }
+      }
+    \__scontents_tmp:w
+  }
   {
     \char_set_catcode_active:N \^^M
     \__scontents_start_environment:w
@@ -288,9 +380,11 @@
     \__scontents_stop_environment:
     \__scontents_atend_environment:
   }
-\NewDocumentCommand \__scontents_grab_optional:w { r[] }
+\__scontents_if_LaTeX:TF
+  { \NewDocumentCommand \__scontents_grab_optional:w { r[] } }
+  { \cs_new_protected:Npn \__scontents_grab_optional:w [#1] }
   {
-    \IfValueT {#1}
+    \tl_if_novalue:nF {#1}
       {
         \tl_set:Nn \l__scontents_temp_tl {#1}
         \__scontents_normalise_line_ends:N \l__scontents_temp_tl
@@ -383,7 +477,9 @@
                   { \__scontents_verb_processor_output:n {#1} }
                 \cs_set_protected:Npx \__scontents_ret:w
                   {
-                    \exp_not:N \end{scontents}
+                    \__scontents_if_LaTeX:TF
+                      { \exp_not:N \end{scontents} }
+                      { \endscontents }
                     \bool_lazy_or:nnF
                       { \tl_if_blank_p:n {#2} }
                       { \str_if_eq_p:ee {#2} { \c_percent_str } }
@@ -489,13 +585,227 @@
           { \__scontents_lastfrom_seq:n \l__scontents_name_seq_env_tl }
       }
   }
-\NewDocumentCommand { \Scontents }{ !s !O{} }
+\__scontents_if_LaTeX:T { \__scontents_use_none_delimit_by_q_stop:w }
+\tl_new:N \l__scontents_v_arg_tl
+\bool_new:N \l__scontents_long_bool
+\cs_new_protected:Npn \__scontents_grab_v:Nw
+  {
+    \bool_set_false:N \l__scontents_long_bool
+    \__scontents_grab_v_aux:w
+  }
+\cs_new_protected:Npn \__scontents_grab_v_long:Nw
+  {
+    \bool_set_true:N \l__scontents_long_bool
+    \__scontents_grab_v_aux:w
+  }
+\cs_new_protected:Npn \__scontents_grab_v_aux:w #1
+  {
+    \cs_set_eq:NN \__scontents_run_code: #1
+    \group_begin:
+      \group_align_safe_begin:
+        \int_set:Nn \tex_escapechar:D { 92 }
+        \tl_clear:N \l__scontents_v_arg_tl
+        \peek_remove_spaces:n
+          {
+            \peek_meaning_remove:NTF \c_group_begin_token
+              {
+                \group_align_safe_end:
+                \__scontents_grab_v_bgroup:
+              }
+              {
+                \peek_N_type:TF
+                  { \__scontents_grab_v_aux_test:N }
+                  { \__scontents_grab_v_aux_abort:n { } }
+              }
+          }
+  }
+\cs_new_protected:Npn \__scontents_grab_v_group_end:
+  {
+        \group_align_safe_end:
+        \exp_args:NNNo
+      \group_end:
+    \tl_set:Nn \l__scontents_v_arg_tl { \l__scontents_v_arg_tl }
+  }
+\cs_new_protected:Npn \__scontents_grab_v_aux_test:N #1
+  {
+    \__scontents_grab_v_token_if_char:NTF #1
+      {
+        \__scontents_grab_v_aux_put:N #1
+        \__scontents_grab_v_aux_catcodes:
+        \__scontents_grab_v_aux_loop:N #1
+      }
+      { \__scontents_grab_v_aux_abort:n {#1} #1 }
+  }
+\cs_new_protected:Npn \__scontents_grab_v_aux_loop:N #1
+  {
+    \peek_N_type:TF
+      { \__scontents_grab_v_aux_loop:NN #1 }
+      { \__scontents_grab_v_aux_abort:n { } }
+  }
+\cs_new_protected:Npn \__scontents_grab_v_aux_loop:NN #1#2
+  {
+    \__scontents_grab_v_token_if_char:NTF #2
+      {
+        \token_if_eq_charcode:NNTF #1 #2
+          { \__scontents_grab_v_aux_loop_end: }
+          {
+            \__scontents_grab_v_aux_put:N #2
+            \__scontents_grab_v_aux_loop:N #1
+          }
+      }
+      { \__scontents_grab_v_aux_abort:n {#2} #2 }
+  }
+\cs_new_protected:Npn \__scontents_grab_v_aux_loop_end:
+  {
+    \__scontents_grab_v_group_end:
+    \__scontents_add_arg:x { \tl_tail:N \l__scontents_v_arg_tl }
+  }
+\int_new:N \l__scontents_v_nesting_int
+\cs_new_protected:Npx \__scontents_grab_v_bgroup:
+  {
+    \exp_not:N \__scontents_grab_v_aux_catcodes:
+    \exp_not:n { \int_set:Nn \l__scontents_v_nesting_int { 1 } }
+    \exp_not:N \__scontents_grab_v_aux_put:N \iow_char:N \{
+    \exp_not:N \__scontents_grab_v_bgroup_loop:
+  }
+\cs_new_protected:Npn \__scontents_grab_v_bgroup_loop:
+  {
+    \peek_N_type:TF
+      { \__scontents_grab_v_bgroup_loop:N }
+      { \__scontents_grab_v_aux_abort:n { } }
+  }
+\cs_new_protected:Npn \__scontents_grab_v_bgroup_loop:N #1
+  {
+    \__scontents_grab_v_token_if_char:NTF #1
+      {
+        \token_if_eq_charcode:NNTF \c_group_end_token #1
+          {
+            \int_decr:N \l__scontents_v_nesting_int
+            \int_compare:nNnTF \l__scontents_v_nesting_int > 0
+              {
+                \__scontents_grab_v_aux_put:N #1
+                \__scontents_grab_v_bgroup_loop:
+              }
+              { \__scontents_grab_v_aux_loop_end: }
+          }
+          {
+            \token_if_eq_charcode:NNT \c_group_begin_token #1
+              { \int_incr:N \l__scontents_v_nesting_int }
+            \__scontents_grab_v_aux_put:N #1
+            \__scontents_grab_v_bgroup_loop:
+          }
+      }
+      { \__scontents_grab_v_aux_abort:n {#1} #1 }
+  }
+\cs_new_protected:Npn \__scontents_grab_v_aux_catcodes:
+  {
+    \cs_set_eq:NN \do \char_set_catcode_other:N
+    \dospecials
+    \tex_endlinechar:D = `\^^M \scan_stop:
+    \bool_if:NTF \l__scontents_long_bool
+      { \char_set_catcode_other:n { \tex_endlinechar:D } }
+      { \char_set_catcode_parameter:n { \tex_endlinechar:D } }
+  }
+\cs_new_protected:Npn \__scontents_grab_v_aux_abort:n #1
+  {
+    \__scontents_grab_v_group_end:
+    \exp_after:wN \exp_after:wN \exp_after:wN
+      \peek_meaning_remove:NTF \char_generate:nn { \tex_endlinechar:D } { 6 }
+      {
+        \msg_error:nnxxx { xparse } { verbatim-newline }
+          { \__scontents_environment_or_command: }
+          { \tl_to_str:N \l__scontents_v_arg_tl }
+          { \tl_to_str:n {#1} }
+        \__scontents_add_arg:o \c_novalue_tl
+      }
+      {
+        \msg_error:nnxxx { xparse } { verbatim-tokenized }
+          { \__scontents_environment_or_command: }
+          { \tl_to_str:N \l__scontents_v_arg_tl }
+          { \tl_to_str:n {#1} }
+        \__scontents_add_arg:o \c_novalue_tl
+      }
+  }
+\cs_new_protected:Npn \__scontents_grab_v_aux_put:N #1
+  {
+    \tl_put_right:Nx \l__scontents_v_arg_tl
+      {
+        \token_if_active:NTF #1
+          { \exp_not:N #1 } { \token_to_str:N #1 }
+      }
+  }
+\cs_new_protected:Npn \__scontents_grab_v_token_if_char:NTF #1
+  { \str_if_eq:eeTF { } { \str_tail:n {#1} } }
+\use_none:n \q__scontents_stop
+\__scontents_if_LaTeX:T { \__scontents_use_none_delimit_by_q_stop:w }
+\group_begin:
+  \char_set_catcode_letter:N \@
+  \bool_new:N \l__scontents_temp_bool
+  \cs_new_protected:Npn \verbatim
+    { \__scontents_verbatim_aux: \frenchspacing \__scontents_vobeyspaces: \@xverbatim }
+  \cs_new_protected:Npn \__scontents_verbatim_aux:
+    {
+      \skip_vertical:N \parskip
+      \int_set:Nn \parindent { 0pt }
+      \skip_set:Nn \parfillskip { 0pt plus 1fil }
+      \int_set:Nn \parskip { 0pt plus0pt minus0pt }
+      \tex_par:D
+      \bool_set_false:N \l__scontents_temp_bool
+      \cs_set:Npn \par
+        {
+          \bool_if:NTF \l__scontents_temp_bool
+            {
+              \mode_leave_vertical:
+              \null
+              \tex_par:D
+              \penalty \interlinepenalty
+            }
+            {
+              \bool_set_true:N \l__scontents_temp_bool
+              \mode_if_horizontal:T
+                { \tex_par:D \penalty \interlinepenalty }
+            }
+        }
+      \cs_set_eq:NN \do \char_set_catcode_other:N
+        \dospecials
+      \obeylines
+      \tl_use:N \l__scontents_verb_font_tl
+      \cs_set_eq:NN \do \__scontents_do_noligs:N
+      \__scontents_nolig_list:
+      \tex_everypar:D \exp_after:wN
+        { \tex_the:D \tex_everypar:D \tex_unpenalty:D }
+    }
+  \cs_new_protected:Npn \__scontents_nolig_list:
+    { \do\`\do\<\do\>\do\,\do\'\do\- }
+  \cs_new_protected:Npn \__scontents_vobeyspaces:
+    { \char_set_active_eq:NN \  \__scontents_xobeysp: }
+  \cs_new_protected:Npn \__scontents_xobeysp:
+    { \mode_leave_vertical: \nobreak \ }
+\group_end:
+\use_none:n \q__scontents_stop
+\__scontents_if_LaTeX:TF
+  { \NewDocumentCommand { \Scontents }{ !s !O{} } }
+  {
+    \cs_new_protected:Npn \Scontents
+      {
+        \peek_charcode_remove:NTF *
+          { \__scontents_Scontents_auxi:N \c_true_bool }
+          { \__scontents_Scontents_auxi:N \c_false_bool }
+      }
+    \cs_new_protected:Npx \__scontents_Scontents_auxi:N #1
+      {
+        \peek_charcode:NTF [ % ]
+          { \use:c { Scontents~code } \c_true_bool }
+          { \use:c { Scontents~code } \c_true_bool [ \c_novalue_tl ] }
+      }
+    \cs_new_protected:cpn { Scontents~code } #1 [#2]
+  }
   {
     \group_begin:
-      \IfNoValueF {#2}
+      \tl_if_novalue:nF {#2}
         { \keys_set:nn { scontents / Scontents } {#2} }
       \char_set_catcode_active:n { 9 }
-      \IfBooleanTF {#1}
+      \bool_if:NTF #1
         { \__scontents_verb_arg:w }
         { \__scontents_norm_arg:n }
   }
@@ -508,7 +818,13 @@
         { \__scontents_lastfrom_seq:n \l__scontents_name_seq_cmd_tl }
     \group_end:
   }
-\NewDocumentCommand { \__scontents_verb_arg:w } { +v }
+\__scontents_if_LaTeX:TF
+  { \NewDocumentCommand { \__scontents_verb_arg:w } { +v } }
+  {
+    \cs_new_protected:Npn \__scontents_verb_arg:w
+      { \exp_args:Nc \__scontents_grab_v_long:Nw { verb_arg~code } }
+    \cs_new_protected:cpn { verb_arg~code } #1
+  }
   {
       \tl_set:Nx \l__scontents_temp_tl { \exp_not:n {#1} }
       \tl_replace_all:Nxx \l__scontents_temp_tl { \iow_char:N \^^M } { \iow_char:N \^^J }
@@ -519,17 +835,37 @@
         { \__scontents_lastfrom_seq:n \l__scontents_name_seq_cmd_tl }
     \group_end:
   }
-\NewDocumentCommand { \getstored } { O{1} m }
+\__scontents_if_LaTeX:TF
+  { \NewDocumentCommand { \getstored } { O{1} m } }
+  {
+    \cs_new_protected:Npn \getstored
+      {
+        \peek_charcode_ignore_spaces:NTF [ % ]
+          { \use:c { getstored~code } }
+          { \use:c { getstored~code } [ 1 ] }
+      }
+    \cs_new_protected:cpn { getstored~code } [#1] #2
+  }
   {
     \group_begin:
       \__scontents_rescan_tokens:x
         { \__scontents_getfrom_seq:nn {#1} {#2} }
     \group_end:
   }
-\NewDocumentCommand { \foreachsc }{ o m }
+\__scontents_if_LaTeX:TF
+  { \NewDocumentCommand { \foreachsc } { o m } }
+  {
+    \cs_new_protected:Npx \foreachsc
+      {
+        \peek_charcode_ignore_spaces:NTF [ % ]
+          { \use:c { foreachsc~code } }
+          { \use:c { foreachsc~code } [ \c_novalue_tl ] }
+      }
+    \cs_new_protected:cpn { foreachsc~code } [#1] #2
+  }
   {
     \group_begin:
-      \IfValueT {#1} { \keys_set:nn { scontents / foreachsc } {#1} }
+      \tl_if_novalue:nF {#1} { \keys_set:nn { scontents / foreachsc } {#1} }
       \tl_set:Nn \l__scontents_foreach_name_seq_tl {#2}
       \seq_clear:N \l__scontents_foreach_print_seq
       \bool_if:NF \l__scontents_foreach_stop_bool
@@ -559,15 +895,23 @@
           { \exp_not:V \l__scontents_foreach_after_tl }
       }
   }
-\NewDocumentCommand { \typestored } { o m }
+\__scontents_if_LaTeX:TF
+  { \NewDocumentCommand { \typestored } { o m } }
+  {
+    \cs_new_protected:Npx \typestored
+      {
+        \peek_charcode_ignore_spaces:NTF [ % ]
+          { \use:c { typestored~code } }
+          { \use:c { typestored~code } [ \c_novalue_tl ] }
+      }
+    \cs_new_protected:cpn { typestored~code } [#1] #2
+  }
   {
     \group_begin:
       \int_set:Nn \l__scontents_seq_item_int { 1 }
-      \IfValueT {#1} { \keys_set:nn { scontents / typemeaning } {#1} }
+      \tl_if_novalue:nF {#1} { \keys_set:nn { scontents / typemeaning } {#1} }
       \tl_set:Nx \l__scontents_temp_tl
-        {
-          \exp_args:NV \__scontents_getfrom_seq:nn \l__scontents_seq_item_int {#2}
-        }
+        { \exp_args:NV \__scontents_getfrom_seq:nn \l__scontents_seq_item_int {#2} }
       \tl_remove_once:NV \l__scontents_temp_tl \c__scontents_hidden_space_str
       \tl_log:N \l__scontents_temp_tl
       \tl_if_empty:NF \l__scontents_temp_tl
@@ -585,7 +929,9 @@
       \cs_set_eq:cN { do@noligs } \__scontents_do_noligs:N
       \__scontents_rescan_tokens:x
         {
-          \exp_not:N \begin{verbatimsc} ^^M
+          \__scontents_if_LaTeX:TF
+            { \exp_not:N \begin{verbatimsc} }
+            { \exp_not:N \verbatimsc } ^^M
           \exp_not:V #1 ^^M
           \g__scontents_end_verbatimsc_tl
         }
@@ -602,9 +948,28 @@
   {
     \cs_new_protected:Npn \exp_not:N \__scontents_xverb:w
       ##1 \g__scontents_end_verbatimsc_tl
+    \__scontents_if_LaTeX:TF
+      { { ##1 \exp_not:N \end{verbatimsc} } }
+      { { ##1 \exp_not:N \endverbatimsc } }
   }
-      { #1 \end{verbatimsc} }
-\NewDocumentEnvironment { verbatimsc } { }
+\__scontents_if_LaTeX:TF
+  { \NewDocumentEnvironment { verbatimsc } { } }
+  {
+    \cs_set:Npn \__scontents_tmp:w #1 #2
+      {
+        \cs_new_protected:Npn \verbatimsc
+          {
+            \group_begin:
+              #1
+          }
+        \cs_new_protected:Npn \endverbatimsc
+          {
+              #2
+            \group_end:
+          }
+      }
+    \__scontents_tmp:w
+  }
   {
     \cs_set_eq:cN { @xverbatim } \__scontents_xverb:
     \verbatim
@@ -628,15 +993,38 @@
     \char_set_catcode_active:N #1
     \char_set_active_eq:NN #1
   }
-\cs_new_protected:Npn \__scontents_make_control_chars_active:
-  {
-    \__scontents_set_active_eq:NN \^^I \__scontents_tab:
-    \__scontents_set_active_eq:NN \^^L \__scontents_par:
-    \__scontents_set_active_eq:NN \^^M \__scontents_ret:w
-  }
-\NewDocumentCommand { \setupsc } { +m }
+\group_begin:
+  \char_set_catcode_active:N \*
+  \cs_new_protected:Npn \__scontents_make_control_chars_active:
+    {
+      \__scontents_if_LaTeX:F
+        {
+          \group_begin:
+            \tex_lccode:D `* = `\^^L
+            \tex_lowercase:D { \group_end:
+            \tex_let:D * \scan_stop:
+          }
+        }
+      \__scontents_set_active_eq:NN \^^I \__scontents_tab:
+      \__scontents_set_active_eq:NN \^^L \__scontents_par:
+      \__scontents_set_active_eq:NN \^^M \__scontents_ret:w
+    }
+\group_end:
+\__scontents_if_LaTeX:TF
+  { \NewDocumentCommand { \setupsc } { +m } }
+  { \cs_new_protected:Npn \setupsc #1 }
   { \keys_set:nn { scontents } {#1} }
-\NewDocumentCommand { \meaningsc } { o m }
+\__scontents_if_LaTeX:TF
+  { \NewDocumentCommand { \meaningsc } { o m } }
+  {
+    \cs_new_protected:Npx \meaningsc
+      {
+        \peek_charcode_ignore_spaces:NTF [ % ]
+          { \use:c { meaningsc~code } }
+          { \use:c { meaningsc~code } [ \c_novalue_tl ] }
+      }
+    \cs_new_protected:cpn { meaningsc~code } [#1] #2
+  }
   {
     \group_begin:
       \int_set:Nn \l__scontents_seq_item_int { 1 }
@@ -660,9 +1048,13 @@
       \cs_replacement_spec:N \l__scontents_temp_tl
     }
 \group_end:
-\NewExpandableDocumentCommand { \countsc } { m }
+\__scontents_if_LaTeX:TF
+  { \NewExpandableDocumentCommand { \countsc } { m } }
+  { \cs_new:Npn \countsc #1 }
   { \seq_count:c { g__scontents_name_#1_seq } }
-\NewDocumentCommand { \cleanseqsc } { m }
+\__scontents_if_LaTeX:TF
+  { \NewDocumentCommand { \cleanseqsc } { m } }
+  { \cs_new_protected:Npn \cleanseqsc #1 }
   { \seq_clear_new:c { g__scontents_name_#1_seq } }
 \msg_new:nnn { scontents } { junk-after-begin }
   {
@@ -744,7 +1136,26 @@
   }
 \msg_new:nnn { scontents } { empty-environment }
   { scontents~environment~empty~\msg_line_context:. }
-\file_input_stop:
+\msg_new:nnnn { scontents } { verbatim-newline }
+  { Verbatim~argument~of~#1~ended~by~end~of~line. }
+  {
+    The~verbatim~argument~of~the~#1~cannot~contain~more~than~one~line,~
+    but~the~end~
+    of~the~current~line~has~been~reached.~You~may~have~forgotten~the~
+    closing~delimiter.
+    \\ \\
+    LaTeX~will~ignore~'#2'.
+  }
+\msg_new:nnnn { scontents } { verbatim-tokenized }
+  { The~verbatim~#1~cannot~be~used~inside~an~argument. }
+  {
+    The~#1~takes~a~verbatim~argument.~
+    It~may~not~appear~within~the~argument~of~another~function.~
+    It~received~an~illegal~token \tl_if_empty:nF {#3} { ~'#3' } .
+    \\ \\
+    LaTeX~will~ignore~'#2'.
+  }
+\__scontents_end_package_hook:
 \endinput
 %%
 %% End of file `scontents.sty'.

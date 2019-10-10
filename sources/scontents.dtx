@@ -1667,48 +1667,115 @@ No tab
 %<@@=scontents>
 %    \end{macrocode}
 %
-% Then, we can give the traditional declaration of a package written with
-% \pkg{expl3} and the necessary packages for its operation.
-%
+% First we check that the package isn't being loaded twice.
+% If so, we abort with an error.
 %    \begin{macrocode}
-\RequirePackage{l3keys2e}
-\RequirePackage{xparse}[2019/05/28]
-\ProvidesExplPackage{scontents}{2019/10/15}{1.5}
-  {Stores LaTeX contents in memory or files}
+\begingroup
+  \def\next{\endgroup}%
+  \expandafter\ifx\csname PackageError\endcsname\relax
+    \begingroup
+      \def\next{\endgroup\endgroup}%
+      \def\PackageError#1#2#3%
+        {%
+          \endgroup
+          \errhelp{#3}%
+          \errmessage{#1 Error: #2!}%
+        }%
+  \fi
+  \expandafter\ifx\csname unless\endcsname\relax
+    \def\next
+      {%
+        \PackageError{scontents}{scontents requires e-TeX.}
+          {scontents requires e-TeX extensions. Loading will abort.}%
+        \endgroup
+        \endinput
+      }%
+  \else
+    \def\SCempty{}
+    \unless\ifnum
+      \expandafter\ifx\csname ver@scontents.sty\endcsname\SCempty 1\else 0\fi % LaTeX
+      \expandafter\ifx\csname ver@scontents.sty\endcsname\relax 1\else 0\fi % plain
+      >0
+      \def\next
+        {%
+          \PackageError{scontents}{scontents already loaded.}
+            {scontents is already loaded. Loading will abort.}%
+          \endgroup
+          \endinput
+        }%
+    \fi
+  \fi
+\next
 %    \end{macrocode}
+% To allow the package to be loaded in other formats some
+% working-around is necessary. The following loader was copied
+% from Bruno Le Floch's \mypkg{gtl} package.
 %
-% A check to make sure that \pkg{expl3} is not too old.
-%
+% First we check if \cs{RequirePackage} exists to choose
+% between \LaTeX{} and otherwise.
 %    \begin{macrocode}
-\@ifpackagelater { expl3 } { 2019/09/19 }
-  { }
+\begingroup\expandafter\expandafter\expandafter\endgroup
+\expandafter\ifx\csname RequirePackage\endcsname\relax
+  \input expl3-generic.tex
+\else
+  \RequirePackage{expl3}[2019/05/28]
+\fi
+%    \end{macrocode}
+% Then we can check using \cs{ProvidesExplPackage}. If it exists,
+% we load use it, otherwise we define a temporary macro that will
+% just log the package name and version.
+%    \begin{macrocode}
+\ExplSyntaxOn
+\cs_if_exist:NTF \ProvidesExplPackage
   {
-    \PackageError { scontents } { Support~package~expl3~too~old }
+    \cs_new_eq:NN \@@_end_package_hook: \prg_do_nothing:
+    \prg_new_conditional:Npnn \@@_if_LaTeX: { T, F, TF }
+      { \prg_return_true: }
+    \ExplSyntaxOff
+    \ProvidesExplPackage
+  }
+  {
+    \cs_new_eq:NN \@@_end_package_hook: \ExplSyntaxOff
+    \prg_new_conditional:Npnn \@@_if_LaTeX: { T, F, TF }
+      { \prg_return_false: }
+    \group_begin:
+    \ExplSyntaxOff
+    \cs_set_protected:Npn \@@_tmp:w #1#2#3#4
       {
-        You~need~to~update~your~installation~of~the~bundles~
-        'l3kernel'~and~'l3packages'.\MessageBreak
-        Loading~scontents~will~abort!
+        \group_end:
+        \tl_gset:cx { ver @ #1 . sty } { #2 ~ v#3 ~ #4 }
+        \cs_if_exist_use:NF \wlog { \iow_log:x }
+          { Package: ~ #1 ~ #2 ~ v#3 ~ #4 }
       }
-    \file_input_stop:
+    \@@_tmp:w
   }
+      {scontents} {2019/10/15} {1.5} {Stores LaTeX contents in memory or files}
 %    \end{macrocode}
 %
-% We check if the \pkg{verbatim} package is loaded and show a compatibility message.
-%
-%^^A I've added a conditional in case a debug key is added in the future.
+% Now we load auxiliary packages if in \LaTeX{} mode.
 %    \begin{macrocode}
-\prg_new_conditional:Nnn \@@_package_if_loaded:n { p, T, F , TF }
+\@@_if_LaTeX:T
   {
-    \use:c { @ifpackageloaded } { #1 } { \prg_return_true: } { \prg_return_false: }
-  }
-\@@_package_if_loaded:nT { verbatim }
-  {
-    \iow_term:n
+    \RequirePackage{l3keys2e}
+    \RequirePackage{xparse}[2019/05/28]
+%    \end{macrocode}
+%
+% We also check if the \pkg{verbatim} package is loaded and show a compatibility message.
+%    \begin{macrocode}
+    \prg_new_conditional:Nnn \@@_package_if_loaded:n { p, T, F , TF }
       {
-        The~implementation~of~the~'verbatimsc'~environment~\\
-        used~by~\tl_to_str:n{\typestored} is~not~compatible~with~package\\
-        'verbatim'.~Review~the~documentation~and~redefine~\\
-        the~'verbatimsc'~environment.
+        \use:c { @ifpackageloaded } { #1 }
+          { \prg_return_true: } { \prg_return_false: }
+      }
+    \@@_package_if_loaded:nT { verbatim }
+      {
+        \iow_term:n
+          {
+            The~implementation~of~the~'verbatimsc'~environment~\\
+            used~by~\tl_to_str:n{\typestored} is~not~compatible~with~package\\
+            'verbatim'.~Review~the~documentation~and~redefine~\\
+            the~'verbatimsc'~environment.
+          }
       }
   }
 %    \end{macrocode}
@@ -1747,6 +1814,11 @@ No tab
     store-all .meta:n           = { store-env = #1 , store-cmd = #1 },
     store-all .value_required:n = true
   }
+\@@_if_LaTeX:F
+  {
+    \keys_define:nn { scontents }
+      { verb-font .initial:n    = \tt }
+  }
 %    \end{macrocode}
 %
 % We process the \mymeta{keys} as options passed on to the package, the
@@ -1754,7 +1826,7 @@ No tab
 % an error when they are \emph{unknown}.
 %
 %    \begin{macrocode}
-\ProcessKeysOptions { scontents }
+\@@_if_LaTeX:T { \ProcessKeysOptions { scontents } }
 %    \end{macrocode}
 %
 % \subsection{Internal variables}
@@ -1851,12 +1923,24 @@ No tab
   \g_@@_end_verbatimsc_tl
   {
     \char_set_catcode_other:N \\
-    \char_set_catcode_other:N \{
-    \char_set_catcode_other:N \}
+    \@@_if_LaTeX:TF
+      {
+        \char_set_catcode_other:N \{
+        \char_set_catcode_other:N \}
+      }
+      {
+        \char_set_catcode_ignore:N \{
+        \char_set_catcode_ignore:N \}
+      }
   }
   { \end{verbatimsc} }
 \tl_const:Nx \c_@@_end_env_tl
-  { \c_backslash_str end \c_left_brace_str scontents \c_right_brace_str }
+  {
+    \c_backslash_str end
+      \@@_if_LaTeX:T \c_left_brace_str
+        scontents
+      \@@_if_LaTeX:T \c_right_brace_str
+  }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -2185,7 +2269,7 @@ No tab
 %
 % \begin{macro}{\@@_lastfrom_seq:n}
 %   \cs{@@_lastfrom_seq:n} retrieves the last saved item from the
-%   sequence when \cs{l_@@__print_env_bool} or \cs{l_@@__print_cmd_bool}
+%   sequence when \cs{l_@@_print_env_bool} or \cs{l_@@_print_cmd_bool}
 %   is true.
 %
 %    \begin{macrocode}
@@ -2224,7 +2308,24 @@ No tab
 %   This is the main environment used in the document.
 %
 %    \begin{macrocode}
-\NewDocumentEnvironment { scontents } { }
+\@@_if_LaTeX:TF
+  { \NewDocumentEnvironment { scontents } { } }
+  {
+    \cs_set:Npn \@@_tmp:w #1 #2
+      {
+        \cs_new_protected:Npn \scontents
+          {
+            \group_begin:
+              #1
+          }
+        \cs_new_protected:Npn \endscontents
+          {
+              #2
+            \group_end:
+          }
+      }
+    \@@_tmp:w
+  }
   {
     \char_set_catcode_active:N \^^M
     \@@_start_environment:w
@@ -2252,9 +2353,11 @@ No tab
 %   \cs{@@_normalise_line_ends:N} is used to replace active §^^M§
 %   characters by spaces.
 %    \begin{macrocode}
-\NewDocumentCommand \@@_grab_optional:w { r[] }
+\@@_if_LaTeX:TF
+  { \NewDocumentCommand \@@_grab_optional:w { r[] } }
+  { \cs_new_protected:Npn \@@_grab_optional:w [#1] }
   {
-    \IfValueT {#1}
+    \tl_if_novalue:nF {#1}
       {
         \tl_set:Nn \l_@@_temp_tl {#1}
         \@@_normalise_line_ends:N \l_@@_temp_tl
@@ -2407,7 +2510,9 @@ No tab
                   { \@@_verb_processor_output:n {#1} }
                 \cs_set_protected:Npx \@@_ret:w
                   {
-                    \exp_not:N \end{scontents}
+                    \@@_if_LaTeX:TF
+                      { \exp_not:N \end{scontents} }
+                      { \endscontents }
                     \bool_lazy_or:nnF
                       { \tl_if_blank_p:n {#2} }
                       { \str_if_eq_p:ee {#2} { \c_percent_str } }
@@ -2551,6 +2656,223 @@ No tab
 %    \end{macrocode}
 % \end{macro}
 %
+% \subsection{Compatibility layer with Plain}
+%
+% \begin{macro}{\@@_cs_new_verb:Nn}
+%   When loading the package outside of \LaTeX{} we can't use \pkg{xparse},
+%   unfortunately, so we need to devise some own code for defining user-level
+%   functions. The \cs{@@_cs_new_verb:Nn} macro defines a verbatim macro similar
+%   to a function defined with \pkg{xparse}'s §v§ argument type.
+%
+%   The bunch of macros below is copied from \pkg{xparse}.
+%    \begin{macrocode}
+\@@_if_LaTeX:T { \@@_use_none_delimit_by_q_stop:w }
+\tl_new:N \l_@@_v_arg_tl
+\bool_new:N \l_@@_long_bool
+\cs_new_protected:Npn \@@_grab_v:Nw
+  {
+    \bool_set_false:N \l_@@_long_bool
+    \@@_grab_v_aux:w
+  }
+\cs_new_protected:Npn \@@_grab_v_long:Nw
+  {
+    \bool_set_true:N \l_@@_long_bool
+    \@@_grab_v_aux:w
+  }
+\cs_new_protected:Npn \@@_grab_v_aux:w #1
+  {
+    \cs_set_eq:NN \@@_run_code: #1
+    \group_begin:
+      \group_align_safe_begin:
+        \int_set:Nn \tex_escapechar:D { 92 }
+        \tl_clear:N \l_@@_v_arg_tl
+        \peek_remove_spaces:n
+          {
+            \peek_meaning_remove:NTF \c_group_begin_token
+              {
+                \group_align_safe_end:
+                \@@_grab_v_bgroup:
+              }
+              {
+                \peek_N_type:TF
+                  { \@@_grab_v_aux_test:N }
+                  { \@@_grab_v_aux_abort:n { } }
+              }
+          }
+  }
+\cs_new_protected:Npn \@@_grab_v_group_end:
+  {
+        \group_align_safe_end:
+        \exp_args:NNNo
+      \group_end:
+    \tl_set:Nn \l_@@_v_arg_tl { \l_@@_v_arg_tl }
+  }
+\cs_new_protected:Npn \@@_grab_v_aux_test:N #1
+  {
+    \@@_grab_v_token_if_char:NTF #1
+      {
+        \@@_grab_v_aux_put:N #1
+        \@@_grab_v_aux_catcodes:
+        \@@_grab_v_aux_loop:N #1
+      }
+      { \@@_grab_v_aux_abort:n {#1} #1 }
+  }
+\cs_new_protected:Npn \@@_grab_v_aux_loop:N #1
+  {
+    \peek_N_type:TF
+      { \@@_grab_v_aux_loop:NN #1 }
+      { \@@_grab_v_aux_abort:n { } }
+  }
+\cs_new_protected:Npn \@@_grab_v_aux_loop:NN #1#2
+  {
+    \@@_grab_v_token_if_char:NTF #2
+      {
+        \token_if_eq_charcode:NNTF #1 #2
+          { \@@_grab_v_aux_loop_end: }
+          {
+            \@@_grab_v_aux_put:N #2
+            \@@_grab_v_aux_loop:N #1
+          }
+      }
+      { \@@_grab_v_aux_abort:n {#2} #2 }
+  }
+\cs_new_protected:Npn \@@_grab_v_aux_loop_end:
+  {
+    \@@_grab_v_group_end:
+    \@@_add_arg:x { \tl_tail:N \l_@@_v_arg_tl }
+  }
+\int_new:N \l_@@_v_nesting_int
+\cs_new_protected:Npx \@@_grab_v_bgroup:
+  {
+    \exp_not:N \@@_grab_v_aux_catcodes:
+    \exp_not:n { \int_set:Nn \l_@@_v_nesting_int { 1 } }
+    \exp_not:N \@@_grab_v_aux_put:N \iow_char:N \{
+    \exp_not:N \@@_grab_v_bgroup_loop:
+  }
+\cs_new_protected:Npn \@@_grab_v_bgroup_loop:
+  {
+    \peek_N_type:TF
+      { \@@_grab_v_bgroup_loop:N }
+      { \@@_grab_v_aux_abort:n { } }
+  }
+\cs_new_protected:Npn \@@_grab_v_bgroup_loop:N #1
+  {
+    \@@_grab_v_token_if_char:NTF #1
+      {
+        \token_if_eq_charcode:NNTF \c_group_end_token #1
+          {
+            \int_decr:N \l_@@_v_nesting_int
+            \int_compare:nNnTF \l_@@_v_nesting_int > 0
+              {
+                \@@_grab_v_aux_put:N #1
+                \@@_grab_v_bgroup_loop:
+              }
+              { \@@_grab_v_aux_loop_end: }
+          }
+          {
+            \token_if_eq_charcode:NNT \c_group_begin_token #1
+              { \int_incr:N \l_@@_v_nesting_int }
+            \@@_grab_v_aux_put:N #1
+            \@@_grab_v_bgroup_loop:
+          }
+      }
+      { \@@_grab_v_aux_abort:n {#1} #1 }
+  }
+\cs_new_protected:Npn \@@_grab_v_aux_catcodes:
+  {
+    \cs_set_eq:NN \do \char_set_catcode_other:N
+    \dospecials
+    \tex_endlinechar:D = `\^^M \scan_stop:
+    \bool_if:NTF \l_@@_long_bool
+      { \char_set_catcode_other:n { \tex_endlinechar:D } }
+      { \char_set_catcode_parameter:n { \tex_endlinechar:D } }
+  }
+\cs_new_protected:Npn \@@_grab_v_aux_abort:n #1
+  {
+    \@@_grab_v_group_end:
+    \exp_after:wN \exp_after:wN \exp_after:wN
+      \peek_meaning_remove:NTF \char_generate:nn { \tex_endlinechar:D } { 6 }
+      {
+        \msg_error:nnxxx { xparse } { verbatim-newline }
+          { \@@_environment_or_command: }
+          { \tl_to_str:N \l_@@_v_arg_tl }
+          { \tl_to_str:n {#1} }
+        \@@_add_arg:o \c_novalue_tl
+      }
+      {
+        \msg_error:nnxxx { xparse } { verbatim-tokenized }
+          { \@@_environment_or_command: }
+          { \tl_to_str:N \l_@@_v_arg_tl }
+          { \tl_to_str:n {#1} }
+        \@@_add_arg:o \c_novalue_tl
+      }
+  }
+\cs_new_protected:Npn \@@_grab_v_aux_put:N #1
+  {
+    \tl_put_right:Nx \l_@@_v_arg_tl
+      {
+        \token_if_active:NTF #1
+          { \exp_not:N #1 } { \token_to_str:N #1 }
+      }
+  }
+\cs_new_protected:Npn \@@_grab_v_token_if_char:NTF #1
+  { \str_if_eq:eeTF { } { \str_tail:n {#1} } }
+\use_none:n \q_@@_stop
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\verbatim,\endverbatim}
+%   In Plain we emulate \LaTeX's \env{verbatim} environment.
+%    \begin{macrocode}
+\@@_if_LaTeX:T { \@@_use_none_delimit_by_q_stop:w }
+\group_begin:
+  \char_set_catcode_letter:N \@
+  \bool_new:N \l_@@_temp_bool
+  \cs_new_protected:Npn \verbatim
+    { \@@_verbatim_aux: \frenchspacing \@@_vobeyspaces: \@xverbatim }
+  \cs_new_protected:Npn \@@_verbatim_aux:
+    {
+      \skip_vertical:N \parskip
+      \int_set:Nn \parindent { 0pt }
+      \skip_set:Nn \parfillskip { 0pt plus 1fil }
+      \int_set:Nn \parskip { 0pt plus0pt minus0pt }
+      \tex_par:D
+      \bool_set_false:N \l_@@_temp_bool
+      \cs_set:Npn \par
+        {
+          \bool_if:NTF \l_@@_temp_bool
+            {
+              \mode_leave_vertical:
+              \null
+              \tex_par:D
+              \penalty \interlinepenalty
+            }
+            {
+              \bool_set_true:N \l_@@_temp_bool
+              \mode_if_horizontal:T
+                { \tex_par:D \penalty \interlinepenalty }
+            }
+        }
+      \cs_set_eq:NN \do \char_set_catcode_other:N
+        \dospecials
+      \obeylines
+      \tl_use:N \l_@@_verb_font_tl
+      \cs_set_eq:NN \do \@@_do_noligs:N
+      \@@_nolig_list:
+      \tex_everypar:D \exp_after:wN
+        { \tex_the:D \tex_everypar:D \tex_unpenalty:D }
+    }
+  \cs_new_protected:Npn \@@_nolig_list:
+    { \do\`\do\<\do\>\do\,\do\'\do\- }
+  \cs_new_protected:Npn \@@_vobeyspaces:
+    { \char_set_active_eq:NN \  \@@_xobeysp: }
+  \cs_new_protected:Npn \@@_xobeysp:
+    { \mode_leave_vertical: \nobreak \ }
+\group_end:
+\use_none:n \q_@@_stop
+%    \end{macrocode}
+% \end{macro}
+%
 % \subsection{The command \cs{Scontents}}
 %
 % User command to \mymeta{stored content}, adapted from
@@ -2568,13 +2890,29 @@ No tab
 %   argument parser.
 %
 %    \begin{macrocode}
-\NewDocumentCommand { \Scontents }{ !s !O{} }
+\@@_if_LaTeX:TF
+  { \NewDocumentCommand { \Scontents }{ !s !O{} } }
+  {
+    \cs_new_protected:Npn \Scontents
+      {
+        \peek_charcode_remove:NTF *
+          { \@@_Scontents_auxi:N \c_true_bool }
+          { \@@_Scontents_auxi:N \c_false_bool }
+      }
+    \cs_new_protected:Npx \@@_Scontents_auxi:N #1
+      {
+        \peek_charcode:NTF [ % ]
+          { \use:c { Scontents~code } \c_true_bool }
+          { \use:c { Scontents~code } \c_true_bool [ \c_novalue_tl ] }
+      }
+    \cs_new_protected:cpn { Scontents~code } #1 [#2]
+  }
   {
     \group_begin:
-      \IfNoValueF {#2}
+      \tl_if_novalue:nF {#2}
         { \keys_set:nn { scontents / Scontents } {#2} }
       \char_set_catcode_active:n { 9 }
-      \IfBooleanTF {#1}
+      \bool_if:NTF #1
         { \@@_verb_arg:w }
         { \@@_norm_arg:n }
   }
@@ -2587,7 +2925,13 @@ No tab
         { \@@_lastfrom_seq:n \l_@@_name_seq_cmd_tl }
     \group_end:
   }
-\NewDocumentCommand { \@@_verb_arg:w } { +v }
+\@@_if_LaTeX:TF
+  { \NewDocumentCommand { \@@_verb_arg:w } { +v } }
+  {
+    \cs_new_protected:Npn \@@_verb_arg:w
+      { \exp_args:Nc \@@_grab_v_long:Nw { verb_arg~code } }
+    \cs_new_protected:cpn { verb_arg~code } #1
+  }
   {
       \tl_set:Nx \l_@@_temp_tl { \exp_not:n {#1} }
       \tl_replace_all:Nxx \l_@@_temp_tl { \iow_char:N \^^M } { \iow_char:N \^^J }
@@ -2608,7 +2952,17 @@ No tab
 %   (robust).
 %
 %    \begin{macrocode}
-\NewDocumentCommand { \getstored } { O{1} m }
+\@@_if_LaTeX:TF
+  { \NewDocumentCommand { \getstored } { O{1} m } }
+  {
+    \cs_new_protected:Npn \getstored
+      {
+        \peek_charcode_ignore_spaces:NTF [ % ]
+          { \use:c { getstored~code } }
+          { \use:c { getstored~code } [ 1 ] }
+      }
+    \cs_new_protected:cpn { getstored~code } [#1] #2
+  }
   {
     \group_begin:
       \@@_rescan_tokens:x
@@ -2624,10 +2978,20 @@ No tab
 %   User command §\foreachsc§ to loop over \mymeta{stored content} in |seq|.
 %
 %    \begin{macrocode}
-\NewDocumentCommand { \foreachsc }{ o m }
+\@@_if_LaTeX:TF
+  { \NewDocumentCommand { \foreachsc } { o m } }
+  {
+    \cs_new_protected:Npx \foreachsc
+      {
+        \peek_charcode_ignore_spaces:NTF [ % ]
+          { \use:c { foreachsc~code } }
+          { \use:c { foreachsc~code } [ \c_novalue_tl ] }
+      }
+    \cs_new_protected:cpn { foreachsc~code } [#1] #2
+  }
   {
     \group_begin:
-      \IfValueT {#1} { \keys_set:nn { scontents / foreachsc } {#1} }
+      \tl_if_novalue:nF {#1} { \keys_set:nn { scontents / foreachsc } {#1} }
       \tl_set:Nn \l_@@_foreach_name_seq_tl {#2}
       \seq_clear:N \l_@@_foreach_print_seq
       \bool_if:NF \l_@@_foreach_stop_bool
@@ -2670,15 +3034,23 @@ No tab
 %   to the log file, and then calls \cs{@@_verb_print:N}.
 %
 %    \begin{macrocode}
-\NewDocumentCommand { \typestored } { o m }
+\@@_if_LaTeX:TF
+  { \NewDocumentCommand { \typestored } { o m } }
+  {
+    \cs_new_protected:Npx \typestored
+      {
+        \peek_charcode_ignore_spaces:NTF [ % ]
+          { \use:c { typestored~code } }
+          { \use:c { typestored~code } [ \c_novalue_tl ] }
+      }
+    \cs_new_protected:cpn { typestored~code } [#1] #2
+  }
   {
     \group_begin:
       \int_set:Nn \l_@@_seq_item_int { 1 }
-      \IfValueT {#1} { \keys_set:nn { scontents / typemeaning } {#1} }
+      \tl_if_novalue:nF {#1} { \keys_set:nn { scontents / typemeaning } {#1} }
       \tl_set:Nx \l_@@_temp_tl
-        {
-          \exp_args:NV \@@_getfrom_seq:nn \l_@@_seq_item_int {#2}
-        }
+        { \exp_args:NV \@@_getfrom_seq:nn \l_@@_seq_item_int {#2} }
       \tl_remove_once:NV \l_@@_temp_tl \c_@@_hidden_space_str
       \tl_log:N \l_@@_temp_tl
       \tl_if_empty:NF \l_@@_temp_tl
@@ -2704,7 +3076,9 @@ No tab
       \cs_set_eq:cN { do@noligs } \@@_do_noligs:N
       \@@_rescan_tokens:x
         {
-          \exp_not:N \begin{verbatimsc} ^^M
+          \@@_if_LaTeX:TF
+            { \exp_not:N \begin{verbatimsc} }
+            { \exp_not:N \verbatimsc } ^^M
           \exp_not:V #1 ^^M
           \g_@@_end_verbatimsc_tl
         }
@@ -2726,9 +3100,28 @@ No tab
   {
     \cs_new_protected:Npn \exp_not:N \@@_xverb:w
       ##1 \g_@@_end_verbatimsc_tl
+    \@@_if_LaTeX:TF
+      { { ##1 \exp_not:N \end{verbatimsc} } }
+      { { ##1 \exp_not:N \endverbatimsc } }
   }
-      { #1 \end{verbatimsc} }
-\NewDocumentEnvironment { verbatimsc } { }
+\@@_if_LaTeX:TF
+  { \NewDocumentEnvironment { verbatimsc } { } }
+  {
+    \cs_set:Npn \@@_tmp:w #1 #2
+      {
+        \cs_new_protected:Npn \verbatimsc
+          {
+            \group_begin:
+              #1
+          }
+        \cs_new_protected:Npn \endverbatimsc
+          {
+              #2
+            \group_end:
+          }
+      }
+    \@@_tmp:w
+  }
   {
     \cs_set_eq:cN { @xverbatim } \@@_xverb:
     \verbatim
@@ -2778,19 +3171,31 @@ No tab
 %     \@@_make_control_chars_active:,
 %   }
 %   Shortcut definitions for common catcode changes.
-%
+%   The §^^L§ needs a special treatment in non-\LaTeX{} mode
+%   because in Plain\,\TeX{} it is an \cs{outer} token.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_set_active_eq:NN #1
   {
     \char_set_catcode_active:N #1
     \char_set_active_eq:NN #1
   }
-\cs_new_protected:Npn \@@_make_control_chars_active:
-  {
-    \@@_set_active_eq:NN \^^I \@@_tab:
-    \@@_set_active_eq:NN \^^L \@@_par:
-    \@@_set_active_eq:NN \^^M \@@_ret:w
-  }
+\group_begin:
+  \char_set_catcode_active:N \*
+  \cs_new_protected:Npn \@@_make_control_chars_active:
+    {
+      \@@_if_LaTeX:F
+        {
+          \group_begin:
+            \tex_lccode:D `* = `\^^L
+            \tex_lowercase:D { \group_end:
+            \tex_let:D * \scan_stop:
+          }
+        }
+      \@@_set_active_eq:NN \^^I \@@_tab:
+      \@@_set_active_eq:NN \^^L \@@_par:
+      \@@_set_active_eq:NN \^^M \@@_ret:w
+    }
+\group_end:
 %    \end{macrocode}
 % \end{macro}
 %
@@ -2802,7 +3207,9 @@ No tab
 %   A user-level wrapper for \cs{keys_set:nn}§{ scontents }§.
 %
 %    \begin{macrocode}
-\NewDocumentCommand { \setupsc } { +m }
+\@@_if_LaTeX:TF
+  { \NewDocumentCommand { \setupsc } { +m } }
+  { \cs_new_protected:Npn \setupsc #1 }
   { \keys_set:nn { scontents } {#1} }
 %    \end{macrocode}
 % \end{macro}
@@ -2813,7 +3220,17 @@ No tab
 %   User command §\meaningsc§ to see content stored in |seq|.
 %
 %    \begin{macrocode}
-\NewDocumentCommand { \meaningsc } { o m }
+\@@_if_LaTeX:TF
+  { \NewDocumentCommand { \meaningsc } { o m } }
+  {
+    \cs_new_protected:Npx \meaningsc
+      {
+        \peek_charcode_ignore_spaces:NTF [ % ]
+          { \use:c { meaningsc~code } }
+          { \use:c { meaningsc~code } [ \c_novalue_tl ] }
+      }
+    \cs_new_protected:cpn { meaningsc~code } [#1] #2
+  }
   {
     \group_begin:
       \int_set:Nn \l_@@_seq_item_int { 1 }
@@ -2847,7 +3264,9 @@ No tab
 %   User command §\countsc§ to count number of contents stored in |seq|.
 %
 %    \begin{macrocode}
-\NewExpandableDocumentCommand { \countsc } { m }
+\@@_if_LaTeX:TF
+  { \NewExpandableDocumentCommand { \countsc } { m } }
+  { \cs_new:Npn \countsc #1 }
   { \seq_count:c { g_@@_name_#1_seq } }
 %    \end{macrocode}
 % \end{macro}
@@ -2859,7 +3278,9 @@ No tab
 %   A user command §\cleanseqsc§ to clear (remove) a defined |seq|.
 %
 %    \begin{macrocode}
-\NewDocumentCommand { \cleanseqsc } { m }
+\@@_if_LaTeX:TF
+  { \NewDocumentCommand { \cleanseqsc } { m } }
+  { \cs_new_protected:Npn \cleanseqsc #1 }
   { \seq_clear_new:c { g_@@_name_#1_seq } }
 %    \end{macrocode}
 % \end{macro}
@@ -2949,6 +3370,25 @@ No tab
   }
 \msg_new:nnn { scontents } { empty-environment }
   { scontents~environment~empty~\msg_line_context:. }
+\msg_new:nnnn { scontents } { verbatim-newline }
+  { Verbatim~argument~of~#1~ended~by~end~of~line. }
+  {
+    The~verbatim~argument~of~the~#1~cannot~contain~more~than~one~line,~
+    but~the~end~
+    of~the~current~line~has~been~reached.~You~may~have~forgotten~the~
+    closing~delimiter.
+    \\ \\
+    LaTeX~will~ignore~'#2'.
+  }
+\msg_new:nnnn { scontents } { verbatim-tokenized }
+  { The~verbatim~#1~cannot~be~used~inside~an~argument. }
+  {
+    The~#1~takes~a~verbatim~argument.~
+    It~may~not~appear~within~the~argument~of~another~function.~
+    It~received~an~illegal~token \tl_if_empty:nF {#3} { ~'#3' } .
+    \\ \\
+    LaTeX~will~ignore~'#2'.
+  }
 %    \end{macrocode}
 %
 % \subsection{Finish package}
@@ -2956,7 +3396,7 @@ No tab
 % Finish package implementation.
 %
 %    \begin{macrocode}
-\file_input_stop:
+\@@_end_package_hook:
 %    \end{macrocode}
 % \iffalse
 %</package>
