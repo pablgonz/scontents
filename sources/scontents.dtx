@@ -781,13 +781,13 @@ and the derived files           scontents.ins,
 %   \end{syntax}
 %
 % The \myenv*{scontents} environment allows you to \mymeta{store} and \mymeta{write}
-% content, including \emph{verbatim} material. After the package has been loaded,
-% the environment can be used both in the preamble and in the body of the document.
+% content, including \emph{verbatim} material. After the package has been
+% loaded, the environment can be used both in the preamble and in the body
+% of the document.
 %
-% For the correct operation §\begin{scontents}§ and §\end{scontents}§ must be in
-% different lines, all \mymeta{keys} must be passed in a \mymeta{single line} separated
-% by commas \enquote{without vertical spaces} and \enquote{without separation} of
-% the start of the environment.
+% For the correct operation §\begin{scontents}§ and §\end{scontents}§ must
+% be in different lines, all \mymeta{keys} must be passed separated by
+% commas and \enquote{without separation} of the start of the environment.
 % \end{function}
 %
 % Comments \enquote{\textcolor{gray}{\%}} or \enquote{any character} after
@@ -1601,8 +1601,10 @@ No tab
 % \begin{description}[font=\small\sffamily,wide=0pt,style=multiline,leftmargin=\descrwidth,nosep,noitemsep]
 % \item [\fileversion{} (dev), \filedate]
 %    \begin{itemize}
+%        \item Add support for vertical spaces in |key=val|.
+%        \item Add support for plain.
 %        \item Add |\foreachsc| command.
-%        \item Check  if |verbatim| package is loaded.
+%        \item Check if |verbatim| package is loaded.
 %    \end{itemize}
 % \item [v1.4 (ctan), 2019/10/03]
 %    \begin{itemize}
@@ -2821,7 +2823,7 @@ No tab
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\verbatim,\endverbatim}
+% \begin{macro}[int]{\verbatim,\endverbatim}
 %   In Plain we emulate \LaTeX's \env{verbatim} environment.
 %    \begin{macrocode}
 \@@_if_LaTeX:T { \@@_use_none_delimit_by_q_stop:w }
