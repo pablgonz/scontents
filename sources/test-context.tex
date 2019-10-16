@@ -1,0 +1,28 @@
+\usemodule[scontents]
+
+\starttext
+Test scontents in ConText
+
+\startscontents[store-env=another]
+Some text here A
+\stopscontents
+
+\startscontents[store-env=test]
+Some text here B
+\stopscontents
+
+\startscontents[store-env=test]
+Some text here C
+\stopscontents
+
+\Scontents{Some text here D}
+\Scontents*{Some text here E}
+\Scontents*|Some text here F|
+
+%\meaningsc[1]{contents}
+%\meaningsc[2]{contents}
+%\typestored[2]{test}
+%\typestored[1]{test}
+\getstored[1]{another}
+
+\stoptext
