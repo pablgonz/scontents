@@ -1,0 +1,25 @@
+%D \module
+%D   [     file=t-scontents,
+%D      version=1.5,
+%D        title=\CONTEXT\ User Module,
+%D     subtitle=Storing Contents,
+%D       author=Pablo González,
+%D         date=2019.10.16,
+%D    copyright=Pablo González,
+%D        email=pablgonz@educarchile.cl,
+%D      license=LPPL]
+
+% ConTeXt module scontents.
+\writestatus{loading}{User Module scontents v1.5}
+
+\unprotect
+
+\input scontents.sty
+
+\let\startscontents=\scontents
+\let\stoptscontents=\endscontents
+
+\stopmodule
+
+\protect
+\endinput
