@@ -1,0 +1,35 @@
+
+\usemodule[scontents]
+\starttext
+
+\startscontents[store-env=another]
+Leaving:
+\aftergroup\stoptext :D
+\stopscontents
+
+\startscontents[store-env=test]
+\begingroup
+  \catcode`\|=0
+  |def|something{I am verbatim!}
+|endgroup
+\something
+\stopscontents
+
+\startscontents[store-env=test]
+\hello :D
+\stopscontents
+
+\Scontents*{\abcde}
+\Scontents*|\fghij|
+
+\meaningsc[1]{contents}
+
+\meaningsc[2]{contents}
+
+\typestored[2]{test}
+
+\typestored[1]{test}
+
+\getstored[1]{another}
+
+It should not get here as the getstored above contains a \stoptext
