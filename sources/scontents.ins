@@ -1,0 +1,58 @@
+\input l3docstrip.tex
+% \keepsilent
+\askforoverwritefalse
+\declarepreamble\standard
+
+Copyright (C) 2019 by Pablo González L <pablgonz@educarchile.cl>
+
+This work may be distributed and/or modified under the conditions of the
+LaTeX Project Public License, either version 1.3c of this license or (at
+your option) any later version. The latest version of this license is in
+
+ http://www.latex-project.org/lppl.txt
+
+and version 1.3c or later is part of all distributions of LaTeX version
+2005/12/01 or later.
+
+This work is "maintained" (as per the LPPL maintenance status)
+by Pablo González Luengo.
+
+This work consists of the files scontents.dtx and
+                                scontents.ins,
+and the derived files           scontents.sty,
+                                scontents.tex,
+                                t-scontents.mkvi and
+                                scontents-code.tex.
+
+\endpreamble
+%
+\catcode`\@=11
+\let\org@ds@heading\ds@heading
+\def\ds@heading{}
+\def\MetaPrefix{\perCent D}
+\declarepreamble\context
+ \string\module
+   [     file=t-scontents,
+      version=1.5,
+        title=\string\CONTEXT\ User Module,
+     subtitle=Storing Contents,
+       author=Pablo González,
+         date=2019.10.16,
+    copyright=Pablo González,
+        email=pablgonz@educarchile.cl,
+      license=LPPL]
+\endpreamble
+\let\ds@heading\org@ds@heading
+\let\MetaPrefix\DoubleperCent
+%
+\usedir{tex/latex/scontents}
+\generate{%
+  \usepreamble\standard
+  \file{scontents.sty}     {\from{scontents.dtx}{loader,latex}}%
+  \file{scontents.tex}     {\from{scontents.dtx}{loader,plain}}%
+  \file{scontents-code.tex}{\from{scontents.dtx}{core}}%
+  \edef\tmpa{\standard^^J\context}\usepreamble\tmpa
+  \file{t-scontents.mkvi}  {\from{scontents.dtx}{loader,context}}%
+}%
+
+\endbatchfile

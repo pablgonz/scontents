@@ -1,0 +1,764 @@
+%%
+%% This is file `scontents-code.tex',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% scontents.dtx  (with options: `core')
+%% 
+%% Copyright (C) 2019 by Pablo González L <pablgonz@educarchile.cl>
+%% 
+%% This work may be distributed and/or modified under the conditions of the
+%% LaTeX Project Public License, either version 1.3c of this license or (at
+%% your option) any later version. The latest version of this license is in
+%% 
+%%  http://www.latex-project.org/lppl.txt
+%% 
+%% and version 1.3c or later is part of all distributions of LaTeX version
+%% 2005/12/01 or later.
+%% 
+%% This work is "maintained" (as per the LPPL maintenance status)
+%% by Pablo González Luengo.
+%% 
+%% This work consists of the files scontents.dtx and
+%%                                 scontents.ins,
+%% and the derived files           scontents.sty,
+%%                                 scontents.tex,
+%%                                 t-scontents.mkvi and
+%%                                 scontents-code.tex.
+%% 
+\def\ScontentsCoreFileDate{2019-10-16}%
+\begingroup
+  \def\next{\endgroup}%
+  \expandafter\ifx\csname PackageError\endcsname\relax
+    \begingroup
+      \def\next{\endgroup\endgroup}%
+      \def\PackageError#1#2#3%
+        {%
+          \endgroup
+          \errhelp{#3}%
+          \errmessage{#1 Error: #2!}%
+        }%
+  \fi
+  \expandafter\ifx\csname ScontentsFileDate\endcsname\relax
+    \def\next
+      {%
+        \PackageError{scontents}{No scontents loader detected}
+          {%
+            You have attempted to use the scontents code directly rather than using
+            the correct loader. Loading of scontents will abort.
+          }%
+        \endgroup
+        \endinput
+      }
+  \else
+    \ifx\ScontentsFileDate\ScontentsCoreFileDate
+    \else
+      \def\next
+        {%
+          \PackageError{scontents}{Mismatched~scontents~files~detected}
+            {%
+              You~have~attempted~to~load~scontents~with~mismatched~files:~
+              probably~you~have~one~or~more~files~'locally~installed'~which~
+              are~in~conflict.~Loading~of~scontents~will~abort.
+            }%
+          \endgroup
+          \endinput
+        }%
+    \fi
+\fi
+\next
+\keys_define:nn { scontents }
+  {
+    store-env .tl_set:N         = \l__scontents_name_seq_env_tl,
+    store-env .initial:n        = contents,
+    store-env .value_required:n = true,
+    store-cmd .tl_set:N         = \l__scontents_name_seq_cmd_tl,
+    store-cmd .initial:n        = contents,
+    store-cmd .value_required:n = true,
+    verb-font .tl_set:N         = \l__scontents_verb_font_tl,
+    verb-font .value_required:n = true,
+    print-env .bool_set:N       = \l__scontents_print_env_bool,
+    print-env .initial:n        = false,
+    print-env .default:n        = true,
+    print-cmd .bool_set:N       = \l__scontents_print_cmd_bool,
+    print-cmd .initial:n        = false,
+    print-cmd .default:n        = true,
+    force-eol .bool_set:N       = \l__scontents_forced_eol_bool,
+    force-eol .initial:n        = false,
+    force-eol .default:n        = true,
+    width-tab .int_set:N        = \l__scontents_tab_width_int,
+    width-tab .initial:n        = 1,
+    width-tab .value_required:n = true,
+    print-all .meta:n           = { print-env = #1 , print-cmd = #1 },
+    print-all .default:n        = true,
+    store-all .meta:n           = { store-env = #1 , store-cmd = #1 },
+    store-all .value_required:n = true
+  }
+\tl_new:N \l__scontents_macro_tmp_tl
+\tl_new:N \l__scontents_fname_out_tl
+\tl_new:N \l__scontents_temp_tl
+\tl_new:N \l__scontents_file_tl
+\tl_new:N \g__scontents_temp_tl
+\tl_new:N \l__scontents_foreach_name_seq_tl
+\tl_new:N \l__scontents_foreach_before_tl
+\tl_new:N \l__scontents_foreach_after_tl
+\int_new:N \l__scontents_foreach_stop_int
+\int_new:N \l__scontents_seq_item_int
+\int_new:N \l__scontents_env_nesting_int
+\int_new:N \l__scontents_tmpa_int
+\bool_new:N \l__scontents_writing_bool
+\bool_set_false:N \l__scontents_writing_bool
+\bool_new:N \l__scontents_storing_bool
+\bool_set_true:N  \l__scontents_storing_bool
+\bool_new:N \l__scontents_foreach_before_bool
+\bool_set_false:N \l__scontents_foreach_before_bool
+\bool_new:N \l__scontents_foreach_after_bool
+\bool_set_false:N \l__scontents_foreach_after_bool
+\bool_new:N \l__scontents_foreach_stop_bool
+\bool_set_false:N \l__scontents_foreach_stop_bool
+\bool_new:N \l__scontents_foreach_wrapper_bool
+\bool_set_false:N \l__scontents_foreach_wrapper_bool
+\seq_new:N \l__scontents_foreach_print_seq
+\str_const:Nx \c__scontents_hidden_space_str
+  { \c_percent_str \c_circumflex_str \c_circumflex_str A scheol \c_percent_str }
+\quark_new:N \q__scontents_stop
+\quark_new:N \q__scontents_mark
+\iow_new:N \l__scontents_file_iow
+\cs_new_protected:Npn \__scontents_rescan_tokens:n #1 { \tex_scantokens:D {#1} }
+\cs_generate_variant:Nn \__scontents_rescan_tokens:n { V, x }
+\cs_new:Npx \__scontents_tab: { \c_space_tl }
+\cs_new:Npn \__scontents_par: { ^^J ^^J }
+\cs_generate_variant:Nn \tl_remove_once:Nn { NV }
+\cs_generate_variant:Nn \tl_replace_all:Nnn { Nx, Nxx, Nnx }
+\cs_generate_variant:Nn \msg_error:nnnn { nnx }
+\prg_generate_conditional_variant:Nnn \tl_if_empty:n { f } { TF }
+\keys_define:nn { scontents / scontents }
+  {
+    write-env .code:n           = {
+                                    \bool_set_true:N \l__scontents_writing_bool
+                                    \tl_set:Nn \l__scontents_fname_out_tl {#1}
+                                  },
+    write-out .code:n           = {
+                                    \bool_set_false:N \l__scontents_storing_bool
+                                    \bool_set_true:N  \l__scontents_writing_bool
+                                    \tl_set:Nn \l__scontents_fname_out_tl {#1}
+                                  },
+    write-env .value_required:n = true,
+    write-out .value_required:n = true,
+    print-env .meta:nn          = { scontents } { print-env = #1 },
+    print-env .default:n        = true,
+    store-env .meta:nn          = { scontents } { store-env = #1 },
+    force-eol .meta:nn          = { scontents } { force-eol = #1 },
+    force-eol .default:n        = true,
+    unknown   .code:n           = { \__scontents_parse_environment_keys:n {#1} }
+  }
+\keys_define:nn { scontents / Scontents }
+  {
+    print-cmd .meta:nn   = { scontents } { print-cmd = #1 },
+    print-cmd .default:n = true,
+    store-cmd .meta:nn   = { scontents } { store-cmd = #1 },
+    force-eol .meta:nn   = { scontents } { force-eol = #1 },
+    force-eol .default:n = true,
+    unknown   .code:n    = { \__scontents_parse_command_keys:n {#1} }
+  }
+\keys_define:nn { scontents / foreachsc }
+  {
+    before  .code:n           = {
+                                  \bool_set_true:N \l__scontents_foreach_before_bool
+                                  \tl_set:Nn \l__scontents_foreach_before_tl {#1}
+                                },
+    before  .value_required:n = true,
+    after   .code:n           = {
+                                  \bool_set_true:N \l__scontents_foreach_after_bool
+                                  \tl_set:Nn \l__scontents_foreach_after_tl {#1}
+                                },
+    after   .value_required:n = true,
+    start   .int_set:N        = \l__scontents_foreach_start_int,
+    start   .value_required:n = true,
+    start   .initial:n        = 1,
+    stop    .code:n           = {
+                                  \bool_set_true:N \l__scontents_foreach_stop_bool
+                                  \int_set:Nn \l__scontents_foreach_stop_int {#1}
+                                 },
+    stop    .value_required:n = true,
+    step    .int_set:N        = \l__scontents_foreach_step_int,
+    step    .value_required:n = true,
+    step    .initial:n        = 1,
+    wrapper .code:n           = {
+                                  \bool_set_true:N \l__scontents_foreach_wrapper_bool
+                                  \cs_set_protected:Npn \__scontents_foreach_wrapper:n ##1 {#1}
+                                },
+    wrapper .value_required:n = true,
+    sep     .tl_set:N         = \l__scontents_foreach_sep_tl,
+    sep     .initial:n        = {},
+    sep     .value_required:n = true,
+    unknown .code:n           = { \__scontents_parse_foreach_keys:n {#1} }
+  }
+\keys_define:nn { scontents / typemeaning }
+  {
+    width-tab .meta:nn = { scontents } { width-tab = #1 },
+    unknown   .code:n  = { \__scontents_parse_type_meaning_key:n {#1} }
+  }
+\cs_new_protected:Npn \__scontents_parse_environment_keys:n #1
+  { \exp_args:NV \__scontents_parse_environment_keys:nn \l_keys_key_tl {#1} }
+\cs_new_protected:Npn \__scontents_parse_environment_keys:nn #1#2
+  {
+    \tl_if_blank:nTF {#2}
+      { \msg_error:nnn { scontents } { env-key-unknown } {#1} }
+      { \msg_error:nnnn { scontents } { env-key-value-unknown } {#1} {#2} }
+  }
+\cs_new_protected:Npn \__scontents_parse_command_keys:n #1
+  { \exp_args:NV \__scontents_parse_command_keys:nn \l_keys_key_tl {#1} }
+\cs_new_protected:Npn \__scontents_parse_command_keys:nn #1#2
+  {
+    \tl_if_blank:nTF {#2}
+      { \msg_error:nnn { scontents } { cmd-key-unknown } {#1} }
+      { \msg_error:nnnn { scontents } { cmd-key-value-unknown } {#1} {#2} }
+  }
+\cs_new_protected:Npn \__scontents_parse_foreach_keys:nn #1#2
+  {
+    \tl_if_blank:nTF {#2}
+      { \msg_error:nnn { scontents } { for-key-unknown } {#1} }
+      { \msg_error:nnnn { scontents } { for-key-value-unknown } {#1} {#2} }
+  }
+\cs_new_protected:Npn \__scontents_parse_foreach_keys:n #1
+  { \exp_args:NV \__scontents_parse_foreach_keys:nn \l_keys_key_tl {#1} }
+\cs_new_protected:Npn \__scontents_parse_type_meaning_key:n #1
+  { \exp_args:NV \__scontents_parse_type_meaning_key:nn \l_keys_key_tl {#1} }
+\cs_new_protected:Npn \__scontents_parse_type_meaning_key:nn #1#2
+  {
+    \tl_if_empty:fTF { \int_to_roman:n { -0 #1 } }
+      {
+        \tl_if_blank:nTF {#2}
+          { \int_set:Nn \l__scontents_seq_item_int {#1} }
+          { \msg_error:nnnn { scontents } { type-key-value-unknown } {#1} {#2} }
+      }
+      {
+        \tl_if_blank:nTF {#2}
+          { \msg_error:nnn { scontents } { type-key-unknown } {#1} }
+          { \msg_error:nnnn { scontents } { type-key-value-unknown } {#1} {#2} }
+      }
+  }
+\cs_new_protected:Npn \__scontents_append_contents:nn #1#2
+  {
+    \tl_if_blank:nT {#1}
+      { \msg_error:nn { scontents } { empty-store-cmd } }
+    \seq_if_exist:cF { g__scontents_name_#1_seq }
+      { \seq_new:c { g__scontents_name_#1_seq } }
+    \seq_gput_right:cn { g__scontents_name_#1_seq } {#2}
+  }
+\cs_generate_variant:Nn \__scontents_append_contents:nn { Vx }
+\cs_new:Npn \__scontents_getfrom_seq:nn #1#2
+  {
+    \seq_if_exist:cTF { g__scontents_name_#2_seq }
+      {
+        \exp_args:Nf \__scontents_getfrom_seq:nnn
+          { \seq_count:c { g__scontents_name_#2_seq } }
+          {#1} {#2}
+      }
+      { \msg_expandable_error:nnn { scontents } { undefined-storage } {#2} }
+  }
+\cs_new:Npn \__scontents_getfrom_seq:nnn #1#2#3
+  {
+    \bool_lazy_or:nnTF
+      { \int_compare_p:nNn {#2} = { 0 } }
+      { \int_compare_p:nNn { \int_abs:n {#2} } > {#1} }
+      { \msg_expandable_error:nnnnn { scontents } { index-out-of-range } {#2} {#3} {#1} }
+      { \seq_item:cn { g__scontents_name_#3_seq } {#2} }
+  }
+\cs_new_protected:Npn \__scontents_lastfrom_seq:n #1
+  {
+    \tl_gset:Nx \g__scontents_temp_tl { \seq_item:cn { g__scontents_name_#1_seq } {-1} }
+    \group_insert_after:N \__scontents_rescan_tokens:V
+    \group_insert_after:N \g__scontents_temp_tl
+    \group_insert_after:N \tl_gclear:N
+    \group_insert_after:N \g__scontents_temp_tl
+  }
+\cs_new_protected:Npn \__scontents_store_to_seq:NN #1#2
+  {
+    \tl_log:N #1
+    \__scontents_append_contents:Vx #2 { \exp_not:V #1 }
+  }
+\cs_new_protected:Npn \__scontents_scontents_env_begin:
+  {
+    \char_set_catcode_active:N \^^M
+    \__scontents_start_environment:w
+  }
+\cs_new_protected:Npn \__scontents_scontents_env_end:
+  {
+    \__scontents_stop_environment:
+    \__scontents_atend_environment:
+  }
+\cs_new_protected:Npn \__scontents_grab_optional:n #1
+  {
+    \tl_if_novalue:nF {#1}
+      {
+        \tl_set:Nn \l__scontents_temp_tl {#1}
+        \__scontents_normalise_line_ends:N \l__scontents_temp_tl
+        \keys_set:nV { scontents / scontents } \l__scontents_temp_tl
+      }
+    \__scontents_start_after_option:w
+  }
+\group_begin:
+  \char_set_catcode_active:N \^^I
+  \char_set_catcode_active:N \^^L
+  \char_set_catcode_active:N \^^M
+  \cs_new_protected:Npn \__scontents_normalise_line_ends:N #1
+    { \tl_replace_all:Nnn #1 { ^^M } { ~ } }
+  \cs_new_protected:Npn \__scontents_start_environment:w #1 ^^M
+    {
+      \tl_if_head_is_N_type:nTF {#1}
+        {
+          \str_if_eq:eeTF { \tl_head:n {#1} } { [ }
+            { \__scontents_grab_optional:w #1 ^^M }
+            { \__scontents_check_line_and_process:xn { } {#1} }
+        }
+        { \__scontents_check_line_and_process:xn { } {#1} }
+    }
+  \cs_new_protected:Npn \__scontents_start_after_option:w #1 ^^M
+    { \__scontents_check_line_and_process:xn { [...] } {#1} }
+  \cs_new_protected:Npn \__scontents_check_line_and_process:xn #1 #2
+    {
+      \tl_if_blank:nF {#2}
+        {
+          \msg_error:nnxn { scontents } { junk-after-begin }
+            { after~\c_backslash_str begin{scontents} #1 } {#2}
+        }
+      \__scontents_make_control_chars_active:
+      \group_begin:
+        \__scontents_file_tl_write_start:V \l__scontents_fname_out_tl
+    }
+  \cs_new_protected:Npn \__scontents_stop_environment:
+    {
+        \__scontents_file_write_stop:N \l__scontents_macro_tmp_tl
+        \exp_args:NNNV
+      \group_end:
+      \tl_set:Nn \l__scontents_macro_tmp_tl \l__scontents_macro_tmp_tl
+      \tl_if_empty:NT \l__scontents_macro_tmp_tl
+        { \msg_warning:nnn { scontents } { empty-environment } }
+    }
+  \cs_new_protected:Npn \__scontents_file_tl_write_start:n #1
+    {
+      \group_begin:
+        \bool_if:NT \l__scontents_writing_bool
+          {
+            \file_if_exist:nTF {#1}
+              { \msg_warning:nnx { scontents } { rewriting-file } {#1} }
+              { \msg_warning:nnx { scontents } { writing-file } {#1} }
+            \iow_open:Nn \l__scontents_file_iow {#1}
+          }
+        \tl_clear:N \l__scontents_file_tl
+        \seq_map_function:NN \l_char_special_seq \char_set_catcode_other:N
+        \int_step_function:nnN { 128 } { 255 } \char_set_catcode_letter:n
+        \cs_set_protected:Npx \__scontents_ret:w ##1 ^^M
+          {
+            \exp_not:N \__scontents_verb_processor_iterate:w
+            ##1 \c__scontents_end_env_tl
+                \c__scontents_end_env_tl
+                \exp_not:N \q__scontents_stop
+          }
+        \__scontents_make_control_chars_active:
+        \__scontents_ret:w
+    }
+  \use:x
+    {
+      \cs_new:Npn \exp_not:N \__scontents_verb_processor_iterate:w
+        ##1 \c__scontents_end_env_tl
+        ##2 \c__scontents_end_env_tl
+        ##3 \exp_not:N \q__scontents_stop
+    } {
+        \tl_if_blank:nTF {#3}
+          {
+            \__scontents_analyse_nesting:n {#1}
+            \__scontents_verb_processor_output:n {#1}
+          }
+          {
+            \__scontents_if_nested:TF
+              {
+                \__scontents_nesting_decr:
+                \__scontents_verb_processor_output:x
+                  { \exp_not:n {#1} \c__scontents_end_env_tl \exp_not:n {#2} }
+              }
+              {
+                \tl_if_blank:nF {#1}
+                  { \__scontents_verb_processor_output:n {#1} }
+                \cs_set_protected:Npx \__scontents_ret:w
+                  {
+                    \__scontents_format_case:nnn
+                      { \exp_not:N \end{scontents} } % LaTeX
+                      { \endscontents } % Plain/Generic
+                      { \stopscontents } % ConTeXt
+                    \bool_lazy_or:nnF
+                      { \tl_if_blank_p:n {#2} }
+                      { \str_if_eq_p:ee {#2} { \c_percent_str } }
+                      {
+                        \msg_warning:nnn { scontents } { rescanning-text } {#2}
+                        \__scontents_rescan_tokens:n {#2}
+                      }
+                  }
+                \char_set_active_eq:NN ^^M \__scontents_ret:w
+              }
+          }
+        ^^M
+      }
+  \cs_new_protected:Npn \__scontents_file_write_stop:N #1
+    {
+      \bool_if:NT \l__scontents_writing_bool
+        { \iow_close:N \l__scontents_file_iow }
+      \use:x
+        {
+          \group_end:
+          \bool_if:NT \l__scontents_storing_bool
+            {
+              \tl_set:Nn \exp_not:N #1
+                { \exp_args:NV \__scontents_remove_leading_nl:n \l__scontents_file_tl }
+            }
+        }
+    }
+  \cs_new:Npn \__scontents_remove_leading_nl:n #1
+    {
+      \tl_if_head_is_N_type:nTF {#1}
+        {
+          \exp_args:Nf
+            \__scontents_remove_leading_nl:nn
+              { \tl_head:n {#1} } {#1}
+        }
+        { \exp_not:n {#1} }
+    }
+  \cs_new:Npn \__scontents_remove_leading_nl:nn #1 #2
+    {
+      \token_if_eq_meaning:NNTF ^^J #1
+        { \exp_not:o { \__scontents_remove_leading_nl:w #2 } }
+        { \exp_not:n {#2} }
+    }
+  \cs_new:Npn \__scontents_remove_leading_nl:w ^^J { }
+  \cs_new_protected:Npn \__scontents_verb_processor_output:n #1
+    {
+      \bool_if:NT \l__scontents_writing_bool
+        { \iow_now:Nn \l__scontents_file_iow {#1} }
+      \bool_if:NT \l__scontents_storing_bool
+        { \tl_put_right:Nn \l__scontents_file_tl { ^^J #1 } }
+    }
+  \cs_generate_variant:Nn \__scontents_verb_processor_output:n { x }
+  \cs_new_protected:Npx \__scontents_analyse_nesting:n #1
+    {
+      \int_zero:N \l__scontents_tmpa_int
+      \exp_not:N \__scontents_analyse_nesting:w #1
+        \c_backslash_str begin
+          \c_left_brace_str \exp_not:N \q__scontents_mark \c_right_brace_str
+      \exp_not:N \q__scontents_stop
+      \int_compare:nNnT { \l__scontents_tmpa_int } > { 1 }
+        { \msg_warning:nn { scontents } { multiple-begin } }
+    }
+  \use:x
+    {
+      \cs_new_protected:Npn \exp_not:N \__scontents_analyse_nesting:w ##1
+        \c_backslash_str begin \c_left_brace_str ##2 \c_right_brace_str
+    }   {
+          \if_meaning:w \q__scontents_mark #2
+            \exp_after:wN \use_i:nn
+          \else:
+            \exp_after:wN \use_ii:nn
+          \fi:
+            { \__scontents_use_none_delimit_by_q_stop:w }
+            {
+              \str_if_eq:eeT {#2} {scontents}
+                {
+                  \int_incr:N \l__scontents_env_nesting_int
+                  \int_incr:N \l__scontents_tmpa_int
+                  \__scontents_analyse_nesting:w
+                }
+              \__scontents_analyse_nesting:w
+            }
+        }
+  \cs_new_protected:Npn \__scontents_nesting_decr:
+    { \int_decr:N \l__scontents_env_nesting_int }
+  \prg_new_protected_conditional:Npnn \__scontents_if_nested: { TF }
+    {
+      \int_compare:nNnTF { \l__scontents_env_nesting_int } > { \c_zero_int }
+        { \prg_return_true: }
+        { \prg_return_false: }
+    }
+  \cs_new:Npn \__scontents_use_none_delimit_by_q_stop:w #1 \q__scontents_stop { }
+\group_end:
+\cs_generate_variant:Nn \__scontents_file_tl_write_start:n { V }
+\cs_new_protected:Npn \__scontents_atend_environment:
+  {
+    \bool_if:NT \l__scontents_storing_bool
+      {
+        \bool_if:NF \l__scontents_forced_eol_bool
+          { \tl_put_right:Nx \l__scontents_macro_tmp_tl { \c__scontents_hidden_space_str } }
+        \__scontents_store_to_seq:NN \l__scontents_macro_tmp_tl \l__scontents_name_seq_env_tl
+        \bool_if:NT \l__scontents_print_env_bool
+          { \__scontents_lastfrom_seq:n \l__scontents_name_seq_env_tl }
+      }
+  }
+\cs_new_protected:Npn \__scontents_dospecials:
+  {
+    \cs_if_exist_use:NF \dospecials
+      { \seq_map_function:NN \l_char_special_seq \do }
+  }
+\cs_new_protected:Npn \__scontents_Scontents_internal:nn #1 #2
+  {
+    \group_begin:
+      \tl_if_novalue:nF {#2}
+        { \keys_set:nn { scontents / Scontents } {#2} }
+      \char_set_catcode_active:n { 9 }
+      \bool_if:NTF #1
+        { \__scontents_verb_arg:w }
+        { \__scontents_norm_arg:n }
+  }
+\cs_new_protected:Npn \__scontents_norm_arg:n #1
+  {
+      \tl_set:Nx \l__scontents_temp_tl { \exp_not:n {#1} }
+      \tl_put_right:Nx \l__scontents_temp_tl { \c__scontents_hidden_space_str }
+      \__scontents_store_to_seq:NN \l__scontents_temp_tl \l__scontents_name_seq_cmd_tl
+      \bool_if:NT \l__scontents_print_cmd_bool
+        { \__scontents_lastfrom_seq:n \l__scontents_name_seq_cmd_tl }
+    \group_end:
+  }
+\cs_new_protected:Npn \__scontents_verb_arg_internal:n #1
+  {
+      \tl_set:Nx \l__scontents_temp_tl { \exp_not:n {#1} }
+      \tl_replace_all:Nxx \l__scontents_temp_tl { \iow_char:N \^^M } { \iow_char:N \^^J }
+      \bool_if:NF \l__scontents_forced_eol_bool
+        { \tl_put_right:Nx \l__scontents_temp_tl { \c__scontents_hidden_space_str } }
+      \__scontents_store_to_seq:NN \l__scontents_temp_tl \l__scontents_name_seq_cmd_tl
+      \bool_if:NT \l__scontents_print_cmd_bool
+        { \__scontents_lastfrom_seq:n \l__scontents_name_seq_cmd_tl }
+    \group_end:
+  }
+\cs_new_protected:Npn \__scontents_getstored_internal:nn #1 #2
+  {
+    \group_begin:
+      \__scontents_rescan_tokens:x
+        { \__scontents_getfrom_seq:nn {#1} {#2} }
+    \group_end:
+  }
+\cs_new_protected:Npn \__scontents_foreachsc_internal:nn #1 #2
+  {
+    \group_begin:
+      \tl_if_novalue:nF {#1} { \keys_set:nn { scontents / foreachsc } {#1} }
+      \tl_set:Nn \l__scontents_foreach_name_seq_tl {#2}
+      \seq_clear:N \l__scontents_foreach_print_seq
+      \bool_if:NF \l__scontents_foreach_stop_bool
+        {
+          \int_set:Nn \l__scontents_foreach_stop_int
+            { \seq_count:c { g__scontents_name_#2_seq } }
+        }
+      \int_step_function:nnnN
+        { \l__scontents_foreach_start_int }
+        { \l__scontents_foreach_step_int }
+        { \l__scontents_foreach_stop_int }
+        \__scontents_foreach_add_body:n
+      \seq_use:Nn \l__scontents_foreach_print_seq { \tl_use:N \l__scontents_foreach_sep_tl }
+    \group_end:
+  }
+\cs_new_protected:Npn \__scontents_foreach_add_body:n #1
+  {
+    \seq_put_right:Nx \l__scontents_foreach_print_seq
+      {
+        \bool_if:NT \l__scontents_foreach_before_bool
+          { \exp_not:V \l__scontents_foreach_before_tl }
+        \bool_if:NTF \l__scontents_foreach_wrapper_bool
+          { \__scontents_foreach_wrapper:n }
+          { \use:n }
+            { \getstored [#1] { \tl_use:N \l__scontents_foreach_name_seq_tl } }
+        \bool_if:NT \l__scontents_foreach_after_bool
+          { \exp_not:V \l__scontents_foreach_after_tl }
+      }
+  }
+\cs_new_protected:Npn \__scontents_typestored_internal:nn #1 #2
+  {
+    \group_begin:
+      \int_set:Nn \l__scontents_seq_item_int { 1 }
+      \tl_if_novalue:nF {#1} { \keys_set:nn { scontents / typemeaning } {#1} }
+      \tl_set:Nx \l__scontents_temp_tl
+        { \exp_args:NV \__scontents_getfrom_seq:nn \l__scontents_seq_item_int {#2} }
+      \tl_remove_once:NV \l__scontents_temp_tl \c__scontents_hidden_space_str
+      \tl_log:N \l__scontents_temp_tl
+      \tl_if_empty:NF \l__scontents_temp_tl
+        { \__scontents_verb_print:N \l__scontents_temp_tl }
+    \group_end:
+  }
+\group_begin:
+  \char_set_catcode_active:N \^^M
+  \cs_new_protected:Npn \__scontents_verb_print:N #1
+    {
+      \tl_if_blank:VT #1
+        { \msg_error:nnn { scontents } { empty-variable } {#1} }
+      \cs_set_eq:NN \__scontents_verb_print_EOL: ^^M
+      \cs_set_eq:NN ^^M \scan_stop:
+      \cs_set_eq:cN { do@noligs } \__scontents_do_noligs:N
+      \__scontents_rescan_tokens:x
+        {
+          \__scontents_format_case:nnn
+            { \exp_not:N \begin{verbatimsc} } % LaTeX
+            { \verbatimsc } % Plain/Generic
+            { \startverbatimsc } % ConTeXt
+            ^^M
+          \exp_not:V #1 ^^M
+          \g__scontents_end_verbatimsc_tl
+        }
+      \cs_set_eq:NN ^^M \__scontents_verb_print_EOL:
+    }
+\group_end:
+\cs_new_protected:Npn \__scontents_xverb:
+  {
+    \char_set_catcode_active:n { 9 }
+    \char_set_active_eq:nN { 9 } \__scontents_tabs_to_spaces:
+    \__scontents_xverb:w
+  }
+\cs_new:Npn \__scontents_tabs_to_spaces:
+  { \prg_replicate:nn { \l__scontents_tab_width_int } { ~ } }
+\cs_new:Npn \__scontents_do_noligs:N #1
+  {
+    \char_set_catcode_active:N #1
+    \char_set_active_eq:Nc #1 { __scontents_active_char_ \token_to_str:N #1 : }
+    \cs_set:cpx { __scontents_active_char_ \token_to_str:N #1 : }
+      {
+        \mode_leave_vertical:
+        \tex_kern:D \c_zero_dim
+        \char_generate:nn { `#1 } { 12 }
+      }
+  }
+\cs_new_protected:Npn \__scontents_set_active_eq:NN #1
+  {
+    \char_set_catcode_active:N #1
+    \char_set_active_eq:NN #1
+  }
+\group_begin:
+  \char_set_catcode_active:N \*
+  \cs_new_protected:Npn \__scontents_make_control_chars_active:
+    {
+      \__scontents_plain_disable_outer_par:
+      \__scontents_set_active_eq:NN \^^I \__scontents_tab:
+      \__scontents_set_active_eq:NN \^^L \__scontents_par:
+      \__scontents_set_active_eq:NN \^^M \__scontents_ret:w
+    }
+\group_end:
+\cs_new_protected:Npn \__scontents_meaningsc_internal:nn #1 #2
+  {
+    \group_begin:
+      \int_set:Nn \l__scontents_seq_item_int { 1 }
+      \tl_if_novalue:nF {#1} { \keys_set:nn { scontents / typemeaning } {#1} }
+      \__scontents_meaningsc:n {#2}
+    \group_end:
+  }
+\group_begin:
+  \char_set_catcode_active:N \^^I
+  \cs_new_protected:Npn \__scontents_meaningsc:n #1
+    {
+      \tl_set:Nx \l__scontents_temp_tl
+        { \exp_args:NV \__scontents_getfrom_seq:nn \l__scontents_seq_item_int {#1} }
+      \tl_replace_all:Nxn \l__scontents_temp_tl { \iow_char:N \^^J } { ~ }
+      \tl_remove_once:NV  \l__scontents_temp_tl \c__scontents_hidden_space_str
+      \tl_log:N \l__scontents_temp_tl
+      \tl_use:N \l__scontents_verb_font_tl
+      \tl_replace_all:Nnx \l__scontents_temp_tl { ^^I } { \__scontents_tabs_to_spaces: }
+      \cs_replacement_spec:N \l__scontents_temp_tl
+    }
+\group_end:
+\msg_new:nnn { scontents } { junk-after-begin }
+  {
+    Junk~characters~#1~\msg_line_context: :
+    \\ \\
+    #2
+  }
+\msg_new:nnn { scontents } { empty-stored-content }
+  { Empty~value~for~key~'getstored'~\msg_line_context:. }
+\msg_new:nnn { scontents } { empty-variable }
+  { Variable~'#1'~empty~\msg_line_context:. }
+\msg_new:nnn { scontents } { rewriting-file }
+  { Overwriting ~ file ~ '#1' }
+\msg_new:nnn { scontents } { writing-file }
+  { Writing ~ file ~ '#1' }
+\msg_new:nnn { scontents } { rescanning-text }
+  { Rescanning~text~'#1'~after~\c_backslash_str end{scontents}~\msg_line_context:.}
+\msg_new:nnn { scontents } { multiple-begin }
+  { Multiple~\c_backslash_str begin{scontents}~\msg_line_context:.}
+\msg_new:nnn { scontents } { undefined-storage }
+  { Storage~named~'#1'~is~not~defined. }
+\msg_new:nnn { scontents } { index-out-of-range }
+  {
+    \int_compare:nNnTF {#1} = { 0 }
+      { Index~of~sequence~cannot~be~zero. }
+      {
+        Index~'#1'~out~of~range~for~'#2'.~
+        \int_compare:nNnTF {#1} > { 0 }
+          { Max = } { Min = -} #3.
+      }
+  }
+\msg_new:nnnn { scontents } { env-key-unknown }
+  { The~key~'#1'~is~unknown~by~environment~'scontents'~and~is~being~ignored.}
+  {
+    The~environment~'scontents'~does~not~have~a~key~called~'#1'.\\
+    Check~that~you~have~spelled~the~key~name~correctly.
+  }
+\msg_new:nnnn { scontents } { env-key-value-unknown }
+  { The~key~'#1=#2'~is~unknown~by~environment~'scontents'~and~is~being~ignored. }
+  {
+    The~environment~'scontents'~does~not~have~a~key~called~'#1'.\\
+    Check~that~you~have~spelled~the~key~name~correctly.
+  }
+\msg_new:nnnn { scontents } { cmd-key-unknown }
+  { The~key~'#1'~is~unknown~by~'\c_backslash_str Scontents'~and~is~being~ignored.}
+  {
+    The~command~'\c_backslash_str Scontents'~does~not~have~a~key~called~'#1'.\\
+    Check~that~you~have~spelled~the~key~name~correctly.
+  }
+\msg_new:nnnn { scontents } { cmd-key-value-unknown }
+  { The~key~'#1=#2'~is~unknown~by~'\c_backslash_str Scontents'~and~is~being~ignored. }
+  {
+    The~command~'\c_backslash_str Scontents'~does~not~have~a~key~called~'#1'.\\
+    Check~that~you~have~spelled~the~key~name~correctly.
+  }
+\msg_new:nnnn { scontents } { for-key-unknown }
+  { The~key~'#1'~is~unknown~by~'\c_backslash_str foreachsc'~and~is~being~ignored.}
+  {
+    The~command~'\c_backslash_str foreachsc'~does~not~have~a~key~called~'#1'.\\
+    Check~that~you~have~spelled~the~key~name~correctly.
+  }
+\msg_new:nnnn { scontents } { for-key-value-unknown }
+  { The~key~'#1=#2'~is~unknown~by~'\c_backslash_str foreachsc'~and~is~being~ignored. }
+  {
+    The~command~'\c_backslash_str foreachsc'~does~not~have~a~key~called~'#1'.\\
+    Check~that~you~have~spelled~the~key~name~correctly.
+  }
+\msg_new:nnnn { scontents } { type-key-unknown }
+  { The~key~'#1'~is~unknown~and~is~being~ignored. }
+  {
+    This~command~does~not~have~a~key~called~'#1'.\\
+    This~command~only~accepts~the~key~'width-tab'.
+  }
+\msg_new:nnnn { scontents } { type-key-value-unknown }
+  { The~key~'#1'~to~which~you~passed~'#2'~is~unknown~and~is~being~ignored. }
+  {
+    This~command~does~not~have~a~key~called~'#1'.\\
+    This~command~only~accepts~the~key~'width-tab'.
+  }
+\msg_new:nnn { scontents } { empty-environment }
+  { scontents~environment~empty~\msg_line_context:. }
+\msg_new:nnnn { scontents } { verbatim-newline }
+  { Verbatim~argument~of~#1~ended~by~end~of~line. }
+  {
+    The~verbatim~argument~of~the~#1~cannot~contain~more~than~one~line,~
+    but~the~end~
+    of~the~current~line~has~been~reached.~You~may~have~forgotten~the~
+    closing~delimiter.
+    \\ \\
+    LaTeX~will~ignore~'#2'.
+  }
+\msg_new:nnnn { scontents } { verbatim-tokenized }
+  { The~verbatim~#1~cannot~be~used~inside~an~argument. }
+  {
+    The~#1~takes~a~verbatim~argument.~
+    It~may~not~appear~within~the~argument~of~another~function.~
+    It~received~an~illegal~token \tl_if_empty:nF {#3} { ~'#3' } .
+    \\ \\
+    LaTeX~will~ignore~'#2'.
+  }
+\endinput
+%%
+%% End of file `scontents-code.tex'.
