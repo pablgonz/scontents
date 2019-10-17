@@ -79,7 +79,7 @@
 \cs_new_protected:Npn \startscontents
   {
     \group_begin:
-      \__scontents_scontents_env_begin:
+    \__scontents_scontents_env_begin:
   }
 \cs_new_protected:Npn \stopscontents
   {
@@ -287,7 +287,6 @@
 \cs_new_eq:NN \startverbatimsc \starttyping
 \cs_new_eq:NN \stopverbatimsc \stoptyping
 \group_begin:
-  \char_set_catcode_active:n { `\* }
   \cs_new_protected:Npn \__scontents_plain_disable_outer_par:
     { }
 \group_end:

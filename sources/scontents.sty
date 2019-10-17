@@ -75,7 +75,7 @@
 \ProcessKeysOptions { scontents }
 \NewDocumentEnvironment { scontents } { }
   {
-      \__scontents_scontents_env_begin:
+    \__scontents_scontents_env_begin:
   }
   {
     \__scontents_scontents_env_end:
@@ -105,7 +105,6 @@
   }
   { }
 \group_begin:
-  \char_set_catcode_active:n { `\* }
   \cs_new_protected:Npn \__scontents_plain_disable_outer_par:
     { }
 \group_end:
