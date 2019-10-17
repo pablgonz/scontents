@@ -1,10 +1,10 @@
 %%
-%% This is file `t-scontents.mkvi',
+%% This is file `scontents.tex',
 %% generated with the docstrip utility.
 %%
 %% The original source files were:
 %%
-%% scontents.dtx  (with options: `loader,context')
+%% scontents.dtx  (with options: `loader,plain')
 %% 
 %% Copyright (C) 2019 by Pablo González L <pablgonz@educarchile.cl>
 %% 
@@ -27,25 +27,9 @@
 %%                                 t-scontents.mkvi and
 %%                                 scontents-code.tex.
 %% 
-%%
-%% The original source files were:
-%%
-%% scontents.dtx  (with options: `loader,context')
-%D  \module
-%D    [     file=t-scontents,
-%D       version=1.5,
-%D         title=\CONTEXT\ User Module,
-%D      subtitle=Storing Contents,
-%D        author=Pablo González,
-%D          date=2019.10.16,
-%D     copyright=Pablo González,
-%D         email=pablgonz@educarchile.cl,
-%D       license=LPPL]
 \def\ScontentsFileDate{2019-10-16}%
 \def\ScontentsFileVersion{1.5}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
-\writestatus{loading}{User Module scontents v\ScontentsFileVersion}
-\unprotect
 \input expl3-generic.tex
 \ExplSyntaxOn
 \tl_gset:cx { ver @ scontents . sty } { \ScontentsFileDate\space
@@ -64,24 +48,24 @@
   {
     \char_set_catcode_other:N \\
   }
-  { \stopverbatimsc }
+  { \endverbatimsc }
 \tl_const:Nx \c__scontents_end_env_tl
   {
     \c_backslash_str
-    stop
+    end
       scontents
   }
 \file_input:n { scontents-code.tex }
 \cs_new:Npn \__scontents_format_case:nnn #1 #2 #3
-  {#3} % ConTeXt
+  {#2} % Plain/Generic
 \keys_define:nn { scontents }
   { verb-font .initial:n = \tt }
-\cs_new_protected:Npn \startscontents
+\cs_new_protected:Npn \scontents
   {
     \group_begin:
       \__scontents_scontents_env_begin:
   }
-\cs_new_protected:Npn \stopscontents
+\cs_new_protected:Npn \endscontents
   {
     \__scontents_scontents_env_end:
     \group_end:
@@ -238,6 +222,50 @@
   }
 \cs_new_protected:Npn \__scontents_grab_v_token_if_char:NTF #1
   { \str_if_eq:eeTF { } { \str_tail:n {#1} } }
+\group_begin:
+  \char_set_catcode_letter:N \@
+  \bool_new:N \l__scontents_temp_bool
+  \cs_new_protected:Npn \verbatim
+    { \__scontents_verbatim_aux: \frenchspacing \__scontents_vobeyspaces: \@xverbatim }
+  \cs_new_protected:Npn \__scontents_verbatim_aux:
+    {
+      \skip_vertical:N \parskip
+      \int_set:Nn \parindent { 0pt }
+      \skip_set:Nn \parfillskip { 0pt plus 1fil }
+      \int_set:Nn \parskip { 0pt plus0pt minus0pt }
+      \tex_par:D
+      \bool_set_false:N \l__scontents_temp_bool
+      \cs_set:Npn \par
+        {
+          \bool_if:NTF \l__scontents_temp_bool
+            {
+              \mode_leave_vertical:
+              \null
+              \tex_par:D
+              \penalty \interlinepenalty
+            }
+            {
+              \bool_set_true:N \l__scontents_temp_bool
+              \mode_if_horizontal:T
+                { \tex_par:D \penalty \interlinepenalty }
+            }
+        }
+      \cs_set_eq:NN \do \char_set_catcode_other:N
+        \__scontents_dospecials:
+      \obeylines
+      \tl_use:N \l__scontents_verb_font_tl
+      \cs_set_eq:NN \do \__scontents_do_noligs:N
+      \__scontents_nolig_list:
+      \tex_everypar:D \exp_after:wN
+        { \tex_the:D \tex_everypar:D \tex_unpenalty:D }
+    }
+  \cs_new_protected:Npn \__scontents_nolig_list:
+    { \do\`\do\<\do\>\do\,\do\'\do\- }
+  \cs_new_protected:Npn \__scontents_vobeyspaces:
+    { \char_set_active_eq:NN \  \__scontents_xobeysp: }
+  \cs_new_protected:Npn \__scontents_xobeysp:
+    { \mode_leave_vertical: \nobreak \ }
+\group_end:
 \cs_new_protected:Npn \Scontents
   {
     \peek_charcode_remove:NTF *
@@ -282,14 +310,26 @@
   {
     \cs_new_protected:Npn \exp_not:N \__scontents_xverb:w
       ##1 \g__scontents_end_verbatimsc_tl
-      { ##1 \exp_not:N \stopverbatimsc }
+      { ##1 \exp_not:N \endverbatimsc }
   }
-\cs_new_eq:NN \startverbatimsc \starttyping
-\cs_new_eq:NN \stopverbatimsc \stoptyping
+\cs_new_protected:Npn \verbatimsc
+  {
+    \group_begin:
+    \cs_set_eq:cN { @xverbatim } \__scontents_xverb:
+    \verbatim
+  }
+\cs_new_protected:Npn \endverbatimsc
+  { \group_end: }
 \group_begin:
   \char_set_catcode_active:n { `\* }
   \cs_new_protected:Npn \__scontents_plain_disable_outer_par:
-    { }
+    {
+      \group_begin:
+        \char_set_lccode:nn { `\* } { `\^^L }
+        \tex_lowercase:D { \group_end:
+        \tex_let:D * \scan_stop:
+      }
+    }
 \group_end:
 \cs_new_protected:Npn \setupsc #1
   { \keys_set:nn { scontents } {#1} }
@@ -308,4 +348,4 @@
 \ExplSyntaxOff
 \endinput
 %%
-%% End of file `t-scontents.mkvi'.
+%% End of file `scontents.tex'.
