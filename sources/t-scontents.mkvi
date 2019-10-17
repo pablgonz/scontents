@@ -284,8 +284,7 @@
       ##1 \g__scontents_end_verbatimsc_tl
       { ##1 \exp_not:N \stopverbatimsc }
   }
-\cs_new_eq:NN \startverbatimsc \starttyping
-\cs_new_eq:NN \stopverbatimsc \stoptyping
+\definetyping[verbatimsc]
 \group_begin:
   \cs_new_protected:Npn \__scontents_plain_disable_outer_par:
     { }

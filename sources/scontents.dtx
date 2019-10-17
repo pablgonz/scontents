@@ -3118,7 +3118,6 @@ No tab
   }
 %<latex>\NewDocumentEnvironment { verbatimsc } { }
 %<plain>\cs_new_protected:Npn \verbatimsc
-%<context>\cs_new_eq:NN \startverbatimsc \starttyping
 %<*plain|latex>
   {
 %<plain>    \group_begin:
@@ -3127,9 +3126,9 @@ No tab
   }
 %</plain|latex>
 %<plain>\cs_new_protected:Npn \endverbatimsc
-%<context>\cs_new_eq:NN \stopverbatimsc \stoptyping
 %<plain>  { \group_end: }
 %<latex>  { }
+%<context>\definetyping[verbatimsc]
 %</loader>
 %<*core>
 %    \end{macrocode}
