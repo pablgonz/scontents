@@ -2792,50 +2792,47 @@ No tab
 %   In Plain we emulate \LaTeX's \env{verbatim} environment.
 %    \begin{macrocode}
 %<*plain>
-\group_begin:
-  \char_set_catcode_letter:N \@
-  \bool_new:N \l_@@_temp_bool
-  \cs_new_protected:Npn \verbatim
-    { \@@_verbatim_aux: \frenchspacing \@@_vobeyspaces: \@xverbatim }
-  \cs_new_protected:Npn \@@_verbatim_aux:
-    {
-      \skip_vertical:N \parskip
-      \int_set:Nn \parindent { 0pt }
-      \skip_set:Nn \parfillskip { 0pt plus 1fil }
-      \int_set:Nn \parskip { 0pt plus0pt minus0pt }
-      \tex_par:D
-      \bool_set_false:N \l_@@_temp_bool
-      \cs_set:Npn \par
-        {
-          \bool_if:NTF \l_@@_temp_bool
-            {
-              \mode_leave_vertical:
-              \null
-              \tex_par:D
-              \penalty \interlinepenalty
-            }
-            {
-              \bool_set_true:N \l_@@_temp_bool
-              \mode_if_horizontal:T
-                { \tex_par:D \penalty \interlinepenalty }
-            }
-        }
-      \cs_set_eq:NN \do \char_set_catcode_other:N
-        \@@_dospecials:
-      \obeylines
-      \tl_use:N \l_@@_verb_font_tl
-      \cs_set_eq:NN \do \@@_do_noligs:N
-      \@@_nolig_list:
-      \tex_everypar:D \exp_after:wN
-        { \tex_the:D \tex_everypar:D \tex_unpenalty:D }
-    }
-  \cs_new_protected:Npn \@@_nolig_list:
-    { \do\`\do\<\do\>\do\,\do\'\do\- }
-  \cs_new_protected:Npn \@@_vobeyspaces:
-    { \char_set_active_eq:NN \  \@@_xobeysp: }
-  \cs_new_protected:Npn \@@_xobeysp:
-    { \mode_leave_vertical: \nobreak \ }
-\group_end:
+\bool_new:N \l_@@_temp_bool
+\cs_new_protected:Npn \verbatim
+  { \@@_verbatim_aux: \frenchspacing \@@_vobeyspaces: \@@_xverb: }
+\cs_new_protected:Npn \@@_verbatim_aux:
+  {
+    \skip_vertical:N \parskip
+    \int_set:Nn \parindent { 0pt }
+    \skip_set:Nn \parfillskip { 0pt plus 1fil }
+    \int_set:Nn \parskip { 0pt plus0pt minus0pt }
+    \tex_par:D
+    \bool_set_false:N \l_@@_temp_bool
+    \cs_set:Npn \par
+      {
+        \bool_if:NTF \l_@@_temp_bool
+          {
+            \mode_leave_vertical:
+            \null
+            \tex_par:D
+            \penalty \interlinepenalty
+          }
+          {
+            \bool_set_true:N \l_@@_temp_bool
+            \mode_if_horizontal:T
+              { \tex_par:D \penalty \interlinepenalty }
+          }
+      }
+    \cs_set_eq:NN \do \char_set_catcode_other:N
+      \@@_dospecials:
+    \obeylines
+    \tl_use:N \l_@@_verb_font_tl
+    \cs_set_eq:NN \do \@@_do_noligs:N
+    \@@_nolig_list:
+    \tex_everypar:D \exp_after:wN
+      { \tex_the:D \tex_everypar:D \tex_unpenalty:D }
+  }
+\cs_new_protected:Npn \@@_nolig_list:
+  { \do\`\do\<\do\>\do\,\do\'\do\- }
+\cs_new_protected:Npn \@@_vobeyspaces:
+  { \@@_set_active_eq:NN \  \@@_xobeysp: }
+\cs_new_protected:Npn \@@_xobeysp:
+  { \mode_leave_vertical: \nobreak \ }
 %</plain>
 %</loader&!latex>
 %<*core>
@@ -3121,7 +3118,7 @@ No tab
 %<*plain|latex>
   {
 %<plain>    \group_begin:
-    \cs_set_eq:cN { @xverbatim } \@@_xverb:
+%<latex>    \cs_set_eq:cN { @xverbatim } \@@_xverb:
     \verbatim
   }
 %</plain|latex>

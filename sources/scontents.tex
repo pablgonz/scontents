@@ -222,50 +222,47 @@
   }
 \cs_new_protected:Npn \__scontents_grab_v_token_if_char:NTF #1
   { \str_if_eq:eeTF { } { \str_tail:n {#1} } }
-\group_begin:
-  \char_set_catcode_letter:N \@
-  \bool_new:N \l__scontents_temp_bool
-  \cs_new_protected:Npn \verbatim
-    { \__scontents_verbatim_aux: \frenchspacing \__scontents_vobeyspaces: \@xverbatim }
-  \cs_new_protected:Npn \__scontents_verbatim_aux:
-    {
-      \skip_vertical:N \parskip
-      \int_set:Nn \parindent { 0pt }
-      \skip_set:Nn \parfillskip { 0pt plus 1fil }
-      \int_set:Nn \parskip { 0pt plus0pt minus0pt }
-      \tex_par:D
-      \bool_set_false:N \l__scontents_temp_bool
-      \cs_set:Npn \par
-        {
-          \bool_if:NTF \l__scontents_temp_bool
-            {
-              \mode_leave_vertical:
-              \null
-              \tex_par:D
-              \penalty \interlinepenalty
-            }
-            {
-              \bool_set_true:N \l__scontents_temp_bool
-              \mode_if_horizontal:T
-                { \tex_par:D \penalty \interlinepenalty }
-            }
-        }
-      \cs_set_eq:NN \do \char_set_catcode_other:N
-        \__scontents_dospecials:
-      \obeylines
-      \tl_use:N \l__scontents_verb_font_tl
-      \cs_set_eq:NN \do \__scontents_do_noligs:N
-      \__scontents_nolig_list:
-      \tex_everypar:D \exp_after:wN
-        { \tex_the:D \tex_everypar:D \tex_unpenalty:D }
-    }
-  \cs_new_protected:Npn \__scontents_nolig_list:
-    { \do\`\do\<\do\>\do\,\do\'\do\- }
-  \cs_new_protected:Npn \__scontents_vobeyspaces:
-    { \char_set_active_eq:NN \  \__scontents_xobeysp: }
-  \cs_new_protected:Npn \__scontents_xobeysp:
-    { \mode_leave_vertical: \nobreak \ }
-\group_end:
+\bool_new:N \l__scontents_temp_bool
+\cs_new_protected:Npn \verbatim
+  { \__scontents_verbatim_aux: \frenchspacing \__scontents_vobeyspaces: \__scontents_xverb: }
+\cs_new_protected:Npn \__scontents_verbatim_aux:
+  {
+    \skip_vertical:N \parskip
+    \int_set:Nn \parindent { 0pt }
+    \skip_set:Nn \parfillskip { 0pt plus 1fil }
+    \int_set:Nn \parskip { 0pt plus0pt minus0pt }
+    \tex_par:D
+    \bool_set_false:N \l__scontents_temp_bool
+    \cs_set:Npn \par
+      {
+        \bool_if:NTF \l__scontents_temp_bool
+          {
+            \mode_leave_vertical:
+            \null
+            \tex_par:D
+            \penalty \interlinepenalty
+          }
+          {
+            \bool_set_true:N \l__scontents_temp_bool
+            \mode_if_horizontal:T
+              { \tex_par:D \penalty \interlinepenalty }
+          }
+      }
+    \cs_set_eq:NN \do \char_set_catcode_other:N
+      \__scontents_dospecials:
+    \obeylines
+    \tl_use:N \l__scontents_verb_font_tl
+    \cs_set_eq:NN \do \__scontents_do_noligs:N
+    \__scontents_nolig_list:
+    \tex_everypar:D \exp_after:wN
+      { \tex_the:D \tex_everypar:D \tex_unpenalty:D }
+  }
+\cs_new_protected:Npn \__scontents_nolig_list:
+  { \do\`\do\<\do\>\do\,\do\'\do\- }
+\cs_new_protected:Npn \__scontents_vobeyspaces:
+  { \__scontents_set_active_eq:NN \  \__scontents_xobeysp: }
+\cs_new_protected:Npn \__scontents_xobeysp:
+  { \mode_leave_vertical: \nobreak \ }
 \cs_new_protected:Npn \Scontents
   {
     \peek_charcode_remove:NTF *
@@ -315,7 +312,6 @@
 \cs_new_protected:Npn \verbatimsc
   {
     \group_begin:
-    \cs_set_eq:cN { @xverbatim } \__scontents_xverb:
     \verbatim
   }
 \cs_new_protected:Npn \endverbatimsc
