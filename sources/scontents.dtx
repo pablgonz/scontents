@@ -2275,7 +2275,7 @@ No tab
 %<context>\cs_new_protected:Npn \startscontents
   {
 %<plain|context>    \group_begin:
-      \@@_scontents_env_begin:
+    \@@_scontents_env_begin:
   }
 %<plain>\cs_new_protected:Npn \endscontents
 %<context>\cs_new_protected:Npn \stopscontents
@@ -3187,9 +3187,8 @@ No tab
 %</core>
 %<*loader>
 \group_begin:
-  \char_set_catcode_active:n { `\* }
+%<plain>  \char_set_catcode_active:n { `\* }
   \cs_new_protected:Npn \@@_plain_disable_outer_par:
-%</loader>
 %<*plain>
     {
       \group_begin:
@@ -3200,7 +3199,8 @@ No tab
     }
 %</plain>
 %<latex|context>    { }
-%<loader>\group_end:
+\group_end:
+%</loader>
 %<*core>
 \group_begin:
   \char_set_catcode_active:N \*
