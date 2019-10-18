@@ -3079,6 +3079,7 @@ No tab
       \cs_set_eq:NN \@@_verb_print_EOL: ^^M
       \cs_set_eq:NN ^^M \scan_stop:
       \cs_set_eq:cN { do@noligs } \@@_do_noligs:N
+      \int_set:Nn \tex_newlinechar:D { `\^^J }
       \@@_rescan_tokens:x
         {
           \@@_format_case:nnn

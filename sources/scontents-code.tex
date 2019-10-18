@@ -591,6 +591,7 @@
       \cs_set_eq:NN \__scontents_verb_print_EOL: ^^M
       \cs_set_eq:NN ^^M \scan_stop:
       \cs_set_eq:cN { do@noligs } \__scontents_do_noligs:N
+      \int_set:Nn \tex_newlinechar:D { `\^^J }
       \__scontents_rescan_tokens:x
         {
           \__scontents_format_case:nnn
