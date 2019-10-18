@@ -2784,12 +2784,13 @@ No tab
 %   exist (at the time \pkg{scontents} is loaded) we define \cs{dospecials}
 %   to use the \cs{l_char_special_seq}.
 %    \begin{macrocode}
-%<*core>
+%<!latex>
 \cs_if_exist:NF \dospecials
   {
     \cs_new:Npn \dospecials
       { \seq_map_function:NN \l_char_special_seq \do }
   }
+%<!latex>
 %    \end{macrocode}
 % \end{macro}
 %
@@ -2818,7 +2819,6 @@ No tab
 %   argument parser.
 %
 %    \begin{macrocode}
-%</core>
 %<*loader>
 \NewDocumentCommand { \Scontents }{ !s !O{} }
   { \@@_Scontents_internal:nn {#1} {#2} }
