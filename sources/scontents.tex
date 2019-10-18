@@ -143,7 +143,7 @@
     \__scontents_scontents_env_end:
     \group_end:
   }
-\cs_new_protected:Npn \__scontents_grab_optional:w [#1]
+\NewDocumentCommand \__scontents_grab_optional:w { r[] }
   { \__scontents_grab_optional:n {#1} }
 \bool_new:N \l__scontents_temp_bool
 \cs_new_protected:Npn \verbatim
@@ -186,45 +186,15 @@
   { \__scontents_set_active_eq:NN \  \__scontents_xobeysp: }
 \cs_new_protected:Npn \__scontents_xobeysp:
   { \mode_leave_vertical: \nobreak \ }
-\cs_new_protected:Npn \Scontents
-  {
-    \peek_charcode_remove:NTF *
-      { \__scontents_Scontents_auxi:N \c_true_bool }
-      { \__scontents_Scontents_auxi:N \c_false_bool }
-  }
-\cs_new_protected:Npx \__scontents_Scontents_auxi:N #1
-  {
-    \peek_charcode:NTF [ % ]
-      { \use:c { Scontents~code } \c_true_bool }
-      { \use:c { Scontents~code } \c_true_bool [ \c_novalue_tl ] }
-  }
-\cs_new_protected:cpn { Scontents~code } #1 [#2]
+\NewDocumentCommand { \Scontents }{ !s !O{} }
   { \__scontents_Scontents_internal:nn {#1} {#2} }
-\cs_new_protected:Npn \__scontents_verb_arg:w
-  { \__scontents_grab_v_long:Nw \__scontents_verb_arg_internal:n }
-\cs_new_protected:Npn \getstored
-  {
-    \peek_charcode_ignore_spaces:NTF [ % ]
-      { \use:c { getstored~code } }
-      { \use:c { getstored~code } [ 1 ] }
-  }
-\cs_new_protected:cpn { getstored~code } [#1] #2
+\NewDocumentCommand { \__scontents_verb_arg:w } { +v }
+  { \__scontents_verb_arg_internal:n {#1} }
+\NewDocumentCommand { \getstored } { O{1} m }
   { \__scontents_getstored_internal:nn {#1} {#2} }
-\cs_new_protected:Npx \foreachsc
-  {
-    \peek_charcode_ignore_spaces:NTF [ % ]
-      { \use:c { foreachsc~code } }
-      { \use:c { foreachsc~code } [ \c_novalue_tl ] }
-  }
-\cs_new_protected:cpn { foreachsc~code } [#1] #2
+\NewDocumentCommand { \foreachsc } { o m }
   { \__scontents_foreachsc_internal:nn {#1} {#2} }
-\cs_new_protected:Npx \typestored
-  {
-    \peek_charcode_ignore_spaces:NTF [ % ]
-      { \use:c { typestored~code } }
-      { \use:c { typestored~code } [ \c_novalue_tl ] }
-  }
-\cs_new_protected:cpn { typestored~code } [#1] #2
+\NewDocumentCommand { \typestored } { o m }
   { \__scontents_typestored_internal:nn {#1} {#2} }
 \use:x
   {
@@ -250,19 +220,13 @@
       }
     }
 \group_end:
-\cs_new_protected:Npn \setupsc #1
+\NewDocumentCommand { \setupsc } { +m }
   { \keys_set:nn { scontents } {#1} }
-\cs_new_protected:Npx \meaningsc
-  {
-    \peek_charcode_ignore_spaces:NTF [ % ]
-      { \use:c { meaningsc~code } }
-      { \use:c { meaningsc~code } [ \c_novalue_tl ] }
-  }
-\cs_new_protected:cpn { meaningsc~code } [#1] #2
+\NewDocumentCommand { \meaningsc } { o m }
   { \__scontents_meaningsc_internal:nn {#1} {#2} }
-\cs_new:Npn \countsc #1
+\NewExpandableDocumentCommand { \countsc } { m }
   { \seq_count:c { g__scontents_name_#1_seq } }
-\cs_new_protected:Npn \cleanseqsc #1
+\NewDocumentCommand { \cleanseqsc } { m }
   { \seq_clear_new:c { g__scontents_name_#1_seq } }
 \ExplSyntaxOff
 \endinput
