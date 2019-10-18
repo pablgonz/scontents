@@ -133,12 +133,11 @@
 \ExplSyntaxOn
 \char_set_catcode:nn { `\@ } { \l__scontents_tmpa_int }
 \__scontents_compat_restore:
-\cs_new_protected:Npn \scontents
+\NewDocumentEnvironment { scontents } { }
   {
     \group_begin:
     \__scontents_scontents_env_begin:
   }
-\cs_new_protected:Npn \endscontents
   {
     \__scontents_scontents_env_end:
     \group_end:
@@ -172,8 +171,7 @@
           }
       }
     \cs_set_eq:NN \do \char_set_catcode_other:N
-      \__scontents_dospecials:
-    \obeylines
+    \dospecials \obeylines
     \tl_use:N \l__scontents_verb_font_tl
     \cs_set_eq:NN \do \__scontents_do_noligs:N
     \__scontents_nolig_list:
@@ -202,13 +200,14 @@
       ##1 \g__scontents_end_verbatimsc_tl
       { ##1 \exp_not:N \endverbatimsc }
   }
-\cs_new_protected:Npn \verbatimsc
+\NewDocumentEnvironment { verbatimsc } { }
   {
     \group_begin:
     \verbatim
   }
-\cs_new_protected:Npn \endverbatimsc
-  { \group_end: }
+  {
+    \group_end:
+  }
 \group_begin:
   \char_set_catcode_active:n { `\* }
   \cs_new_protected:Npn \__scontents_plain_disable_outer_par:

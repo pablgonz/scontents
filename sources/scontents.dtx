@@ -2376,14 +2376,12 @@ No tab
 %    \begin{macrocode}
 %</core>
 %<*loader>
-%<latex>\NewDocumentEnvironment { scontents } { }
-%<plain>\cs_new_protected:Npn \scontents
+%<!context>\NewDocumentEnvironment { scontents } { }
 %<context>\cs_new_protected:Npn \startscontents
   {
 %<plain|context>    \group_begin:
     \@@_scontents_env_begin:
   }
-%<plain>\cs_new_protected:Npn \endscontents
 %<context>\cs_new_protected:Npn \stopscontents
   {
     \@@_scontents_env_end:
@@ -2760,8 +2758,7 @@ No tab
           }
       }
     \cs_set_eq:NN \do \char_set_catcode_other:N
-      \@@_dospecials:
-    \obeylines
+    \dospecials \obeylines
     \tl_use:N \l_@@_verb_font_tl
     \cs_set_eq:NN \do \@@_do_noligs:N
     \@@_nolig_list:
@@ -3015,18 +3012,17 @@ No tab
 %<plain>      { ##1 \exp_not:N \endverbatimsc }
 %<context>      { ##1 \exp_not:N \stopverbatimsc }
   }
-%<latex>\NewDocumentEnvironment { verbatimsc } { }
-%<plain>\cs_new_protected:Npn \verbatimsc
-%<*plain|latex>
+%<*!context>
+\NewDocumentEnvironment { verbatimsc } { }
   {
 %<plain>    \group_begin:
 %<latex>    \cs_set_eq:cN { @xverbatim } \@@_xverb:
     \verbatim
   }
-%</plain|latex>
-%<plain>\cs_new_protected:Npn \endverbatimsc
-%<plain>  { \group_end: }
-%<latex>  { }
+  {
+%<plain>    \group_end:
+  }
+%</!context>
 %<context>\definetyping[verbatimsc]
 %</loader>
 %<*core>
