@@ -51,14 +51,6 @@
 \tl_gset:cx { ver @ scontents . sty } { \ScontentsFileDate\space
   v\ScontentsFileVersion\space \ScontentsFileDescription }
 \iow_log:x { Package: ~ scontents ~ \use:c { ver @ scontents . sty } }
-\msg_gset:nnn { scontents } { already-loaded }
-  { The~`scontents'~package~is~already~loaded.~Aborting~input~\msg_line_context:. }
-\cs_if_exist:NT \__scontents_rescan_tokens:n
-  {
-    \msg_warning:nn { scontents } { already-loaded }
-    \ExplSyntaxOff
-    \file_input_stop:
-  }
 \tl_new:N \g__scontents_end_verbatimsc_tl
 \tl_gset_rescan:Nnn
   \g__scontents_end_verbatimsc_tl
