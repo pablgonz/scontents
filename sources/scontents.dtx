@@ -1671,6 +1671,7 @@ No tab
 \cs_if_exist:NT \@@_rescan_tokens:n
   {
     \msg_warning:nn { scontents } { already-loaded }
+    \ExplSyntaxOff
     \file_input_stop:
   }
 %    \end{macrocode}
