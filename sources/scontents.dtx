@@ -1653,7 +1653,7 @@ No tab
 % know how to make a proper \hologo{ConTeXt} module :-). We define a
 % \LaTeX{}-style ver@scontents.sty macro with version info (just in case):
 %    \begin{macrocode}
-%<*plain|context>
+%<*!latex>
 %<context>\writestatus{loading}{User Module scontents v\ScontentsFileVersion}
 %<context>\unprotect
 \input expl3-generic.tex
@@ -1661,11 +1661,13 @@ No tab
 \tl_gset:cx { ver @ scontents . sty } { \ScontentsFileDate\space
   v\ScontentsFileVersion\space \ScontentsFileDescription }
 \iow_log:x { Package: ~ scontents ~ \use:c { ver @ scontents . sty } }
-%</plain|context>
+%</!latex>
 %    \end{macrocode}
 %
-% Now we load the core \mypkg*{scontents} code:
+% In Plain, check that the package isn't being loaded twice (\LaTeX{} and
+% \hologo{ConTeXt} already defend against that):
 %    \begin{macrocode}
+%<*plain>
 \msg_gset:nnn { scontents } { already-loaded }
   { The~`scontents'~package~is~already~loaded.~Aborting~input~\msg_line_context:. }
 \cs_if_exist:NT \@@_rescan_tokens:n
@@ -1674,6 +1676,7 @@ No tab
     \ExplSyntaxOff
     \file_input_stop:
   }
+%</plain>
 %    \end{macrocode}
 %
 % \begin{macro}{\g_@@_end_verbatimsc_tl,\c_@@_end_env_tl}
