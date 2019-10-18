@@ -40,6 +40,7 @@
 \cs_if_exist:NT \__scontents_rescan_tokens:n
   {
     \msg_warning:nn { scontents } { already-loaded }
+    \ExplSyntaxOff
     \file_input_stop:
   }
 \tl_new:N \g__scontents_end_verbatimsc_tl
