@@ -2422,8 +2422,7 @@ No tab
 %    \begin{macrocode}
 %</core>
 %<*loader>
-%<latex>\NewDocumentCommand \@@_grab_optional:w { r[] }
-%<plain|context>\cs_new_protected:Npn \@@_grab_optional:w [#1]
+\NewDocumentCommand \@@_grab_optional:w { r[] }
   { \@@_grab_optional:n {#1} }
 %</loader>
 %<*core>
@@ -2776,10 +2775,18 @@ No tab
 \cs_new_protected:Npn \@@_xobeysp:
   { \mode_leave_vertical: \nobreak \ }
 %</plain>
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[int]{\dospecials}
+%   \pkg{xparse} also requires \LaTeX's \cs{dospecials}. In case it doesn't
+%   exist (at the time \pkg{scontents} is loaded) we define \cs{dospecials}
+%   to use the \cs{l_char_special_seq}.
+%    \begin{macrocode}
 %<*core>
-\cs_new_protected:Npn \@@_dospecials:
+\cs_if_exist:NF \dospecials
   {
-    \cs_if_exist_use:NF \dospecials
+    \cs_new:Npn \dospecials
       { \seq_map_function:NN \l_char_special_seq \do }
   }
 %    \end{macrocode}
@@ -2812,22 +2819,7 @@ No tab
 %    \begin{macrocode}
 %</core>
 %<*loader>
-%<latex>\NewDocumentCommand { \Scontents }{ !s !O{} }
-%<*plain|context>
-\cs_new_protected:Npn \Scontents
-  {
-    \peek_charcode_remove:NTF *
-      { \@@_Scontents_auxi:N \c_true_bool }
-      { \@@_Scontents_auxi:N \c_false_bool }
-  }
-\cs_new_protected:Npx \@@_Scontents_auxi:N #1
-  {
-    \peek_charcode:NTF [ % ]
-      { \use:c { Scontents~code } \c_true_bool }
-      { \use:c { Scontents~code } \c_true_bool [ \c_novalue_tl ] }
-  }
-\cs_new_protected:cpn { Scontents~code } #1 [#2]
-%</plain|context>
+\NewDocumentCommand { \Scontents }{ !s !O{} }
   { \@@_Scontents_internal:nn {#1} {#2} }
 %</loader>
 %<*core>
@@ -2852,14 +2844,8 @@ No tab
   }
 %</core>
 %<*loader>
-%<*latex>
 \NewDocumentCommand { \@@_verb_arg:w } { +v }
   { \@@_verb_arg_internal:n {#1} }
-%</latex>
-%<*plain|context>
-\cs_new_protected:Npn \@@_verb_arg:w
-  { \@@_grab_v_long:Nw \@@_verb_arg_internal:n }
-%</plain|context>
 %</loader>
 %<*core>
 \cs_new_protected:Npn \@@_verb_arg_internal:n #1
@@ -2885,16 +2871,7 @@ No tab
 %    \begin{macrocode}
 %</core>
 %<*loader>
-%<latex>\NewDocumentCommand { \getstored } { O{1} m }
-%<*plain|context>
-\cs_new_protected:Npn \getstored
-  {
-    \peek_charcode_ignore_spaces:NTF [ % ]
-      { \use:c { getstored~code } }
-      { \use:c { getstored~code } [ 1 ] }
-  }
-\cs_new_protected:cpn { getstored~code } [#1] #2
-%</plain|context>
+\NewDocumentCommand { \getstored } { O{1} m }
   { \@@_getstored_internal:nn {#1} {#2} }
 %</loader>
 %<*core>
@@ -2917,16 +2894,7 @@ No tab
 %    \begin{macrocode}
 %</core>
 %<*loader>
-%<latex>\NewDocumentCommand { \foreachsc } { o m }
-%<*plain|context>
-\cs_new_protected:Npx \foreachsc
-  {
-    \peek_charcode_ignore_spaces:NTF [ % ]
-      { \use:c { foreachsc~code } }
-      { \use:c { foreachsc~code } [ \c_novalue_tl ] }
-  }
-\cs_new_protected:cpn { foreachsc~code } [#1] #2
-%</plain|context>
+\NewDocumentCommand { \foreachsc } { o m }
   { \@@_foreachsc_internal:nn {#1} {#2} }
 %</loader>
 %<*core>
@@ -2978,16 +2946,7 @@ No tab
 %    \begin{macrocode}
 %</core>
 %<*loader>
-%<latex>\NewDocumentCommand { \typestored } { o m }
-%<*plain|context>
-\cs_new_protected:Npx \typestored
-  {
-    \peek_charcode_ignore_spaces:NTF [ % ]
-      { \use:c { typestored~code } }
-      { \use:c { typestored~code } [ \c_novalue_tl ] }
-  }
-\cs_new_protected:cpn { typestored~code } [#1] #2
-%</plain|context>
+\NewDocumentCommand { \typestored } { o m }
   { \@@_typestored_internal:nn {#1} {#2} }
 %</loader>
 %<*core>
@@ -3163,9 +3122,10 @@ No tab
 %
 %    \begin{macrocode}
 %</core>
-%<latex>\NewDocumentCommand { \setupsc } { +m }
-%<plain|context>\cs_new_protected:Npn \setupsc #1
-%<loader>  { \keys_set:nn { scontents } {#1} }
+%<*loader>
+\NewDocumentCommand { \setupsc } { +m }
+  { \keys_set:nn { scontents } {#1} }
+%</loader>
 %<*core>
 %    \end{macrocode}
 % \end{macro}
@@ -3178,16 +3138,7 @@ No tab
 %    \begin{macrocode}
 %</core>
 %<*loader>
-%<latex>\NewDocumentCommand { \meaningsc } { o m }
-%<*plain|context>
-\cs_new_protected:Npx \meaningsc
-  {
-    \peek_charcode_ignore_spaces:NTF [ % ]
-      { \use:c { meaningsc~code } }
-      { \use:c { meaningsc~code } [ \c_novalue_tl ] }
-  }
-\cs_new_protected:cpn { meaningsc~code } [#1] #2
-%</plain|context>
+\NewDocumentCommand { \meaningsc } { o m }
   { \@@_meaningsc_internal:nn {#1} {#2} }
 %</loader>
 %<*core>
@@ -3224,9 +3175,10 @@ No tab
 %
 %    \begin{macrocode}
 %</core>
-%<latex>\NewExpandableDocumentCommand { \countsc } { m }
-%<plain|context>\cs_new:Npn \countsc #1
-%<loader>  { \seq_count:c { g_@@_name_#1_seq } }
+%<*loader>
+\NewExpandableDocumentCommand { \countsc } { m }
+  { \seq_count:c { g_@@_name_#1_seq } }
+%</loader>
 %<*core>
 %    \end{macrocode}
 % \end{macro}
@@ -3239,9 +3191,10 @@ No tab
 %
 %    \begin{macrocode}
 %</core>
-%<latex>\NewDocumentCommand { \cleanseqsc } { m }
-%<plain|context>\cs_new_protected:Npn \cleanseqsc #1
-%<loader>  { \seq_clear_new:c { g_@@_name_#1_seq } }
+%<*loader>
+\NewDocumentCommand { \cleanseqsc } { m }
+  { \seq_clear_new:c { g_@@_name_#1_seq } }
+%</loader>
 %<*core>
 %    \end{macrocode}
 % \end{macro}
