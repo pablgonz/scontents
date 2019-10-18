@@ -161,6 +161,72 @@
   }
 \cs_new_protected:Npn \__scontents_grab_optional:w [#1]
   { \__scontents_grab_optional:n {#1} }
+\cs_new_protected:Npn \Scontents
+  {
+    \peek_charcode_remove:NTF *
+      { \__scontents_Scontents_auxi:N \c_true_bool }
+      { \__scontents_Scontents_auxi:N \c_false_bool }
+  }
+\cs_new_protected:Npx \__scontents_Scontents_auxi:N #1
+  {
+    \peek_charcode:NTF [ % ]
+      { \use:c { Scontents~code } \c_true_bool }
+      { \use:c { Scontents~code } \c_true_bool [ \c_novalue_tl ] }
+  }
+\cs_new_protected:cpn { Scontents~code } #1 [#2]
+  { \__scontents_Scontents_internal:nn {#1} {#2} }
+\cs_new_protected:Npn \__scontents_verb_arg:w
+  { \__scontents_grab_v_long:Nw \__scontents_verb_arg_internal:n }
+\cs_new_protected:Npn \getstored
+  {
+    \peek_charcode_ignore_spaces:NTF [ % ]
+      { \use:c { getstored~code } }
+      { \use:c { getstored~code } [ 1 ] }
+  }
+\cs_new_protected:cpn { getstored~code } [#1] #2
+  { \__scontents_getstored_internal:nn {#1} {#2} }
+\cs_new_protected:Npx \foreachsc
+  {
+    \peek_charcode_ignore_spaces:NTF [ % ]
+      { \use:c { foreachsc~code } }
+      { \use:c { foreachsc~code } [ \c_novalue_tl ] }
+  }
+\cs_new_protected:cpn { foreachsc~code } [#1] #2
+  { \__scontents_foreachsc_internal:nn {#1} {#2} }
+\cs_new_protected:Npx \typestored
+  {
+    \peek_charcode_ignore_spaces:NTF [ % ]
+      { \use:c { typestored~code } }
+      { \use:c { typestored~code } [ \c_novalue_tl ] }
+  }
+\cs_new_protected:cpn { typestored~code } [#1] #2
+  { \__scontents_typestored_internal:nn {#1} {#2} }
+\use:x
+  {
+    \cs_new_protected:Npn \exp_not:N \__scontents_xverb:w
+      ##1 \g__scontents_end_verbatimsc_tl
+      { ##1 \exp_not:N \stopverbatimsc }
+  }
+\definetyping[verbatimsc]
+\group_begin:
+  \cs_new_protected:Npn \__scontents_plain_disable_outer_par:
+    { }
+\group_end:
+\cs_new_protected:Npn \setupsc #1
+  { \keys_set:nn { scontents } {#1} }
+\cs_new_protected:Npx \meaningsc
+  {
+    \peek_charcode_ignore_spaces:NTF [ % ]
+      { \use:c { meaningsc~code } }
+      { \use:c { meaningsc~code } [ \c_novalue_tl ] }
+  }
+\cs_new_protected:cpn { meaningsc~code } [#1] #2
+  { \__scontents_meaningsc_internal:nn {#1} {#2} }
+\cs_new:Npn \countsc #1
+  { \seq_count:c { g__scontents_name_#1_seq } }
+\cs_new_protected:Npn \cleanseqsc #1
+  { \seq_clear_new:c { g__scontents_name_#1_seq } }
+\ExplSyntaxOff
 \endinput
 %%
 %% End of file `t-scontents.mkvi'.

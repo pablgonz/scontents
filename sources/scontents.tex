@@ -145,6 +145,126 @@
   }
 \cs_new_protected:Npn \__scontents_grab_optional:w [#1]
   { \__scontents_grab_optional:n {#1} }
+\bool_new:N \l__scontents_temp_bool
+\cs_new_protected:Npn \verbatim
+  { \__scontents_verbatim_aux: \frenchspacing \__scontents_vobeyspaces: \__scontents_xverb: }
+\cs_new_protected:Npn \__scontents_verbatim_aux:
+  {
+    \skip_vertical:N \parskip
+    \int_set:Nn \parindent { 0pt }
+    \skip_set:Nn \parfillskip { 0pt plus 1fil }
+    \int_set:Nn \parskip { 0pt plus0pt minus0pt }
+    \tex_par:D
+    \bool_set_false:N \l__scontents_temp_bool
+    \cs_set:Npn \par
+      {
+        \bool_if:NTF \l__scontents_temp_bool
+          {
+            \mode_leave_vertical:
+            \null
+            \tex_par:D
+            \penalty \interlinepenalty
+          }
+          {
+            \bool_set_true:N \l__scontents_temp_bool
+            \mode_if_horizontal:T
+              { \tex_par:D \penalty \interlinepenalty }
+          }
+      }
+    \cs_set_eq:NN \do \char_set_catcode_other:N
+      \__scontents_dospecials:
+    \obeylines
+    \tl_use:N \l__scontents_verb_font_tl
+    \cs_set_eq:NN \do \__scontents_do_noligs:N
+    \__scontents_nolig_list:
+    \tex_everypar:D \exp_after:wN
+      { \tex_the:D \tex_everypar:D \tex_unpenalty:D }
+  }
+\cs_new_protected:Npn \__scontents_nolig_list:
+  { \do\`\do\<\do\>\do\,\do\'\do\- }
+\cs_new_protected:Npn \__scontents_vobeyspaces:
+  { \__scontents_set_active_eq:NN \  \__scontents_xobeysp: }
+\cs_new_protected:Npn \__scontents_xobeysp:
+  { \mode_leave_vertical: \nobreak \ }
+\cs_new_protected:Npn \Scontents
+  {
+    \peek_charcode_remove:NTF *
+      { \__scontents_Scontents_auxi:N \c_true_bool }
+      { \__scontents_Scontents_auxi:N \c_false_bool }
+  }
+\cs_new_protected:Npx \__scontents_Scontents_auxi:N #1
+  {
+    \peek_charcode:NTF [ % ]
+      { \use:c { Scontents~code } \c_true_bool }
+      { \use:c { Scontents~code } \c_true_bool [ \c_novalue_tl ] }
+  }
+\cs_new_protected:cpn { Scontents~code } #1 [#2]
+  { \__scontents_Scontents_internal:nn {#1} {#2} }
+\cs_new_protected:Npn \__scontents_verb_arg:w
+  { \__scontents_grab_v_long:Nw \__scontents_verb_arg_internal:n }
+\cs_new_protected:Npn \getstored
+  {
+    \peek_charcode_ignore_spaces:NTF [ % ]
+      { \use:c { getstored~code } }
+      { \use:c { getstored~code } [ 1 ] }
+  }
+\cs_new_protected:cpn { getstored~code } [#1] #2
+  { \__scontents_getstored_internal:nn {#1} {#2} }
+\cs_new_protected:Npx \foreachsc
+  {
+    \peek_charcode_ignore_spaces:NTF [ % ]
+      { \use:c { foreachsc~code } }
+      { \use:c { foreachsc~code } [ \c_novalue_tl ] }
+  }
+\cs_new_protected:cpn { foreachsc~code } [#1] #2
+  { \__scontents_foreachsc_internal:nn {#1} {#2} }
+\cs_new_protected:Npx \typestored
+  {
+    \peek_charcode_ignore_spaces:NTF [ % ]
+      { \use:c { typestored~code } }
+      { \use:c { typestored~code } [ \c_novalue_tl ] }
+  }
+\cs_new_protected:cpn { typestored~code } [#1] #2
+  { \__scontents_typestored_internal:nn {#1} {#2} }
+\use:x
+  {
+    \cs_new_protected:Npn \exp_not:N \__scontents_xverb:w
+      ##1 \g__scontents_end_verbatimsc_tl
+      { ##1 \exp_not:N \endverbatimsc }
+  }
+\cs_new_protected:Npn \verbatimsc
+  {
+    \group_begin:
+    \verbatim
+  }
+\cs_new_protected:Npn \endverbatimsc
+  { \group_end: }
+\group_begin:
+  \char_set_catcode_active:n { `\* }
+  \cs_new_protected:Npn \__scontents_plain_disable_outer_par:
+    {
+      \group_begin:
+        \char_set_lccode:nn { `\* } { `\^^L }
+        \tex_lowercase:D { \group_end:
+        \tex_let:D * \scan_stop:
+      }
+    }
+\group_end:
+\cs_new_protected:Npn \setupsc #1
+  { \keys_set:nn { scontents } {#1} }
+\cs_new_protected:Npx \meaningsc
+  {
+    \peek_charcode_ignore_spaces:NTF [ % ]
+      { \use:c { meaningsc~code } }
+      { \use:c { meaningsc~code } [ \c_novalue_tl ] }
+  }
+\cs_new_protected:cpn { meaningsc~code } [#1] #2
+  { \__scontents_meaningsc_internal:nn {#1} {#2} }
+\cs_new:Npn \countsc #1
+  { \seq_count:c { g__scontents_name_#1_seq } }
+\cs_new_protected:Npn \cleanseqsc #1
+  { \seq_clear_new:c { g__scontents_name_#1_seq } }
+\ExplSyntaxOff
 \endinput
 %%
 %% End of file `scontents.tex'.
