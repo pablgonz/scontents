@@ -2171,6 +2171,112 @@ No tab
 %    \end{macrocode}
 % \end{macro}
 %
+% \subsection{Compatibility layer with Plain}
+%
+% When loading the package outside of \LaTeX{} we can't usually use \pkg{xparse}.
+% However since \pkg{xparse} doesn't actually hold any dependency with \LaTeX{}
+% except for package-loading commands, we can emulate those commands (much like
+% in \pkg{miniltx}) so that \pkg{xparse} is loadable in any format.
+%
+% The bunch of macros below is adapted from the \LaTeX{} kernel (greatly simplified).
+%  \begin{macrocode}
+%</core>
+%<*loader&!latex>
+\seq_new:N \l_@@_compat_seq
+\cs_new_protected:Npn \@@_compat_redefine:Npn #1
+  {
+    \seq_put_right:Nn \l_@@_compat_seq {#1}
+    \cs_set_eq:cN { @@_saved_\cs_to_str:N #1: } #1
+    \cs_new_protected:Npn #1
+  }
+\cs_new_protected:Npn \@@_compat_restore:
+  { \seq_map_function:NN \l_@@_compat_seq \@@_compat_restore:N }
+\cs_new_protected:Npn \@@_compat_restore:N #1
+  {
+    \cs_set_eq:Nc #1 { @@_saved_\cs_to_str:N #1: }
+    \cs_undefine:c { @@_saved_\cs_to_str:N #1: }
+  }
+\cs_generate_variant:Nn \@@_compat_redefine:Npn { c }
+\cs_new_protected:Npn \@@_optarg:nn #1 #2
+  { \peek_charcode_ignore_spaces:NTF [ {#1} {#1[#2]} }
+\cs_new_protected:Npn \@@_stararg:nn #1 #2
+  { \peek_charcode_remove_ignore_spaces:NTF * {#1} {#2} }
+\@@_compat_redefine:Npn \RequirePackage
+  { \@@_optarg:nn { \@@_require_auxi:wn } { } }
+\cs_new_protected:Npn \@@_require_auxi:wn [#1] #2
+  { \@@_optarg:nn { \@@_require_auxii:wnw [{#1}]{#2} } { } }
+\cs_new:Npn \@@_zap_space:ww #1~#2
+  {
+    #1 \if_meaning:w #2 \q_mark
+      \exp_after:wN \use_none:n
+    \else:
+      \exp_after:wN \@@_zap_space:ww
+    \fi: #2
+  }
+\cs_new_protected:Npn \@@_require_auxii:wnw [#1] #2 [#3]
+  {
+    \tl_set:Nx \l_@@_temp_tl { \@@_zap_space:ww #2 ~ \q_mark }
+    \clist_map_function:NN \l_@@_temp_tl \@@_require_auxiii:n
+  }
+\cs_new_protected:Npn \@@_require_auxiii:n #1
+  { \str_if_eq:eeF {expl3} {#1} { \msg_error:nnn { scontents } { invalid-package } {#1} } }
+\msg_new:nnn { scontents } { invalid-package }
+  { Package~`#1'~invalid~in~scontents.~This~is~an~error~in~scontents. }
+\@@_compat_redefine:cpn { @ifpackagelater } #1
+  { \exp_args:Nc \@@_package_later_aux:Nn { ver@#1.sty } }
+\cs_new_protected:Npn \@@_package_later_aux:Nn #1 #2
+  {
+    \int_compare:nNnTF
+      { \exp_after:wN \@@_parse_version:w #1 //00 \q_mark } <
+      { \exp_after:wN \@@_parse_version:w #2 //00 \q_mark }
+  }
+\cs_new:Npn \@@_parse_version:w #1 { \@@_parse_version_auxi:w 0#1 }
+\cs_new:Npn \@@_parse_version_auxi:w #1/#2/#3#4#5 \q_mark
+  { \@@_parse_version_auxii:w #1-#2-#3#4 \q_mark }
+\cs_new:Npn \@@_parse_version_auxii:w #1-#2-#3#4#5 \q_mark
+  { \tl_if_blank:nF {#2} {#1} #2 #3 #4 }
+\@@_compat_redefine:Npn \ProvidesExplPackage #1 #2 #3 #4
+  { \@@_provides_aux:nn {#1} { #2 \ifx\relax#3\relax\else v#3\space\fi #4 } }
+\cs_new_protected:Npn \@@_provides_aux:nn #1 #2
+  {
+    \tl_gset:cx { ver@#1.sty } {#2}
+    \iow_log:n { Package~#1:~#2 }
+    \ExplSyntaxOn
+  }
+\@@_compat_redefine:Npn \DeclareOption
+  { \@@_stararg:nn { \use_none:n } { \use_none:nn } }
+\@@_compat_redefine:Npn \ProcessOptions
+  { \@@_stararg:nn { } { } }
+%    \end{macrocode}
+%
+% Now that the compatibility layer is defined, we can finally load \pkg{xparse}.
+% \pkg{xparse} expects to be loaded with \cs{ExplSyntaxOff} (not much harm would
+% be done otherwise, but just to be on the safe side).
+%
+% Within \pkg{xparse} a §\RequirePackage{expl3}§ is done. We can ignore that since
+% we have already loaded \pkg{expl3}. Next, a §\@ifpackagelater§ test is done:
+% we do that test too to ensure that \pkg{xparse} is compatible with the current
+% running version of \pkg{expl3}. The following §\ProvidesExplPackage§ simply
+% defines §\ver@xparse.sty§ for any other package that might uset it, and then
+% does \cs{ExplSyntaxOn}. At the end of the package, \pkg{xparse} parses (heh)
+% the package options. Since we don't have those in non-\LaTeX{} formats, they are
+% ignored. Okay, so load \pkg{xparse}:
+%    \begin{macrocode}
+\int_set:Nn \l_@@_tmpa_int { \char_value_catcode:n { `\@ } }
+\char_set_catcode_letter:N \@
+\exp_after:wN
+\ExplSyntaxOff
+\file_input:n { xparse.sty }
+\ExplSyntaxOn
+\char_set_catcode:nn { `\@ } { \l_@@_tmpa_int }
+\@@_compat_restore:
+%</loader&!latex>
+%<*core>
+%    \end{macrocode}
+% (actually we don't need to do \cs{ExplSyntaxOn} there because we don't have
+%  \LaTeX{}'s full package loading mechanism, so the \pkg{expl3} syntax remains
+%  active after \pkg{xparse} is loaded, but it doesn't harm either).
+%
 % \subsection{Programming of the sequences}
 %
 %   The storage of the package is done using |seq| variables.  Here we
@@ -2623,171 +2729,6 @@ No tab
 %    \end{macrocode}
 % \end{macro}
 %
-% \subsection{Compatibility layer with Plain}
-%
-% \begin{macro}{\@@_cs_new_verb:Nn}
-%   When loading the package outside of \LaTeX{} we can't use \pkg{xparse},
-%   unfortunately, so we need to devise some own code for defining user-level
-%   functions. The \cs{@@_cs_new_verb:Nn} macro defines a verbatim macro similar
-%   to a function defined with \pkg{xparse}'s §v§ argument type.
-%
-%   The bunch of macros below is copied from \pkg{xparse}.
-%    \begin{macrocode}
-%</core>
-%<*loader&!latex>
-\tl_new:N \l_@@_v_arg_tl
-\bool_new:N \l_@@_long_bool
-\cs_new_protected:Npn \@@_grab_v:Nw
-  {
-    \bool_set_false:N \l_@@_long_bool
-    \@@_grab_v_aux:w
-  }
-\cs_new_protected:Npn \@@_grab_v_long:Nw
-  {
-    \bool_set_true:N \l_@@_long_bool
-    \@@_grab_v_aux:w
-  }
-\cs_new_protected:Npn \@@_grab_v_aux:w #1
-  {
-    \cs_set_eq:NN \@@_run_code:n #1
-    \group_begin:
-      \group_align_safe_begin:
-        \int_set:Nn \tex_escapechar:D { 92 }
-        \tl_clear:N \l_@@_v_arg_tl
-        \peek_remove_spaces:n
-          {
-            \peek_meaning_remove:NTF \c_group_begin_token
-              {
-                \group_align_safe_end:
-                \@@_grab_v_bgroup:
-              }
-              {
-                \peek_N_type:TF
-                  { \@@_grab_v_aux_test:N }
-                  { \@@_grab_v_aux_abort:n { } }
-              }
-          }
-  }
-\cs_new_protected:Npn \@@_grab_v_group_end:
-  {
-        \group_align_safe_end:
-        \exp_args:NNNo
-      \group_end:
-    \tl_set:Nn \l_@@_v_arg_tl { \l_@@_v_arg_tl }
-  }
-\cs_new_protected:Npn \@@_grab_v_aux_test:N #1
-  {
-    \@@_grab_v_token_if_char:NTF #1
-      {
-        \@@_grab_v_aux_put:N #1
-        \@@_grab_v_aux_catcodes:
-        \@@_grab_v_aux_loop:N #1
-      }
-      { \@@_grab_v_aux_abort:n {#1} #1 }
-  }
-\cs_new_protected:Npn \@@_grab_v_aux_loop:N #1
-  {
-    \peek_N_type:TF
-      { \@@_grab_v_aux_loop:NN #1 }
-      { \@@_grab_v_aux_abort:n { } }
-  }
-\cs_new_protected:Npn \@@_grab_v_aux_loop:NN #1#2
-  {
-    \@@_grab_v_token_if_char:NTF #2
-      {
-        \token_if_eq_charcode:NNTF #1 #2
-          { \@@_grab_v_aux_loop_end: }
-          {
-            \@@_grab_v_aux_put:N #2
-            \@@_grab_v_aux_loop:N #1
-          }
-      }
-      { \@@_grab_v_aux_abort:n {#2} #2 }
-  }
-\cs_new_protected:Npn \@@_grab_v_aux_loop_end:
-  {
-    \@@_grab_v_group_end:
-    \exp_args:Nx \@@_run_code:n { \tl_tail:N \l_@@_v_arg_tl }
-  }
-\int_new:N \l_@@_v_nesting_int
-\cs_new_protected:Npx \@@_grab_v_bgroup:
-  {
-    \exp_not:N \@@_grab_v_aux_catcodes:
-    \exp_not:n { \int_set:Nn \l_@@_v_nesting_int { 1 } }
-    \exp_not:N \@@_grab_v_aux_put:N \iow_char:N \{
-    \exp_not:N \@@_grab_v_bgroup_loop:
-  }
-\cs_new_protected:Npn \@@_grab_v_bgroup_loop:
-  {
-    \peek_N_type:TF
-      { \@@_grab_v_bgroup_loop:N }
-      { \@@_grab_v_aux_abort:n { } }
-  }
-\cs_new_protected:Npn \@@_grab_v_bgroup_loop:N #1
-  {
-    \@@_grab_v_token_if_char:NTF #1
-      {
-        \token_if_eq_charcode:NNTF \c_group_end_token #1
-          {
-            \int_decr:N \l_@@_v_nesting_int
-            \int_compare:nNnTF \l_@@_v_nesting_int > 0
-              {
-                \@@_grab_v_aux_put:N #1
-                \@@_grab_v_bgroup_loop:
-              }
-              { \@@_grab_v_aux_loop_end: }
-          }
-          {
-            \token_if_eq_charcode:NNT \c_group_begin_token #1
-              { \int_incr:N \l_@@_v_nesting_int }
-            \@@_grab_v_aux_put:N #1
-            \@@_grab_v_bgroup_loop:
-          }
-      }
-      { \@@_grab_v_aux_abort:n {#1} #1 }
-  }
-\cs_new_protected:Npn \@@_grab_v_aux_catcodes:
-  {
-    \cs_set_eq:NN \do \char_set_catcode_other:N
-    \@@_dospecials:
-    \tex_endlinechar:D = `\^^M \scan_stop:
-    \bool_if:NTF \l_@@_long_bool
-      { \char_set_catcode_other:n { \tex_endlinechar:D } }
-      { \char_set_catcode_parameter:n { \tex_endlinechar:D } }
-  }
-\cs_new_protected:Npn \@@_grab_v_aux_abort:n #1
-  {
-    \@@_grab_v_group_end:
-    \exp_after:wN \exp_after:wN \exp_after:wN
-      \peek_meaning_remove:NTF \char_generate:nn { \tex_endlinechar:D } { 6 }
-      {
-        \msg_error:nnxxx { xparse } { verbatim-newline }
-          { \@@_environment_or_command: }
-          { \tl_to_str:N \l_@@_v_arg_tl }
-          { \tl_to_str:n {#1} }
-        \@@_add_arg:o \c_novalue_tl
-      }
-      {
-        \msg_error:nnxxx { xparse } { verbatim-tokenized }
-          { \@@_environment_or_command: }
-          { \tl_to_str:N \l_@@_v_arg_tl }
-          { \tl_to_str:n {#1} }
-        \@@_add_arg:o \c_novalue_tl
-      }
-  }
-\cs_new_protected:Npn \@@_grab_v_aux_put:N #1
-  {
-    \tl_put_right:Nx \l_@@_v_arg_tl
-      {
-        \token_if_active:NTF #1
-          { \exp_not:N #1 } { \token_to_str:N #1 }
-      }
-  }
-\cs_new_protected:Npn \@@_grab_v_token_if_char:NTF #1
-  { \str_if_eq:eeTF { } { \str_tail:n {#1} } }
-%    \end{macrocode}
-% \end{macro}
-%
 % \begin{macro}[int]{\verbatim,\endverbatim}
 %   In Plain we emulate \LaTeX's \env{verbatim} environment.
 %    \begin{macrocode}
@@ -2834,7 +2775,6 @@ No tab
 \cs_new_protected:Npn \@@_xobeysp:
   { \mode_leave_vertical: \nobreak \ }
 %</plain>
-%</loader&!latex>
 %<*core>
 \cs_new_protected:Npn \@@_dospecials:
   {
