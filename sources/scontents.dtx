@@ -2960,6 +2960,7 @@ No tab
 \cs_new_protected:Npn \@@_getstored_internal:nn #1 #2
   {
     \group_begin:
+      \int_set:Nn \tex_newlinechar:D { `\^^J }
       \@@_rescan_tokens:x
         { \@@_getfrom_seq:nn {#1} {#2} }
     \group_end:
