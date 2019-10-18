@@ -185,6 +185,13 @@
   { \__scontents_set_active_eq:NN \  \__scontents_xobeysp: }
 \cs_new_protected:Npn \__scontents_xobeysp:
   { \mode_leave_vertical: \nobreak \ }
+
+\cs_if_exist:NF \dospecials
+  {
+    \cs_new:Npn \dospecials
+      { \seq_map_function:NN \l_char_special_seq \do }
+  }
+
 \NewDocumentCommand { \Scontents }{ !s !O{} }
   { \__scontents_Scontents_internal:nn {#1} {#2} }
 \NewDocumentCommand { \__scontents_verb_arg:w } { +v }
