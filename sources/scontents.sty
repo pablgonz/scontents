@@ -82,40 +82,6 @@
   }
 \NewDocumentCommand \__scontents_grab_optional:w { r[] }
   { \__scontents_grab_optional:n {#1} }
-\NewDocumentCommand { \Scontents }{ !s !O{} }
-  { \__scontents_Scontents_internal:nn {#1} {#2} }
-\NewDocumentCommand { \__scontents_verb_arg:w } { +v }
-  { \__scontents_verb_arg_internal:n {#1} }
-\NewDocumentCommand { \getstored } { O{1} m }
-  { \__scontents_getstored_internal:nn {#1} {#2} }
-\NewDocumentCommand { \foreachsc } { o m }
-  { \__scontents_foreachsc_internal:nn {#1} {#2} }
-\NewDocumentCommand { \typestored } { o m }
-  { \__scontents_typestored_internal:nn {#1} {#2} }
-\use:x
-  {
-    \cs_new_protected:Npn \exp_not:N \__scontents_xverb:w
-      ##1 \g__scontents_end_verbatimsc_tl
-      { ##1 \exp_not:N \end{verbatimsc} }
-  }
-\NewDocumentEnvironment { verbatimsc } { }
-  {
-    \cs_set_eq:cN { @xverbatim } \__scontents_xverb:
-    \verbatim
-  }
-  { }
-\group_begin:
-  \cs_new_protected:Npn \__scontents_plain_disable_outer_par:
-    { }
-\group_end:
-\NewDocumentCommand { \setupsc } { +m }
-  { \keys_set:nn { scontents } {#1} }
-\NewDocumentCommand { \meaningsc } { o m }
-  { \__scontents_meaningsc_internal:nn {#1} {#2} }
-\NewExpandableDocumentCommand { \countsc } { m }
-  { \seq_count:c { g__scontents_name_#1_seq } }
-\NewDocumentCommand { \cleanseqsc } { m }
-  { \seq_clear_new:c { g__scontents_name_#1_seq } }
 \endinput
 %%
 %% End of file `scontents.sty'.
