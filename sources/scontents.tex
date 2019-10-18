@@ -39,7 +39,7 @@
   { The~`scontents'~package~is~already~loaded.~Aborting~input~\msg_line_context:. }
 \cs_if_exist:NT \__scontents_rescan_tokens:n
   {
-    \msg_warning:nnn { scontents } { already-loaded }
+    \msg_warning:nn { scontents } { already-loaded }
     \file_input_stop:
   }
 \tl_new:N \g__scontents_end_verbatimsc_tl
