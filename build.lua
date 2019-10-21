@@ -1,39 +1,48 @@
 -- Build script for scontents
 pkgversion   = "1.5"
-pkgdate      = "2019/10/15"
+pkgdate      = "2019-10-22"
 
 module       = "scontents"
 ctanpkg      = "scontents"
 ctanzip      = ctanpkg.."-"..pkgversion
 
-tagfiles     = {"sources/README.md","sources/scontents.sty","sources/scontents.dtx"}
+tagfiles     = {"sources/README.md","sources/scontents.ins","sources/scontents.dtx"}
 
 function update_tag (file,content,tagname,tagdate)
- tagdate = string.gsub (pkgdate,"-", "/")
- if string.match (file, "scontents.sty" ) then
+ tagdate = string.gsub (pkgdate,"-", "-")
+ if string.match (file, "scontents.ins" ) then
   content = string.gsub (content,  
-                         "\\ProvidesExplPackage{(.-)}{.-}{.-}",
-                         "\\ProvidesExplPackage{%1}{".. tagdate.."}{"..pkgversion .."}")
+                         "date=%d%d%d%d%-%d%d%-%d%d",
+                         "date="..tagdate.."")
+  content = string.gsub (content,  
+                         "version=%d%.%d",
+                         "version=".. pkgversion ..""  )
   return content                         
  elseif string.match (file, "scontents.dtx") then
   content = string.gsub (content,  
-                         "\\ProvidesExplPackage{(.-)}{.-}{.-}",
-                         "\\ProvidesExplPackage{%1}{".. tagdate.."}{"..pkgversion .. "}")
+                         "\\ScontentsFileDate{(.-)}",
+                         "\\ScontentsFileDate{"..tagdate.."}")
+  content = string.gsub (content,
+                         "\\ScontentsCoreFileDate{(.-)}",
+                         "\\ScontentsCoreFileDate{"..tagdate.."}")
+  content = string.gsub (content,  
+                         "\\ScontentsFileVersion{(.-)}",
+                         "\\ScontentsFileVersion{"..pkgversion.."}")
   return content 
  elseif string.match (file, "README.md") then
    content = string.gsub (content,  
-                         "Version: %d%.%d.%s-",
-                         "Version: " .. pkgversion  )
+                         "Version: %d%.%d",
+                         "Version: "..pkgversion.."" )
    content = string.gsub (content,  
-                         "Date: %d%d%d%d%/%d%d%/%d%d",
-                         "Date: " .. tagdate )
+                         "Date: %d%d%d%d%-%d%d%-%d%d",
+                         "Date: ".. tagdate.."" )
  return content
   end
  return content
  end
 
 -- ctan setup
-docfiles = {"sources/scontents.pdf","source/scontents.dtx"}
+docfiles = {"sources/scontents.pdf","sources/scontents.dtx","sources/scontents.ins"}
 textfiles= {"sources/README.md"}
 
 -- Compile documentation with xelatex to reduce pdf size
