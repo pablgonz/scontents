@@ -1,6 +1,6 @@
 ## scontents — Stores LaTeX contents in memory or files
 - Version: 1.5
-- Date: 2019/10/15
+- Date: 2019-10-22
 - Author: Pablo González
 
 ## Description
@@ -34,3 +34,4 @@ conditions of the [LaTeX Project Public License](https://www.latex-project.org/l
 - README.md (this file)
 - scontents.pdf  (documentation)
 - scontents.dtx  (master file that produced all files)
+- scontents.ins  (installer to extract all files)
