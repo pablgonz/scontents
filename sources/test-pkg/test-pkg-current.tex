@@ -7,7 +7,6 @@
 \usepackage{scontents}
 % only for test
 \usepackage[top=0.5in,bottom=0.5in, left=1in, right=1in]{geometry}
-\usepackage{pgffor}
 \usepackage{fvextra}
 \usepackage{listings}
 \setlength{\parindent}{0pt}
@@ -585,7 +584,7 @@ YYY\getstored[1]{answers}XXX
 
 \begin{exercise}
 \end{exercise}
-\Scontents[unknow]{This is the answer to exercise 3}
+\Scontents{This is the answer to exercise 3}
 
 \subsection{Answers}
 \newcounter{ansNr}
@@ -593,11 +592,9 @@ YYY\getstored[1]{answers}XXX
   {\refstepcounter{ansNr}\par\noindent Answer~\theansNr:}
   {\par}
 
-\foreach \i in {1,...,\countsc{answers}} {
-\begin{answer}
-\getstored[\i]{answers}
-\end{answer}
-}
+\foreachsc[before={\begin{answer}},after={\end{answer}}]{answers}
+
+
 \subsection{typestored}
 \RecustomVerbatimEnvironment{verbatimsc}{Verbatim}{frame=none,numbers=left}
 \typestored[1]{answers}

@@ -1,19 +1,19 @@
 % \iffalse meta-comment
 %
 % Copyright (C) 2019 by Pablo González L <pablgonz@educarchile.cl>
-% 
+%
 % This work may be distributed and/or modified under the conditions of the
 % LaTeX Project Public License, either version 1.3c of this license or (at
 % your option) any later version. The latest version of this license is in
-% 
+%
 %  http://www.latex-project.org/lppl.txt
-% 
+%
 % and version 1.3c or later is part of all distributions of LaTeX version
 % 2005/12/01 or later.
-% 
+%
 % This work is "maintained" (as per the LPPL maintenance status)
 % by Pablo González Luengo.
-% 
+%
 % This work consists of the files scontents.dtx and
 %                                 scontents.ins,
 % and the derived files           scontents.sty,
@@ -341,14 +341,15 @@
     keywords=[1]{begin,end,Verbatim},%
 % Other words 2
     keywordstyle=[2]{\color{blue!75}},%
-    keywords=[2]{usepackage,section,documentclass},%
+    keywords=[2]{usepackage,section,documentclass,input,usemodule},%
 % Other words 3
     keywordstyle=[3]{\color{optcolor!85}},%
     keywords=[3]{document,article},%
 % Reserved words 4 (scontents pkg)
     keywordstyle=[4]{\color{mypkgcolor}},%
     keywords=[4]{scontents,Scontents,getstored,typestored,verbatimsc,%
-                 endverbatimsc,countsc,meaningsc,foreachsc,macros},%
+                 endverbatimsc,countsc,meaningsc,foreachsc,macros
+                 endscontents,startscontents,stopscontents},%
 % Reserved in red
     keywordstyle=[5]{\color{red}},%
     keywords=[5]{makeatletter,makeatother,let,verb,undefined,makebox},%
@@ -407,7 +408,7 @@
 \lstMakeShortInline[language=scontents-doc,basicstyle=\ttfamily]§
 
 % Get file info
-\GetFileInfo{\jobname.sty}
+\GetFileInfo{scontents.sty}
 
 % Config hyperref
 \hypersetup{
@@ -551,8 +552,8 @@
 % \medskip
 %
 % The \mypkg*{scontents} package loads \mypkg{expl3}, \mypkg{xparse} and
-% \mypkg{l3keys2e}. This package can be used with "xelatex", "lualatex"
-% , "pdflatex" and the classical workflow §latex>dvips>ps2pdf§.
+% \mypkg{l3keys2e}. This package can be used with "plain", "context", "xelatex",
+% "lualatex", "pdflatex" and the classical workflow §latex>dvips>ps2pdf§.
 %
 % \thispagestyle{plain}
 %
@@ -574,9 +575,9 @@
 % by making use \mymeta{sequences}.
 % \end{scontents}
 %
-% The package uses a \myoarg{key \textnormal{\textcolor{gray}{=}} val}
-% system for the options and is loaded in the usual way:
+% The package is loaded in the usual way:
 %
+% \subsubsection*{For \hologo{LaTeX} users}
 % \iffalse
 %<*example>
 % \fi
@@ -593,6 +594,30 @@
 % \fi
 \begin{examplecode}[frame=single]
 \usepackage`\small\myoarg{key \textnormal{\textcolor{gray}{=}} val}`{scontents}
+\end{examplecode}
+% \iffalse
+%</example>
+% \fi
+%
+% \subsubsection*{For \hologo{plainTeX} users}
+%
+% \iffalse
+%<*example>
+% \fi
+\begin{examplecode}[frame=single]
+\input scontents.tex
+\end{examplecode}
+% \iffalse
+%</example>
+% \fi
+%
+% \subsubsection*{For \hologo{ConTeXt} users}
+%
+% \iffalse
+%<*example>
+% \fi
+\begin{examplecode}[frame=single]
+\usemodule{scontents}
 \end{examplecode}
 % \iffalse
 %</example>
@@ -776,6 +801,11 @@ This text is in the outer environment (after nested).
 % It is advisable to store content within sequences with different names,
 % so as not to get lost in the order in which content is stored.
 %
+% In \hologo{plainTeX} there is not environments as in \hologo{LaTeX}.
+% Instead of using the environment \myenv*{scontents}, one should use a
+% \emph{pseudo environment} delimited by \ics*{scontents} and \ics*{endscontents}.
+% \hologo{ConTeXt} users should use \ics*{startscontents} and \ics*{stopscontents}.
+%
 % \subsection*{Options for environment}
 %
 % The environment options can be configured globally using option
@@ -794,7 +824,7 @@ This text is in the outer environment (after nested).
 % running the environment. The content is extracted from the \mymeta{sequence}
 % in which it is stored.
 %
-% \newpage
+% \medskip
 %
 % \keyexamp{write-env}{file.ext}{not used}
 % Sets the name of the \mymeta{external file} in which the \mymeta{contents} of
@@ -1552,9 +1582,9 @@ No tab
 % \settowidth{\descrwidth}{\textsf{v1.0, (ctan), 2019/07/30} }
 %
 % \begin{description}[font=\small\sffamily,wide=0pt,style=multiline,leftmargin=\descrwidth,nosep,noitemsep]
-% \item [\fileversion{} (dev), \filedate]
+% \item [\fileversion{} (ctan), \filedate]
 %    \begin{itemize}
-%        \item Add support for plain and ConText.
+%        \item Add support for \hologo{plainTeX} and \hologo{ConTeXt}.
 %        \item Split internal code for optimization.
 %        \item Add support for vertical spaces in |key=val|.
 %        \item Add support for plain.

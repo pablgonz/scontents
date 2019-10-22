@@ -11,29 +11,29 @@ tagfiles     = {"sources/README.md","sources/scontents.ins","sources/scontents.d
 function update_tag (file,content,tagname,tagdate)
  tagdate = string.gsub (pkgdate,"-", "-")
  if string.match (file, "scontents.ins" ) then
-  content = string.gsub (content,  
+  content = string.gsub (content,
                          "date=%d%d%d%d%-%d%d%-%d%d",
                          "date="..tagdate.."")
-  content = string.gsub (content,  
+  content = string.gsub (content,
                          "version=%d%.%d",
                          "version=".. pkgversion ..""  )
-  return content                         
+  return content
  elseif string.match (file, "scontents.dtx") then
-  content = string.gsub (content,  
+  content = string.gsub (content,
                          "\\ScontentsFileDate{(.-)}",
                          "\\ScontentsFileDate{"..tagdate.."}")
   content = string.gsub (content,
                          "\\ScontentsCoreFileDate{(.-)}",
                          "\\ScontentsCoreFileDate{"..tagdate.."}")
-  content = string.gsub (content,  
+  content = string.gsub (content,
                          "\\ScontentsFileVersion{(.-)}",
                          "\\ScontentsFileVersion{"..pkgversion.."}")
-  return content 
+  return content
  elseif string.match (file, "README.md") then
-   content = string.gsub (content,  
+   content = string.gsub (content,
                          "Version: %d%.%d",
                          "Version: "..pkgversion.."" )
-   content = string.gsub (content,  
+   content = string.gsub (content,
                          "Date: %d%d%d%d%-%d%d%-%d%d",
                          "Date: ".. tagdate.."" )
  return content
@@ -50,10 +50,8 @@ typesetexe = "xelatex"
 typesetopts= "-8bit"
 packtdszip   = false
 
-installfiles = { "sources/scontents.sty" }
-
-sourcefiles  = { "sources/scontents.dtx" }
-
+excludefiles = { "scontents/scontents.sty","scontents/scontents-code.tex" }
+sourcefiles  = { "sources/scontents.dtx","sources/scontents.sty","sources/scontents-code.tex" }
 typesetfiles = { "scontents.dtx" }
 
 typesetruns = 3
