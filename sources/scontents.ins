@@ -1,5 +1,5 @@
 \input l3docstrip.tex
-% \keepsilent
+\keepsilent
 \askforoverwritefalse
 \declarepreamble\standard
 
@@ -37,7 +37,7 @@ and the derived files           scontents.sty,
         title=\string\CONTEXT\ User Module,
      subtitle=Storing Contents,
        author=Pablo González,
-         date=2019-10-22,
+         date=2019-10-24,
     copyright=Pablo González,
         email=pablgonz@educarchile.cl,
       license=LPPL]
@@ -54,5 +54,17 @@ and the derived files           scontents.sty,
   \edef\tmpa{\standard^^J\context}\usepreamble\tmpa
   \file{t-scontents.mkvi}  {\from{scontents.dtx}{loader,context}}%
 }%
+
+\Msg{*****************************************************************}%
+\Msg{*}
+\Msg{* To finish the installation you have to move the files into a }
+\Msg{* directory searched by TeX. See README.md for instructions.}
+\Msg{*}
+\Msg{* To produce the documentation with source code run xelatex }%
+\Msg{* thrice on file scontents.dtx }%
+\Msg{*}
+\Msg{* Happy TeXing!}
+\Msg{*}
+\Msg{*****************************************************************}%
 
 \endbatchfile

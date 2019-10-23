@@ -1,6 +1,6 @@
 ## scontents — Stores LaTeX contents in memory or files
 - Version: 1.5
-- Date: 2019-10-22
+- Date: 2019-10-24
 - Author: Pablo González
 
 ## Description
@@ -18,9 +18,21 @@ The package loads and depends on updated versions of:
 ## Installation
 
 The package `scontents` is present in `TeXLive` and `MiKTeX`, use the 
-package manager to install. For a manual installation, put `scontents.dtx` 
-in your working directory and run `tex scontents.dtx`.
+package manager to install.
 
+For manual installation, download `scontents.zip` and unzip it, then move
+the files to appropriate locations:
+```
+  scontents.tex      -> TDS:tex/generic/scontents/
+  scontents-code.tex -> TDS:tex/generic/scontents/
+  scontents.sty      -> TDS:tex/latex/scontents/
+  scontents.mkvi     -> TDS:tex/context/third/scontents/
+  scontents.pdf      -> TDS:doc/latex/scontents/
+  README.md          -> TDS:doc/latex/scontents/
+  scontents.dtx      -> TDS:source/latex/scontents/
+  scontents.ins      -> TDS:source/latex/scontents/
+```
+then run `mktexlsr`.
 ## Examples
 
 The file `scontents.pdf` contains attached examples, which can be extracted
