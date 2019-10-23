@@ -26,7 +26,7 @@ the files to appropriate locations:
   scontents.tex      -> TDS:tex/generic/scontents/
   scontents-code.tex -> TDS:tex/generic/scontents/
   scontents.sty      -> TDS:tex/latex/scontents/
-  scontents.mkvi     -> TDS:tex/context/third/scontents/
+  t-scontents.mkvi   -> TDS:tex/context/third/scontents/
   scontents.pdf      -> TDS:doc/latex/scontents/
   README.md          -> TDS:doc/latex/scontents/
   scontents.dtx      -> TDS:source/latex/scontents/
