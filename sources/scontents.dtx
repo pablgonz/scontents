@@ -32,16 +32,26 @@
 % so that entries written to both streams end up in the same file.
 \usepackage[top=0.5in,bottom=0.5in,left=2in,right=0.7in,footskip=0.2in,headsep=10pt]{geometry}
 \usepackage[osf,mono=false,scale=0.95,llscaled=0.95]{libertine}
+\setmonofont[Ligatures = TeX, Scale = 0.80,Extension = .otf, WordSpace = {1,0,0},
+             PunctuationSpace = WordSpace, UprightFont =*-Regular,
+             ItalicFont =*-RegularIt, BoldFont=*-Semibold,
+             BoldItalicFont=*-SemiboldIt,
+             RawFeature = {+onum,+zero,+ss06},% 
+             FontFace={m}{sc}{*-ExtraLight}
+             ]{SourceCodePro}
+\newfontfamily\sourcecodeprolight{SourceCodePro-Regular.otf}
+     [Scale = 0.80, FakeStretch =0.75]
+\RenewDocumentCommand{\MacroLongFont}{}
+  {
+    \sourcecodeprolight\small
+  }
 \usepackage{unicode-math}
 \setmathfont[Scale = 0.95]{latinmodern-math.otf}
-\usepackage[osf,scale=0.80,semibold]{sourcecodepro}
 \usepackage{fontawesome5}
 \newfontfamily\lmmitalic{lmmono10-italic.otf}[
    Scale             = 0.95,%
    Extension         = .otf,%
    ItalicFont        = lmmono10-italic,%
-   SmallCapsFont     = lmmonocaps10-oblique,%
-   SlantedFont       = lmmonoslant10-regular,
    ]
 \newfontfamily\fetamontotf{ffmw10.otf}[
    Scale             = 0.95,%
@@ -52,7 +62,6 @@
 \usepackage{hyperxmp,lastpage,imakeidx,microtype,attachfile2}
 \usepackage{adjustbox,multicol,listings,accsupp,titletoc}
 \usepackage{scontents} % main
-\usepackage[osf,scale=0.80,semibold]{sourcecodepro}
 \usepackage[contents]{colordoc}
 
 % Patching colordoc.sty to work with l3doc.cls
@@ -2834,7 +2843,6 @@ No tab
 %     \Scontents,
 %     \@@_norm_arg:n,
 %     \@@_Scontents_auxi:N,
-%     \Scontents code,
 %     \@@_Scontents_internal:nn,
 %     \@@_verb_arg:w,
 %     \@@_verb_arg_internal:n,
