@@ -2387,26 +2387,6 @@ No tab
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\@@_getfrom_seq_p:nn}
-%   \cs{@@_getfrom_seq_p:nn} retrieves the items from the
-%   sequence for \cs{getstored}.
-%
-%    \begin{macrocode}
-\cs_new_protected:Npn \@@_getfrom_seq_p:nn #1#2
-  {
-    \seq_if_exist:cTF { g_@@_name_#2_seq }
-      {
-         \tl_gset:Nx \g_@@_temp_tl { \@@_getfrom_seq:nn {#1} {#2} }
-         \group_insert_after:N \@@_rescan_tokens:V
-         \group_insert_after:N \g_@@_temp_tl
-         \group_insert_after:N \tl_gclear:N
-         \group_insert_after:N \g_@@_temp_tl
-      }
-      { \msg_expandable_error:nnn { scontents } { undefined-storage } {#2} }
-  }
-%    \end{macrocode}
-% \end{macro}
-%
 % \begin{macro}{\@@_store_to_seq:NN}
 %   The \cs{@@_store_to_seq:NN} writes the recorded contents
 %   in |#1| to the log and stores it in |#2|.
@@ -2936,12 +2916,15 @@ No tab
   { \@@_getstored_internal:nn {#1} {#2} }
 %</loader>
 %<*core>
-\cs_new_protected:Npn \@@_getstored_internal:nn #1#2
+\cs_new_protected:Npn \@@_getstored_internal:nn #1 #2
   {
     \group_begin:
       \int_set:Nn \tex_newlinechar:D { `\^^J }
-      \@@_getfrom_seq_p:nn {#1} {#2}
-    \group_end:
+      \@@_rescan_tokens:x
+        {
+    \endgroup % This assumes \catcode`\\=0... Things might go off otherwise.
+    \@@_getfrom_seq:nn {#1} {#2}
+        }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -2974,8 +2957,12 @@ No tab
         { \l_@@_foreach_step_int }
         { \l_@@_foreach_stop_int }
         \@@_foreach_add_body:n
-      \seq_use:Nn \l_@@_foreach_print_seq { \tl_use:N \l_@@_foreach_sep_tl }
+      \tl_gset:Nx \g_@@_temp_tl
+        { \seq_use:Nn \l_@@_foreach_print_seq { \tl_use:N \l_@@_foreach_sep_tl } }
     \group_end:
+    \exp_after:wN \tl_gclear:N
+    \exp_after:wN \g_@@_temp_tl
+      \g_@@_temp_tl
   }
 \cs_new_protected:Npn \@@_foreach_add_body:n #1
   {
@@ -3045,8 +3032,8 @@ No tab
         {
           \@@_format_case:nnn
             { \exp_not:N \begin{verbatimsc} } % LaTeX
-            { \verbatimsc }                   % Plain/Generic
-            { \startverbatimsc }              % ConTeXt
+            { \verbatimsc } % Plain/Generic
+            { \startverbatimsc } % ConTeXt
             ^^M
           \exp_not:V #1 ^^M
           \g_@@_end_verbatimsc_tl
@@ -3073,7 +3060,7 @@ No tab
       ##1 \g_@@_end_verbatimsc_tl
 %<latex>      { ##1 \exp_not:N \end{verbatimsc} }
 %<plain>      { ##1 \exp_not:N \endverbatimsc }
-%<context>    { ##1 \exp_not:N \stopverbatimsc }
+%<context>      { ##1 \exp_not:N \stopverbatimsc }
   }
 %<*!context>
 \NewDocumentEnvironment { verbatimsc } { }
