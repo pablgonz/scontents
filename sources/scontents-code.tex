@@ -275,6 +275,18 @@
     \group_insert_after:N \tl_gclear:N
     \group_insert_after:N \g__scontents_temp_tl
   }
+\cs_new_protected:Npn \__scontents_getfrom_seq_p:nn #1#2
+  {
+    \seq_if_exist:cTF { g__scontents_name_#2_seq }
+      {
+         \tl_gset:Nx \g__scontents_temp_tl { \__scontents_getfrom_seq:nn {#1} {#2} }
+         \group_insert_after:N \__scontents_rescan_tokens:V
+         \group_insert_after:N \g__scontents_temp_tl
+         \group_insert_after:N \tl_gclear:N
+         \group_insert_after:N \g__scontents_temp_tl
+      }
+      { \msg_expandable_error:nnn { scontents } { undefined-storage } {#2} }
+  }
 \cs_new_protected:Npn \__scontents_store_to_seq:NN #1#2
   {
     \tl_log:N #1
@@ -529,12 +541,11 @@
         { \__scontents_lastfrom_seq:n \l__scontents_name_seq_cmd_tl }
     \group_end:
   }
-\cs_new_protected:Npn \__scontents_getstored_internal:nn #1 #2
+\cs_new_protected:Npn \__scontents_getstored_internal:nn #1#2
   {
     \group_begin:
       \int_set:Nn \tex_newlinechar:D { `\^^J }
-      \__scontents_rescan_tokens:x
-        { \__scontents_getfrom_seq:nn {#1} {#2} }
+      \__scontents_getfrom_seq_p:nn {#1} {#2}
     \group_end:
   }
 \cs_new_protected:Npn \__scontents_foreachsc_internal:nn #1 #2
@@ -597,8 +608,8 @@
         {
           \__scontents_format_case:nnn
             { \exp_not:N \begin{verbatimsc} } % LaTeX
-            { \verbatimsc } % Plain/Generic
-            { \startverbatimsc } % ConTeXt
+            { \verbatimsc }                   % Plain/Generic
+            { \startverbatimsc }              % ConTeXt
             ^^M
           \exp_not:V #1 ^^M
           \g__scontents_end_verbatimsc_tl
