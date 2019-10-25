@@ -18,7 +18,7 @@
 %                                 scontents.ins,
 % and the derived files           scontents.sty,
 %                                 scontents.tex,
-%                                 t-scontents.mkvi and
+%                                 t-scontents.mkiv and
 %                                 scontents-code.tex.
 %
 %<*driver>
@@ -32,19 +32,20 @@
 % so that entries written to both streams end up in the same file.
 \usepackage[top=0.5in,bottom=0.5in,left=2in,right=0.7in,footskip=0.2in,headsep=10pt]{geometry}
 \usepackage[osf,mono=false,scale=0.95,llscaled=0.95]{libertine}
-\setmonofont[Ligatures = TeX, Scale = 0.80,Extension = .otf, WordSpace = {1,0,0},
-             PunctuationSpace = WordSpace, UprightFont =*-Regular,
-             ItalicFont =*-RegularIt, BoldFont=*-Semibold,
-             BoldItalicFont=*-SemiboldIt,
-             RawFeature = {+onum,+zero,+ss06},% 
-             FontFace={m}{sc}{*-ExtraLight}
-             ]{SourceCodePro}
-\newfontfamily\sourcecodeprolight{SourceCodePro-Regular.otf}
-     [Scale = 0.80, FakeStretch =0.75]
+\setmonofont[
+    Ligatures      = TeX,
+    Numbers        = OldStyle,
+    Scale          = 0.80,
+    UprightFont    = *-Regular,
+    ItalicFont     = *-RegularIt,
+    BoldFont       = *-Semibold,
+    BoldItalicFont = *-SemiboldIt,
+    RawFeature     = {+zero,+ss06},
+    FontFace       = {m}{sc}{*-ExtraLight},
+    Extension      = .otf]{SourceCodePro}
+\newfontfamily\sourcecodeprolight{SourceCodePro-Regular.otf}[Scale = 0.80,FakeStretch =0.75]
 \RenewDocumentCommand{\MacroLongFont}{}
-  {
-    \sourcecodeprolight\small
-  }
+  { \sourcecodeprolight\small }
 \usepackage{unicode-math}
 \setmathfont[Scale = 0.95]{latinmodern-math.otf}
 \usepackage{fontawesome5}
@@ -1660,10 +1661,10 @@ No tab
 %
 % Now we define some common macros to hold the package date and version:
 %    \begin{macrocode}
-%<loader>\def\ScontentsFileDate{2019-10-24}%
-%<core>\def\ScontentsCoreFileDate{2019-10-24}%
+%<loader>\def\ScontentsFileDate{2019-10-26}%
+%<core>\def\ScontentsCoreFileDate{2019-10-26}%
 %<*loader>
-\def\ScontentsFileVersion{1.5}%
+\def\ScontentsFileVersion{1.6}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
 %    \end{macrocode}
 %
