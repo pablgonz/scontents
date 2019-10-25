@@ -21,7 +21,7 @@ This work consists of the files scontents.dtx and
                                 scontents.ins,
 and the derived files           scontents.sty,
                                 scontents.tex,
-                                t-scontents.mkvi and
+                                t-scontents.mkiv and
                                 scontents-code.tex.
 
 \endpreamble
@@ -33,11 +33,11 @@ and the derived files           scontents.sty,
 \declarepreamble\context
  \string\module
    [     file=t-scontents,
-      version=1.5,
+      version=1.6,
         title=\string\CONTEXT\ User Module,
      subtitle=Storing Contents,
        author=Pablo González,
-         date=2019-10-24,
+         date=2019-10-26,
     copyright=Pablo González,
         email=pablgonz@educarchile.cl,
       license=LPPL]
@@ -52,7 +52,7 @@ and the derived files           scontents.sty,
   \file{scontents.tex}     {\from{scontents.dtx}{loader,plain}}%
   \file{scontents-code.tex}{\from{scontents.dtx}{core}}%
   \edef\tmpa{\standard^^J\context}\usepreamble\tmpa
-  \file{t-scontents.mkvi}  {\from{scontents.dtx}{loader,context}}%
+  \file{t-scontents.mkiv}  {\from{scontents.dtx}{loader,context}}%
 }%
 
 \Msg{*****************************************************************}%
