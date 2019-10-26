@@ -50,10 +50,28 @@ from command line.
 The scontents package may be modified and distributed under the terms and
 conditions of the [LaTeX Project Public License](https://www.latex-project.org/lppl/), version 1.3c or greater.
 
-## Contents
-- README.md
-- scontents.sty
-- scontents.dtx
+## Content of the repository
+
+```
+├── README.md
+├── build.lua
+└── sources/
+    ├── README.md
+    ├── scontents-code.tex
+    ├── scontents.dtx
+    ├── scontents.ins
+    ├── scontents.log
+    ├── scontents.sty
+    ├── scontents.tex
+    ├── t-scontents.mkiv
+    ├── test-pkg/
+        ├── test-format.context.tex
+        ├── test-format.latex.tex
+        ├── test-format.plain.tex
+        ├── test-nospace.tex
+        ├── test-pkg-current.tex
+        └── test-pkg-other.tex    
+```
 
 ## Copyright
 
