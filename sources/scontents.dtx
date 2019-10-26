@@ -47,6 +47,16 @@
 \RenewDocumentCommand{\MacroLongFont}{}
   { \sourcecodeprolight\small }
 \usepackage{unicode-math}
+
+% Unicode-math changes the position of the glyphs, so the position 26A is now
+% a letter `j'. The doc package ensures that mathcode and the | actually prints
+% a j inside docstrip guards. This changes the mathcode of | to 07C:
+\makeatletter
+\def\mod@math@codes{\mathcode`\|="207C \mathcode`\&="2026
+                    \mathcode`\-="702D \mathcode`\+="702B
+                    \mathcode`\:="703A \mathcode`\=="703D }
+\makeatother
+
 \setmathfont[Scale = 0.95]{latinmodern-math.otf}
 \usepackage{fontawesome5}
 \newfontfamily\lmmitalic{lmmono10-italic.otf}[
