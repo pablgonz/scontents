@@ -393,7 +393,8 @@
                       { \tl_if_blank_p:n {#2} }
                       { \str_if_eq_p:ee {#2} { \c_percent_str } }
                       {
-                        \msg_warning:nnn { scontents } { rescanning-text } {#2}
+                        \str_if_eq:VnF \c__scontents_hidden_space_str {#2}
+                          { \msg_warning:nnn { scontents } { rescanning-text } {#2} }
                         \__scontents_rescan_tokens:n {#2}
                       }
                   }
