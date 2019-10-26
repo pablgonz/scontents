@@ -102,7 +102,7 @@
 % Now, after imakeidx opens the write stream for the index file, we copy
 % the reference to \@indexfile:
 \makeatletter
-\let\@indexfile\scontents@idxfile
+\expandafter\let\expandafter\@indexfile\csname \jobname @idxfile\endcsname
 \makeatother
 
 \setlength{\parindent}{0pt}
