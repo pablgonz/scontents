@@ -1589,10 +1589,16 @@ No tab
 %
 % \setlist[itemize,1]{label=\textendash,wide=0.5em,nosep,noitemsep,leftmargin=10pt}
 % \newlength\descrwidth
-% \settowidth{\descrwidth}{\textsf{v1.0, (ctan), 2019/07/30} }
+% \settowidth{\descrwidth}{\textsf{v1.0, (ctan), 2019-07-30} }
 %
 % \begin{description}[font=\small\sffamily,wide=0pt,style=multiline,leftmargin=\descrwidth,nosep,noitemsep]
 % \item [\fileversion{} (ctan), \filedate]
+%    \begin{itemize}
+%    \item The internal behavior of |\getstored| has been modified.
+%    \item The internal behavior of |\foreachsc| has been modified.
+%    \item Corrected file extension for \hologo{ConTeXt}.
+%    \end{itemize}
+% \item [v1.5 (ctan), 2019-10-24]
 %    \begin{itemize}
 %        \item Add support for \hologo{plainTeX} and \hologo{ConTeXt}.
 %        \item Split internal code for optimization.
@@ -1606,27 +1612,27 @@ No tab
 %        \item Messages and keys were separated.
 %        \item Restructuring of documentation.
 %        \item Now the version of |expl3| is checked instead of |xparse|.
-%        \item The internal behavior of \verb+force-eol+ has been modified.
+%        \item The internal behavior of |force-eol| has been modified.
 %    \end{itemize}
 % \item [v1.3 (ctan), 2019-09-24]
 %    \begin{itemize}
 %        \item The environment can now nest.
-%        \item Added \verb+force-eol+, \verb+verb-font+ and \verb+width-tab+ keys.
-%        \item The extra space has been removed when you run \verb+\getstored+.
+%        \item Added |force-eol|, |verb-font| and |width-tab| keys.
+%        \item The extra space has been removed when you run |\getstored|.
 %        \item Internal code has been rewritten more efficiently.
-%        \item Remove \verb+\typestored*+.
-%        \item Remove \verb+filecontentsdef+ dependency.
-%        \item Changing \verb+\regex_replace_all:+ for \verb+\tl_replace_all:+.
+%        \item Remove |\typestored|.
+%        \item Remove |filecontentsdef| dependency.
+%        \item Changing |\regex_replace_all:| for |\tl_replace_all:|.
 %    \end{itemize}
 % \item [v1.2 (ctan), 2019-08-28]
 %    \begin{itemize}
 %        \item Restructuring of documentation.
-%        \item Added copy of \verb+\tex_scantokens:D+.
+%        \item Added copy of |\tex_scantokens:|.
 %    \end{itemize}
 % \item [v1.1 (ctan), 2019-08-12]
 %    \begin{itemize}
 %        \item Extension of documentation.
-%        \item Replace \verb+\tex_endinput:D+ by \verb+\file_input_stop:+.
+%        \item Replace |\tex_endinput:D| by |\file_input_stop:|.
 %    \end{itemize}
 % \item [v1.0 (ctan), 2019-07-30]
 %    \begin{itemize}
@@ -2404,8 +2410,7 @@ No tab
 %
 % We define the environment \env{scontents}, next to the system
 % \myoarg{key \textnormal{\textcolor{gray}{=}} val}. The environment
-% is divided into three parts. This implementation is taken from answer
-% by Enrico Gregorio in \url{https://tex.stackexchange.com/a/487746/7832}.
+% is divided into two parts.
 %
 % \begin{macro}{
 %     scontents,
