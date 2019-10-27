@@ -30,6 +30,7 @@
 \makeatother
 % and later we will copy the write stream opened by imakeidx into \@indexfile
 % so that entries written to both streams end up in the same file.
+\usepackage[english]{babel}
 \usepackage[top=0.5in,bottom=0.5in,left=2in,right=0.7in,footskip=0.2in,headsep=10pt]{geometry}
 \usepackage[osf,mono=false,scale=0.95,llscaled=0.95]{libertine}
 \setmonofont[
@@ -227,7 +228,7 @@
   \group_begin:
   \small\ttfamily
   \textcolor{mypkgcolor}{\textbackslash#2}
-  \IfValueT{#1}{ \textcolor{red}{#1} }
+  \IfValueT{#1}{ \textcolor{MediumOrchid}{#1} }
   \IfValueT{#3}{ \myoarg[type=tt,sbc=gray,ac=lightgray,cf=optcolor]{#3} }
   \IfValueTF{#5}
     {
@@ -289,7 +290,7 @@
     \IfBooleanTF{#1}
       {
         \tl_set:Nn \l_tmpa_tl { #2 }
-        \regex_replace_once:nnN { (\*) } { \c{textcolor}\cB\{red\cE\}\cB\{\1\cE\} } \l_tmpa_tl
+        \regex_replace_once:nnN { (\*) } { \c{textcolor}\cB\{MediumOrchid\cE\}\cB\{\1\cE\} } \l_tmpa_tl
         \textcolor{mypkgcolor}{\ttfamily\textbackslash{\tl_use:N \l_tmpa_tl}}
         \MYSortIndex{Commands}{Commands ~ provide  ~ by  ~ \textcolor{gray}{scontents}>\texttt{\textbackslash#2}}
       }
@@ -352,7 +353,7 @@
     columns=fullflexible,%
     stringstyle= {\color{red}},%
     basicstyle=\ttfamily\small,%
-    alsoletter=-,%
+    alsoletter={-,@,.},%
 % comments
     morecomment=[l]{\%},%
     commentstyle=\lmmitalic\small\itshape\color{lightgray},%
@@ -361,36 +362,66 @@
     keywords=[1]{begin,end,Verbatim},%
 % Other words 2
     keywordstyle=[2]{\color{blue!75}},%
-    keywords=[2]{usepackage,section,documentclass,input,usemodule},%
+    keywords=[2]{usepackage,section,documentclass,input,usemodule,
+                 subsection,ExplSyntaxOff,ExplSyntaxOn,RequirePackage,
+                 ProvidesExplPackage},%
 % Other words 3
     keywordstyle=[3]{\color{optcolor!85}},%
-    keywords=[3]{document,article},%
+    keywords=[3]{document,article,setlength,pagestyle,definecolor},%
 % Reserved words 4 (scontents pkg)
     keywordstyle=[4]{\color{mypkgcolor}},%
     keywords=[4]{scontents,Scontents,getstored,typestored,verbatimsc,%
                  endverbatimsc,countsc,meaningsc,foreachsc,macros
-                 endscontents,startscontents,stopscontents},%
+                 endscontents,startscontents,stopscontents,scontents.tex},%
 % Reserved in red
     keywordstyle=[5]{\color{red}},%
-    keywords=[5]{makeatletter,makeatother,let,verb,undefined,makebox},%
+    keywords=[5]{makeatletter,makeatother,let,verb,@undefined,makebox,def,%
+                par,item,parindent,lstinline,@ifpackagelater,ver@xparse.sty,%
+                dospecials,do@noligs,char,outer},%
 % Reserved in orange
     keywordstyle=[6]{\color{optcolor}},%
-    keywords=[6]{store-cmd,store-env,print-env,write-env,%
+    keywords=[6]{store-cmd,store-env,print-env,print-cmd,write-env,%
                  start,stopt,wrapper,sep,step,before,after,write-out,%
                  width-tab,force-eol,inner,outer,I,J,M,L,Ascheol},%
 % Reserved in orange
     keywordstyle=[7]{\color{OrangeRed}},%
-    keywords=[7]{DefineVerbatimEnvironment,lstnewenvironment,newminted,newenvironment},%
+    keywords=[7]{DefineVerbatimEnvironment,lstnewenvironment,newminted,%
+                 newtheorem,newenvironment,VerbatimEnvironment},%
 % literate
-    literate=*{\{}{{\textcolor{gray}{\{}}}{1}
-              {\}}{{\textcolor{gray}{\}}}}{1}
+    literate=*{\{}{{{\color{gray}{\char`\{}}}}{1}
+              {\}}{{{\color{gray}{\char`\}}}}}{1}
+              {\|}{{{\color{gray}{\char`\|}}}}{1}
+              {\$}{{{\color{gray}{\char`\$}}}}{1}
+              {\#}{{{\color{optcolor}{\char`\#}}}}{1}
               {[}{{\textcolor{gray}{[}}}{1}
               {]}{{\textcolor{gray}{]}}}{1}
               {,}{{\textcolor{gray}{,}}}{1}
+              {;}{{\textcolor{gray}{;}}}{1}
+              {\&}{{\textcolor{gray}{\&}}}{1}
               {>}{{\textcolor{OrangeRed}{\guillemotright}}}{1}
-              {*}{{\textcolor{red}{*}}}{1}
-              {@}{{\textcolor{red}{@}}}{1}
+              {*}{{\textcolor{MediumOrchid}{*}}}{1}
+              %{@}{{\textcolor{red}{@}}}{1}
               {\^}{{\textcolor{optcolor}{\textasciicircum}}}{1}
+              {0}{{\textcolor{MediumOrchid}{0}}}{1}
+              {1}{{\textcolor{MediumOrchid}{1}}}{1}
+              {2}{{\textcolor{MediumOrchid}{2}}}{1}
+              %{3}{{\textcolor{MediumOrchid}{3}}}{1}% expl3
+              {4}{{\textcolor{MediumOrchid}{4}}}{1}
+              {5}{{\textcolor{MediumOrchid}{5}}}{1}
+              {6}{{\textcolor{MediumOrchid}{6}}}{1}
+              {7}{{\textcolor{MediumOrchid}{7}}}{1}
+              {8}{{\textcolor{MediumOrchid}{8}}}{1}
+              {9}{{\textcolor{MediumOrchid}{9}}}{1}
+              {.0}{{\textcolor{MediumOrchid}{.0}}}{2}% Following is to ensure that only periods
+              {.1}{{\textcolor{MediumOrchid}{.1}}}{2}% followed by a digit are changed.
+              {.2}{{\textcolor{MediumOrchid}{.2}}}{2}
+              {.3}{{\textcolor{MediumOrchid}{.3}}}{2}
+              {.4}{{\textcolor{MediumOrchid}{.4}}}{2}
+              {.5}{{\textcolor{MediumOrchid}{.5}}}{2}
+              {.6}{{\textcolor{MediumOrchid}{.6}}}{2}
+              {.7}{{\textcolor{MediumOrchid}{.7}}}{2}
+              {.8}{{\textcolor{MediumOrchid}{.8}}}{2}
+              {.9}{{\textcolor{MediumOrchid}{.9}}}{2}
               {=}{{\textcolor{gray}{=}}}{1},%
 }[keywords,tex,comments,strings]% end languaje
 
@@ -613,11 +644,14 @@
 %<*example>
 % \fi
 \begin{examplecode}[frame=single]
-\usepackage`\small\myoarg{key \textnormal{\textcolor{gray}{=}} val}`{scontents}
+\usepackage`\small\myoarg[type=tt]{key \textnormal{\textcolor{gray}{=}} val}`{scontents}
 \end{examplecode}
 % \iffalse
 %</example>
 % \fi
+%
+% The package options are not available for \hologo{plainTeX} and
+% \hologo{ConTeXt}, see \ref{sec:confopt}.
 %
 % \subsubsection*{For \hologo{plainTeX} users}
 %
@@ -1202,7 +1236,7 @@ by making use \mymeta{sequences}.
 %
 % \section{Examples}
 %
-% These are some (adapted) examples that have served as inspiration for
+% These are some adapted examples that have served as inspiration for
 % the creation of this package.
 %
 % \subsection{From answers package}
@@ -1213,7 +1247,7 @@ by making use \mymeta{sequences}.
 %<*example>
 % \fi
 \begin{scontents}[write-out=scexamp1.ltx]
-\documentclass[12pt,a4paper]{article}
+\documentclass{article}
 \usepackage[store-cmd=solutions]{scontents}
 \newtheorem{ex}{Exercise}
 \begin{document}
@@ -1320,7 +1354,7 @@ seventies that the \NSA\ has known that for 40 years.\par
 \begin{scontents}[store-env=buffer]
 Hello World!
 
-This is a \verb*|fake poor man's buffer| :).
+This is a \verb*|fake poor man's buffer :)|.
 \end{scontents}
 
 \section{source tikz}
@@ -1560,7 +1594,7 @@ and more.+
 %<*example>
 % \fi
 \begin{scontents}[write-out=scexamp8.ltx]
-% need --shell-escape
+% need -shell-escape
 \documentclass{article}
 \usepackage{scontents}
 \makeatletter
@@ -1728,7 +1762,7 @@ No tab
 %    \end{macrocode}
 % The Plain and \hologo{ConTeXt} loaders are similar (probably because I don't
 % know how to make a proper \hologo{ConTeXt} module :-). We define a
-% \LaTeX{}-style ver@scontents.sty macro with version info (just in case):
+% \LaTeX{}-style §\ver@scontents.sty§ macro with version info (just in case):
 %    \begin{macrocode}
 %<*!latex>
 %<context>\writestatus{loading}{User Module scontents v\ScontentsFileVersion}
@@ -2228,7 +2262,7 @@ No tab
 %
 %   First we check if the \mymeta{key} is an integer using \cs{int_to_roman:n}.
 %   If it is, we check that the value passed to the key is blank
-%   (otherwise something odd as |1=1| might have been used). If everything
+%   (otherwise something odd as §1=1§ might have been used). If everything
 %   is correct, then set the value of the integer which holds the \mymeta{index}.
 %   Otherwise raise an error about an \emph{unknown} option.
 %
@@ -2331,7 +2365,7 @@ No tab
 %    \end{macrocode}
 %
 % Now that the compatibility layer is defined, we can finally load \pkg{xparse}.
-% \pkg{xparse} expects to be loaded with \cs{ExplSyntaxOff} (not much harm would
+% \pkg{xparse} expects to be loaded with §\ExplSyntaxOff§ (not much harm would
 % be done otherwise, but just to be on the safe side).
 %
 % Within \pkg{xparse} a §\RequirePackage{expl3}§ is done. We can ignore that since
@@ -2339,7 +2373,7 @@ No tab
 % we do that test too to ensure that \pkg{xparse} is compatible with the current
 % running version of \pkg{expl3}. The following §\ProvidesExplPackage§ simply
 % defines §\ver@xparse.sty§ for any other package that might uset it, and then
-% does \cs{ExplSyntaxOn}. At the end of the package, \pkg{xparse} parses (heh)
+% does §\ExplSyntaxOn§. At the end of the package, \pkg{xparse} parses (heh)
 % the package options. Since we don't have those in non-\LaTeX{} formats, they are
 % ignored. Okay, so load \pkg{xparse}:
 %    \begin{macrocode}
@@ -2354,7 +2388,7 @@ No tab
 %</loader&!latex>
 %<*core>
 %    \end{macrocode}
-% (actually we don't need to do \cs{ExplSyntaxOn} there because we don't have
+% (actually we don't need to do §\ExplSyntaxOn§ there because we don't have
 %  \LaTeX{}'s full package loading mechanism, so the \pkg{expl3} syntax remains
 %  active after \pkg{xparse} is loaded, but it doesn't harm either).
 %
@@ -2425,7 +2459,7 @@ No tab
 %
 % \begin{macro}{\@@_store_to_seq:NN}
 %   The \cs{@@_store_to_seq:NN} writes the recorded contents
-%   in |#1| to the log and stores it in |#2|.
+%   in §#1§ to the log and stores it in §#2§.
 %
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_store_to_seq:NN #1#2
@@ -2600,16 +2634,16 @@ No tab
 %     \@@_remove_leading_nl:w,
 %   }
 %   This is the main macro to collect the contents of a verbatim environment.
-%   The macro starts a group, opens the output file, if necessary, sets verbatim
-%   catcodes, and then issues §^^M§ (set equal to \cs{@@_ret:w}) to read the
-%   environment line by line until reaching its end. The output token list will
-%   be appended with an active §^^J§ character and the line just read, and this
-%   line is written to the output file, if any. At the end of the environment
-%   the output file is closed (if it was open), and the output token list is
-%   smuggled out of the verbatim group. A leading §^^J§ is removed from the
-%   token list using \cs{@@_remove_leading_nl:n} (which expects an active §^^J§
-%   token at the head of the token list; a low level \hologo{TeX} error is raised
-%   otherwise).
+%   The macro starts a group, opens the \mymeta{output file}, if necessary,
+%   sets verbatim catcodes, and then issues §^^M§ (set equal to \cs{@@_ret:w})
+%   to read the environment line by line until reaching its end. The output
+%   token list will be appended with an active §^^J§ character and the line
+%   just read, and this line is written to the output file, if any. At the end
+%   of the environment the \mymeta{output file} is closed (if it was open),
+%   and the output token list is smuggled out of the verbatim group. A leading
+%   §^^J§ is removed from the token list using \cs{@@_remove_leading_nl:n}
+%  (which expects an active §^^J§ token at the head of the token list; a low
+%  level \hologo{TeX} error is raised otherwise).
 %
 %    \begin{macrocode}
   \cs_new_protected:Npn \@@_file_tl_write_start:n #1
@@ -2857,8 +2891,8 @@ No tab
 % \end{macro}
 %
 % \begin{macro}[int]{\dospecials}
-%   \pkg{xparse} also requires \LaTeX's \cs{dospecials}. In case it doesn't
-%   exist (at the time \pkg{scontents} is loaded) we define \cs{dospecials}
+%   \pkg{xparse} also requires \LaTeX's §\dospecials§. In case it doesn't
+%   exist (at the time \pkg{scontents} is loaded) we define §\dospecials§
 %   to use the \cs{l_char_special_seq}.
 %    \begin{macrocode}
 %<*!latex>
@@ -3019,9 +3053,6 @@ No tab
 %
 % \subsection{The command \cs{typestored}}
 %
-% This implementation is an adaptation taken from answer by Phelype Oleinik
-% in (\url{https://tex.stackexchange.com/a/497651/7832}).
-%
 % \begin{macro}{\typestored,\@@_verb_print:N,\@@_xverb:w,verbatimsc}
 %   The §\typestored§ commands fetches a buffer from memory, prints it
 %   to the log file, and then calls \cs{@@_verb_print:N}.
@@ -3130,8 +3161,8 @@ No tab
 %
 % \begin{macro}{\@@_do_noligs:N}
 %   \cs{@@_do_noligs:N} is an alternative definition for \LaTeXe's
-%   \cs{do@noligs} which makes sure to not consume following space
-%   tokens. The \LaTeXe{} version ends with \cs{char}|`#1|, which
+%   §\do@noligs§ which makes sure to not consume following space
+%   tokens. The \LaTeXe{} version ends with §\char`#1§, which
 %   leaves \TeX{} still looking for an \mymeta{optional~space}.
 %   This version uses \cs{char_generate:nn} to ensure that doesn't
 %   happen.
@@ -3157,7 +3188,7 @@ No tab
 %   }
 %   Shortcut definitions for common catcode changes.
 %   The §^^L§ needs a special treatment in non-\LaTeX{} mode
-%   because in Plain\,\TeX{} it is an \cs{outer} token.
+%   because in Plain\,\TeX{} it is an §\outer§ token.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_set_active_eq:NN #1
   {
