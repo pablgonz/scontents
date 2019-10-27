@@ -428,7 +428,7 @@
 \lstMakeShortInline[language=scontents-doc,basicstyle=\ttfamily]§
 
 % Get file info
-\GetFileInfo{scontents.sty}
+\GetFileInfo{\jobname.sty}
 
 % Config hyperref
 \hypersetup{
@@ -1297,6 +1297,7 @@ seventies that the \NSA\ has known that for 40 years.\par
 \documentclass{article}
 \usepackage[store-cmd=tikz]{scontents}
 \usepackage{tikz}
+\setlength{\parindent}{0pt}
 \pagestyle{empty}
 \Scontents*{\matrix{ \node (a) {$a$} ; & \node (b) {$b$} ; \\ } ;}
 \Scontents*{\matrix[ampersand replacement=\&]
@@ -1316,10 +1317,27 @@ seventies that the \NSA\ has known that for 40 years.\par
 \getstored[3]{tikz}
 \end{tikzpicture}
 
-\section{source}
+\begin{scontents}[store-env=buffer]
+Hello World!
+
+This is a \verb*|fake poor man's buffer| :).
+\end{scontents}
+
+\section{source tikz}
 \typestored[1]{tikz}
 \typestored[2]{tikz}
 \typestored[3]{tikz}
+
+\section{fake buffer}
+\subsection{real content}
+\getstored[1]{buffer}
+\subsection{verbatim style}
+\typestored[1]{buffer}
+\subsection{meaning}
+\meaningsc[1]{buffer}
+
+\section{tikz again}
+\foreachsc[before={\begin{tikzpicture}},after={\end{tikzpicture}},sep={\\[10pt]}]{tikz}
 \end{document}
 \end{scontents}
 % \iffalse
@@ -1340,24 +1358,25 @@ seventies that the \NSA\ has known that for 40 years.\par
 \usepackage{scontents}
 \pagestyle{empty}
 \begin{document}
-\begin{scontents}[store-env=a]
-Something for a
+\begin{scontents}[store-env=main]
+Something for main A.
 \end{scontents}
 
-\begin{scontents}[store-env=a]
-Something for b
+\begin{scontents}[store-env=main]
+Something for \verb|main B|.
 \end{scontents}
 
-\begin{scontents}[store-env=a]
-Something with no label
+\begin{scontents}[store-env=other]
+Something for \verb|other|.
 \end{scontents}
 
 \textbf{Let's print them}
 
-This is a: \getstored[1]{a}\par
-This is b: \getstored[2]{a}
+This is first stored in main: \getstored[1]{main}\par
+This is second stored in main: \getstored[2]{main}\par
+This is stored in other: \getstored[1]{other}
 
-\textbf{Print all of them}\par
+\textbf{Print all of stored in main}\par
 \foreachsc[sep={\\[10pt]}]{a}
 \end{document}
 \end{scontents}
@@ -1607,6 +1626,7 @@ No tab
 %    \item The internal behavior of |\getstored| has been modified.
 %    \item The internal behavior of |\foreachsc| has been modified.
 %    \item Corrected file extension for \hologo{ConTeXt}.
+%    \item Remove spurious warning.
 %    \end{itemize}
 % \item [v1.5 (ctan), 2019-10-24]
 %    \begin{itemize}
