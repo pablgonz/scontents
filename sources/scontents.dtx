@@ -47,6 +47,10 @@
 \newfontfamily\sourcecodeprolight{SourceCodePro-Regular.otf}[Scale = 0.80,FakeStretch =0.75]
 \RenewDocumentCommand{\MacroLongFont}{}
   { \sourcecodeprolight\small }
+% The character of visible space is now taken from Latin Modern Mono
+% to prevent fonts in T1. The original definition for xetex/luatex is
+% \def\verbvisiblespace{\usefont{OT1}{cmtt}{m}{n}\asciispace}
+\def\verbvisiblespace{{\fontfamily{lmtt}\selectfont\char"2423}}
 
 \usepackage{unicode-math}
 % Unicode-math changes the position of the glyphs, so the position 26A is now
@@ -1044,11 +1048,6 @@ This text is in the outer environment (after nested).
 % stored in the \mymarg{seq name}. The key §width-tab§ is available for
 % this command.
 %
-% The \mypkg{verbatim} package is not compatible with the implementation
-% of the \myenv*{verbatimsc} environment used by this command, if you are
-% a user of that package consider customizing the \myenv*{verbatimsc}
-% environment.
-%
 % \subsection{The environment \env{verbatimsc}}
 % \label{sec:verbatimsc}
 %
@@ -1061,11 +1060,9 @@ This text is in the outer environment (after nested).
 %
 % One consideration to keep in mind is that this is a \emph{representation}
 % of the \mymeta{stored content} in a \emph{verbatim} environment and not
-% a real \emph{verbatim} environment.
-%
-%
-% The \myenv*{verbatimsc} environment can be customized in the
-% following ways:
+% a real \emph{verbatim} environment. The \mypkg{verbatim} package is not
+% compatible with the implementation of the \myenv*{verbatimsc} environment.
+% The \myenv*{verbatimsc} environment can be customized in the following ways:
 %
 % Using the package \mypkg{fancyvrb}:
 % \iffalse
@@ -1167,8 +1164,6 @@ This text is in the outer environment (after nested).
 % The command \ics*{cleanseqsc} remove all contents stored in \mymarg{seq name}.
 % \end{function}
 %
-% \newpage
-%
 % \section[The \textnormal{\texttt{scontents}} package in action]{The \mypkg*{scontents} package in action}
 %
 % Remember the abstract on the first page?, this is it:
@@ -1231,14 +1226,12 @@ by making use \mymeta{sequences}.
 % I stored the content in memory and then ran §\getstored§ and
 % §\typestored§. This is one of the ways you can use \mypkg*{scontents}.
 %
-% \newpage
-%
 % \section{Examples}
 %
 % These are some adapted examples that have served as inspiration for
 % the creation of this package.
 %
-% \subsection{From answers package}
+% \subsection{From \texttt{answers} package}
 %
 % \subsubsection*{Example 1}
 %
@@ -1253,16 +1246,12 @@ by making use \mymeta{sequences}.
 \section{Problems}
 \begin{ex}
 First exercise
-\Scontents{
-   First solution.
-}
+\Scontents{First solution.}
 \end{ex}
 
 \begin{ex}
 Second exercise
-\Scontents{
-  Second solution.
-}
+\Scontents{Second solution.}
 \end{ex}
 
 \section{Solutions}
@@ -1273,11 +1262,11 @@ Second exercise
 %</example>
 % \fi
 %
-% Adaptation of example 1 (ansexam1) of the package \mypkg{answers}
+% Adaptation of example 1 of the package \mypkg{answers}
 % \textattachfile[color=0 0 1]{scexamp1.ltx}{\faFile*[regular]}.
 % \lstinputlisting[language=scontents-doc,numbers=left]{scexamp1.ltx}
 %
-% \subsection{From filecontentsdef package}
+% \subsection{From \texttt{filecontentsdef} package}
 %
 % \subsubsection*{Example 2}
 %
@@ -1457,7 +1446,7 @@ This is from the verbatim environment:
 % \textattachfile[color=0 0 1]{scexamp5.ltx}{\faFile*[regular]}.
 % \lstinputlisting[language=scontents-doc,numbers=left]{scexamp5.ltx}
 %
-% \subsection{Customization of verbatimsc}
+% \subsection{Customization of \texttt{verbatimsc}}
 %
 % \subsubsection*{Example 6}
 %
@@ -1656,6 +1645,11 @@ No tab
 % \begin{description}[font=\small\sffamily,wide=0pt,style=multiline,leftmargin=\descrwidth,nosep,noitemsep]
 % \item [\fileversion{} (ctan), \filedate]
 %    \begin{itemize}
+%    \item The |verbatimsc| environment was rewritten.
+%    \item Minor adjustments in documentation.
+%    \end{itemize}
+% \item [v1.6 (ctan), 2019-10-26]
+%    \begin{itemize}
 %    \item The internal behavior of |\getstored| has been modified.
 %    \item The internal behavior of |\foreachsc| has been modified.
 %    \item Corrected file extension for \hologo{ConTeXt}.
@@ -1730,10 +1724,10 @@ No tab
 %
 % Now we define some common macros to hold the package date and version:
 %    \begin{macrocode}
-%<loader>\def\ScontentsFileDate{2019-10-26}%
-%<core>\def\ScontentsCoreFileDate{2019-10-26}%
+%<loader>\def\ScontentsFileDate{2019-10-29}%
+%<core>\def\ScontentsCoreFileDate{2019-10-29}%
 %<*loader>
-\def\ScontentsFileVersion{1.6}%
+\def\ScontentsFileVersion{1.7}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
 %    \end{macrocode}
 %
@@ -2841,7 +2835,7 @@ No tab
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}[int]{\verbatim,\endverbatim}
+% \begin{macro}[int]{\verbatimsc,\endverbatimsc}
 %   In Plain we emulate \LaTeX's \env{verbatim} environment.
 %    \begin{macrocode}
 %<*plain>
