@@ -47,8 +47,8 @@
 \newfontfamily\sourcecodeprolight{SourceCodePro-Regular.otf}[Scale = 0.80,FakeStretch =0.75]
 \RenewDocumentCommand{\MacroLongFont}{}
   { \sourcecodeprolight\small }
-\usepackage{unicode-math}
 
+\usepackage{unicode-math}
 % Unicode-math changes the position of the glyphs, so the position 26A is now
 % a letter `j'. The doc package ensures that mathcode and the | actually prints
 % a j inside docstrip guards. This changes the mathcode of | to 07C:
@@ -205,7 +205,6 @@
   {
    \textcolor{\l_userdoc_meta_brackcolor_tl}{#1}
   }
-
 % \envexamp{m}
 \newsavebox{\boxexaenv}
 \NewDocumentCommand{\envexamp}{m}
@@ -462,10 +461,11 @@
 \GetFileInfo{\jobname.sty}
 
 % Config hyperref
+\definecolor{linkcolour}{cmyk}{0.64,0,0.95,0.40}% <-Olive Green
 \hypersetup{
-   linkcolor          = blue!50,
-   citecolor          = red!50,%
-   urlcolor           = magenta,%
+   linkcolor          = linkcolour,%
+   citecolor          = linkcolour,%
+   urlcolor           = linkcolour,%
    colorlinks         = true,%
    linktoc            = all,%
    pdftitle           = {.:: The scontents package --- \fileinfo{} ::.},%
@@ -508,7 +508,7 @@
 \makeatletter
 \renewcommand\tableofcontents{%
 \begingroup%
-\section*{\contentsname\quad{\color{gray}\leaders\hrule height 5pt depth -4.4pt\hfill}%
+\section*{\contentsname\quad{\color{linkcolour}\leaders\hrule height 5pt depth -4.4pt\hfill}%
   \@mkboth{%
     \MakeUppercase\contentsname}{\MakeUppercase\contentsname}}%
 \vspace*{-14pt}
@@ -516,7 +516,7 @@
  \begin{multicols}{2}%
     \@starttoc{toc}%
 \end{multicols}%
-\vspace*{-3pt}{\color{gray}\hrule height 0.6pt}%
+\vspace*{-3pt}{\color{linkcolour}\hrule height 0.6pt}%
 \vspace*{5pt}
 \endgroup
 }
@@ -549,7 +549,7 @@
 %
 % \begin{scontents}[store-env=abstract,print-env=true]
 % \begin{abstract}
-% The \mypkg*{scontents} package stores valid \hologo{(La)TeX} code in
+% The \mypkg*{scontents} package stores valid \hologo{LaTeX} code in
 % \mymeta{sequences} using the \mypkg{l3seq} module of \mypkg{expl3}.
 % The \mymeta{stored content}, including \emph{verbatim}, can be used
 % as many times as desired in the document, additionally can be written
@@ -1168,10 +1168,8 @@ This text is in the outer environment (after nested).
 %
 % \newpage
 %
-% \pdfstringdefDisableCommands{%
-%      \RenewExpandableDocumentCommand{\mypkg}{sm}{#2}%
-%    }
-% \section{The \mypkg*{scontents} package in action}
+% \section[The \textnormal{\texttt{scontents}} package in action]{The \mypkg*{scontents} package in action}
+%
 % Remember the abstract on the first page?, this is it:
 %
 % \getstored{abstract}
