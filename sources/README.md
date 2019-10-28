@@ -1,6 +1,6 @@
 ## scontents — Stores LaTeX contents in memory or files
-- Version: 1.6
-- Date: 2019-10-26
+- Version: 1.7
+- Date: 2019-10-29
 - Author: Pablo González
 
 ## Description
