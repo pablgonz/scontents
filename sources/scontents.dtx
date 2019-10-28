@@ -2845,9 +2845,14 @@ No tab
 %    \begin{macrocode}
 %<*plain>
 \bool_new:N \l_@@_temp_bool
-\cs_new_protected:Npn \verbatim
-  { \@@_verbatim_aux: \frenchspacing \@@_vobeyspaces: \@@_xverb: }
-\cs_new_protected:Npn \@@_verbatim_aux:
+\cs_new_protected:Npn \verbatimsc
+  {
+    \group_begin:
+      \@@_verbatimsc_aux: \frenchspacing \@@_vobeyspaces: \@@_xverb:
+  }
+\cs_new_protected:Npn \endverbatimsc
+  { \group_end: }
+\cs_new_protected:Npn \@@_verbatimsc_aux:
   {
     \skip_vertical:N \parskip
     \int_set:Nn \parindent { 0pt }
@@ -3119,6 +3124,7 @@ No tab
   }
 %</core>
 %<*loader>
+%<*!context>
 \use:x
   {
     \cs_new_protected:Npn \exp_not:N \@@_xverb:w
@@ -3127,17 +3133,15 @@ No tab
 %<plain>      { ##1 \exp_not:N \endverbatimsc }
 %<context>      { ##1 \exp_not:N \stopverbatimsc }
   }
-%<*!context>
+%</!context>
+%<*latex>
 \NewDocumentEnvironment { verbatimsc } { }
   {
-%<plain>    \group_begin:
-%<latex>    \cs_set_eq:cN { @xverbatim } \@@_xverb:
+    \cs_set_eq:cN { @xverbatim } \@@_xverb:
     \verbatim
   }
-  {
-%<plain>    \group_end:
-  }
-%</!context>
+  { }
+%</latex>
 %<context>\definetyping[verbatimsc]
 %</loader>
 %<*core>

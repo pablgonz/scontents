@@ -146,9 +146,14 @@
 \NewDocumentCommand \__scontents_grab_optional:w { r[] }
   { \__scontents_grab_optional:n {#1} }
 \bool_new:N \l__scontents_temp_bool
-\cs_new_protected:Npn \verbatim
-  { \__scontents_verbatim_aux: \frenchspacing \__scontents_vobeyspaces: \__scontents_xverb: }
-\cs_new_protected:Npn \__scontents_verbatim_aux:
+\cs_new_protected:Npn \verbatimsc
+  {
+    \group_begin:
+      \__scontents_verbatimsc_aux: \frenchspacing \__scontents_vobeyspaces: \__scontents_xverb:
+  }
+\cs_new_protected:Npn \endverbatimsc
+  { \group_end: }
+\cs_new_protected:Npn \__scontents_verbatimsc_aux:
   {
     \skip_vertical:N \parskip
     \int_set:Nn \parindent { 0pt }
@@ -205,14 +210,6 @@
     \cs_new_protected:Npn \exp_not:N \__scontents_xverb:w
       ##1 \g__scontents_end_verbatimsc_tl
       { ##1 \exp_not:N \endverbatimsc }
-  }
-\NewDocumentEnvironment { verbatimsc } { }
-  {
-    \group_begin:
-    \verbatim
-  }
-  {
-    \group_end:
   }
 \group_begin:
   \char_set_catcode_active:n { `\* }
