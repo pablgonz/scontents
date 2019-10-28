@@ -72,6 +72,7 @@
 \newfontfamily\fetamontotf{ffmw10.otf}[
    Scale             = 0.95,%
    RawFeature        = {+latn,+rand,+kern,+size},%
+   FontFace          = {bx}{n}{ffmw10.otf},
    ]
 \usepackage[svgnames]{xcolor}
 \usepackage[sf,bf,compact,medium,pagestyles]{titlesec}
@@ -133,6 +134,18 @@
 % Colors for options
 \definecolor{optcolor}{rgb}{0.281,0.275,0.485}
 \definecolor{mypkgcolor}{RGB}{0,128,128}%
+
+% Logo with fetamont font for title
+\makeatletter
+\newsavebox{\logobox}
+\savebox{\logobox}{%
+  \normalsize\fetamontotf{\textcolor{mypkgcolor}{s}\textcolor{OrangeRed}{content}\textcolor{mypkgcolor}{s}}}
+\newcommand{\mylogo}{%
+  \settoheight{\@tempdima}{L}%
+  \resizebox{!}{\@tempdima}{\usebox{\logobox}}%
+ }
+\makeatother
+
 % Custom \meta[...]{...}, \marg[...]{...} and \oarg[...]{...} with color
 \ExplSyntaxOn
 % User level commands
@@ -231,6 +244,19 @@
    \end{lrbox}%
    \usebox{\boxexaenv}
   }
+\NewDocumentCommand{\envexaplain}{O{} m O{end}}
+  {
+   \begin{lrbox}{\boxexaenv}%
+    \begin{minipage}[t]{\marginparwidth}%
+     \raggedright\ttfamily\small
+     \textcolor{mypkgcolor}{{\textbackslash#1#2}}\myoarg
+     [type=tt,sbc=gray,ac=lightgray,cf=optcolor]{keyval ~ list}\par%
+     \hspace{0.5cm}\mymeta[type=tt,ac=lightgray,cf=gray]{env ~ contents}\par%
+     \textcolor{mypkgcolor}{{\textbackslash #3#2}}\par
+    \end{minipage}%
+   \end{lrbox}%
+   \usebox{\boxexaenv}
+  }
 
 % \cmdexamp{s m o m o}
 \DeclareDocumentCommand{\cmdexamp}{o m o m o}
@@ -249,7 +275,8 @@
     { \mymarg[type=tt,cbc=gray,ac=lightgray,cf=optcolor]{#4} }
   \par
   \group_end:
-  \MYSortIndex{Commands}{Commands ~ provide  ~ by  ~ \textcolor{gray}{scontents}>\texttt{\textbackslash#2}}%
+  \MYSortIndex{Commands}{Commands ~ provide  ~ by ~
+  {\fetamontotf{\textcolor{mypkgcolor}{s}\textcolor{OrangeRed}{content}\textcolor{mypkgcolor}{s}}}:}%
   }
 
 % \keyexamp{mmm}
@@ -270,7 +297,8 @@
     \group_begin:
     \IfBooleanTF{#1}
       {
-        \textsf{\textcolor{mypkgcolor}{s}\textcolor{OrangeRed}{content}\textcolor{mypkgcolor}{s}}
+        %\textsf{\textcolor{mypkgcolor}{s}\textcolor{OrangeRed}{content}\textcolor{mypkgcolor}{s}}
+        \fetamontotf{\textcolor{mypkgcolor}{s}\textcolor{OrangeRed}{content}\textcolor{mypkgcolor}{s}}
         \MYSortIndex{packages}{Packages>\texttt{#2}}
       }
       {
@@ -285,8 +313,9 @@
   {
     \IfBooleanTF{#1}
       {
-       \textcolor{mypkgcolor}{\ttfamily{#2}}%
-       \MYSortIndex{environment}{Environment ~ provide ~ by ~ \textcolor{gray}{scontents}:>\texttt{#2}}
+        \textcolor{mypkgcolor}{\ttfamily{#2}}%
+        \MYSortIndex{environment}{ Environment ~ provide ~ by ~
+        {\fetamontotf{\textcolor{mypkgcolor}{s}\textcolor{OrangeRed}{content}\textcolor{mypkgcolor}{s}}}:>\texttt{#2}}
       }
       {
        \textcolor{darkgray}{\ttfamily{#2}}%
@@ -302,7 +331,11 @@
         \tl_set:Nn \l_tmpa_tl { #2 }
         \regex_replace_once:nnN { (\*) } { \c{textcolor}\cB\{MediumOrchid\cE\}\cB\{\1\cE\} } \l_tmpa_tl
         \textcolor{mypkgcolor}{\ttfamily\textbackslash{\tl_use:N \l_tmpa_tl}}
-        \MYSortIndex{Commands}{Commands ~ provide  ~ by  ~ \textcolor{gray}{scontents}>\texttt{\textbackslash#2}}
+        \MYSortIndex{Commands}{ Commands ~ provide  ~ by ~
+        {
+        \fetamontotf{
+        \textcolor{mypkgcolor}{s}\textcolor{OrangeRed}{content}\textcolor{mypkgcolor}{s}}
+        }:>\texttt{\textbackslash#2}}
       }
       {
         \textcolor{darkgray}{\ttfamily\textbackslash{#2}}
@@ -320,17 +353,6 @@
 \newcommand\emailfont{\sffamily}%
 \newcommand\emailampersat{{\color{optcolor}\footnotesize @}}%
 \catcode`\_=8\relax%
-
-\makeatletter
-% Logo whit fetamont font for title
-\newsavebox{\logobox}
-\savebox{\logobox}{%
-  \normalsize\fetamontotf{\textcolor{mypkgcolor}{s}\textcolor{OrangeRed}{content}\textcolor{mypkgcolor}{s}}}
-\newcommand{\mylogo}{%
-  \settoheight{\@tempdima}{L}%
-  \resizebox{!}{\@tempdima}{\usebox{\logobox}}%
- }
-\makeatother
 
 % Custom vertamimsc
 \makeatletter
@@ -519,7 +541,7 @@
 \makeatletter
 \renewcommand\tableofcontents{%
 \begingroup%
-\section*{\contentsname\quad{\color{linkcolour}\leaders\hrule height 5pt depth -4.4pt\hfill}%
+\section*{\contentsname\quad{\color{optcolor}\leaders\hrule height 5pt depth -4.4pt\hfill}%
   \@mkboth{%
     \MakeUppercase\contentsname}{\MakeUppercase\contentsname}}%
 \vspace*{-14pt}
@@ -527,7 +549,7 @@
  \begin{multicols}{2}%
     \@starttoc{toc}%
 \end{multicols}%
-\vspace*{-3pt}{\color{linkcolour}\hrule height 0.6pt}%
+\vspace*{-3pt}{\color{optcolor}\hrule height 0.6pt}%
 \vspace*{5pt}
 \endgroup
 }
@@ -541,7 +563,7 @@
 % \title{
 %    \scalebox{1.025}{\mylogo}\\[2pt]
 %    \Large
-%    \textsf{Stores \hologo{LaTeX} contents}\\[3pt]
+%    \textsf{Stores \hologo{LaTeX}}{ \fetamontotf{contents} }\\[3pt]
 %    \fileversion{} --- \filedate\thanks{
 %    This file describes a documentation for \fileversion, last revised
 %    \filedate.}\\[25pt]
@@ -574,7 +596,7 @@
 %
 % \section{Motivation and Acknowledgments}
 %
-% In \hologo{(La)TeX} there is no direct way to record content for later use, although
+% In \hologo{LaTeX} there is no direct way to record content for later use, although
 % you can do this using §\macros§, recording \mymeta{verbatim content}  is a
 % problem, usually you can avoid this by creating external files or boxes. The
 % general idea of this package is to try to imitate this implementation
@@ -813,12 +835,12 @@
 % command to get the \mymeta{stored content} along with other utilities described
 % in this documentation.
 %
-% \subsection{The environment \env{scontents}}
-% \label{sec:scontents}
+% \subsection{The environment \texttt{scontents}}
+% \label{sec:envscontents}
 %
 % \vspace*{-10pt}
 %
-% \begin{function}{scontents}
+% \begin{function}[label=SCONTENTS]{scontents}
 %   \begin{syntax}
 %   \envexamp{scontents}
 %   \end{syntax}
@@ -848,11 +870,14 @@
 % \fi
 \begin{examplecode}[frame=single]
 \begin{scontents}[store-env=outer]
-This text is in the outer environment (before nested).
+This text is in the outer environment
+(before nested).
 \begin{scontents}[store-env=inner]
-This text is found in the inner environment (inside of nested).
+This text is found in the inner environment
+(inside of nested).
 \end{scontents}
-This text is in the outer environment (after nested).
+This text is in the outer environment
+(after nested).
 \end{scontents}
 \end{examplecode}
 % \iffalse
@@ -866,11 +891,28 @@ This text is in the outer environment (after nested).
 % It is advisable to store content within sequences with different names,
 % so as not to get lost in the order in which content is stored.
 %
+% \newpage
+%
+% \subsection*{Notes for \hologo{plainTeX} and \hologo{ConTeXt} users}
+%
 % In \hologo{plainTeX} there is not environments as in \hologo{LaTeX}.
 % Instead of using the environment \myenv*{scontents}, one should use a
 % \emph{pseudo environment} delimited by \ics*{scontents} and \ics*{endscontents}.
-% \hologo{ConTeXt} users should use \ics*{startscontents} and \ics*{stopscontents}.
 %
+% \vspace*{-10pt}
+% \begin{function}{\scontents,\endscontents}
+%   \begin{syntax}
+%   \envexaplain{scontents}
+%   \end{syntax}
+% \end{function}
+%
+% \hologo{ConTeXt} users should use \ics*{startscontents} and \ics*{stopscontents}.
+% \vspace*{-10pt}
+% \begin{function}{\startscontents,\stopscontents}
+%   \begin{syntax}
+%   \envexaplain[start]{scontents}[stop]
+%   \end{syntax}
+% \end{function}
 % \subsection*{Options for environment}
 %
 % The environment options can be configured globally using option
@@ -1068,7 +1110,10 @@ This text is in the outer environment (after nested).
 % of the \mymeta{stored content} in a \emph{verbatim} environment and not
 % a real \emph{verbatim} environment. The \mypkg{verbatim} package is not
 % compatible with the implementation of the \myenv*{verbatimsc} environment.
+%
 % The \myenv*{verbatimsc} environment can be customized in the following ways:
+%
+% \newpage
 %
 % Using the package \mypkg{fancyvrb}:
 % \iffalse
@@ -1714,6 +1759,11 @@ No tab
 % \addtocontents{toc}{\protect\setcounter{tocdepth}{2}}
 % \cleardoublepage
 % \phantomsection
+% \indexprologue{
+% The italic numbers denote the pages where the corresponding entry is
+% described, the numbers underlined and all others indicate the line on
+% which they are implemented in the package code.
+% }
 % \printindex
 % }
 %
