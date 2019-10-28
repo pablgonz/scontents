@@ -2649,8 +2649,7 @@ No tab
 %   of the environment and optionally store them in a token list or write to
 %   an external file.
 %
-%   When that's done, \cs{@@_file_write_stop:N} does the cleanup and the
-%   read token list is smuggled out of the verbatim group. This part of
+%   When that's done, \cs{@@_file_write_stop:N} does the cleanup. This part of
 %   the code is inspired and adapted from the code of the package \pkg{xsimverb}
 %   by Clemens Niederberger.
 %
@@ -2701,13 +2700,13 @@ No tab
 %     \@@_remove_leading_nl:w,
 %   }
 %   This is the main macro to collect the contents of a verbatim environment.
-%   The macro opens the \mymeta{output file}, if necessary,
+%   The macro starts a group, opens the \mymeta{output file}, if necessary,
 %   sets verbatim catcodes, and then issues §^^M§ (set equal to \cs{@@_ret:w})
 %   to read the environment line by line until reaching its end. The output
 %   token list will be appended with an active §^^J§ character and the line
 %   just read, and this line is written to the output file, if any. At the end
-%   of the environment the \mymeta{output file} is closed (if it was open).
-%   A leading
+%   of the environment the \mymeta{output file} is closed (if it was open),
+%   and the output token list is smuggled out of the verbatim group. A leading
 %   §^^J§ is removed from the token list using \cs{@@_remove_leading_nl:n}
 %  (which expects an active §^^J§ token at the head of the token list; a low
 %  level \hologo{TeX} error is raised otherwise).
