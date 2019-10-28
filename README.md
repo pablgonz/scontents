@@ -2,7 +2,7 @@
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/pablgonz/scontents?label=version)
 ![GitHub Release Date](https://img.shields.io/github/release-date/pablgonz/scontents)
 ![GitHub last commit](https://img.shields.io/github/last-commit/pablgonz/scontents)
-![GitHub commits since latest release](https://img.shields.io/github/commits-since/pablgonz/scontents/v1.6)
+![GitHub commits since latest release](https://img.shields.io/github/commits-since/pablgonz/scontents/v1.7)
 
 ## Description
 The `scontents` package stores valid `LaTeX` code in <code>&lt;sequences&gt;</code> using the
@@ -21,7 +21,7 @@ The package loads and depends on updated versions of:
 The package `scontents` is present in `TeXLive` and `MiKTeX`, use the 
 package manager to install.
 
-For manual installation, download [scontents.zip](https://github.com/pablgonz/scontents/releases/download/v1.6/scontents-1.6.zip) and unzip it, then move
+For manual installation, download [scontents.zip](https://github.com/pablgonz/scontents/releases/download/v1.7/scontents-1.7.zip) and unzip it, then move
 the files to appropriate locations:
 ```
   scontents.tex      -> TDS:tex/generic/scontents/
