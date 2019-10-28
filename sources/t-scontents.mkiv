@@ -169,12 +169,6 @@
   { \__scontents_foreachsc_internal:nn {#1} {#2} }
 \NewDocumentCommand { \typestored } { o m }
   { \__scontents_typestored_internal:nn {#1} {#2} }
-\use:x
-  {
-    \cs_new_protected:Npn \exp_not:N \__scontents_xverb:w
-      ##1 \g__scontents_end_verbatimsc_tl
-      { ##1 \exp_not:N \stopverbatimsc }
-  }
 \definetyping[verbatimsc]
 \group_begin:
   \cs_new_protected:Npn \__scontents_plain_disable_outer_par:
