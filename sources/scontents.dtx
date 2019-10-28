@@ -2654,10 +2654,6 @@ No tab
 %   the code is inspired and adapted from the code of the package \pkg{xsimverb}
 %   by Clemens Niederberger.
 %
-%^^A Hm... Apparently this is not the verbatim group, but one level above. Is
-%^^A this group really necessary?
-%^^A Reply : I've checked it several times, it seems to be correct.
-%
 %    \begin{macrocode}
 \group_begin:
   \char_set_catcode_active:N \^^I
@@ -2685,15 +2681,11 @@ No tab
             { after~\c_backslash_str begin{scontents} #1 } {#2}
         }
       \@@_make_control_chars_active:
-      \group_begin:
-        \@@_file_tl_write_start:V \l_@@_fname_out_tl
+      \@@_file_tl_write_start:V \l_@@_fname_out_tl
     }
   \cs_new_protected:Npn \@@_stop_environment:
     {
-        \@@_file_write_stop:N \l_@@_macro_tmp_tl
-        \exp_args:NNNV
-      \group_end:
-      \tl_set:Nn \l_@@_macro_tmp_tl \l_@@_macro_tmp_tl
+      \@@_file_write_stop:N \l_@@_macro_tmp_tl
       \tl_if_empty:NT \l_@@_macro_tmp_tl
         { \msg_warning:nnn { scontents } { empty-environment } }
     }
@@ -2709,13 +2701,13 @@ No tab
 %     \@@_remove_leading_nl:w,
 %   }
 %   This is the main macro to collect the contents of a verbatim environment.
-%   The macro starts a group, opens the \mymeta{output file}, if necessary,
+%   The macro opens the \mymeta{output file}, if necessary,
 %   sets verbatim catcodes, and then issues §^^M§ (set equal to \cs{@@_ret:w})
 %   to read the environment line by line until reaching its end. The output
 %   token list will be appended with an active §^^J§ character and the line
 %   just read, and this line is written to the output file, if any. At the end
-%   of the environment the \mymeta{output file} is closed (if it was open),
-%   and the output token list is smuggled out of the verbatim group. A leading
+%   of the environment the \mymeta{output file} is closed (if it was open).
+%   A leading
 %   §^^J§ is removed from the token list using \cs{@@_remove_leading_nl:n}
 %  (which expects an active §^^J§ token at the head of the token list; a low
 %  level \hologo{TeX} error is raised otherwise).
