@@ -553,6 +553,16 @@
 \vspace*{5pt}
 \endgroup
 }
+% Reduce I/O
+\AtBeginDocument{%
+  \ifx\runNo\@undefined
+    \newcount\runNo \runNo=1
+  \else
+    \advance\runNo by \@ne
+  \fi
+  \write\@auxout{%
+    \string\newcount\string\runNo ^^J
+    \string\global\runNo=\the\runNo}}
 \makeatother
 \begin{document}
   \DocInput{\jobname.dtx}
@@ -810,7 +820,7 @@
 % \small
 % \begin{tabular}{cccccccc}
 % \toprule
-% \texttt{key} &package &\ics{setupsc} &\myenv*{scontents} &\ics*{Scontents} &\ics*{Scontents*} &\ics*{typestored} &\ics*{meaningsc}\\
+% \texttt{key} &package &\ics*{setupsc} &\myenv*{scontents} &\ics*{Scontents} &\ics*{Scontents*} &\ics*{typestored} &\ics*{meaningsc}\\
 % \midrule
 %  \texttt{store-env} & \cmark  & \cmark  &  \cmark  & \xmark  & \xmark  & \xmark  & \xmark \\
 %  \texttt{store-cmd} & \cmark  & \cmark  &  \xmark  & \cmark  & \cmark  & \xmark  & \xmark \\
@@ -1289,6 +1299,7 @@ by making use \mymeta{sequences}.
 % \iffalse
 %<*example>
 % \fi
+\ifnum\the\runNo=1
 \begin{scontents}[write-out=scexamp1.ltx]
 \documentclass{article}
 \usepackage[store-cmd=solutions]{scontents}
@@ -1309,6 +1320,7 @@ Second exercise
 \foreachsc[sep={\\[10pt]}]{solutions}
 \end{document}
 \end{scontents}
+\fi
 % \iffalse
 %</example>
 % \fi
@@ -1324,6 +1336,7 @@ Second exercise
 % \iffalse
 %<*example>
 % \fi
+\ifnum\the\runNo=1
 \begin{scontents}[write-out=scexamp2.ltx]
 \documentclass{article}
 \usepackage[store-env=defexercise,store-cmd=defexercise]{scontents}
@@ -1351,6 +1364,7 @@ seventies that the \NSA\ has known that for 40 years.\par
 \section{\getstored[2]{defexercise}}
 \end{document}
 \end{scontents}
+\fi
 % \iffalse
 %</example>
 % \fi
@@ -1366,6 +1380,7 @@ seventies that the \NSA\ has known that for 40 years.\par
 % \iffalse
 %<*example>
 % \fi
+\ifnum\the\runNo=1
 \begin{scontents}[write-out=scexamp3.ltx]
 \documentclass{article}
 \usepackage[store-cmd=tikz]{scontents}
@@ -1413,6 +1428,7 @@ This is a \verb*|fake poor man's buffer :)|.
 \foreachsc[before={\begin{tikzpicture}},after={\end{tikzpicture}},sep={\\[10pt]}]{tikz}
 \end{document}
 \end{scontents}
+\fi
 % \iffalse
 %</example>
 % \fi
@@ -1426,6 +1442,7 @@ This is a \verb*|fake poor man's buffer :)|.
 % \iffalse
 %<*example>
 % \fi
+\ifnum\the\runNo=1
 \begin{scontents}[write-out=scexamp4.ltx]
 \documentclass{article}
 \usepackage{scontents}
@@ -1453,6 +1470,7 @@ This is stored in other: \getstored[1]{other}
 \foreachsc[sep={\\[10pt]}]{a}
 \end{document}
 \end{scontents}
+\fi
 % \iffalse
 %</example>
 % \fi
@@ -1466,6 +1484,7 @@ This is stored in other: \getstored[1]{other}
 % \iffalse
 %<*example>
 % \fi
+\ifnum\the\runNo=1
 \begin{scontents}[write-out=scexamp5.ltx]
 \documentclass{article}
 \usepackage{scontents}
@@ -1489,6 +1508,7 @@ This is from the verbatim environment:
 \getstored[1]{problem}
 \end{document}
 \end{scontents}
+\fi
 % \iffalse
 %</example>
 % \fi
@@ -1504,6 +1524,7 @@ This is from the verbatim environment:
 % \iffalse
 %<*example>
 % \fi
+\ifnum\the\runNo=1
 \begin{scontents}[write-out=scexamp6.ltx]
 \documentclass{article}
 \usepackage{scontents}
@@ -1554,6 +1575,7 @@ Prove new \Verb*{ fancyvrb whit braces } and environment \verb+Verbatim*+
 \typestored[2]{contents}
 \end{document}
 \end{scontents}
+\fi
 % \iffalse
 %</example>
 % \fi
@@ -1568,6 +1590,7 @@ Prove new \Verb*{ fancyvrb whit braces } and environment \verb+Verbatim*+
 % \iffalse
 %<*example>
 % \fi
+\ifnum\the\runNo=1
 \begin{scontents}[write-out=scexamp7.ltx]
 \documentclass{article}
 \usepackage{scontents}
@@ -1619,6 +1642,7 @@ and more.+
 \typestored[2]{contents}
 \end{document}
 \end{scontents}
+\fi
 % \iffalse
 %</example>
 % \fi
@@ -1632,6 +1656,7 @@ and more.+
 % \iffalse
 %<*example>
 % \fi
+\ifnum\the\runNo=1
 \begin{scontents}[write-out=scexamp8.ltx]
 % need -shell-escape
 \documentclass{article}
@@ -1674,6 +1699,7 @@ No tab
 \typestored[2]{contents}
 \end{document}
 \end{scontents}
+\fi
 % \iffalse
 %</example>
 % \fi
