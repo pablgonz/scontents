@@ -413,7 +413,7 @@
     keywordstyle=[5]{\color{red}},%
     keywords=[5]{makeatletter,makeatother,let,verb,@undefined,makebox,def,%
                 par,item,parindent,lstinline,@ifpackagelater,ver@xparse.sty,%
-                dospecials,do@noligs,char,outer},%
+                dospecials,do@noligs,char,outer,jobname},%
 % Reserved in orange
     keywordstyle=[6]{\color{optcolor}},%
     keywords=[6]{store-cmd,store-env,print-env,print-cmd,write-env,%
@@ -557,16 +557,6 @@
 \vspace*{5pt}
 \endgroup
 }
-% Reduce I/O
-\AtBeginDocument{%
-  \ifx\runNo\@undefined
-    \newcount\runNo \runNo=1
-  \else
-    \advance\runNo by \@ne
-  \fi
-  \write\@auxout{%
-    \string\newcount\string\runNo ^^J
-    \string\global\runNo=\the\runNo}}
 \makeatother
 \begin{document}
   \DocInput{\jobname.dtx}
@@ -1309,7 +1299,6 @@ by making use \mymeta{sequences}.
 % \iffalse
 %<*example>
 % \fi
-\ifnum\the\runNo=1
 \begin{scontents}[write-out=scexamp1.ltx]
 % arara: pdflatex
 % arara: clean: { extensions: [ aux, log] }
@@ -1332,7 +1321,6 @@ Second exercise
 \foreachsc[sep={\\[10pt]}]{solutions}
 \end{document}
 \end{scontents}
-\fi
 % \iffalse
 %</example>
 % \fi
@@ -1348,7 +1336,6 @@ Second exercise
 % \iffalse
 %<*example>
 % \fi
-\ifnum\the\runNo=1
 \begin{scontents}[write-out=scexamp2.ltx]
 % arara: pdflatex
 % arara: clean: { extensions: [ aux, log] }
@@ -1378,7 +1365,6 @@ seventies that the \NSA\ has known that for 40 years.\par
 \section{\getstored[2]{defexercise}}
 \end{document}
 \end{scontents}
-\fi
 % \iffalse
 %</example>
 % \fi
@@ -1394,7 +1380,6 @@ seventies that the \NSA\ has known that for 40 years.\par
 % \iffalse
 %<*example>
 % \fi
-\ifnum\the\runNo=1
 \begin{scontents}[write-out=scexamp3.ltx]
 % arara: pdflatex
 % arara: clean: { extensions: [ aux, log] }
@@ -1444,7 +1429,6 @@ This is a \verb*|fake poor man's buffer :)|.
 \foreachsc[before={\begin{tikzpicture}},after={\end{tikzpicture}},sep={\\[10pt]}]{tikz}
 \end{document}
 \end{scontents}
-\fi
 % \iffalse
 %</example>
 % \fi
@@ -1458,7 +1442,6 @@ This is a \verb*|fake poor man's buffer :)|.
 % \iffalse
 %<*example>
 % \fi
-\ifnum\the\runNo=1
 \begin{scontents}[write-out=scexamp4.ltx]
 % arara: pdflatex
 % arara: clean: { extensions: [ aux, log] }
@@ -1488,7 +1471,6 @@ This is stored in other: \getstored[1]{other}
 \foreachsc[sep={\\[10pt]}]{a}
 \end{document}
 \end{scontents}
-\fi
 % \iffalse
 %</example>
 % \fi
@@ -1502,7 +1484,6 @@ This is stored in other: \getstored[1]{other}
 % \iffalse
 %<*example>
 % \fi
-\ifnum\the\runNo=1
 \begin{scontents}[write-out=scexamp5.ltx]
 % arara: pdflatex
 % arara: clean: { extensions: [ aux, log] }
@@ -1528,7 +1509,6 @@ This is from the verbatim environment:
 \getstored[1]{problem}
 \end{document}
 \end{scontents}
-\fi
 % \iffalse
 %</example>
 % \fi
@@ -1544,7 +1524,6 @@ This is from the verbatim environment:
 % \iffalse
 %<*example>
 % \fi
-\ifnum\the\runNo=1
 \begin{scontents}[write-out=scexamp6.ltx]
 \documentclass{article}
 % arara: pdflatex
@@ -1597,7 +1576,6 @@ Prove new \Verb*{ fancyvrb whit braces } and environment \verb+Verbatim*+
 \typestored[2]{contents}
 \end{document}
 \end{scontents}
-\fi
 % \iffalse
 %</example>
 % \fi
@@ -1612,7 +1590,6 @@ Prove new \Verb*{ fancyvrb whit braces } and environment \verb+Verbatim*+
 % \iffalse
 %<*example>
 % \fi
-\ifnum\the\runNo=1
 \begin{scontents}[write-out=scexamp7.ltx]
 % arara: pdflatex
 % arara: clean: { extensions: [ aux, log] }
@@ -1666,7 +1643,6 @@ and more.+
 \typestored[2]{contents}
 \end{document}
 \end{scontents}
-\fi
 % \iffalse
 %</example>
 % \fi
@@ -1680,7 +1656,6 @@ and more.+
 % \iffalse
 %<*example>
 % \fi
-\ifnum\the\runNo=1
 \begin{scontents}[write-out=scexamp8.ltx]
 % arara: xelatex : {shell: true, options: [-8bit]}
 % arara: clean: { extensions: [ aux, log] }
@@ -1698,7 +1673,7 @@ and more.+
 \section{Test \texttt{\textbackslash begin\{scontents\}} whit \texttt{minted}}
 Test \verb+{scontents}+ \par
 
-\begin{scontents}[write-env=\jobname.tsc,force-eol=true]
+\begin{scontents}[overwrite,write-env=\jobname.tsc,force-eol=true]
 Using \verb+scontents+ env no \verb+[key=val]+, save in seq \verb+contents+
 with index 1.\par
 
@@ -1727,7 +1702,6 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 \typestored[2]{contents}
 \end{document}
 \end{scontents}
-\fi
 % \iffalse
 %</example>
 % \fi
@@ -1748,7 +1722,12 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \settowidth{\descrwidth}{\textsf{v1.0, (ctan), 2019-07-30} }
 %
 % \begin{description}[font=\small\sffamily,wide=0pt,style=multiline,leftmargin=\descrwidth,nosep,noitemsep]
-% \item [\fileversion{} (ctan), \filedate]
+% \item [\fileversion{} (devp), \filedate]
+%    \begin{itemize}
+%    \item Added |overwrite| key to reduce |I/O| operations
+%    \item Deleted an unnecessary group in the code.
+%    \end{itemize}
+% \item [v1.7 (ctan), 2019-10-29]
 %    \begin{itemize}
 %    \item The |verbatimsc| environment was rewritten.
 %    \item Minor adjustments in documentation.
@@ -2009,8 +1988,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
     force-eol .initial:n        = false,
     force-eol .default:n        = true,
     overwrite .bool_set:N       = \l_@@_overwrite_bool,
-    overwrite .initial:n        = true,
-    overwrite .default:n        = false,
+    overwrite .initial:n        = false,
+    overwrite .default:n        = true,
     width-tab .int_set:N        = \l_@@_tab_width_int,
     width-tab .initial:n        = 1,
     width-tab .value_required:n = true,
@@ -2210,7 +2189,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
     force-eol .meta:nn          = { scontents } { force-eol = #1 },
     force-eol .default:n        = true,
     overwrite .meta:nn          = { scontents } { overwrite = #1 },
-    overwrite .default:n        = false,
+    overwrite .default:n        = true,
     unknown   .code:n           = { \@@_parse_environment_keys:n {#1} }
   }
 %    \end{macrocode}
@@ -2748,20 +2727,18 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
   \cs_new_protected:Npn \@@_file_tl_write_start:n #1
     {
       \group_begin:
-        \bool_if:NT \l_@@_writing_bool
+        \bool_if:nT  { \l_@@_writing_bool && \l_@@_overwrite_bool }
           {
-            \file_if_exist:nTF {#1}
-              {
-                \bool_if:NT \l_@@_overwrite_bool
-                  {
-                    \msg_warning:nnx { scontents } { overwrite-file } {#1}
-                    \iow_open:Nn \l_@@_file_iow {#1}
-                  }
-              }
-              {
-                \msg_warning:nnx { scontents } { writing-file } {#1}
-                \iow_open:Nn \l_@@_file_iow {#1}
-              }
+             \file_if_exist:nTF {#1}
+               { \msg_warning:nnx { scontents } { overwrite-file } {#1} }
+               { \msg_warning:nnx { scontents } { writing-file } {#1} }
+             \iow_open:Nn \l_@@_file_iow {#1}
+          }
+        \bool_if:nT  { \l_@@_writing_bool && !\l_@@_overwrite_bool }
+          {
+             \file_if_exist:nF {#1}
+               { \msg_warning:nnx { scontents } { writing-file } {#1} }
+              \iow_open:Nn \l_@@_file_iow {#1}
           }
         \tl_clear:N \l_@@_file_tl
         \seq_map_function:NN \l_char_special_seq \char_set_catcode_other:N
@@ -3442,11 +3419,6 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
   { Overwriting ~ file ~ '#1' }
 \msg_new:nnn { scontents } { writing-file }
   { Writing ~ file ~ '#1' }
-\msg_new:nnn { scontents } { notexist-file }
-  {
-    The ~ file ~ '#1' ~ not ~ exist ~ in ~ the ~ current ~ directory.\\
-    Check ~ that ~ the ~ file ~ name ~ is ~ correct.
-  }
 \msg_new:nnn { scontents } { rescanning-text }
   { Rescanning~text~'#1'~after~\c_backslash_str end{scontents}~\msg_line_context:.}
 \msg_new:nnn { scontents } { multiple-begin }
