@@ -34,6 +34,8 @@ _minted*
 *.ps
 *.pdf
 *.ltx
+*.tsc
+*.tuc
 
 ## Build tool auxiliary files:
 *.fdb_latexmk
@@ -43,3 +45,9 @@ _minted*
 *.synctex(busy)
 *.pdfsync
 *.zip
+
+## For testing
+**/sources/test-pkg/scontents.sty
+**/sources/test-pkg/scontents.tex
+**/sources/test-pkg/scontents-code.tex
+**/sources/test-pkg/t-scontents.mkiv
