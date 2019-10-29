@@ -89,7 +89,7 @@
     force-eol .default:n        = true,
     overwrite .bool_set:N       = \l__scontents_overwrite_bool,
     overwrite .initial:n        = false,
-    overwrite .default:n        = false,
+    overwrite .default:n        = true,
     width-tab .int_set:N        = \l__scontents_tab_width_int,
     width-tab .initial:n        = 1,
     width-tab .value_required:n = true,
@@ -155,7 +155,7 @@
     force-eol .meta:nn          = { scontents } { force-eol = #1 },
     force-eol .default:n        = true,
     overwrite .meta:nn          = { scontents } { overwrite = #1 },
-    overwrite .default:n        = false,
+    overwrite .default:n        = true,
     unknown   .code:n           = { \__scontents_parse_environment_keys:n {#1} }
   }
 \keys_define:nn { scontents / Scontents }
@@ -342,23 +342,18 @@
   \cs_new_protected:Npn \__scontents_file_tl_write_start:n #1
     {
       \group_begin:
-        \bool_if:NT \l__scontents_writing_bool
+        \bool_if:nT  { \l__scontents_writing_bool && \l__scontents_overwrite_bool }
           {
-            \bool_if:NTF \l__scontents_overwrite_bool
-              {
-                \file_if_exist:nTF {#1}
-                  {
-                    \msg_warning:nnx { scontents } { overwrite-file } {#1}
-                    \iow_open:Nn \l__scontents_file_iow {#1}
-                  }
-                  { \msg_warning:nnx { scontents } { notexist-file } {#1} }
-              }
-              {
-                \file_if_exist:nTF {#1}
-                  { \msg_warning:nnx { scontents } { overwrite-file } {#1} }
-                  { \msg_warning:nnx { scontents } { writing-file } {#1} }
-                    \iow_open:Nn \l__scontents_file_iow {#1}
-              }
+             \file_if_exist:nTF {#1}
+               { \msg_warning:nnx { scontents } { overwrite-file } {#1} }
+               { \msg_warning:nnx { scontents } { writing-file } {#1} }
+             \iow_open:Nn \l__scontents_file_iow {#1}
+          }
+        \bool_if:nT  { \l__scontents_writing_bool && !\l__scontents_overwrite_bool }
+          {
+             \file_if_exist:nF {#1}
+               { \msg_warning:nnx { scontents } { writing-file } {#1} }
+              \iow_open:Nn \l__scontents_file_iow {#1}
           }
         \tl_clear:N \l__scontents_file_tl
         \seq_map_function:NN \l_char_special_seq \char_set_catcode_other:N
@@ -695,11 +690,6 @@
   { Overwriting ~ file ~ '#1' }
 \msg_new:nnn { scontents } { writing-file }
   { Writing ~ file ~ '#1' }
-\msg_new:nnn { scontents } { notexist-file }
-  {
-    The ~ file ~ '#1' ~ not ~ exist ~ in ~ the ~ current ~ directory.\\
-    Check ~ that ~ the ~ file ~ name ~ is ~ correct.
-  }
 \msg_new:nnn { scontents } { rescanning-text }
   { Rescanning~text~'#1'~after~\c_backslash_str end{scontents}~\msg_line_context:.}
 \msg_new:nnn { scontents } { multiple-begin }
