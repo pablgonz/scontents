@@ -64,11 +64,6 @@
 
 \setmathfont[Scale = 0.95]{latinmodern-math.otf}
 \usepackage{fontawesome5}
-\newfontfamily\lmmitalic{lmmono10-italic.otf}[
-   Scale             = 0.95,%
-   Extension         = .otf,%
-   ItalicFont        = lmmono10-italic,%
-   ]
 \newfontfamily\fetamontotf{ffmw10.otf}[
    Scale             = 0.95,%
    RawFeature        = {+latn,+rand,+kern,+size},%
@@ -76,7 +71,7 @@
    ]
 \usepackage[svgnames]{xcolor}
 \usepackage[sf,bf,compact,medium,pagestyles]{titlesec}
-\usepackage{hyperxmp,lastpage,imakeidx,microtype,attachfile2}
+\usepackage{lastpage,imakeidx,microtype,attachfile2}
 \usepackage{adjustbox,multicol,listings,accsupp,titletoc}
 \usepackage{scontents} % main
 \usepackage[contents]{colordoc}
@@ -392,7 +387,7 @@
     alsoletter={-,@,.},%
 % comments
     morecomment=[l]{\%},%
-    commentstyle=\lmmitalic\small\itshape\color{lightgray},%
+    commentstyle=\ttfamily\small\color{lightgray},%
 % Important words 1
     keywordstyle=[1]{\color{gray}},%
     keywords=[1]{begin,end,Verbatim},%
@@ -441,7 +436,7 @@
               {0}{{\textcolor{MediumOrchid}{0}}}{1}
               {1}{{\textcolor{MediumOrchid}{1}}}{1}
               {2}{{\textcolor{MediumOrchid}{2}}}{1}
-              %{3}{{\textcolor{MediumOrchid}{3}}}{1}% expl3
+              {3}{{\textcolor{MediumOrchid}{3}}}{1}% expl3
               {4}{{\textcolor{MediumOrchid}{4}}}{1}
               {5}{{\textcolor{MediumOrchid}{5}}}{1}
               {6}{{\textcolor{MediumOrchid}{6}}}{1}
@@ -508,10 +503,7 @@
    pdftitle           = {.:: The scontents package --- \fileinfo{} ::.},%
    pdfauthor          = {Pablo González L},
    pdfsubject         = {Documentation for \fileversion{} [\filedate] },%
-   pdfcopyright       = {\textcopyright 2019 by Pablo González},
-   pdfcontacturl      = {https://github.com/pablgonz/scontents},
    pdfkeywords        = {sequences, contents, external files, expl3, xparse, l3seq, store contents},
-   pdfstartview       = {FitH},%
    bookmarksopenlevel = 1,%
   }
 
@@ -522,7 +514,7 @@
 
 \newpagestyle{myheader}[\color{gray}\small\sffamily]{
 \renewcommand\makeheadrule{\color{gray}\rule[0.45\baselineskip]{\linewidth}{0.4pt}}
-\setfoot{\scalebox{0.8}{\mylogo}\space\textcopyright\space 2019 by Pablo González}
+\setfoot{\scalebox{0.8}{\mylogo}\space\textcopyright 2019 by Pablo González}
         {}
         {\thepage/\pageref{LastPage}}
 \sethead{\raisebox{0.75\baselineskip}{Documentation for \fileversion\space[\filedate]}}
@@ -545,7 +537,7 @@
 \makeatletter
 \renewcommand\tableofcontents{%
 \begingroup%
-\section*{\contentsname\quad{\color{optcolor}\leaders\hrule height 5pt depth -4.4pt\hfill}%
+\section*{\contentsname\quad{\color{mypkgcolor}\leaders\hrule height 5pt depth -4.4pt\hfill}%
   \@mkboth{%
     \MakeUppercase\contentsname}{\MakeUppercase\contentsname}}%
 \vspace*{-14pt}
@@ -553,7 +545,7 @@
  \begin{multicols}{2}%
     \@starttoc{toc}%
 \end{multicols}%
-\vspace*{-3pt}{\color{optcolor}\hrule height 0.6pt}%
+\vspace*{-3pt}{\color{mypkgcolor}\hrule height 0.6pt}%
 \vspace*{5pt}
 \endgroup
 }
@@ -577,8 +569,8 @@
 %    \thanks{E-mail: \textsf{\guillemotleft}\email{pablgonz@educarchile.cl}\textsf{\guillemotright}}%
 %    }
 % \small
-% \textsc{ctan}: \url{http://www.ctan.org/pkg/scontents}\\
-% \textsc{git}: \url{https://github.com/pablgonz/scontents}
+% \textsc{ctan}: \url{https://www.ctan.org/pkg/scontents}\\
+% \textcolor{gray}{\scriptsize\faIcon[regular]{github}}\,\,\,\url{https://github.com/pablgonz/scontents}
 % \vspace*{-2cm}
 % }
 % \date{}
@@ -588,7 +580,7 @@
 % \begin{abstract}
 % The \mypkg*{scontents} package stores valid \hologo{LaTeX} code in
 % \mymeta{sequences} using the \mypkg{l3seq} module of \mypkg{expl3}.
-% The \mymeta{stored content}, including \emph{verbatim}, can be used
+% The \emph{stored content}, including \mymeta{verbatim}, can be used
 % as many times as desired in the document, additionally can be written
 % to \mymeta{external files}.
 % \end{abstract}
@@ -604,7 +596,7 @@
 % you can do this using §\macros§, recording \mymeta{verbatim content}  is a
 % problem, usually you can avoid this by creating external files or boxes. The
 % general idea of this package is to try to imitate this implementation
-% \emph{buffers} that has \hologo{ConTeXt} which allows you to save content in
+% \enquote{\emph{buffers}} that has \hologo{ConTeXt} which allows you to save content in
 % memory, including \emph{verbatim}, to be used later. The package
 % \mypkg{filecontentsdef} solves this problem and since \mypkg{expl3} has an
 % excellent way to manage data, ideas were combined giving rise to this package.
@@ -1288,9 +1280,21 @@ by making use \mymeta{sequences}.
 % \section{Examples}
 %
 % These are some adapted examples that have served as inspiration for
-% the creation of this package. The examples are attached and you can
-% use the excellent \arara\footnote{The cool \TeX\ automation tool:
-%  \url{https://www.ctan.org/pkg/arara}} tool to compile them.
+% the creation of this package. The examples are attached to this documentation
+% and can be extracted from your PDF viewer or from the command line by running:
+% \iffalse
+%<*example>
+% \fi
+\begin{examplecode}[frame=single]
+$ pdfdetach -saveall scontents.pdf
+\end{examplecode}
+% \iffalse
+%</example>
+% \fi
+% and then you can use the excellent \arara\footnote{The cool \TeX\ automation tool:
+% \url{https://www.ctan.org/pkg/arara}} tool to compile them.
+%
+% \newpage
 %
 % \subsection{From \texttt{answers} package}
 %
@@ -1710,12 +1714,16 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \textattachfile[color=0 0 1]{scexamp8.ltx}{\faFile*[regular]}.
 % \lstinputlisting[language=scontents-doc,numbers=left]{scexamp8.ltx}
 %
+% \newpage
+%
 % \section{Change history}
 % \label{sec:changes}
 %
 % In this section you will find some (not all) of the changes in \mypkg*{scontents}
 % development, from the first public implementation using the \mypkg{filecontentsdef}
 % package to the current version with only \mypkg{expl3}.
+% 
+% \medskip
 %
 % \setlist[itemize,1]{label=\textendash,wide=0.5em,nosep,noitemsep,leftmargin=10pt}
 % \newlength\descrwidth
@@ -1783,6 +1791,10 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % \newpage
 %
+% \indexprologue{
+% The italic numbers denote the pages where the corresponding entry is
+% described.}
+%
 % \printindex[userdoc]
 %
 % \newpage
@@ -1803,6 +1815,13 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \section{Implementation}
 % \label{sec:Implementation}
 % \addtocontents{toc}{\protect\setcounter{tocdepth}{0}}
+%
+% The most recent publicly released version of \mypkg*{scontents} is available at 
+% \textsc{ctan}: \url{https://www.ctan.org/pkg/scontents}. Historical and 
+% developmental versions are available at \textcolor{gray}{\scriptsize\faIcon[regular]{github}}
+% \url{https://github.com/pablgonz/scontents}. While general feedback via email is 
+% welcomed, specific bugs or feature requests should be reported through the issue 
+% tracker: \url{https://github.com/pablgonz/scontents/issues}.
 %
 % \subsection{Declaration of the package}
 %
