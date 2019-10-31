@@ -5,10 +5,10 @@
 ![GitHub commits since latest release](https://img.shields.io/github/commits-since/pablgonz/scontents/v1.7)
 
 ## Description
-The `scontents` package stores valid `LaTeX` code in <code>&lt;sequences&gt;</code> using the
-`l3seq` module of `expl3`. The stored content, including `verbatim` material, can be
-used as many times as desired in the document, additionally can be written
-to external files.
+This package allows to store `LaTeX` code, including _"verbatim"_, in <code>&lt;sequences&gt;</code>
+using the `l3seq` module of `expl3`. The <code>&lt;stored content&gt;</code> can be used
+as many times as desired in the document, additionally you can write to <code>&lt;external files&gt;</code>
+or show it in <code>&lt;verbatim style&gt;</code>.
 
 ## Requirements
 The package loads and depends on updated versions of:

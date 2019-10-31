@@ -408,7 +408,7 @@
     keywordstyle=[5]{\color{red}},%
     keywords=[5]{makeatletter,makeatother,let,verb,@undefined,makebox,def,%
                 par,item,parindent,lstinline,@ifpackagelater,ver@xparse.sty,%
-                dospecials,do@noligs,char,outer,jobname},%
+                dospecials,do@noligs,char,outer,jobname,inner},%
 % Reserved in orange
     keywordstyle=[6]{\color{optcolor}},%
     keywords=[6]{store-cmd,store-env,print-env,print-cmd,write-env,%
@@ -497,7 +497,7 @@
 \hypersetup{
    linkcolor          = linkcolour,%
    citecolor          = linkcolour,%
-   urlcolor           = linkcolour,%
+   urlcolor           = magenta,%
    colorlinks         = true,%
    linktoc            = all,%
    pdftitle           = {.:: The scontents package --- \fileinfo{} ::.},%
@@ -537,7 +537,7 @@
 \makeatletter
 \renewcommand\tableofcontents{%
 \begingroup%
-\section*{\contentsname\quad{\color{mypkgcolor}\leaders\hrule height 5pt depth -4.4pt\hfill}%
+\section*{\contentsname\quad{\color{gray}\leaders\hrule height 5pt depth -4.4pt\hfill}%
   \@mkboth{%
     \MakeUppercase\contentsname}{\MakeUppercase\contentsname}}%
 \vspace*{-14pt}
@@ -545,7 +545,7 @@
  \begin{multicols}{2}%
     \@starttoc{toc}%
 \end{multicols}%
-\vspace*{-3pt}{\color{mypkgcolor}\hrule height 0.6pt}%
+\vspace*{-3pt}{\color{gray}\hrule height 0.6pt}%
 \vspace*{5pt}
 \endgroup
 }
@@ -557,7 +557,7 @@
 % \fi
 %
 % \title{
-%    \scalebox{1.025}{\mylogo}\\[2pt]
+%    \scalebox{1.13}{\mylogo}\\[2pt]
 %    \Large
 %    \textsf{Stores \hologo{LaTeX}}{ \fetamontotf{contents} }\\[3pt]
 %    \fileversion{} --- \filedate\thanks{
@@ -566,7 +566,9 @@
 %    \author{
 %    \large
 %    \raisebox{-1pt}{\textcopyright}{}2019 by Pablo González
-%    \thanks{E-mail: \textsf{\guillemotleft}\email{pablgonz@educarchile.cl}\textsf{\guillemotright}}%
+%    \thanks{
+%    E-mail: \textcolor{optcolor}{\textsf{\guillemotleft}}\email{pablgonz@educarchile.cl}\textcolor{optcolor}{\textsf{\guillemotright}}.
+%       }%
 %    }
 % \small
 % \textsc{ctan}: \url{https://www.ctan.org/pkg/scontents}\\
@@ -578,11 +580,11 @@
 %
 % \begin{scontents}[store-env=abstract,print-env=true]
 % \begin{abstract}
-% The \mypkg*{scontents} package stores valid \hologo{LaTeX} code in
+% This package allows to store \hologo{LaTeX} code, including \enquote{\emph{verbatim}}, in 
 % \mymeta{sequences} using the \mypkg{l3seq} module of \mypkg{expl3}.
-% The \emph{stored content}, including \mymeta{verbatim}, can be used
-% as many times as desired in the document, additionally can be written
-% to \mymeta{external files}.
+% The \mymeta{stored content} can be used as many times as desired in
+% the document, additionally you can write to \mymeta{external files} or
+% show it in \mymeta{verbatim style}.
 % \end{abstract}
 % \end{scontents}
 %
@@ -593,7 +595,7 @@
 % \section{Motivation and Acknowledgments}
 %
 % In \hologo{LaTeX} there is no direct way to record content for later use, although
-% you can do this using §\macros§, recording \mymeta{verbatim content}  is a
+% you can do this using §\macros§, recording \mymeta[type=rm]{verbatim content}  is a
 % problem, usually you can avoid this by creating external files or boxes. The
 % general idea of this package is to try to imitate this implementation
 % \enquote{\emph{buffers}} that has \hologo{ConTeXt} which allows you to save content in
@@ -741,7 +743,7 @@
 %
 % Most of the options can be passed directly to the package or using the
 % command \ics*{setupsc}. All boolean keys can be passed using the
-% equal sign \enquote{\textnormal{\textcolor{optcolor}{=}}} or just the
+% equal sign \enquote{\textnormal{\textcolor{gray}{=}}} or just the
 % name of the key, all unknown keys will return an error. In this section
 % are described some of the options, a summary of all options is shown in
 % section \ref{sec:optover}.
@@ -789,7 +791,7 @@
 % This key is necessary only if the last line is the closing of some
 % environment defined by the \mypkg{fancyvrb} package as §\end{Verbatim}§
 % or another environment that does not support a comments \enquote{\textcolor{gray}{\%}}
-% after closing §\end{§\textcolor{gray}{...}§}%§. This key is available for the \myenv*{scontents}
+% after closing §\end{§\textcolor{gray}{...}§}§\textcolor{gray}{\%}. This key is available for the \myenv*{scontents}
 % environment and the \ics*{Scontents} command.
 %
 % \keyexamp{width-tab}{integer}{1}
@@ -1330,7 +1332,7 @@ Second exercise
 % \fi
 %
 % Adaptation of example 1 of the package \mypkg{answers}
-% \textattachfile[color=0 0 1]{scexamp1.ltx}{\faFile*[regular]}.
+% \textattachfile[color=linkcolour,print=false]{scexamp1.ltx}{\faFile*[regular]}.
 % \lstinputlisting[language=scontents-doc,numbers=left]{scexamp1.ltx}
 %
 % \subsection{From \texttt{filecontentsdef} package}
@@ -1374,7 +1376,7 @@ seventies that the \NSA\ has known that for 40 years.\par
 % \fi
 %
 % Adaptation of example from package \mypkg{filecontentsdef}
-% \textattachfile[color=0 0 1]{scexamp2.ltx}{\faFile*[regular]}.
+% \textattachfile[color=linkcolour,print=false]{scexamp2.ltx}{\faFile*[regular]}.
 % \lstinputlisting[language=scontents-doc,numbers=left]{scexamp2.ltx}
 %
 % \subsection{From TeX-SX}
@@ -1438,7 +1440,7 @@ This is a \verb*|fake poor man's buffer :)|.
 % \fi
 %
 % Adapted from \href{https://tex.stackexchange.com/q/5338/7832}{LaTeX equivalent of ConTeXt buffers}
-% \textattachfile[color=0 0 1]{scexamp3.ltx}{\faFile*[regular]}.
+% \textattachfile[color=linkcolour,print=false]{scexamp3.ltx}{\faFile*[regular]}.
 % \lstinputlisting[language=scontents-doc,numbers=left]{scexamp3.ltx}
 %
 % \subsubsection*{Example 4}
@@ -1480,7 +1482,7 @@ This is stored in other: \getstored[1]{other}
 % \fi
 %
 % Adapted from \href{https://tex.stackexchange.com/q/184503/7832}{Collecting contents of environment and store them for later retrieval}
-% \textattachfile[color=0 0 1]{scexamp4.ltx}{\faFile*[regular]}.
+% \textattachfile[color=linkcolour,print=false]{scexamp4.ltx}{\faFile*[regular]}.
 % \lstinputlisting[language=scontents-doc,numbers=left]{scexamp4.ltx}
 %
 % \subsubsection*{Example 5}
@@ -1518,7 +1520,7 @@ This is from the verbatim environment:
 % \fi
 %
 % Adapted from \href{https://tex.stackexchange.com/q/373647/7832}{Collect contents of an environment (that contains verbatim content)}
-% \textattachfile[color=0 0 1]{scexamp5.ltx}{\faFile*[regular]}.
+% \textattachfile[color=linkcolour,print=false]{scexamp5.ltx}{\faFile*[regular]}.
 % \lstinputlisting[language=scontents-doc,numbers=left]{scexamp5.ltx}
 %
 % \subsection{Customization of \texttt{verbatimsc}}
@@ -1586,7 +1588,7 @@ Prove new \Verb*{ fancyvrb whit braces } and environment \verb+Verbatim*+
 %
 % Customization of \myenv*{verbatimsc} using the \mypkg{fancyvrb} and
 % \mypkg{tcolorbox} package
-% \textattachfile[color=0 0 1]{scexamp6.ltx}{\faFile*[regular]}.
+% \textattachfile[color=linkcolour,print=false]{scexamp6.ltx}{\faFile*[regular]}.
 % \lstinputlisting[language=scontents-doc,numbers=left]{scexamp6.ltx}
 %
 % \subsubsection*{Example 7}
@@ -1652,7 +1654,7 @@ and more.+
 % \fi
 %
 % Customization of \myenv*{verbatimsc} using the \mypkg{listings} package
-% \textattachfile[color=0 0 1]{scexamp7.ltx}{\faFile*[regular]}.
+% \textattachfile[color=linkcolour,print=false]{scexamp7.ltx}{\faFile*[regular]}.
 % \lstinputlisting[language=scontents-doc,numbers=left]{scexamp7.ltx}
 %
 % \subsubsection*{Example 8}
@@ -1711,7 +1713,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \fi
 %
 % Customization of \myenv*{verbatimsc} using the \mypkg{minted} package
-% \textattachfile[color=0 0 1]{scexamp8.ltx}{\faFile*[regular]}.
+% \textattachfile[color=linkcolour,print=false]{scexamp8.ltx}{\faFile*[regular]}.
 % \lstinputlisting[language=scontents-doc,numbers=left]{scexamp8.ltx}
 %
 % \newpage
