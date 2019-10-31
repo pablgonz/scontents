@@ -1,6 +1,6 @@
 ## scontents — Stores LaTeX contents in memory or files
-- Version: 1.7
-- Date: 2019-10-29
+- Version: 1.8
+- Date: 2019-12-25
 - Author: Pablo González
 
 ## Description
@@ -35,8 +35,13 @@ the files to appropriate locations:
 then run `mktexlsr`.
 ## Examples
 
-The file `scontents.pdf` contains attached examples, which can be extracted
-from the PDF viewer or using `pdfdetach -saveall scontents.pdf` from command line.
+The file <code>&lt;scontents.pdf&gt;</code> contains attached examples, which can be extracted
+from the PDF viewer or from the command line by running:
+
+```
+$ pdfdetach -saveall scontents.pdf
+```
+and then you can use the excellent `arara` tool to compile them.
 
 ## License
 The scontents package may be modified and distributed under the terms and

@@ -18,7 +18,7 @@ The package loads and depends on updated versions of:
 
 ## Installation
 
-The package `scontents` is present in `TeXLive` and `MiKTeX`, use the 
+The package `scontents` is present in `TeXLive` and `MiKTeX`, use the
 package manager to install.
 
 For manual installation, download [scontents.zip](https://github.com/pablgonz/scontents/releases/download/v1.7/scontents-1.7.zip) and unzip it, then move
@@ -37,14 +37,13 @@ then run `mktexlsr`.
 
 ## Examples
 
-The file `scontents.pdf` contains attached examples, which can be extracted
-from the PDF viewer or using:
+The file <code>&lt;scontents.pdf&gt;</code> contains attached examples, which can be extracted
+from the PDF viewer or from the command line by running:
 
-```bash
-pdfdetach -saveall scontents.pdf
 ```
- 
-from command line.
+$ pdfdetach -saveall scontents.pdf
+```
+and then you can use the excellent `arara` tool to compile them.
 
 ## License
 The scontents package may be modified and distributed under the terms and
@@ -70,7 +69,7 @@ conditions of the [LaTeX Project Public License](https://www.latex-project.org/l
         ├── test-format.plain.tex
         ├── test-nospace.tex
         ├── test-pkg-current.tex
-        └── test-pkg-other.tex    
+        └── test-pkg-other.tex
 ```
 
 ## Copyright
