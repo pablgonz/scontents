@@ -286,7 +286,7 @@
     \adjustbox{outer=-\marginparsep}{\textcolor{black}{\small\ttfamily{#1}}}
     \textcolor{gray}{\,\bfseries\texttt{=}}\,{}
     \mymarg[type=tt,cbc=gray,ac=lightgray,cf=optcolor]{\small{#2}}
-    \hfill\textcolor{gray}{ \small (\textsf{default}:~\emph{#3})}
+    \hfill\textcolor{gray}{\small\textsf{default}:~\emph{#3}}
     \par
     \MYSortIndex{Keys}{Keys>\texttt{#1}}%
   }
@@ -363,8 +363,7 @@
   {
     \lstset{
        language=,%
-       basicstyle= \ttfamily,
-       columns   = fullflexible,
+       basicstyle= \ttfamily\small,
        gobble    = 2,%
            }
    }{}
@@ -514,7 +513,7 @@
 
 \newpagestyle{myheader}[\color{gray}\small\sffamily]{
 \renewcommand\makeheadrule{\color{gray}\rule[0.45\baselineskip]{\linewidth}{0.4pt}}
-\setfoot{\scalebox{0.8}{\mylogo}\space\textcopyright 2019 by Pablo González}
+\setfoot{\scalebox{0.8}{\mylogo}\space\raisebox{-1pt}{\textcopyright}{}2019 by Pablo González}
         {}
         {\thepage/\pageref{LastPage}}
 \sethead{\raisebox{0.75\baselineskip}{Documentation for \fileversion\space[\filedate]}}
@@ -578,13 +577,12 @@
 % \date{}
 % \maketitle
 %
-% \begin{scontents}[store-env=abstract,print-env=true]
+% \begin{scontents}[store-env=abstract, print-env=true]
 % \begin{abstract}
-% This package allows to store \hologo{LaTeX} code, including \enquote{\emph{verbatim}}, in 
-% \mymeta{sequences} using the \mypkg{l3seq} module of \mypkg{expl3}.
-% The \mymeta{stored content} can be used as many times as desired in
-% the document, additionally you can write to \mymeta{external files} or
-% show it in \mymeta{verbatim style}.
+% This package allows to store \hologo{LaTeX} code, including \enquote{\emph{verbatim}},
+% in \mymeta{sequences} using the \mypkg{l3seq} module of \mypkg{expl3}. The \mymeta{stored
+% content} can be used as many times as desired in the document, additionally you can write
+% to \mymeta{external files} or show it in \mymeta{verbatim style}.
 % \end{abstract}
 % \end{scontents}
 %
@@ -649,12 +647,11 @@
 % \subsection{Description of the package and load}
 %
 % \begin{scontents}[store-env=description, print-env=true]
-% The \mypkg*{scontents} package allows to \mymeta{store contents} in
-% \mymeta{sequences} or \mymeta{external files}. In some ways it is
-% similar to the \mypkg{filecontentsdef} package, with the difference
-% in which the \mymeta{content} is stored. The idea behind this package
-% is to get an approach to \hologo{ConTeXt} \enquote{\emph{buffers}}
-% by making use \mymeta{sequences}.
+% The \mypkg*{scontents} package allows to \mymeta{store contents} in \mymeta{sequences}
+% or \mymeta{external files}. In some ways it is similar to the \mypkg{filecontentsdef}
+% package, with the difference in which the \mymeta{content} is stored. The idea behind
+% this package is to get an approach to \hologo{ConTeXt} \enquote{\emph{buffers}} by
+% making use \mymeta{sequences}.
 % \end{scontents}
 %
 % The package is loaded in the usual way:
@@ -1245,11 +1242,10 @@ This text is in the outer environment
 \begin{examplecode}[numbers=left]
 \begin{scontents}[store-env=abstract,print-env=true]
 \begin{abstract}
-The \mypkg*{scontents} package stores valid \hologo{(La)TeX} code in
-\mymeta{sequences} using the \mypkg{l3seq} module of \mypkg{expl3}.
-The \mymeta{stored content}, including \emph{verbatim}, can be used
-as many times as desired in the document, additionally can be written
-to \mymeta{external files}.
+This package allows to store \hologo{LaTeX} code, including \enquote{\emph{verbatim}},
+in \mymeta{sequences} using the \mypkg{l3seq} module of \mypkg{expl3}. The \mymeta{stored
+content} can be used as many times as desired in the document, additionally you can write
+to \mymeta{external files} or show it in \mymeta{verbatim style}.
 \end{abstract}
 \end{scontents}
 \end{examplecode}
@@ -1264,12 +1260,11 @@ to \mymeta{external files}.
 % \fi
 \begin{examplecode}[numbers=left]
 \begin{scontents}[store-env=description, print-env=true]
-The \mypkg*{scontents} package allows to \mymeta{store contents} in
-\mymeta{sequences} or \mymeta{external files}. In some ways it is
-similar to the \mypkg{filecontentsdef} package, with the difference
-in which the \mymeta{content} is stored. The idea behind this package
-is to get an approach to \hologo{ConTeXt} \enquote{\emph{buffers}}
-by making use \mymeta{sequences}.
+The \mypkg*{scontents} package allows to \mymeta{store contents} in \mymeta{sequences}
+or \mymeta{external files}. In some ways it is similar to the \mypkg{filecontentsdef}
+package, with the difference in which the \mymeta{content} is stored. The idea behind
+this package is to get an approach to \hologo{ConTeXt} \enquote{\emph{buffers}} by
+making use \mymeta{sequences}.
 \end{scontents}
 \end{examplecode}
 % \iffalse
