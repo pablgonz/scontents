@@ -31,7 +31,7 @@
 % and later we will copy the write stream opened by imakeidx into \@indexfile
 % so that entries written to both streams end up in the same file.
 \usepackage[english]{babel}
-\usepackage[top=0.5in,bottom=0.5in,left=2in,right=0.7in,footskip=0.2in,headsep=10pt]{geometry}
+\usepackage[top=0.5in,bottom=0.3in,left=2in,right=0.7in,footskip=0.2in,headheight=1cm,headsep=0.27cm]{geometry}
 \usepackage[osf,mono=false,scale=0.95,llscaled=0.95]{libertine}
 \setmonofont[
     Ligatures      = TeX,
@@ -42,11 +42,13 @@
     BoldFont       = *-Semibold,
     BoldItalicFont = *-SemiboldIt,
     RawFeature     = {+zero,+ss06},
-    FontFace       = {m}{sc}{*-ExtraLight},
+    FontFace       = {m}{sc}{*-Regular},
     Extension      = .otf]{SourceCodePro}
 \newfontfamily\sourcecodeprolight{SourceCodePro-Regular.otf}[Scale = 0.80,FakeStretch =0.75]
 \RenewDocumentCommand{\MacroLongFont}{}
-  { \sourcecodeprolight\small }
+  {
+    \sourcecodeprolight\small
+  }
 % The character of visible space is now taken from Latin Modern Mono
 % to prevent fonts in T1. The original definition for xetex/luatex is
 % \def\verbvisiblespace{\usefont{OT1}{cmtt}{m}{n}\asciispace}
@@ -114,7 +116,7 @@
 \newcommand{\HP}[1]{\emph{\hyperpage{#1}}\normalsize}
 \def\MYSortIndex#1#2{\index[userdoc]{#1\actualchar#2|HP}}
 
-\indexsetup{level=\section,firstpagestyle=myheader}
+\indexsetup{level=\section}%,firstpagestyle=myheader
 \makeindex[name=userdoc,options=-s gind.ist,columnsep=15pt,title={Index of Documentation}]
 \makeindex[options=-s gind.ist,columnsep=15pt,title={Index of Implementation}]
 % Now, after imakeidx opens the write stream for the index file, we copy
@@ -129,9 +131,9 @@
 % Colors for options
 \definecolor{optcolor}{rgb}{0.281,0.275,0.485}
 \definecolor{mypkgcolor}{RGB}{0,128,128}%
-% Only for arara...I like arara :)
+% Only for arara...I like arara :)_
 \definecolor{araracolour}{rgb}{0, 0.72, 0.28}
-\usepackage{comfortaa}
+\usepackage[scale=0.85]{comfortaa} 
 \newcommand{\araratext}[1]{{\small\normalfont\comfortaa\color{araracolour}\bfseries#1}}
 \newcommand*\arara{\araratext{ar\kern-.03emar\kern-.03ema}}
 
@@ -508,20 +510,23 @@
 
 % Configuration titleps and titlesec
 \settitlemarks{section}
-\renewpagestyle{plain}[\color{gray}\small\sffamily]{
-\setfoot{}{}{\thepage/\pageref{LastPage}}}
-
-\newpagestyle{myheader}[\color{gray}\small\sffamily]{
-\renewcommand\makeheadrule{\color{gray}\rule[0.45\baselineskip]{\linewidth}{0.4pt}}
-\setfoot{\scalebox{0.8}{\mylogo}\space\raisebox{-1pt}{\textcopyright}{}2019 by Pablo González}
-        {}
-        {\thepage/\pageref{LastPage}}
-\sethead{\raisebox{0.75\baselineskip}{Documentation for \fileversion\space[\filedate]}}
-        {}
-        {\raisebox{0.75\baselineskip}{\scshape\small\S.\thesection\space\sectiontitle}}
+\renewpagestyle{plain}[\color{optcolor}\small\sffamily]{
+\setfoot{}{}{\rlap{\parbox{\dimexpr\marginparwidth\relax}{\hspace{20pt}\thepage\,/\,\pageref{LastPage}}}}
 }
-
-\setlength{\headheight}{21pt}%
+\newpagestyle{plainidx}[\color{optcolor}\small\sffamily]{
+\setfoot{}{}{\rlap{\parbox{\dimexpr\marginparwidth\relax}{\hspace{10pt}\thepage\,/\,\pageref{LastPage}}}}
+}
+\newpagestyle{myheader}[\color{gray}\small\sffamily]{
+\renewcommand\makeheadrule{
+\adjustbox{lap=-\marginparwidth-1.7\marginparsep}{\textcolor{WhiteSmoke}{\rule[0.3cm]{\paperwidth}{0.7cm}}}
+}
+\setfoot{\raisebox{-1pt}{\textcopyright}{}2019 by Pablo González}
+        {}
+        {\rlap{\parbox{\dimexpr\marginparwidth\relax}{\hspace{20pt}\textcolor{optcolor}{\thepage}\,/\,\pageref{LastPage}}}}
+\sethead{\llap{\raisebox{0.55cm}{\parbox{\dimexpr\marginparsep + 3pt+\marginparwidth\relax}{\hspace{10pt}\scalebox{0.8}{\mylogo}\space\color{optcolor}\fileversion}}}}
+        {\raisebox{0.55cm}{\parbox{\dimexpr\textwidth\relax}{\hspace*{-\marginparwidth}\centering\color{optcolor}\scshape\small\S.\thesection\space\sectiontitle}}} % centro
+        {}
+}
 
 \titlecontents{section}[0mm]{}%
     {\bfseries\contentspush{\makebox[5mm][l]{\thecontentslabel\hfill}}}%
@@ -871,14 +876,11 @@
 % \fi
 \begin{examplecode}[frame=single]
 \begin{scontents}[store-env=outer]
-This text is in the outer environment
-(before nested).
+This text is in the outer environment (before nested).
 \begin{scontents}[store-env=inner]
-This text is found in the inner environment
-(inside of nested).
+This text is found in the inner environment (inside of nested).
 \end{scontents}
-This text is in the outer environment
-(after nested).
+This text is in the outer environment (after nested).
 \end{scontents}
 \end{examplecode}
 % \iffalse
@@ -1095,7 +1097,6 @@ This text is in the outer environment
 % stored in the \mymarg{seq name}. The key §width-tab§ is available for
 % this command.
 %
-% \newpage
 %
 % \subsection{The environment \env{verbatimsc}}
 % \label{sec:verbatimsc}
@@ -1111,6 +1112,8 @@ This text is in the outer environment
 % of the \mymeta{stored content} in a \emph{verbatim} environment and not
 % a real \emph{verbatim} environment. The \mypkg{verbatim} package is not
 % compatible with the implementation of the \myenv*{verbatimsc} environment.
+%
+% \newpage
 %
 % The \myenv*{verbatimsc} environment can be customized in the following ways:
 %
@@ -1290,8 +1293,6 @@ $ pdfdetach -saveall scontents.pdf
 % \fi
 % and then you can use the excellent \arara\footnote{The cool \TeX\ automation tool:
 % \url{https://www.ctan.org/pkg/arara}} tool to compile them.
-%
-% \newpage
 %
 % \subsection{From \texttt{answers} package}
 %
@@ -1729,7 +1730,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \begin{description}[font=\small\sffamily,wide=0pt,style=multiline,leftmargin=\descrwidth,nosep,noitemsep]
 % \item [\fileversion{} (devp), \filedate]
 %    \begin{itemize}
-%    \item Added |overwrite| key to reduce |I/O| operations
+%    \item Add |overwrite| key to reduce |I/O| operations
 %    \item Deleted an unnecessary group in the code.
 %    \end{itemize}
 % \item [v1.7 (ctan), 2019-10-29]
@@ -1782,7 +1783,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{itemize}
 % \item [v1.0 (ctan), 2019-07-30]
 %    \begin{itemize}
-%        \item First public release,
+%        \item First public release.
 %    \end{itemize}
 % \end{description}
 %
@@ -1797,7 +1798,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \newpage
 %
 % \StopEventually{^^A
-% \newgeometry{top=0.5in,bottom=0.5in,left=1.0in,right=0.5in,footskip=0.2in,headsep=10pt}
+% \newgeometry{top=0.5in,bottom=0.3in,left=1.0in,right=0.5in,footskip=0.2in,headheight=1cm,headsep=0.27cm}
 % \addtocontents{toc}{\protect\setcounter{tocdepth}{2}}
 % \cleardoublepage
 % \phantomsection
@@ -1806,6 +1807,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % described, the numbers underlined and all others indicate the line on
 % which they are implemented in the package code.
 % }
+% \pagestyle{plainidx}
 % \printindex
 % }
 %
