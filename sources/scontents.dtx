@@ -294,6 +294,13 @@
     \MYSortIndex{Keys}{Keys>\texttt{#1}}%
   }
 
+% \mykey{m}
+\DeclareDocumentCommand{\mykey}{ m }
+  {
+    \textcolor{optcolor}{\texttt{#1}}
+    \MYSortIndex{Keys}{Keys>\texttt{#1}}%
+  }
+
 % \mypkg{sm}
 \NewDocumentCommand{\mypkg}{sm}
   {
@@ -513,13 +520,13 @@
 \newpagestyle{plainidx}[\color{optcolor}\small\sffamily]{
 \setfoot{}{}{\rlap{\parbox{\dimexpr\marginparwidth\relax}{\hspace{10pt}\thepage\,/\,\pageref{LastPage}}}}
 }
-\newpagestyle{myheader}[\color{gray}\small\sffamily]{
+\newpagestyle{myheader}[\color{gray}\small\sffamily]{%
 \renewcommand\makeheadrule{
 \adjustbox{lap=-\marginparwidth-1.7\marginparsep}{\textcolor{WhiteSmoke}{\rule[0.3cm]{\paperwidth}{0.7cm}}}
 }
-\setfoot{\raisebox{-1pt}{\textcopyright}{}2019 by Pablo González}
-        {}
-        {\rlap{\parbox{\dimexpr\marginparwidth\relax}{\hspace{20pt}\textcolor{optcolor}{\thepage}\,/\,\pageref{LastPage}}}}
+\setfoot{\raisebox{-1pt}{\textcopyright}{}2019 by Pablo González}%
+        {}%
+        {\rlap{\parbox{\dimexpr\marginparwidth\relax}{\hspace{20pt}\textcolor{optcolor}{\thepage}\,/\,\pageref{LastPage}}}}%
 \sethead{\llap{\raisebox{0.55cm}{\parbox{\dimexpr\marginparsep + 3pt+\marginparwidth\relax}{\hspace{10pt}\scalebox{0.8}{\mylogo}\space\color{optcolor}\fileversion}}}}
         {\raisebox{0.55cm}{\parbox{\dimexpr\textwidth\relax}{\hspace*{-\marginparwidth}\centering\color{optcolor}\scshape\small\S.\thesection\space\sectiontitle}}} % centro
         {}
@@ -802,8 +809,8 @@
 % \subsection{Options Overview}
 % \label{sec:optover}
 %
-% \newcommand*{\xmark}{\textcolor{red}{✘}}%
-% \newcommand*{\cmark}{\textcolor{green}{✔}}%
+% \newcommand*{\xmark}{\textcolor{OrangeRed}{✘}}%
+% \newcommand*{\cmark}{\textcolor{linkcolor}{✔}}%
 %
 % Summary of available options.
 %
@@ -814,18 +821,18 @@
 % \toprule
 % \texttt{key} &package &\ics*{setupsc} &\myenv*{scontents} &\ics*{Scontents} &\ics*{Scontents*} &\ics*{typestored} &\ics*{meaningsc}\\
 % \midrule
-%  \texttt{store-env} & \cmark  & \cmark  &  \cmark  & \xmark  & \xmark  & \xmark  & \xmark \\
-%  \texttt{store-cmd} & \cmark  & \cmark  &  \xmark  & \cmark  & \cmark  & \xmark  & \xmark \\
-%  \texttt{print-env} & \cmark  & \cmark  &  \cmark  & \xmark  & \xmark  & \xmark  & \xmark \\
-%  \texttt{print-cmd} & \cmark  & \cmark  &  \xmark  & \cmark  & \cmark  & \xmark  & \xmark \\
-%  \texttt{print-all} & \cmark  & \cmark  &  \xmark  & \xmark  & \xmark  & \xmark  & \xmark \\
-%  \texttt{store-all} & \cmark  & \cmark  &  \xmark  & \xmark  & \xmark  & \xmark  & \xmark \\
-%  \texttt{write-env} & \xmark  & \xmark  &  \cmark  & \xmark  & \xmark  & \xmark  & \xmark \\
-%  \texttt{write-out} & \xmark  & \xmark  &  \cmark  & \xmark  & \xmark  & \xmark  & \xmark \\
-%  \texttt{overwrite} & \cmark  & \cmark  &  \cmark  & \xmark  & \xmark  & \xmark  & \xmark \\
-%  \texttt{width-tab} & \cmark  & \cmark  &  \xmark  & \xmark  & \xmark  & \cmark  & \cmark \\
-%  \texttt{force-eol} & \cmark  & \cmark  &  \cmark  & \xmark  & \cmark  & \xmark  & \xmark \\
-%  \texttt{verb-font} & \cmark  & \cmark  &  \xmark  & \xmark  & \xmark  & \xmark  & \xmark \\
+%  \mykey{store-env} & \cmark  & \cmark  &  \cmark  & \xmark  & \xmark  & \xmark  & \xmark \\
+%  \mykey{store-cmd} & \cmark  & \cmark  &  \xmark  & \cmark  & \cmark  & \xmark  & \xmark \\
+%  \mykey{print-env} & \cmark  & \cmark  &  \cmark  & \xmark  & \xmark  & \xmark  & \xmark \\
+%  \mykey{print-cmd} & \cmark  & \cmark  &  \xmark  & \cmark  & \cmark  & \xmark  & \xmark \\
+%  \mykey{print-all} & \cmark  & \cmark  &  \xmark  & \xmark  & \xmark  & \xmark  & \xmark \\
+%  \mykey{store-all} & \cmark  & \cmark  &  \xmark  & \xmark  & \xmark  & \xmark  & \xmark \\
+%  \mykey{write-env} & \xmark  & \xmark  &  \cmark  & \xmark  & \xmark  & \xmark  & \xmark \\
+%  \mykey{write-out} & \xmark  & \xmark  &  \cmark  & \xmark  & \xmark  & \xmark  & \xmark \\
+%  \mykey{overwrite} & \cmark  & \cmark  &  \cmark  & \xmark  & \xmark  & \xmark  & \xmark \\
+%  \mykey{width-tab} & \cmark  & \cmark  &  \xmark  & \xmark  & \xmark  & \cmark  & \cmark \\
+%  \mykey{force-eol} & \cmark  & \cmark  &  \cmark  & \xmark  & \cmark  & \xmark  & \xmark \\
+%  \mykey{verb-font} & \cmark  & \cmark  &  \xmark  & \xmark  & \xmark  & \xmark  & \xmark \\
 % \bottomrule
 % \end{tabular}
 % \end{center}
