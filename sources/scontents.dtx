@@ -561,6 +561,7 @@
 }
 \makeatother
 \begin{document}
+  \overfullrule=5pt
   \DocInput{\jobname.dtx}
 \end{document}
 %</driver>
@@ -770,7 +771,7 @@
 %
 % \keyexamp{verb-font}{font family}{\textnormal{\ttfamily\textbackslash{}ttfamily}}
 % Sets the \mymeta{font family} used to display the \mymeta{stored content} for the
-% commands \ics*{typestored} and \ics*{meaningsc}. This key is only available
+% \ics*{typestored} and \ics*{meaningsc} commands. This key is only available
 % as a package option or using \ics*{setupsc}.
 %
 % \medskip
@@ -2096,7 +2097,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \end{macro}
 %
 %
-% \begin{macro}{\l_@@_foreach_before_bool,\l_@@_foreach_after_bool
+% \begin{macro}{\l_@@_foreach_before_bool,\l_@@_foreach_after_bool,
 %               \l_@@_foreach_stop_bool,\l_@@_foreach_wrapper_bool}
 %   Boolean variables used by the §\foreachsc§ loop.
 %
@@ -2265,7 +2266,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
     step    .initial:n        = 1,
     wrapper .code:n           = {
                                   \bool_set_true:N \l_@@_foreach_wrapper_bool
-                                  \cs_set_protected:Npn \@@_foreach_wrapper:n ##1 {#1}
+                                  \cs_set_protected:Npn
+                                    \@@_foreach_wrapper:n ##1 {#1}
                                 },
     wrapper .value_required:n = true,
     sep     .tl_set:N         = \l_@@_foreach_sep_tl,
@@ -2445,7 +2447,10 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
     \clist_map_function:NN \l_@@_temp_tl \@@_require_auxiii:n
   }
 \cs_new_protected:Npn \@@_require_auxiii:n #1
-  { \str_if_eq:eeF {expl3} {#1} { \msg_error:nnn { scontents } { invalid-package } {#1} } }
+  {
+    \str_if_eq:eeF {expl3} {#1}
+      { \msg_error:nnn { scontents } { invalid-package } {#1} }
+  }
 \msg_new:nnn { scontents } { invalid-package }
   { Package~`#1'~invalid~in~scontents.~This~is~an~error~in~scontents. }
 \@@_compat_redefine:cpn { @ifpackagelater } #1
@@ -2665,7 +2670,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \subsubsection{The environment itself}
 %
 % \begin{macro}{\@@_start_environment:w,\@@_start_after_option:w,
-%     \@@_check_line_and_process:xn,\@@_stop_environment:}
+%     \@@_check_line_process:xn,\@@_stop_environment:}
 %   Here we make §^^I§, §^^L§ and §^^M§ active characters so that the end of
 %   line can be \enquote{seen} to be used as a delimiter, and \hologo{TeX} doesn't try to
 %   eliminate space-like characters.
@@ -2678,9 +2683,9 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   \cs{@@_start_after_option:w} also checks for trailing tokens after
 %   the optional argument and issues an error if any.
 %
-%   In all cases \cs{@@_check_line_and_process:xn} is called to check that
-%   the rest of the §\begin{scontents}§ is empty and then process
-%   the environment. \cs{@@_check_line_and_process:xn} calls the
+%   In all cases, \cs{@@_check_line_process:xn} ckecks that
+%   everything past §\begin{scontents}§ is empty and then process
+%   the environment. \cs{@@_check_line_process:xn} calls the
 %   \cs{@@_file_tl_write_start:V} function, which will then read the contents
 %   of the environment and optionally store them in a token list or write to
 %   an external file.
@@ -2702,13 +2707,13 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
         {
           \str_if_eq:eeTF { \tl_head:n {#1} } { [ }
             { \@@_grab_optional:w #1 ^^M }
-            { \@@_check_line_and_process:xn { } {#1} }
+            { \@@_check_line_process:xn { } {#1} }
         }
-        { \@@_check_line_and_process:xn { } {#1} }
+        { \@@_check_line_process:xn { } {#1} }
     }
   \cs_new_protected:Npn \@@_start_after_option:w #1 ^^M
-    { \@@_check_line_and_process:xn { [...] } {#1} }
-  \cs_new_protected:Npn \@@_check_line_and_process:xn #1 #2
+    { \@@_check_line_process:xn { [...] } {#1} }
+  \cs_new_protected:Npn \@@_check_line_process:xn #1 #2
     {
       \tl_if_blank:nF {#2}
         {
@@ -2868,8 +2873,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   to a token list and to a file, depending on the booleans
 %   \cs{l_@@_writing_bool} and \cs{l_@@_storing_bool}.
 %
-%   \cs{@@_analyse_nesting:n} looks for nested §\begin{scontents}§
-%   and adds to a \cs{l_@@_env_nesting_int} counter. The \cs{@@_if_nested:}
+%   \cs{@@_analyse_nesting:n} scans nested §\begin{scontents}§
+%   and steps a \cs{l_@@_env_nesting_int} counter. The \cs{@@_if_nested:}
 %   conditional tests if we're in a nested environment, and
 %   \cs{@@_nesting_decr:} reduces the nesting level, if an §\end{scontents}§
 %   is found.
@@ -2942,8 +2947,12 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
     \bool_if:NT \l_@@_storing_bool
       {
         \bool_if:NF \l_@@_forced_eol_bool
-          { \tl_put_right:Nx \l_@@_macro_tmp_tl { \c_@@_hidden_space_str } }
-        \@@_store_to_seq:NN \l_@@_macro_tmp_tl \l_@@_name_seq_env_tl
+          {
+            \tl_put_right:Nx \l_@@_macro_tmp_tl
+              { \c_@@_hidden_space_str }
+          }
+        \@@_store_to_seq:NN \l_@@_macro_tmp_tl
+          \l_@@_name_seq_env_tl
         \bool_if:NT \l_@@_print_env_bool
           { \@@_lastfrom_seq:n \l_@@_name_seq_env_tl }
       }
@@ -2960,7 +2969,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 \cs_new_protected:Npn \verbatimsc
   {
     \group_begin:
-      \@@_verbatimsc_aux: \frenchspacing \@@_vobeyspaces: \@@_xverb:
+      \@@_verbatimsc_aux: \frenchspacing \@@_vobeyspaces:
+      \@@_xverb:
   }
 \cs_new_protected:Npn \endverbatimsc
   { \group_end: }
@@ -3143,7 +3153,10 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
         { \l_@@_foreach_stop_int }
         \@@_foreach_add_body:n
       \tl_gset:Nx \g_@@_temp_tl
-        { \seq_use:Nn \l_@@_foreach_print_seq { \tl_use:N \l_@@_foreach_sep_tl } }
+        {
+          \seq_use:Nn \l_@@_foreach_print_seq
+            { \tl_use:N \l_@@_foreach_sep_tl }
+        }
     \group_end:
     \exp_after:wN \tl_gclear:N
     \exp_after:wN \g_@@_temp_tl
