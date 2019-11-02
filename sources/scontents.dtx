@@ -42,7 +42,7 @@
     BoldFont       = *-Semibold,
     BoldItalicFont = *-SemiboldIt,
     RawFeature     = {+zero,+ss06},
-    FontFace       = {m}{sc}{*-Regular},
+    FontFace       = {m}{sc}{LinBiolinum_R.otf},
     Extension      = .otf]{SourceCodePro}
 \newfontfamily\sourcecodeprolight{SourceCodePro-Regular.otf}[Scale = 0.80,FakeStretch =0.75]
 \RenewDocumentCommand{\MacroLongFont}{}
@@ -116,7 +116,7 @@
 \newcommand{\HP}[1]{\emph{\hyperpage{#1}}\normalsize}
 \def\MYSortIndex#1#2{\index[userdoc]{#1\actualchar#2|HP}}
 
-\indexsetup{level=\section}%,firstpagestyle=myheader
+\indexsetup{level=\section}
 \makeindex[name=userdoc,options=-s gind.ist,columnsep=15pt,title={Index of Documentation}]
 \makeindex[options=-s gind.ist,columnsep=15pt,title={Index of Implementation}]
 % Now, after imakeidx opens the write stream for the index file, we copy
@@ -127,21 +127,22 @@
 
 \setlength{\parindent}{0pt}
 
-%%-------------------- ONLY FOR DOCUMENTATION ------------------------%%
-% Colors for options
+% Colors
 \definecolor{optcolor}{rgb}{0.281,0.275,0.485}
-\definecolor{mypkgcolor}{RGB}{0,128,128}%
-% Only for arara...I like arara :)_
-\definecolor{araracolour}{rgb}{0, 0.72, 0.28}
-\usepackage[scale=0.85]{comfortaa} 
-\newcommand{\araratext}[1]{{\small\normalfont\comfortaa\color{araracolour}\bfseries#1}}
+\definecolor{pkgcolor}{rgb}{0,0.5,0.5}
+\definecolor{araracolor}{rgb}{0, 0.72, 0.28}
+\definecolor{linkcolor}{rgb}{0.04,0.38,0.04}
+
+% Only for arara...I like arara :)
+\usepackage[scale=0.85]{comfortaa}
+\newcommand{\araratext}[1]{{\small\normalfont\comfortaa\color{araracolor}\bfseries#1}}
 \newcommand*\arara{\araratext{ar\kern-.03emar\kern-.03ema}}
 
 % Logo with fetamont font for title
 \makeatletter
 \newsavebox{\logobox}
 \savebox{\logobox}{%
-  \normalsize\fetamontotf{\textcolor{mypkgcolor}{s}\textcolor{OrangeRed}{content}\textcolor{mypkgcolor}{s}}}
+  \normalsize\fetamontotf{\textcolor{pkgcolor}{s}\textcolor{OrangeRed}{content}\textcolor{pkgcolor}{s}}}
 \newcommand{\mylogo}{%
   \settoheight{\@tempdima}{L}%
   \resizebox{!}{\@tempdima}{\usebox{\logobox}}%
@@ -238,10 +239,10 @@
    \begin{lrbox}{\boxexaenv}%
     \begin{minipage}[t]{\marginparwidth}%
      \raggedright\ttfamily\small
-     \textcolor{gray}{\textbackslash begin\{\textcolor{mypkgcolor}{{#1}}\}\myoarg
+     \textcolor{gray}{\textbackslash begin\{\textcolor{pkgcolor}{{#1}}\}\myoarg
      [type=tt,sbc=gray,ac=lightgray,cf=optcolor]{keyval ~ list}}\par%
      \hspace{0.5cm}\mymeta[type=tt,ac=lightgray,cf=gray]{env ~ contents}\par%
-     \textcolor{gray}{\textbackslash end\{{\textcolor{mypkgcolor}{{#1}}}\}}\par
+     \textcolor{gray}{\textbackslash end\{{\textcolor{pkgcolor}{{#1}}}\}}\par
     \end{minipage}%
    \end{lrbox}%
    \usebox{\boxexaenv}
@@ -251,10 +252,10 @@
    \begin{lrbox}{\boxexaenv}%
     \begin{minipage}[t]{\marginparwidth}%
      \raggedright\ttfamily\small
-     \textcolor{mypkgcolor}{{\textbackslash#1#2}}\myoarg
+     \textcolor{pkgcolor}{{\textbackslash#1#2}}\myoarg
      [type=tt,sbc=gray,ac=lightgray,cf=optcolor]{keyval ~ list}\par%
      \hspace{0.5cm}\mymeta[type=tt,ac=lightgray,cf=gray]{env ~ contents}\par%
-     \textcolor{mypkgcolor}{{\textbackslash #3#2}}\par
+     \textcolor{pkgcolor}{{\textbackslash #3#2}}\par
     \end{minipage}%
    \end{lrbox}%
    \usebox{\boxexaenv}
@@ -265,7 +266,7 @@
   {
   \group_begin:
   \small\ttfamily
-  \textcolor{mypkgcolor}{\textbackslash#2}
+  \textcolor{pkgcolor}{\textbackslash#2}
   \IfValueT{#1}{ \textcolor{MediumOrchid}{#1} }
   \IfValueT{#3}{ \myoarg[type=tt,sbc=gray,ac=lightgray,cf=optcolor]{#3} }
   \IfValueTF{#5}
@@ -278,7 +279,7 @@
   \par
   \group_end:
   \MYSortIndex{Commands}{Commands ~ provide  ~ by ~
-  {\fetamontotf{\textcolor{mypkgcolor}{s}\textcolor{OrangeRed}{content}\textcolor{mypkgcolor}{s}}}:}%
+  {\fetamontotf{\textcolor{pkgcolor}{s}\textcolor{OrangeRed}{content}\textcolor{pkgcolor}{s}}}:}%
   }
 
 % \keyexamp{mmm}
@@ -299,7 +300,7 @@
     \group_begin:
     \IfBooleanTF{#1}
       {
-        \fetamontotf{\textcolor{mypkgcolor}{s}\textcolor{OrangeRed}{content}\textcolor{mypkgcolor}{s}}
+        \fetamontotf{\textcolor{pkgcolor}{s}\textcolor{OrangeRed}{content}\textcolor{pkgcolor}{s}}
         \MYSortIndex{packages}{Packages>\texttt{#2}}
       }
       {
@@ -314,9 +315,9 @@
   {
     \IfBooleanTF{#1}
       {
-        \textcolor{mypkgcolor}{\ttfamily{#2}}%
+        \textcolor{pkgcolor}{\ttfamily{#2}}%
         \MYSortIndex{environment}{ Environment ~ provide ~ by ~
-        {\fetamontotf{\textcolor{mypkgcolor}{s}\textcolor{OrangeRed}{content}\textcolor{mypkgcolor}{s}}}:>\texttt{#2}}
+        {\fetamontotf{\textcolor{pkgcolor}{s}\textcolor{OrangeRed}{content}\textcolor{pkgcolor}{s}}}:>\texttt{#2}}
       }
       {
        \textcolor{darkgray}{\ttfamily{#2}}%
@@ -331,11 +332,11 @@
       {
         \tl_set:Nn \l_tmpa_tl { #2 }
         \regex_replace_once:nnN { (\*) } { \c{textcolor}\cB\{MediumOrchid\cE\}\cB\{\1\cE\} } \l_tmpa_tl
-        \textcolor{mypkgcolor}{\ttfamily\textbackslash{\tl_use:N \l_tmpa_tl}}
+        \textcolor{pkgcolor}{\ttfamily\textbackslash{\tl_use:N \l_tmpa_tl}}
         \MYSortIndex{Commands}{ Commands ~ provide  ~ by ~
         {
         \fetamontotf{
-        \textcolor{mypkgcolor}{s}\textcolor{OrangeRed}{content}\textcolor{mypkgcolor}{s}}
+        \textcolor{pkgcolor}{s}\textcolor{OrangeRed}{content}\textcolor{pkgcolor}{s}}
         }:>\texttt{\textbackslash#2}}
       }
       {
@@ -401,7 +402,7 @@
     keywordstyle=[3]{\color{optcolor!85}},%
     keywords=[3]{document,article,setlength,pagestyle,definecolor},%
 % Reserved words 4 (scontents pkg)
-    keywordstyle=[4]{\color{mypkgcolor}},%
+    keywordstyle=[4]{\color{pkgcolor}},%
     keywords=[4]{scontents,Scontents,getstored,typestored,verbatimsc,%
                  endverbatimsc,countsc,meaningsc,foreachsc,macros
                  endscontents,startscontents,stopscontents,scontents.tex},%
@@ -432,7 +433,6 @@
               {\&}{{\textcolor{gray}{\&}}}{1}
               {>}{{\textcolor{OrangeRed}{\guillemotright}}}{1}
               {*}{{\textcolor{MediumOrchid}{*}}}{1}
-              %{@}{{\textcolor{red}{@}}}{1}
               {\^}{{\textcolor{optcolor}{\textasciicircum}}}{1}
               {0}{{\textcolor{MediumOrchid}{0}}}{1}
               {1}{{\textcolor{MediumOrchid}{1}}}{1}
@@ -494,11 +494,8 @@
 \GetFileInfo{\jobname.sty}
 
 % Config hyperref
-\definecolor{linkcolour}{cmyk}{0.64,0,0.95,0.40}% <-Olive Green
 \hypersetup{
-   linkcolor          = linkcolour,%
-   citecolor          = linkcolour,%
-   urlcolor           = magenta,%
+   allcolors          = linkcolor,
    colorlinks         = true,%
    linktoc            = all,%
    pdftitle           = {.:: The scontents package --- \fileinfo{} ::.},%
@@ -1328,7 +1325,7 @@ Second exercise
 % \fi
 %
 % Adaptation of example 1 of the package \mypkg{answers}
-% \textattachfile[color=linkcolour,print=false]{scexamp1.ltx}{\faFile*[regular]}.
+% \textattachfile[color=linkcolor,print=false]{scexamp1.ltx}{\faFile*[regular]}.
 % \lstinputlisting[language=scontents-doc,numbers=left]{scexamp1.ltx}
 %
 % \subsection{From \texttt{filecontentsdef} package}
@@ -1372,7 +1369,7 @@ seventies that the \NSA\ has known that for 40 years.\par
 % \fi
 %
 % Adaptation of example from package \mypkg{filecontentsdef}
-% \textattachfile[color=linkcolour,print=false]{scexamp2.ltx}{\faFile*[regular]}.
+% \textattachfile[color=linkcolor,print=false]{scexamp2.ltx}{\faFile*[regular]}.
 % \lstinputlisting[language=scontents-doc,numbers=left]{scexamp2.ltx}
 %
 % \subsection{From TeX-SX}
@@ -1436,7 +1433,7 @@ This is a \verb*|fake poor man's buffer :)|.
 % \fi
 %
 % Adapted from \href{https://tex.stackexchange.com/q/5338/7832}{LaTeX equivalent of ConTeXt buffers}
-% \textattachfile[color=linkcolour,print=false]{scexamp3.ltx}{\faFile*[regular]}.
+% \textattachfile[color=linkcolor,print=false]{scexamp3.ltx}{\faFile*[regular]}.
 % \lstinputlisting[language=scontents-doc,numbers=left]{scexamp3.ltx}
 %
 % \subsubsection*{Example 4}
@@ -1478,7 +1475,7 @@ This is stored in other: \getstored[1]{other}
 % \fi
 %
 % Adapted from \href{https://tex.stackexchange.com/q/184503/7832}{Collecting contents of environment and store them for later retrieval}
-% \textattachfile[color=linkcolour,print=false]{scexamp4.ltx}{\faFile*[regular]}.
+% \textattachfile[color=linkcolor,print=false]{scexamp4.ltx}{\faFile*[regular]}.
 % \lstinputlisting[language=scontents-doc,numbers=left]{scexamp4.ltx}
 %
 % \subsubsection*{Example 5}
@@ -1516,7 +1513,7 @@ This is from the verbatim environment:
 % \fi
 %
 % Adapted from \href{https://tex.stackexchange.com/q/373647/7832}{Collect contents of an environment (that contains verbatim content)}
-% \textattachfile[color=linkcolour,print=false]{scexamp5.ltx}{\faFile*[regular]}.
+% \textattachfile[color=linkcolor,print=false]{scexamp5.ltx}{\faFile*[regular]}.
 % \lstinputlisting[language=scontents-doc,numbers=left]{scexamp5.ltx}
 %
 % \subsection{Customization of \texttt{verbatimsc}}
@@ -1584,7 +1581,7 @@ Prove new \Verb*{ fancyvrb whit braces } and environment \verb+Verbatim*+
 %
 % Customization of \myenv*{verbatimsc} using the \mypkg{fancyvrb} and
 % \mypkg{tcolorbox} package
-% \textattachfile[color=linkcolour,print=false]{scexamp6.ltx}{\faFile*[regular]}.
+% \textattachfile[color=linkcolor,print=false]{scexamp6.ltx}{\faFile*[regular]}.
 % \lstinputlisting[language=scontents-doc,numbers=left]{scexamp6.ltx}
 %
 % \subsubsection*{Example 7}
@@ -1650,7 +1647,7 @@ and more.+
 % \fi
 %
 % Customization of \myenv*{verbatimsc} using the \mypkg{listings} package
-% \textattachfile[color=linkcolour,print=false]{scexamp7.ltx}{\faFile*[regular]}.
+% \textattachfile[color=linkcolor,print=false]{scexamp7.ltx}{\faFile*[regular]}.
 % \lstinputlisting[language=scontents-doc,numbers=left]{scexamp7.ltx}
 %
 % \subsubsection*{Example 8}
@@ -1709,7 +1706,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \fi
 %
 % Customization of \myenv*{verbatimsc} using the \mypkg{minted} package
-% \textattachfile[color=linkcolour,print=false]{scexamp8.ltx}{\faFile*[regular]}.
+% \textattachfile[color=linkcolor,print=false]{scexamp8.ltx}{\faFile*[regular]}.
 % \lstinputlisting[language=scontents-doc,numbers=left]{scexamp8.ltx}
 %
 % \newpage
@@ -1720,7 +1717,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % In this section you will find some (not all) of the changes in \mypkg*{scontents}
 % development, from the first public implementation using the \mypkg{filecontentsdef}
 % package to the current version with only \mypkg{expl3}.
-% 
+%
 % \medskip
 %
 % \setlist[itemize,1]{label=\textendash,wide=0.5em,nosep,noitemsep,leftmargin=10pt}
@@ -1730,7 +1727,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \begin{description}[font=\small\sffamily,wide=0pt,style=multiline,leftmargin=\descrwidth,nosep,noitemsep]
 % \item [\fileversion{} (devp), \filedate]
 %    \begin{itemize}
-%    \item Add |overwrite| key to reduce |I/O| operations
+%    \item Add |overwrite| key to reduce |I/O| operations.
 %    \item Deleted an unnecessary group in the code.
 %    \end{itemize}
 % \item [v1.7 (ctan), 2019-10-29]
@@ -1815,11 +1812,11 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \label{sec:Implementation}
 % \addtocontents{toc}{\protect\setcounter{tocdepth}{0}}
 %
-% The most recent publicly released version of \mypkg*{scontents} is available at 
-% \textsc{ctan}: \url{https://www.ctan.org/pkg/scontents}. Historical and 
+% The most recent publicly released version of \mypkg*{scontents} is available at
+% \textsc{ctan}: \url{https://www.ctan.org/pkg/scontents}. Historical and
 % developmental versions are available at \textcolor{gray}{\scriptsize\faIcon[regular]{github}}
-% \url{https://github.com/pablgonz/scontents}. While general feedback via email is 
-% welcomed, specific bugs or feature requests should be reported through the issue 
+% \url{https://github.com/pablgonz/scontents}. While general feedback via email is
+% welcomed, specific bugs or feature requests should be reported through the issue
 % tracker: \url{https://github.com/pablgonz/scontents/issues}.
 %
 % \subsection{Declaration of the package}
