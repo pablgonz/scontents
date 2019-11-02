@@ -530,7 +530,7 @@
 \newpagestyle{myheader}[\color{gray}\small\sffamily]{%
 \renewcommand\makeheadrule{%
 \rlap{\hskip\dimexpr-\marginparwidth-1.7\marginparsep\relax
-      \color{WhiteSmoke}\rule[0.3cm]{\paperwidth}{0.7cm}}\hss%
+      \color{WhiteSmoke}\rule[0.3cm]{\paperwidth}{0.7cm}}\hss
 % \adjustbox{lap=-\marginparwidth-1.7\marginparsep}{\textcolor{WhiteSmoke}{\rule[0.3cm]{\paperwidth}{0.7cm}}}
 }
 \setfoot{\raisebox{-1pt}{\textcopyright}{}2019 by Pablo González}%
@@ -568,7 +568,6 @@
 }
 \makeatother
 \begin{document}
-  \overfullrule=5pt
   \DocInput{\jobname.dtx}
 \end{document}
 %</driver>
