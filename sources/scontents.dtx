@@ -521,8 +521,10 @@
 \setfoot{}{}{\rlap{\parbox{\dimexpr\marginparwidth\relax}{\hspace{10pt}\thepage\,/\,\pageref{LastPage}}}}
 }
 \newpagestyle{myheader}[\color{gray}\small\sffamily]{%
-\renewcommand\makeheadrule{
-\adjustbox{lap=-\marginparwidth-1.7\marginparsep}{\textcolor{WhiteSmoke}{\rule[0.3cm]{\paperwidth}{0.7cm}}}
+\renewcommand\makeheadrule{%
+\rlap{\hskip\dimexpr-\marginparwidth-1.7\marginparsep\relax
+      \color{WhiteSmoke}\rule[0.3cm]{\paperwidth}{0.7cm}}\hss%
+% \adjustbox{lap=-\marginparwidth-1.7\marginparsep}{\textcolor{WhiteSmoke}{\rule[0.3cm]{\paperwidth}{0.7cm}}}
 }
 \setfoot{\raisebox{-1pt}{\textcopyright}{}2019 by Pablo González}%
         {}%
