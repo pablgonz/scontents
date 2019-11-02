@@ -126,7 +126,7 @@
 }
 \ExplSyntaxOff
 
-\indexsetup{level=\section}
+\indexsetup{level=\section,firstpagestyle=myheader,othercode=\pagestyle{myheader}}
 \makeindex[name=userdoc,options=-s gind.ist,columnsep=15pt,title={Index of Documentation}]
 \makeindex[options=-s gind.ist,columnsep=15pt,title={Index of Implementation}]
 % Now, after imakeidx opens the write stream for the index file, we copy
@@ -523,25 +523,22 @@
   }
 
 % Configuration titleps and titlesec
+\AtBeginDocument{\edef\scontentsrightmargin{\the\oddsidemargin}}
 \settitlemarks{section}
-\renewpagestyle{plain}[\color{optcolor}\small\sffamily]{
-\setfoot{}{}{\rlap{\parbox{\dimexpr\marginparwidth\relax}{\hspace{20pt}\thepage\,/\,\pageref{LastPage}}}}
-}
-\newpagestyle{plainidx}[\color{optcolor}\small\sffamily]{
-\setfoot{}{}{\rlap{\parbox{\dimexpr\marginparwidth\relax}{\hspace{10pt}\thepage\,/\,\pageref{LastPage}}}}
+\renewpagestyle{plain}[\color{optcolor}\small\sffamily]{%
+\setfoot{}{}{\rlap{\parbox{\scontentsrightmargin}{\hspace{20pt}\thepage\,/\,\pageref{LastPage}}}}%
 }
 \newpagestyle{myheader}[\color{gray}\small\sffamily]{%
 \renewcommand\makeheadrule{%
-\rlap{\hskip\dimexpr-\marginparwidth-1.7\marginparsep\relax
+\rlap{\hskip\dimexpr-\oddsidemargin-1in\relax
       \color{WhiteSmoke}\rule[0.3cm]{\paperwidth}{0.7cm}}\hss
-% \adjustbox{lap=-\marginparwidth-1.7\marginparsep}{\textcolor{WhiteSmoke}{\rule[0.3cm]{\paperwidth}{0.7cm}}}
 }
 \setfoot{\raisebox{-1pt}{\textcopyright}{}2019 by Pablo González}%
         {}%
-        {\rlap{\parbox{\dimexpr\marginparwidth\relax}{\hspace{20pt}\textcolor{optcolor}{\thepage}\,/\,\pageref{LastPage}}}}%
-\sethead{\llap{\raisebox{0.55cm}{\parbox{\dimexpr\marginparsep + 3pt+\marginparwidth\relax}{\hspace{10pt}\scalebox{0.8}{\mylogo}\space\color{optcolor}\fileversion}}}}
-        {\raisebox{0.55cm}{\parbox{\dimexpr\textwidth\relax}{\hspace*{-\marginparwidth}\centering\color{optcolor}\scshape\small\S.\thesection\space\sectiontitle}}} % centro
-        {}
+        {\rlap{\parbox{\scontentsrightmargin}{\hspace{20pt}\textcolor{optcolor}{\thepage}\,/\,\pageref{LastPage}}}}%
+\sethead{\llap{\raisebox{0.55cm}{\parbox{\dimexpr\oddsidemargin+1in\relax}{\makebox[0pt][l]{\hspace{10pt}\scalebox{0.8}{\mylogo}\space\color{optcolor}\fileversion}}}}}
+        {\raisebox{0.55cm}{\parbox{\textwidth}{\hspace*{-\marginparwidth}\centering\color{optcolor}\scshape\small\S.\thesection\space\sectiontitle}}} % centro
+        {}%
 }
 
 \titlecontents{section}[0mm]{}%
@@ -1825,7 +1822,6 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % described, the numbers underlined and all others indicate the line on
 % which they are implemented in the package code.
 % }
-% \pagestyle{plainidx}
 % \printindex
 % }
 %
