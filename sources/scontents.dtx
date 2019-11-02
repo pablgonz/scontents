@@ -114,7 +114,14 @@
 \expandafter\DoNotIndex\expandafter{\string\}}
 \expandafter\DoNotIndex\expandafter{\string\begin}
 \newcommand{\HP}[1]{\emph{\hyperpage{#1}}\normalsize}
-\def\MYSortIndex#1#2{\index[userdoc]{#1\actualchar#2|HP}}
+\ExplSyntaxOn
+\cs_new:Npn \MYSortIndex #1 #2
+  {
+    \bool_if:NTF \l__codedoc_in_implementation_bool
+      { \index{#1\actualchar#2|HP} }
+      { \index[userdoc]{#1\actualchar#2|HP} }
+}
+\ExplSyntaxOff
 
 \indexsetup{level=\section}
 \makeindex[name=userdoc,options=-s gind.ist,columnsep=15pt,title={Index of Documentation}]
@@ -566,6 +573,8 @@
 \end{document}
 %</driver>
 % \fi
+%
+% \begin{documentation}
 %
 % \title{
 %    \scalebox{1.13}{\mylogo}\\[2pt]
@@ -1802,7 +1811,11 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % \printindex[userdoc]
 %
+% \end{documentation}
+%
 % \newpage
+%
+% \begin{implementation}
 %
 % \StopEventually{^^A
 % \newgeometry{top=0.5in,bottom=0.3in,left=1.0in,right=0.5in,footskip=0.2in,headheight=1cm,headsep=0.27cm}
@@ -1817,6 +1830,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \pagestyle{plainidx}
 % \printindex
 % }
+%
 %
 % \section{Implementation}
 % \label{sec:Implementation}
@@ -3553,4 +3567,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %</core>
 %<plain|context>\ExplSyntaxOff
 %    \end{macrocode}
+%
+% \end{implementation}
+%
 % \Finale
