@@ -2721,7 +2721,9 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
   \cs_new_protected:Npn \@@_stop_environment:
     {
       \@@_file_write_stop:N \l_@@_macro_tmp_tl
-      \tl_if_empty:NT \l_@@_macro_tmp_tl
+      \bool_lazy_and:nnT
+        { \l_@@_storing_bool }
+        { \tl_if_empty_p:N \l_@@_macro_tmp_tl }
         { \msg_warning:nnn { scontents } { empty-environment } }
     }
 %    \end{macrocode}
