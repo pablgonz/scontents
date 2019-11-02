@@ -336,7 +336,9 @@
   \cs_new_protected:Npn \__scontents_stop_environment:
     {
       \__scontents_file_write_stop:N \l__scontents_macro_tmp_tl
-      \tl_if_empty:NT \l__scontents_macro_tmp_tl
+      \bool_lazy_and:nnT
+        { \l__scontents_storing_bool }
+        { \tl_if_empty_p:N \l__scontents_macro_tmp_tl }
         { \msg_warning:nnn { scontents } { empty-environment } }
     }
   \cs_new_protected:Npn \__scontents_file_tl_write_start:n #1
