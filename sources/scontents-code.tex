@@ -59,7 +59,7 @@
           \PackageError{scontents}{Mismatched~scontents~files~detected}
             {%
               You~have~attempted~to~load~scontents~with~mismatched~files:~
-              probably~you~have~one~or~more~files~'locally~installed'~which~
+              probably~you~have~one~or~more~files~‘locally~installed’~which~
               are~in~conflict.~Loading~of~scontents~will~abort.
             }%
           \endgroup
@@ -192,7 +192,8 @@
     step    .initial:n        = 1,
     wrapper .code:n           = {
                                   \bool_set_true:N \l__scontents_foreach_wrapper_bool
-                                  \cs_set_protected:Npn \__scontents_foreach_wrapper:n ##1 {#1}
+                                  \cs_set_protected:Npn
+                                    \__scontents_foreach_wrapper:n ##1 {#1}
                                 },
     wrapper .value_required:n = true,
     sep     .tl_set:N         = \l__scontents_foreach_sep_tl,
@@ -317,13 +318,13 @@
         {
           \str_if_eq:eeTF { \tl_head:n {#1} } { [ }
             { \__scontents_grab_optional:w #1 ^^M }
-            { \__scontents_check_line_and_process:xn { } {#1} }
+            { \__scontents_check_line_process:xn { } {#1} }
         }
-        { \__scontents_check_line_and_process:xn { } {#1} }
+        { \__scontents_check_line_process:xn { } {#1} }
     }
   \cs_new_protected:Npn \__scontents_start_after_option:w #1 ^^M
-    { \__scontents_check_line_and_process:xn { [...] } {#1} }
-  \cs_new_protected:Npn \__scontents_check_line_and_process:xn #1 #2
+    { \__scontents_check_line_process:xn { [...] } {#1} }
+  \cs_new_protected:Npn \__scontents_check_line_process:xn #1 #2
     {
       \tl_if_blank:nF {#2}
         {
@@ -498,8 +499,12 @@
     \bool_if:NT \l__scontents_storing_bool
       {
         \bool_if:NF \l__scontents_forced_eol_bool
-          { \tl_put_right:Nx \l__scontents_macro_tmp_tl { \c__scontents_hidden_space_str } }
-        \__scontents_store_to_seq:NN \l__scontents_macro_tmp_tl \l__scontents_name_seq_env_tl
+          {
+            \tl_put_right:Nx \l__scontents_macro_tmp_tl
+              { \c__scontents_hidden_space_str }
+          }
+        \__scontents_store_to_seq:NN \l__scontents_macro_tmp_tl
+          \l__scontents_name_seq_env_tl
         \bool_if:NT \l__scontents_print_env_bool
           { \__scontents_lastfrom_seq:n \l__scontents_name_seq_env_tl }
       }
@@ -566,7 +571,10 @@
         { \l__scontents_foreach_stop_int }
         \__scontents_foreach_add_body:n
       \tl_gset:Nx \g__scontents_temp_tl
-        { \seq_use:Nn \l__scontents_foreach_print_seq { \tl_use:N \l__scontents_foreach_sep_tl } }
+        {
+          \seq_use:Nn \l__scontents_foreach_print_seq
+            { \tl_use:N \l__scontents_foreach_sep_tl }
+        }
     \group_end:
     \exp_after:wN \tl_gclear:N
     \exp_after:wN \g__scontents_temp_tl
@@ -685,76 +693,76 @@
     #2
   }
 \msg_new:nnn { scontents } { empty-stored-content }
-  { Empty~value~for~key~'getstored'~\msg_line_context:. }
+  { Empty~value~for~key~‘getstored’~\msg_line_context:. }
 \msg_new:nnn { scontents } { empty-variable }
-  { Variable~'#1'~empty~\msg_line_context:. }
+  { Variable~‘#1’~empty~\msg_line_context:. }
 \msg_new:nnn { scontents } { overwrite-file }
-  { Overwriting ~ file ~ '#1' }
+  { Overwriting~file~‘#1’. }
 \msg_new:nnn { scontents } { writing-file }
-  { Writing ~ file ~ '#1' }
+  { Writing~file~‘#1’. }
 \msg_new:nnn { scontents } { rescanning-text }
-  { Rescanning~text~'#1'~after~\c_backslash_str end{scontents}~\msg_line_context:.}
+  { Rescanning~text~‘#1’~after~\c_backslash_str end{scontents}~\msg_line_context:.}
 \msg_new:nnn { scontents } { multiple-begin }
   { Multiple~\c_backslash_str begin{scontents}~\msg_line_context:.}
 \msg_new:nnn { scontents } { undefined-storage }
-  { Storage~named~'#1'~is~not~defined. }
+  { Storage~named~‘#1’~is~not~defined. }
 \msg_new:nnn { scontents } { index-out-of-range }
   {
     \int_compare:nNnTF {#1} = { 0 }
       { Index~of~sequence~cannot~be~zero. }
       {
-        Index~'#1'~out~of~range~for~'#2'.~
+        Index~‘#1’~out~of~range~for~‘#2’.~
         \int_compare:nNnTF {#1} > { 0 }
           { Max = } { Min = -} #3.
       }
   }
 \msg_new:nnnn { scontents } { env-key-unknown }
-  { The~key~'#1'~is~unknown~by~environment~'scontents'~and~is~being~ignored.}
+  { The~key~‘#1’~is~unknown~by~environment~‘scontents’~and~is~being~ignored.}
   {
-    The~environment~'scontents'~does~not~have~a~key~called~'#1'.\\
+    The~environment~‘scontents’~does~not~have~a~key~called~‘#1’.\\
     Check~that~you~have~spelled~the~key~name~correctly.
   }
 \msg_new:nnnn { scontents } { env-key-value-unknown }
-  { The~key~'#1=#2'~is~unknown~by~environment~'scontents'~and~is~being~ignored. }
+  { The~key~‘#1=#2’~is~unknown~by~environment~‘scontents’~and~is~being~ignored. }
   {
-    The~environment~'scontents'~does~not~have~a~key~called~'#1'.\\
+    The~environment~‘scontents’~does~not~have~a~key~called~‘#1’.\\
     Check~that~you~have~spelled~the~key~name~correctly.
   }
 \msg_new:nnnn { scontents } { cmd-key-unknown }
-  { The~key~'#1'~is~unknown~by~'\c_backslash_str Scontents'~and~is~being~ignored.}
+  { The~key~‘#1’~is~unknown~by~‘\c_backslash_str Scontents’~and~is~being~ignored.}
   {
-    The~command~'\c_backslash_str Scontents'~does~not~have~a~key~called~'#1'.\\
+    The~command~‘\c_backslash_str Scontents’~does~not~have~a~key~called~‘#1’.\\
     Check~that~you~have~spelled~the~key~name~correctly.
   }
 \msg_new:nnnn { scontents } { cmd-key-value-unknown }
-  { The~key~'#1=#2'~is~unknown~by~'\c_backslash_str Scontents'~and~is~being~ignored. }
+  { The~key~‘#1=#2’~is~unknown~by~‘\c_backslash_str Scontents’~and~is~being~ignored. }
   {
-    The~command~'\c_backslash_str Scontents'~does~not~have~a~key~called~'#1'.\\
+    The~command~‘\c_backslash_str Scontents’~does~not~have~a~key~called~‘#1’.\\
     Check~that~you~have~spelled~the~key~name~correctly.
   }
 \msg_new:nnnn { scontents } { for-key-unknown }
-  { The~key~'#1'~is~unknown~by~'\c_backslash_str foreachsc'~and~is~being~ignored.}
+  { The~key~‘#1’~is~unknown~by~‘\c_backslash_str foreachsc’~and~is~being~ignored.}
   {
-    The~command~'\c_backslash_str foreachsc'~does~not~have~a~key~called~'#1'.\\
+    The~command~‘\c_backslash_str foreachsc’~does~not~have~a~key~called~‘#1’.\\
     Check~that~you~have~spelled~the~key~name~correctly.
   }
 \msg_new:nnnn { scontents } { for-key-value-unknown }
-  { The~key~'#1=#2'~is~unknown~by~'\c_backslash_str foreachsc'~and~is~being~ignored. }
+  { The~key~‘#1=#2’~is~unknown~by~‘\c_backslash_str foreachsc’~and~is~being~ignored. }
   {
-    The~command~'\c_backslash_str foreachsc'~does~not~have~a~key~called~'#1'.\\
+    The~command~‘\c_backslash_str foreachsc’~does~not~have~a~key~called~‘#1’.\\
     Check~that~you~have~spelled~the~key~name~correctly.
   }
 \msg_new:nnnn { scontents } { type-key-unknown }
-  { The~key~'#1'~is~unknown~and~is~being~ignored. }
+  { The~key~‘#1’~is~unknown~and~is~being~ignored. }
   {
-    This~command~does~not~have~a~key~called~'#1'.\\
-    This~command~only~accepts~the~key~'width-tab'.
+    This~command~does~not~have~a~key~called~‘#1’.\\
+    This~command~only~accepts~the~key~‘width-tab’.
   }
 \msg_new:nnnn { scontents } { type-key-value-unknown }
-  { The~key~'#1'~to~which~you~passed~'#2'~is~unknown~and~is~being~ignored. }
+  { The~key~‘#1’~to~which~you~passed~‘#2’~is~unknown~and~is~being~ignored. }
   {
-    This~command~does~not~have~a~key~called~'#1'.\\
-    This~command~only~accepts~the~key~'width-tab'.
+    This~command~does~not~have~a~key~called~‘#1’.\\
+    This~command~only~accepts~the~key~‘width-tab’.
   }
 \msg_new:nnn { scontents } { empty-environment }
   { scontents~environment~empty~\msg_line_context:. }
@@ -766,16 +774,16 @@
     of~the~current~line~has~been~reached.~You~may~have~forgotten~the~
     closing~delimiter.
     \\ \\
-    LaTeX~will~ignore~'#2'.
+    LaTeX~will~ignore~‘#2’.
   }
 \msg_new:nnnn { scontents } { verbatim-tokenized }
   { The~verbatim~#1~cannot~be~used~inside~an~argument. }
   {
     The~#1~takes~a~verbatim~argument.~
     It~may~not~appear~within~the~argument~of~another~function.~
-    It~received~an~illegal~token \tl_if_empty:nF {#3} { ~'#3' } .
+    It~received~an~illegal~token \tl_if_empty:nF {#3} { ~‘#3’ } .
     \\ \\
-    LaTeX~will~ignore~'#2'.
+    LaTeX~will~ignore~‘#2’.
   }
 \endinput
 %%
