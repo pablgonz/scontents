@@ -36,7 +36,7 @@
   v\ScontentsFileVersion\space \ScontentsFileDescription }
 \iow_log:x { Package: ~ scontents ~ \use:c { ver @ scontents . sty } }
 \msg_gset:nnn { scontents } { already-loaded }
-  { The~`scontents'~package~is~already~loaded.~Aborting~input~\msg_line_context:. }
+  { The~‘scontents’~package~is~already~loaded.~Aborting~input~\msg_line_context:. }
 \cs_if_exist:NT \__scontents_rescan_tokens:n
   {
     \msg_warning:nn { scontents } { already-loaded }
@@ -98,9 +98,12 @@
     \clist_map_function:NN \l__scontents_temp_tl \__scontents_require_auxiii:n
   }
 \cs_new_protected:Npn \__scontents_require_auxiii:n #1
-  { \str_if_eq:eeF {expl3} {#1} { \msg_error:nnn { scontents } { invalid-package } {#1} } }
+  {
+    \str_if_eq:eeF {expl3} {#1}
+      { \msg_error:nnn { scontents } { invalid-package } {#1} }
+  }
 \msg_new:nnn { scontents } { invalid-package }
-  { Package~`#1'~invalid~in~scontents.~This~is~an~error~in~scontents. }
+  { Package~‘#1’~invalid~in~scontents.~This~is~an~error~in~scontents. }
 \__scontents_compat_redefine:cpn { @ifpackagelater } #1
   { \exp_args:Nc \__scontents_package_later_aux:Nn { ver@#1.sty } }
 \cs_new_protected:Npn \__scontents_package_later_aux:Nn #1 #2
@@ -149,7 +152,8 @@
 \cs_new_protected:Npn \verbatimsc
   {
     \group_begin:
-      \__scontents_verbatimsc_aux: \frenchspacing \__scontents_vobeyspaces: \__scontents_xverb:
+      \__scontents_verbatimsc_aux: \frenchspacing \__scontents_vobeyspaces:
+      \__scontents_xverb:
   }
 \cs_new_protected:Npn \endverbatimsc
   { \group_end: }
