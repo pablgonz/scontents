@@ -19,6 +19,13 @@ Leaving:
 \hello :D
 \end{scontents}
 
+\begin{scontents}[store-env=nest]
+\def\nested{A}
+\begin{scontents}[store-env=nest]
+\def\nested{B}
+\end{scontents}
+\end{scontents}
+
 \Scontents*{\abcde}
 \Scontents*|\fghij|
 
@@ -29,6 +36,10 @@ Leaving:
 \typestored[2]{test}
 
 \typestored[1]{test}
+
+\getstored[1]{nest}\nested
+
+\getstored[2]{nest}\nested
 
 \getstored[1]{another}
 

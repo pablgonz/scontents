@@ -157,6 +157,8 @@
   }
 \NewDocumentCommand \__scontents_grab_optional:w { r[] }
   { \__scontents_grab_optional:n {#1} }
+\cs_new_protected:Npn \__scontents_analyse_nesting_format:n
+  { \__scontents_analyse_nesting_generic:nn { start } }
 \cs_if_exist:NF \dospecials
   {
     \cs_new:Npn \dospecials

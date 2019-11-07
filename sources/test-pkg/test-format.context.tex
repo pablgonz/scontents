@@ -19,6 +19,13 @@ Leaving:
 \hello :D
 \stopscontents
 
+\startscontents[store-env=nest]
+\def\nested{A}
+\startscontents[store-env=nest]
+\def\nested{B}
+\stopscontents
+\stopscontents
+
 \Scontents*{\abcde}
 \Scontents*|\fghij|
 
@@ -30,20 +37,9 @@ Leaving:
 
 \typestored[1]{test}
 
+\getstored[1]{nest}\nested
 
-\startscontents[print-env=false, store-env=outer]
-This text is in the outermost environment (before nested).
-\startscontents[print-env=false, store-env=inner]
-This text is found in the most inner environment.
-\stopscontents
-This text is in the outermost environment (after nested).
-\stopscontents
-
-% get nested
-
-\getstored{outer}\par
-\getstored{inner}
-
+\getstored[2]{nest}\nested
 
 \getstored[1]{another}
 

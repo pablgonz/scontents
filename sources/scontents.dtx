@@ -2885,23 +2885,10 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \begin{macro}{
 %     \@@_verb_processor_output:n,
 %     \@@_verb_processor_output:x,
-%     \@@_analyse_nesting:n,
-%     \@@_analyse_nesting:w,
-%     \@@_nesting_decr:,
-%     \@@_use_none_delimit_by_q_stop:w,
 %   }
-% \begin{macro}[TF]{\@@_if_nested:}
 %   \cs{@@_verb_processor_output:n} does the output of each line read,
 %   to a token list and to a file, depending on the booleans
 %   \cs{l_@@_writing_bool} and \cs{l_@@_storing_bool}.
-%
-%   \cs{@@_analyse_nesting:n} scans nested §\begin{scontents}§
-%   and steps a \cs{l_@@_env_nesting_int} counter. The \cs{@@_if_nested:}
-%   conditional tests if we're in a nested environment, and
-%   \cs{@@_nesting_decr:} reduces the nesting level, if an §\end{scontents}§
-%   is found.
-%
-%   Multiple §\end{scontents}§ in the same line are not supported...
 %    \begin{macrocode}
   \cs_new_protected:Npn \@@_verb_processor_output:n #1
     {
@@ -2911,48 +2898,105 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
         { \tl_put_right:Nn \l_@@_file_tl { ^^J #1 } }
     }
   \cs_generate_variant:Nn \@@_verb_processor_output:n { x }
-  \cs_new_protected:Npx \@@_analyse_nesting:n #1
+  \cs_new_protected:Npn \@@_analyse_nesting:n #1
     {
       \int_zero:N \l_@@_tmpa_int
-      \exp_not:N \@@_analyse_nesting:w #1
-        \c_backslash_str begin
-          \c_left_brace_str \exp_not:N \q_@@_mark \c_right_brace_str
-      \exp_not:N \q_@@_stop
+      \@@_analyse_nesting_format:n {#1}
       \int_compare:nNnT { \l_@@_tmpa_int } > { 1 }
         { \msg_warning:nn { scontents } { multiple-begin } }
     }
-  \use:x
-    {
-      \cs_new_protected:Npn \exp_not:N \@@_analyse_nesting:w ##1
-        \c_backslash_str begin \c_left_brace_str ##2 \c_right_brace_str
-    }   {
-          \if_meaning:w \q_@@_mark #2
-            \exp_after:wN \use_i:nn
-          \else:
-            \exp_after:wN \use_ii:nn
-          \fi:
-            { \@@_use_none_delimit_by_q_stop:w }
-            {
-              \str_if_eq:eeT {#2} {scontents}
-                {
-                  \int_incr:N \l_@@_env_nesting_int
-                  \int_incr:N \l_@@_tmpa_int
-                  \@@_analyse_nesting:w
-                }
-              \@@_analyse_nesting:w
-            }
-        }
-  \cs_new_protected:Npn \@@_nesting_decr:
-    { \int_decr:N \l_@@_env_nesting_int }
-  \prg_new_protected_conditional:Npnn \@@_if_nested: { TF }
-    {
-      \int_compare:nNnTF { \l_@@_env_nesting_int } > { \c_zero_int }
-        { \prg_return_true: }
-        { \prg_return_false: }
-    }
-  \cs_new:Npn \@@_use_none_delimit_by_q_stop:w #1 \q_@@_stop { }
 \group_end:
 \cs_generate_variant:Nn \@@_file_tl_write_start:n { V }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{
+%     \@@_analyse_nesting:n,
+%     \@@_analyse_nesting:w,
+%     \@@_nesting_decr:,
+%     \@@_use_none_delimit_by_q_stop:w,
+%   }
+% \begin{macro}[TF]{\@@_if_nested:}
+%   \cs{@@_analyse_nesting:n} scans nested §\begin{scontents}§
+%   and steps a \cs{l_@@_env_nesting_int} counter. The \cs{@@_if_nested:}
+%   conditional tests if we're in a nested environment, and
+%   \cs{@@_nesting_decr:} reduces the nesting level, if an §\end{scontents}§
+%   is found.
+%
+%   Multiple §\end{scontents}§ in the same line are not supported\dots
+%
+%   In \LaTeX{}, environments start with §\begin{<env>}§, so checking if a
+%   string contains §\begin{scontents}§ is straightforward. Since no §}§ can
+%   appear inside §<env>§, then just a macro delimited by §}§ is enough.
+%    \begin{macrocode}
+\use:x
+  {
+    \cs_new_protected:Npn \exp_not:N \@@_analyse_nesting_latex:w ##1
+      \c_backslash_str begin \c_left_brace_str ##2 \c_right_brace_str
+  }   {
+        \@@_tl_if_head_is_q_mark:nTF {#2}
+          { \@@_use_none_delimit_by_q_stop:w }
+          {
+            \str_if_eq:eeT {#2} {scontents}
+              {
+                \int_incr:N \l_@@_env_nesting_int
+                \int_incr:N \l_@@_tmpa_int
+              }
+            \@@_analyse_nesting_latex:w
+          }
+      }
+\cs_new_protected:Npx \@@_analyse_nesting_latex:n #1
+  {
+    \@@_analyse_nesting_latex:w #1
+      \c_backslash_str begin
+        \c_left_brace_str \exp_not:N \q_@@_mark \c_right_brace_str
+    \exp_not:N \q_@@_stop
+  }
+%    \end{macrocode}
+%   In other formats, however, we don't have an ``end anchor'' to delimit the
+%   environment name, so a delimited macro won't help. We have to search for
+%   the entire environment command (usually §\scontents§ and §\startscontents§).
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_analyse_nesting_generic_process:nn #1 #2
+  {
+    \tl_if_head_is_N_type:nTF {#2}
+      {
+        \@@_tl_if_head_is_q_mark:nF {#2}
+          {
+            \int_incr:N \l_@@_env_nesting_int
+            \int_incr:N \l_@@_tmpa_int
+            \@@_analyse_nesting_generic:w #2 \q_@@_stop
+          }
+      }
+      { \@@_analyse_nesting_generic:w #2 \q_@@_stop }
+  }
+\cs_new_protected:Npx \@@_analyse_nesting_generic:nn #1 #2
+  {
+    \cs_set_protected:Npn \exp_not:N \@@_analyse_nesting_generic:w ##1
+      \c_backslash_str #1 scontents ##2 \exp_not:N \q_@@_stop
+      { \exp_not:N \@@_analyse_nesting_generic_process:nn {##1} {##2} }
+    \exp_not:N \@@_analyse_nesting_generic:w #2
+      \c_backslash_str #1 scontents
+        \exp_not:N \q_@@_mark \exp_not:N \q_@@_stop
+  }
+%</core>
+%<*loader>
+%<latex>\cs_new_eq:NN \@@_analyse_nesting_format:n
+%<latex>  \@@_analyse_nesting_latex:n
+%<!latex>\cs_new_protected:Npn \@@_analyse_nesting_format:n
+%<plain>  { \@@_analyse_nesting_generic:nn { } }
+%<context>  { \@@_analyse_nesting_generic:nn { start } }
+%</loader>
+%<*core>
+\cs_new_protected:Npn \@@_nesting_decr:
+  { \int_decr:N \l_@@_env_nesting_int }
+\prg_new_protected_conditional:Npnn \@@_if_nested: { TF }
+  {
+    \int_compare:nNnTF { \l_@@_env_nesting_int } > { \c_zero_int }
+      { \prg_return_true: }
+      { \prg_return_false: }
+  }
+\cs_new:Npn \@@_use_none_delimit_by_q_stop:w #1 \q_@@_stop { }
 %    \end{macrocode}
 % \end{macro}
 % \end{macro}
@@ -3327,6 +3371,21 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
         \tex_kern:D \c_zero_dim
         \char_generate:nn { `#1 } { 12 }
       }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[TF]{\@@_tl_if_head_is_q_mark:n}
+%   Tests if the head of the token list is \cs{q_@@_mark}.
+%    \begin{macrocode}
+\prg_new_protected_conditional:Npnn \@@_tl_if_head_is_q_mark:n #1
+  { T, F, TF }
+  {
+    \if_meaning:w \q_@@_mark #1 \scan_stop:
+      \prg_return_true:
+    \else:
+      \prg_return_false:
+    \fi:
   }
 %    \end{macrocode}
 % \end{macro}
