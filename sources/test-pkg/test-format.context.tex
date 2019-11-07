@@ -30,6 +30,21 @@ Leaving:
 
 \typestored[1]{test}
 
+
+\startscontents[print-env=false, store-env=outer]
+This text is in the outermost environment (before nested).
+\startscontents[print-env=false, store-env=inner]
+This text is found in the most inner environment.
+\stopscontents
+This text is in the outermost environment (after nested).
+\stopscontents
+
+% get nested
+
+\getstored{outer}\par
+\getstored{inner}
+
+
 \getstored[1]{another}
 
 It should not get here as the getstored above contains a \stoptext
