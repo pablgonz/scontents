@@ -44,7 +44,9 @@
     RawFeature     = {+zero,+ss06},
     FontFace       = {m}{sc}{LinBiolinum_R.otf},
     Extension      = .otf]{SourceCodePro}
-\newfontfamily\sourcecodeprolight{SourceCodePro-Regular.otf}[Scale = 0.80,FakeStretch =0.75]
+\newfontfamily\sourcecodeprolight{SourceCodePro-Regular.otf}[
+    Scale = 0.80,FakeStretch =0.75,
+    FontFace = {m}{it}{SourceCodePro-RegularIt.otf}]
 \RenewDocumentCommand{\MacroLongFont}{}
   {
     \sourcecodeprolight\small
@@ -410,7 +412,7 @@
     commentstyle=\ttfamily\small\color{lightgray},%
 % Important words 1
     keywordstyle=[1]{\color{gray}},%
-    keywords=[1]{begin,end,Verbatim},%
+    keywords=[1]{begin,end,Verbatim,env},%
 % Other words 2
     keywordstyle=[2]{\color{blue!75}},%
     keywords=[2]{usepackage,section,documentclass,input,usemodule,
@@ -450,6 +452,7 @@
               {;}{{\textcolor{gray}{;}}}{1}
               {\&}{{\textcolor{gray}{\&}}}{1}
               {>}{{\textcolor{OrangeRed}{\guillemotright}}}{1}
+              {<}{{\textcolor{OrangeRed}{\guillemotleft}}}{1}
               {*}{{\textcolor{MediumOrchid}{*}}}{1}
               {\^}{{\textcolor{optcolor}{\textasciicircum}}}{1}
               {0}{{\textcolor{MediumOrchid}{0}}}{1}
@@ -1756,6 +1759,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \begin{description}[font=\small\sffamily,wide=0pt,style=multiline,leftmargin=\descrwidth,nosep,noitemsep]
 % \item [\fileversion{} (devp), \filedate]
 %    \begin{itemize}
+%    \item Fix nested environment in \hologo{plainTeX} and \hologo{ConTeXt}.
 %    \item Modified default value in |\getstored|.
 %    \item Add |overwrite| key to reduce |I/O| operations.
 %    \item Deleted an unnecessary group in the code.
@@ -2429,7 +2433,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % in \pkg{miniltx}) so that \pkg{xparse} is loadable in any format.
 %
 % The bunch of macros below is adapted from the \LaTeX{} kernel (greatly simplified).
-%  \begin{macrocode}
+%    \begin{macrocode}
 %</core>
 %<*loader&!latex>
 \seq_new:N \l_@@_compat_seq
