@@ -75,6 +75,7 @@
   }
 \NewDocumentCommand \__scontents_grab_optional:w { r[] }
   { \__scontents_grab_optional:n {#1} }
+\cs_new_eq:NN \__scontents_analyse_nesting_format:n \__scontents_analyse_nesting_latex:n
 \NewDocumentCommand { \Scontents }{ !s !O{} }
   { \__scontents_Scontents_internal:nn {#1} {#2} }
 \NewDocumentCommand { \__scontents_verb_arg:w } { +v }
