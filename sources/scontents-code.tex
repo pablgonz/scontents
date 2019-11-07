@@ -451,16 +451,30 @@
       \bool_if:NT \l__scontents_storing_bool
         { \tl_put_right:Nn \l__scontents_file_tl { ^^J #1 } }
     }
-  \cs_generate_variant:Nn \__scontents_verb_processor_output:n { x }
-  \cs_new_protected:Npn \__scontents_analyse_nesting:n #1
-    {
-      \int_zero:N \l__scontents_tmpa_int
-      \__scontents_analyse_nesting_format:n {#1}
-      \int_compare:nNnT { \l__scontents_tmpa_int } > { 1 }
-        { \msg_warning:nn { scontents } { multiple-begin } }
-    }
 \group_end:
+\cs_generate_variant:Nn \__scontents_verb_processor_output:n { x }
 \cs_generate_variant:Nn \__scontents_file_tl_write_start:n { V }
+\cs_new_protected:Npn \__scontents_analyse_nesting:n #1
+  {
+    \int_zero:N \l__scontents_tmpa_int
+    \__scontents_analyse_nesting_format:n {#1}
+    \int_compare:nNnT { \l__scontents_tmpa_int } > { 1 }
+      { \msg_warning:nn { scontents } { multiple-begin } }
+  }
+\cs_new_protected:Npn \__scontents_nesting_incr:
+  {
+    \int_incr:N \l__scontents_env_nesting_int
+    \int_incr:N \l__scontents_tmpa_int
+  }
+\cs_new_protected:Npn \__scontents_nesting_decr:
+  { \int_decr:N \l__scontents_env_nesting_int }
+\prg_new_protected_conditional:Npnn \__scontents_if_nested: { TF }
+  {
+    \int_compare:nNnTF { \l__scontents_env_nesting_int } > { \c_zero_int }
+      { \prg_return_true: }
+      { \prg_return_false: }
+  }
+\cs_new:Npn \__scontents_use_none_delimit_by_q_stop:w #1 \q__scontents_stop { }
 \use:x
   {
     \cs_new_protected:Npn \exp_not:N \__scontents_analyse_nesting_latex:w ##1
@@ -469,11 +483,8 @@
         \__scontents_tl_if_head_is_q_mark:nTF {#2}
           { \__scontents_use_none_delimit_by_q_stop:w }
           {
-            \str_if_eq:eeT {#2} {scontents}
-              {
-                \int_incr:N \l__scontents_env_nesting_int
-                \int_incr:N \l__scontents_tmpa_int
-              }
+            \str_if_eq:eeT {#2} { scontents }
+              { \__scontents_nesting_incr: }
             \__scontents_analyse_nesting_latex:w
           }
       }
@@ -490,8 +501,7 @@
       {
         \__scontents_tl_if_head_is_q_mark:nF {#2}
           {
-            \int_incr:N \l__scontents_env_nesting_int
-            \int_incr:N \l__scontents_tmpa_int
+            \__scontents_nesting_incr:
             \__scontents_analyse_nesting_generic:w #2 \q__scontents_stop
           }
       }
@@ -503,17 +513,9 @@
       \c_backslash_str #1 scontents ##2 \exp_not:N \q__scontents_stop
       { \exp_not:N \__scontents_analyse_nesting_generic_process:nn {##1} {##2} }
     \exp_not:N \__scontents_analyse_nesting_generic:w #2
-      \c_backslash_str #1 scontents \exp_not:N \q__scontents_mark \exp_not:N \q__scontents_stop
+      \c_backslash_str #1 scontents
+        \exp_not:N \q__scontents_mark \exp_not:N \q__scontents_stop
   }
-\cs_new_protected:Npn \__scontents_nesting_decr:
-  { \int_decr:N \l__scontents_env_nesting_int }
-\prg_new_protected_conditional:Npnn \__scontents_if_nested: { TF }
-  {
-    \int_compare:nNnTF { \l__scontents_env_nesting_int } > { \c_zero_int }
-      { \prg_return_true: }
-      { \prg_return_false: }
-  }
-\cs_new:Npn \__scontents_use_none_delimit_by_q_stop:w #1 \q__scontents_stop { }
 \cs_new_protected:Npn \__scontents_atend_environment:
   {
     \bool_if:NT \l__scontents_storing_bool
