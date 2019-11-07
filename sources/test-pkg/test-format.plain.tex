@@ -30,6 +30,21 @@ Leaving:
 
 \typestored[1]{test}
 
+\scontents[print-env=false, store-env=outer]
+This text is in the outermost environment (before nested).
+\scontents[print-env=false, store-env=inner]
+This text is found in the most inner environment.
+\endscontents
+This text is in the outermost environment (after nested).
+\endscontents
+
+% get nested
+
+\getstored{outer}\par
+\getstored{inner}\par
+
+
+
 \getstored[1]{another}
 
 It should not get here as the getstored above contains a \bye
