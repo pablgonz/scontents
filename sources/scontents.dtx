@@ -2897,15 +2897,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
       \bool_if:NT \l_@@_storing_bool
         { \tl_put_right:Nn \l_@@_file_tl { ^^J #1 } }
     }
-  \cs_generate_variant:Nn \@@_verb_processor_output:n { x }
-  \cs_new_protected:Npn \@@_analyse_nesting:n #1
-    {
-      \int_zero:N \l_@@_tmpa_int
-      \@@_analyse_nesting_format:n {#1}
-      \int_compare:nNnT { \l_@@_tmpa_int } > { 1 }
-        { \msg_warning:nn { scontents } { multiple-begin } }
-    }
 \group_end:
+\cs_generate_variant:Nn \@@_verb_processor_output:n { x }
 \cs_generate_variant:Nn \@@_file_tl_write_start:n { V }
 %    \end{macrocode}
 % \end{macro}
@@ -2924,7 +2917,29 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   is found.
 %
 %   Multiple §\end{scontents}§ in the same line are not supported\dots
-%
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_analyse_nesting:n #1
+  {
+    \int_zero:N \l_@@_tmpa_int
+    \@@_analyse_nesting_format:n {#1}
+    \int_compare:nNnT { \l_@@_tmpa_int } > { 1 }
+      { \msg_warning:nn { scontents } { multiple-begin } }
+  }
+\cs_new_protected:Npn \@@_nesting_incr:
+  {
+    \int_incr:N \l_@@_env_nesting_int
+    \int_incr:N \l_@@_tmpa_int
+  }
+\cs_new_protected:Npn \@@_nesting_decr:
+  { \int_decr:N \l_@@_env_nesting_int }
+\prg_new_protected_conditional:Npnn \@@_if_nested: { TF }
+  {
+    \int_compare:nNnTF { \l_@@_env_nesting_int } > { \c_zero_int }
+      { \prg_return_true: }
+      { \prg_return_false: }
+  }
+\cs_new:Npn \@@_use_none_delimit_by_q_stop:w #1 \q_@@_stop { }
+%    \end{macrocode}
 %   In \LaTeX{}, environments start with §\begin{<env>}§, so checking if a
 %   string contains §\begin{scontents}§ is straightforward. Since no §}§ can
 %   appear inside §<env>§, then just a macro delimited by §}§ is enough.
@@ -2937,11 +2952,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
         \@@_tl_if_head_is_q_mark:nTF {#2}
           { \@@_use_none_delimit_by_q_stop:w }
           {
-            \str_if_eq:eeT {#2} {scontents}
-              {
-                \int_incr:N \l_@@_env_nesting_int
-                \int_incr:N \l_@@_tmpa_int
-              }
+            \str_if_eq:eeT {#2} { scontents }
+              { \@@_nesting_incr: }
             \@@_analyse_nesting_latex:w
           }
       }
@@ -2963,8 +2975,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
       {
         \@@_tl_if_head_is_q_mark:nF {#2}
           {
-            \int_incr:N \l_@@_env_nesting_int
-            \int_incr:N \l_@@_tmpa_int
+            \@@_nesting_incr:
             \@@_analyse_nesting_generic:w #2 \q_@@_stop
           }
       }
@@ -2988,15 +2999,6 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %<context>  { \@@_analyse_nesting_generic:nn { start } }
 %</loader>
 %<*core>
-\cs_new_protected:Npn \@@_nesting_decr:
-  { \int_decr:N \l_@@_env_nesting_int }
-\prg_new_protected_conditional:Npnn \@@_if_nested: { TF }
-  {
-    \int_compare:nNnTF { \l_@@_env_nesting_int } > { \c_zero_int }
-      { \prg_return_true: }
-      { \prg_return_false: }
-  }
-\cs_new:Npn \@@_use_none_delimit_by_q_stop:w #1 \q_@@_stop { }
 %    \end{macrocode}
 % \end{macro}
 % \end{macro}
