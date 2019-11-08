@@ -737,8 +737,8 @@
 %
 % Some users use horizontal "TAB"s \enquote{\LKeyTab} from keyboard to indented the source
 % code of the document and depending on the text editor used, some will use real "TAB"s
-% (\enquote{hard tabs}), others with \enquote{soft tabs}(\verbvisiblespace\verbvisiblespace{}
-% or \verbvisiblespace\verbvisiblespace\verbvisiblespace\verbvisiblespace) or both.
+% (\enquote{hard tabs}), others with \enquote{soft tabs}(\verb*|  | or \verb*|    |)
+% or both.
 %
 % At first glance it may seem the same, but the way in which "TAB"s (\enquote{hard tabs})
 % are processed according to the context in which they are found within
@@ -792,7 +792,7 @@
 % \medskip
 %
 % \keyexamp{store-all}{seq name}{not used}
-% It is a \mymeta{meta-key} that sets the §store-env§ key of the \myenv*{scontents}
+% It is a \mymeta{meta-key} that sets the \mykey{store-env} key of the \myenv*{scontents}
 % environment and the \mykey{store-cmd} key of the \ics*{Scontents} command. This key is
 % only available as a package option or using \ics*{setupsc}.
 %
@@ -815,7 +815,7 @@
 % This key is necessary only if the last line is the closing of some
 % environment defined by the \mypkg{fancyvrb} package as §\end{Verbatim}§
 % or another environment that does not support a comments \enquote{\textcolor{gray}{\%}}
-% after closing §\end{§\textcolor{gray}{...}§}§\textcolor{gray}{\%}. This key is available
+% after closing §\end{<env>}§\textcolor{gray}{\%}. This key is available
 % for the \myenv*{scontents} environment and the \ics*{Scontents} command.
 %
 % \keyexamp{width-tab}{integer}{1}
@@ -2969,7 +2969,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
     \exp_not:N \q_@@_stop
   }
 %    \end{macrocode}
-%   In other formats, however, we don't have an ``end anchor'' to delimit the
+%   In other formats, however, we don't have an \enquote{end anchor} to delimit the
 %   environment name, so a delimited macro won't help. We have to search for
 %   the entire environment command (usually §\scontents§ and §\startscontents§).
 %    \begin{macrocode}
