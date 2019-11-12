@@ -46,7 +46,7 @@
     Extension      = .otf]{SourceCodePro}
 \newfontfamily\sourcecodeprolight{SourceCodePro-Regular.otf}[
     Scale = 0.80,FakeStretch =0.75,
-    FontFace = {m}{it}{SourceCodePro-RegularIt.otf}]
+    FontFace = {m}{it}{Font =SourceCodePro-RegularIt.otf,Color=FF0000}]
 \RenewDocumentCommand{\MacroLongFont}{}
   {
     \sourcecodeprolight\small
@@ -146,104 +146,101 @@
 \definecolor{linkcolor}{rgb}{0.04,0.38,0.04}
 \definecolor{rulecolor}{rgb}{0.96,0.96,0.96}
 
-% Only for arara...I like arara :)
+% Only for arara... I like arara :)
 \usepackage[scale=0.85]{comfortaa}
 \newcommand{\araratext}[1]{{\small\normalfont\comfortaa\color{araracolor}\bfseries#1}}
 \newcommand*\arara{\araratext{ar\kern-.03emar\kern-.03ema}}
 
-% Logo with fetamont font for title
-\makeatletter
-\newsavebox{\logobox}
-\savebox{\logobox}{%
-  \normalsize\fetamontotf{\textcolor{pkgcolor}{s}\textcolor{OrangeRed}{content}\textcolor{pkgcolor}{s}}}
-\newcommand{\mylogo}{%
-  \settoheight{\@tempdima}{L}%
-  \resizebox{!}{\@tempdima}{\usebox{\logobox}}%
- }
-\makeatother
+% User level commands
+\ExplSyntaxOn
+% Logo with fetamont font
+\NewDocumentCommand{\pkglogo}{}
+  {
+    \group_begin:
+    \fetamontotf{\textcolor{pkgcolor}{s}\textcolor{OrangeRed}{content}\textcolor{pkgcolor}{s}}
+    \group_end:
+  }
 
 % Custom \meta[...]{...}, \marg[...]{...} and \oarg[...]{...} with color
-\ExplSyntaxOn
-% User level commands
 \NewDocumentCommand{\mymeta}{O{}m}
   {
-   \userdoc_meta_generic:Nnn \userdoc_meta:n { #1 } { #2 }
+    \userdoc_meta_generic:Nnn \userdoc_meta:n { #1 } { #2 }
   }
 \NewDocumentCommand{\mymarg}{O{}m}
   {
-   \userdoc_meta_generic:Nnn \userdoc_marg:n { #1 } { #2 }
+    \userdoc_meta_generic:Nnn \userdoc_marg:n { #1 } { #2 }
   }
 \NewDocumentCommand{\myoarg}{O{}m}
   {
-   \userdoc_meta_generic:Nnn \userdoc_oarg:n { #1 } { #2 }
+    \userdoc_meta_generic:Nnn \userdoc_oarg:n { #1 } { #2 }
   }
 % Variables and keys
 \tl_new:N \l_userdoc_meta_font_tl
 
 \keys_define:nn { userdoc / mymeta }
   {
-   type .choice:,
-   type / tt .code:n = \tl_set:Nn \l_userdoc_meta_font_tl { \ttfamily },
-   type / rm .code:n = \tl_set:Nn \l_userdoc_meta_font_tl { \rmfamily },
-   type .initial:n = rm,
-   cf .tl_set:N = \l_userdoc_meta_color_tl,
-   cf .initial:n = optcolor,
-   ac .tl_set:N = \l_userdoc_meta_anglecolor_tl,
-   ac .initial:n = lightgray,
-   sbc .tl_set:N = \l_userdoc_meta_brackcolor_tl,
-   sbc .initial:n = gray,
-   cbc .tl_set:N = \l_userdoc_meta_bracecolor_tl,
-   cbc .initial:n = gray,
+    type .choice:,
+    type / tt .code:n = \tl_set:Nn \l_userdoc_meta_font_tl { \ttfamily },
+    type / rm .code:n = \tl_set:Nn \l_userdoc_meta_font_tl { \rmfamily },
+    type .initial:n   = rm,
+    cf .tl_set:N      = \l_userdoc_meta_color_tl,
+    cf .initial:n     = optcolor,
+    ac .tl_set:N      = \l_userdoc_meta_anglecolor_tl,
+    ac .initial:n     = lightgray,
+    sbc .tl_set:N     = \l_userdoc_meta_brackcolor_tl,
+    sbc .initial:n    = gray,
+    cbc .tl_set:N     = \l_userdoc_meta_bracecolor_tl,
+    cbc .initial:n    = gray,
   }
 % Internal commands
 \cs_new_protected:Npn \userdoc_meta_generic:Nnn #1 #2 #3
   {
-   \group_begin:
-   \keys_set:nn { userdoc / mymeta } { #2 }
-   \color{ \l_userdoc_meta_color_tl }
-   \l_userdoc_meta_font_tl
-   #1 { #3 } % #1 is \userdoc_meta:n, \userdoc_marg:n or \userdoc_oarg:n
-   \group_end:
+    \group_begin:
+    \keys_set:nn { userdoc / mymeta } { #2 }
+    \color{ \l_userdoc_meta_color_tl }
+    \l_userdoc_meta_font_tl
+    #1 { #3 } % #1 is \userdoc_meta:n, \userdoc_marg:n or \userdoc_oarg:n
+    \group_end:
   }
 \cs_new_protected:Npn \userdoc_meta:n #1
   {
-   \userdoc_meta_angle:n { \textlangle }
-   \userdoc_meta_meta:n { #1 }
-   \userdoc_meta_angle:n { \textrangle }
+    \userdoc_meta_angle:n { \textlangle }
+    \userdoc_meta_meta:n { #1 }
+    \userdoc_meta_angle:n { \textrangle }
   }
 \cs_new_protected:Npn \userdoc_marg:n #1
   {
-   \userdoc_meta_brace:n { \textbraceleft }
-   \userdoc_meta:n { #1 }
-   \userdoc_meta_brace:n { \textbraceright }
+    \userdoc_meta_brace:n { \textbraceleft }
+    \userdoc_meta:n { #1 }
+    \userdoc_meta_brace:n { \textbraceright }
   }
 \cs_new_protected:Npn \userdoc_oarg:n #1
   {
-   \userdoc_meta_brack:n { [ }
-   \userdoc_meta:n { #1 }
-   \userdoc_meta_brack:n { ] }
+    \userdoc_meta_brack:n { [ }
+    \userdoc_meta:n { #1 }
+    \userdoc_meta_brack:n { ] }
   }
 \cs_new_protected:Npn \userdoc_meta_meta:n #1
   {
-   \textnormal{\textit{#1}}
+    \textnormal{\textit{#1}}
   }
 \cs_new_protected:Npn \userdoc_meta_angle:n #1
   {
-   \group_begin:
-   \fontfamily{lmr}\selectfont
-   \textcolor{\l_userdoc_meta_anglecolor_tl}{#1}
-   \group_end:
+    \group_begin:
+    \fontfamily{lmr}\selectfont
+    \textcolor{\l_userdoc_meta_anglecolor_tl}{#1}
+    \group_end:
   }
 \cs_new_protected:Npn \userdoc_meta_brace:n #1
   {
-   \group_begin:
-   \color{\l_userdoc_meta_bracecolor_tl}
+    \group_begin:
+    \color{\l_userdoc_meta_bracecolor_tl}
     #1
-   \group_end:
+    \group_end:
   }
 \cs_new_protected:Npn \userdoc_meta_brack:n #1
   {
-   \textcolor{\l_userdoc_meta_brackcolor_tl}{#1}
+    \textcolor{\l_userdoc_meta_brackcolor_tl}{#1}
   }
 % \envexamp{m}
 \newsavebox{\boxexaenv}
@@ -277,22 +274,21 @@
 % \cmdexamp{s m o m o}
 \DeclareDocumentCommand{\cmdexamp}{o m o m o}
   {
-  \group_begin:
-  \small\ttfamily
-  \textcolor{pkgcolor}{\textbackslash#2}
-  \IfValueT{#1}{ \textcolor{MediumOrchid}{#1} }
-  \IfValueT{#3}{ \myoarg[type=tt,sbc=gray,ac=lightgray,cf=optcolor]{#3} }
-  \IfValueTF{#5}
-    {
-     \mymeta[ac=gray,type=tt,cf=MediumOrchid]{#5}%
-     \mymeta[type=tt,ac=gray,cf=optcolor]{#4}
-     \mymeta[ac=gray,type=tt,cf=MediumOrchid]{#5}%
-    }
-    { \mymarg[type=tt,cbc=gray,ac=lightgray,cf=optcolor]{#4} }
-  \par
-  \group_end:
-  \MYSortIndex{Commands}{Commands ~ provide  ~ by ~
-  {\fetamontotf{\textcolor{pkgcolor}{s}\textcolor{OrangeRed}{content}\textcolor{pkgcolor}{s}}}:}%
+    \group_begin:
+    \small\ttfamily
+    \textcolor{pkgcolor}{\textbackslash#2}
+    \IfValueT{#1}{ \textcolor{MediumOrchid}{#1} }
+    \IfValueT{#3}{ \myoarg[type=tt,sbc=gray,ac=lightgray,cf=optcolor]{#3} }
+    \IfValueTF{#5}
+      {
+        \mymeta[ac=gray,type=tt,cf=MediumOrchid]{#5}%
+        \mymeta[type=tt,ac=gray,cf=optcolor]{#4}
+        \mymeta[ac=gray,type=tt,cf=MediumOrchid]{#5}%
+      }
+      { \mymarg[type=tt,cbc=gray,ac=lightgray,cf=optcolor]{#4} }
+    \par
+    \group_end:
+    \MYSortIndex{Commands}{Commands ~ provide  ~ by ~ \pkglogo :}%
   }
 
 % \keyexamp{mmm}
@@ -320,7 +316,7 @@
     \group_begin:
     \IfBooleanTF{#1}
       {
-        \fetamontotf{\textcolor{pkgcolor}{s}\textcolor{OrangeRed}{content}\textcolor{pkgcolor}{s}}
+        \pkglogo
         \MYSortIndex{packages}{Packages>\texttt{#2}}
       }
       {
@@ -336,12 +332,11 @@
     \IfBooleanTF{#1}
       {
         \textcolor{pkgcolor}{\ttfamily{#2}}%
-        \MYSortIndex{environment}{ Environment ~ provide ~ by ~
-        {\fetamontotf{\textcolor{pkgcolor}{s}\textcolor{OrangeRed}{content}\textcolor{pkgcolor}{s}}}:>\texttt{#2}}
+        \MYSortIndex{environment}{ Environment ~ provide ~ by ~\pkglogo :>\texttt{#2}}
       }
       {
-       \textcolor{darkgray}{\ttfamily{#2}}%
-       \MYSortIndex{environment}{Environments>\texttt{#2}}
+        \textcolor{darkgray}{\ttfamily{#2}}%
+        \MYSortIndex{environment}{Environments>\texttt{#2}}
       }
   }
 
@@ -353,11 +348,7 @@
         \tl_set:Nn \l_tmpa_tl { #2 }
         \regex_replace_once:nnN { (\*) } { \c{textcolor}\cB\{MediumOrchid\cE\}\cB\{\1\cE\} } \l_tmpa_tl
         \textcolor{pkgcolor}{\ttfamily\textbackslash{\tl_use:N \l_tmpa_tl}}
-        \MYSortIndex{Commands}{ Commands ~ provide  ~ by ~
-        {
-        \fetamontotf{
-        \textcolor{pkgcolor}{s}\textcolor{OrangeRed}{content}\textcolor{pkgcolor}{s}}
-        }:>\texttt{\textbackslash#2}}
+        \MYSortIndex{Commands}{ Commands ~ provide  ~ by ~ \pkglogo :>\texttt{\textbackslash#2}}
       }
       {
         \textcolor{darkgray}{\ttfamily\textbackslash{#2}}
@@ -385,9 +376,9 @@
 \lstnewenvironment{verbatimsc}
   {
     \lstset{
-       language=,%
-       basicstyle= \ttfamily\small,
-       gobble    = 2,%
+       language   =,%
+       basicstyle = \ttfamily\small,
+       gobble     = 2,%
            }
    }{}
 \makeatother
@@ -397,100 +388,100 @@
 
 % Create a language for documentation
 \lstdefinelanguage{scontents-doc}{
-    texcsstyle=*,%
-    escapechar=Ç,%
-    extendedchars=true,%
-    breakatwhitespace=true,%
-    breaklines=true,%
-    keepspaces=true,%
-    columns=fullflexible,%
-    stringstyle= {\color{red}},%
-    basicstyle=\ttfamily\small,%
-    alsoletter={-,@,.},%
+    texcsstyle    = *,%
+    escapechar    = Ç,%
+    extendedchars = true,%
+    %keepspaces    = true,%
+    stringstyle   = {\color{red}},%
+    basicstyle    = \ttfamily\small,%
+    alsoletter    = {-,@,.},%
 % comments
-    morecomment=[l]{\%},%
-    commentstyle=\ttfamily\small\color{lightgray},%
+    morecomment   = [l]{\%},%
+    commentstyle  = \ttfamily\small\color{lightgray},%
 % Important words 1
-    keywordstyle=[1]{\color{gray}},%
-    keywords=[1]{begin,end,Verbatim,env},%
+    keywordstyle  = [1]{\color{gray}},%
+    keywords      = [1]{begin,end,Verbatim,env},%
 % Other words 2
-    keywordstyle=[2]{\color{blue!75}},%
-    keywords=[2]{usepackage,section,documentclass,input,usemodule,
-                 subsection,ExplSyntaxOff,ExplSyntaxOn,RequirePackage,
-                 ProvidesExplPackage},%
+    keywordstyle  = [2]{\color{blue!75}},%
+    keywords      = [2]{usepackage,section,documentclass,input,usemodule,
+                    subsection,ExplSyntaxOff,ExplSyntaxOn,RequirePackage,
+                    ProvidesExplPackage},%
 % Other words 3
-    keywordstyle=[3]{\color{optcolor!85}},%
-    keywords=[3]{document,article,setlength,pagestyle,definecolor},%
+    keywordstyle  = [3]{\color{optcolor!85}},%
+    keywords      = [3]{document,article,setlength,pagestyle,definecolor},%
 % Reserved words 4 (scontents pkg)
-    keywordstyle=[4]{\color{pkgcolor}},%
-    keywords=[4]{scontents,Scontents,getstored,typestored,verbatimsc,%
-                 endverbatimsc,countsc,meaningsc,foreachsc,macros
-                 endscontents,startscontents,stopscontents,scontents.tex},%
-% Reserved in red
-    keywordstyle=[5]{\color{red}},%
-    keywords=[5]{makeatletter,makeatother,let,verb,@undefined,makebox,def,%
-                par,item,parindent,lstinline,@ifpackagelater,ver@xparse.sty,%
-                dospecials,do@noligs,char,outer,jobname,inner},%
-% Reserved in orange
-    keywordstyle=[6]{\color{optcolor}},%
-    keywords=[6]{store-cmd,store-env,print-env,print-cmd,write-env,%
-                 start,stopt,wrapper,sep,step,before,after,write-out,%
-                 overwrite,width-tab,force-eol,inner,outer,I,J,M,L,Ascheol},%
-% Reserved in orange
-    keywordstyle=[7]{\color{OrangeRed}},%
-    keywords=[7]{DefineVerbatimEnvironment,lstnewenvironment,newminted,%
-                 newtheorem,newenvironment,VerbatimEnvironment},%
+    keywordstyle  = [4]{\color{pkgcolor}},%
+    keywords      = [4]{scontents,Scontents,getstored,typestored,verbatimsc,%
+                    endverbatimsc,countsc,meaningsc,foreachsc,macros
+                    endscontents,startscontents,stopscontents,scontents.tex},%
+% Reserved words 5 (in red)
+    keywordstyle  = [5]{\color{red}},%
+    keywords      = [5]{makeatletter,makeatother,let,verb,@undefined,makebox,def,%
+                    par,item,parindent,lstinline,@ifpackagelater,ver@xparse.sty,%
+                    ver@scontents.sty,dospecials,do@noligs,char,outer,jobname,inner},%
+% Reserved words 6 (optcolor)
+    keywordstyle  = [6]{\color{optcolor}},%
+    keywords      = [6]{store-cmd,store-env,print-env,print-cmd,write-env,%
+                    start,stopt,wrapper,sep,step,before,after,write-out,%
+                    overwrite,width-tab,force-eol,inner,outer,I,J,M,L,Ascheol},%
+% Reserved words 7 (OrangeRed)
+    keywordstyle  = [7]{\color{OrangeRed}},%
+    keywords      = [7]{DefineVerbatimEnvironment,lstnewenvironment,newminted,%
+                    newtheorem,newenvironment,VerbatimEnvironment},%
 % literate
-    literate=*{\{}{{{\color{gray}{\char`\{}}}}{1}
-              {\}}{{{\color{gray}{\char`\}}}}}{1}
-              {\|}{{{\color{gray}{\char`\|}}}}{1}
-              {\$}{{{\color{gray}{\char`\$}}}}{1}
-              {\#}{{{\color{optcolor}{\char`\#}}}}{1}
-              {[}{{\textcolor{gray}{[}}}{1}
-              {]}{{\textcolor{gray}{]}}}{1}
-              {,}{{\textcolor{gray}{,}}}{1}
-              {;}{{\textcolor{gray}{;}}}{1}
-              {\&}{{\textcolor{gray}{\&}}}{1}
-              {>}{{\textcolor{OrangeRed}{\guillemotright}}}{1}
-              {<}{{\textcolor{OrangeRed}{\guillemotleft}}}{1}
-              {*}{{\textcolor{MediumOrchid}{*}}}{1}
-              {\^}{{\textcolor{optcolor}{\textasciicircum}}}{1}
-              {0}{{\textcolor{MediumOrchid}{0}}}{1}
-              {1}{{\textcolor{MediumOrchid}{1}}}{1}
-              {2}{{\textcolor{MediumOrchid}{2}}}{1}
-              {3}{{\textcolor{MediumOrchid}{3}}}{1}% expl3
-              {4}{{\textcolor{MediumOrchid}{4}}}{1}
-              {5}{{\textcolor{MediumOrchid}{5}}}{1}
-              {6}{{\textcolor{MediumOrchid}{6}}}{1}
-              {7}{{\textcolor{MediumOrchid}{7}}}{1}
-              {8}{{\textcolor{MediumOrchid}{8}}}{1}
-              {9}{{\textcolor{MediumOrchid}{9}}}{1}
-              {.0}{{\textcolor{MediumOrchid}{.0}}}{2}% Following is to ensure that only periods
-              {.1}{{\textcolor{MediumOrchid}{.1}}}{2}% followed by a digit are changed.
-              {.2}{{\textcolor{MediumOrchid}{.2}}}{2}
-              {.3}{{\textcolor{MediumOrchid}{.3}}}{2}
-              {.4}{{\textcolor{MediumOrchid}{.4}}}{2}
-              {.5}{{\textcolor{MediumOrchid}{.5}}}{2}
-              {.6}{{\textcolor{MediumOrchid}{.6}}}{2}
-              {.7}{{\textcolor{MediumOrchid}{.7}}}{2}
-              {.8}{{\textcolor{MediumOrchid}{.8}}}{2}
-              {.9}{{\textcolor{MediumOrchid}{.9}}}{2}
-              {=}{{\textcolor{gray}{=}}}{1},%
+    literate      =*{\{}{{{\color{gray}{\char`\{}}}}{1}
+                    {\}}{{{\color{gray}{\char`\}}}}}{1}
+                    {\|}{{{\color{gray}{\char`\|}}}}{1}
+                    {\$}{{{\color{gray}{\char`\$}}}}{1}
+                    {\#}{{{\color{optcolor}{\char`\#}}}}{1}
+                    {[}{{\textcolor{gray}{[}}}{1}
+                    {]}{{\textcolor{gray}{]}}}{1}
+                    {,}{{\textcolor{gray}{,}}}{1}
+                    {;}{{\textcolor{gray}{;}}}{1}
+                    {`}{{\textcolor{gray}{\textasciigrave}}}{1}
+                    {\&}{{\textcolor{gray}{\&}}}{1}
+                    {>}{{\textcolor{OrangeRed}{\guillemotright}}}{1}
+                    {<}{{\textcolor{OrangeRed}{\guillemotleft}}}{1}
+                    {*}{{\textcolor{MediumOrchid}{*}}}{1}
+                    {\^}{{\textcolor{optcolor}{\textasciicircum}}}{1}
+                    {0}{{\textcolor{MediumOrchid}{0}}}{1}
+                    {1}{{\textcolor{MediumOrchid}{1}}}{1}
+                    {2}{{\textcolor{MediumOrchid}{2}}}{1}
+                    {3}{{\textcolor{MediumOrchid}{3}}}{1}
+                    {4}{{\textcolor{MediumOrchid}{4}}}{1}
+                    {5}{{\textcolor{MediumOrchid}{5}}}{1}
+                    {6}{{\textcolor{MediumOrchid}{6}}}{1}
+                    {7}{{\textcolor{MediumOrchid}{7}}}{1}
+                    {8}{{\textcolor{MediumOrchid}{8}}}{1}
+                    {9}{{\textcolor{MediumOrchid}{9}}}{1}
+                    {.0}{{\textcolor{MediumOrchid}{.0}}}{2}% Following is to ensure that only periods
+                    {.1}{{\textcolor{MediumOrchid}{.1}}}{2}% followed by a digit are changed.
+                    {.2}{{\textcolor{MediumOrchid}{.2}}}{2}
+                    {.3}{{\textcolor{MediumOrchid}{.3}}}{2}
+                    {.4}{{\textcolor{MediumOrchid}{.4}}}{2}
+                    {.5}{{\textcolor{MediumOrchid}{.5}}}{2}
+                    {.6}{{\textcolor{MediumOrchid}{.6}}}{2}
+                    {.7}{{\textcolor{MediumOrchid}{.7}}}{2}
+                    {.8}{{\textcolor{MediumOrchid}{.8}}}{2}
+                    {.9}{{\textcolor{MediumOrchid}{.9}}}{2}
+                    {=}{{\textcolor{gray}{=}}}{1},%
 }[keywords,tex,comments,strings]% end languaje
 
 % \begin{examplecode}[key=val]...\end{examplecode}
 \lstnewenvironment{examplecode}[1][]{%
 \lstset{
-    language=scontents-doc,%
-    stringstyle= {\color{red}},%
-    basicstyle=\ttfamily\small,%
-    numbersep=1em,%
-    numberstyle=\tiny\color{lightgray}\noaccsupp,%
-    rulecolor=\color{gray!50},%
-    framesep=\fboxsep,%
-    framerule=\fboxrule,%
-    xleftmargin=\dimexpr\fboxsep+\fboxrule\relax,%
-    xrightmargin=\dimexpr\fboxsep+\fboxrule\relax,%
+    language    = scontents-doc,%
+    stringstyle = {\color{red}},%
+    basicstyle  = \ttfamily\small,%
+    columns     = fullflexible,%
+    fontadjust  = true,%
+    aboveskip   = 8pt,%
+    belowskip   = 5pt,%
+    rulecolor   = \color{gray!50},%
+    framesep    = \fboxsep,%
+    framerule   = \fboxrule,%
+    xleftmargin = \dimexpr\fboxsep+\fboxrule\relax,%
+    xrightmargin= \dimexpr\fboxsep+\fboxrule\relax,%
            #1,%
     }% close lstset
 }{}% close examplecode
@@ -498,18 +489,17 @@
 % \lstinline[style=inline]|...|
 \lstdefinestyle{inline}
   {
-   language=scontents-doc,%
-   upquote=true,%
-   numbersep=1em,%
-   columns=fullflexible,%
-   numberstyle=\tiny\color{lightgray}\noaccsupp,%
-   literate=*{\%}{{\bfseries\textcolor{gray}{\%}}}{1}
+    language    = scontents-doc,%
+    upquote     = true,%
+    numbersep   = 1em,%
+    numberstyle = \tiny\color{lightgray}\noaccsupp,%
+    literate    =*{\%}{{\textcolor{gray}{\%}}}{1}
   }
 
 % Set default \lstinline style
 \lstset{style=inline}
 
-% Set default \lstinline style
+% Set short §...§
 \lstMakeShortInline[language=scontents-doc,basicstyle=\ttfamily]§
 
 % Get file info
@@ -528,7 +518,6 @@
   }
 
 % Configuration titleps and titlesec
-\AtBeginDocument{\edef\scontentsrightmargin{\the\oddsidemargin}}
 \settitlemarks{section}
 \renewpagestyle{plain}[\color{optcolor}\small\sffamily]{%
 \setfoot{\rlap{\hskip\dimexpr-\oddsidemargin-1in\relax%
@@ -545,8 +534,8 @@
          \parbox{1.93\paperwidth\relax}{\hfil\thepage\,/\,\pageref{LastPage}}}}%
         {\parbox{\textwidth}{\raggedright \textcolor{gray}{\raisebox{-1pt}{\textcopyright}{}2019 by Pablo González}}}%
         {}%
-\sethead{\llap{\raisebox{0.55cm}{\parbox{\dimexpr\oddsidemargin+1in\relax}{\makebox[0pt][l]{\hspace{15pt}\scalebox{0.8}{\mylogo}\space\fileversion}}}}}
-        {\raisebox{0.55cm}{\parbox{\textwidth}{\hspace*{-\oddsidemargin}\centering\scshape\small\S.\thesection\space\sectiontitle}}}%
+\sethead{\llap{\raisebox{0.55cm}{\parbox{\dimexpr\oddsidemargin+1in\relax}{\makebox[0pt][l]{\hspace{15pt}\pkglogo\space\fileversion}}}}}
+        {\raisebox{0.55cm}{\parbox{\textwidth}{\hspace*{-\oddsidemargin}\centering\small\S.\thesection\space\sectiontitle}}}%
         {}%
 }
 
@@ -576,6 +565,13 @@
 \endgroup
 }
 \makeatother
+% thanks
+\makeatletter
+\renewcommand*{\@fnsymbol}[1]{\ensuremath{\ifcase#1\or \textcolor{pkgcolor}{*}
+\or \textcolor{pkgcolor}{\dagger} \or \ddagger\or \mathsection
+\or \mathparagraph\or \|\or **\or \dagger\dagger
+\or \ddagger\ddagger \else\@ctrerr\fi}}
+\makeatother
 \begin{document}
   \DocInput{\jobname.dtx}
 \end{document}
@@ -583,7 +579,7 @@
 % \fi
 %
 % \title{
-%    \scalebox{1.13}{\mylogo}\\[2pt]
+%    \scalebox{1.57}{\pkglogo}\\[2pt]
 %    \Large
 %    \textsf{Stores \hologo{LaTeX}}{ \fetamontotf{contents} }\\[3pt]
 %    \fileversion{} --- \filedate\thanks{
@@ -591,9 +587,8 @@
 %    \filedate.}\\[25pt]
 %    \author{
 %    \large
-%    \raisebox{-1pt}{\textcopyright}{}2019 by Pablo González
-%    \thanks{
-%    E-mail: \textcolor{optcolor}{\textsf{\guillemotleft}}\email{pablgonz@educarchile.cl}\textcolor{optcolor}{\textsf{\guillemotright}}.
+%    \raisebox{-1pt}{\textcopyright}{}2019 by Pablo González\thanks{
+%    E-mail: \textcolor{OrangeRed}{\textsf{\guillemotleft}}\email{pablgonz@educarchile.cl}\textcolor{OrangeRed}{\textsf{\guillemotright}}.
 %       }%
 %    }
 % \small
@@ -636,7 +631,7 @@
 % of the \href{https://tex.stackexchange.com}{TeX-SX} community who have provided
 % great answers and ideas. Here a note of the main ones:
 %
-% \begin{enumerate}[nosep]
+% \begin{enumerate}[left=0pt, labelsep=5pt, noitemsep, nosep, label=\small\arabic*.]
 % \item \href{https://tex.stackexchange.com/q/45946/7832}{Stack datastructure using LaTeX}
 %
 % \item \href{https://tex.stackexchange.com/q/5338/7832}{LaTeX equivalent of ConTeXt buffers}
@@ -693,8 +688,9 @@
 % \iffalse
 %</example>
 % \fi
-% \vspace*{-5pt}
+%
 % or
+%
 % \iffalse
 %<*example>
 % \fi
@@ -814,8 +810,8 @@
 % Sets if the end of line for the \mymeta{stored content} is hidden or not.
 % This key is necessary only if the last line is the closing of some
 % environment defined by the \mypkg{fancyvrb} package as §\end{Verbatim}§
-% or another environment that does not support a comments \enquote{\textcolor{gray}{\%}}
-% after closing §\end{<env>}§\textcolor{gray}{\%}. This key is available
+% or another environment that does not support a comments \enquote{\ttfamily\textcolor{gray}{\%}}
+% after closing §\end{<env>}%§. This key is available
 % for the \myenv*{scontents} environment and the \ics*{Scontents} command.
 %
 % \keyexamp{width-tab}{integer}{1}
@@ -830,7 +826,7 @@
 % \newcommand*{\xmark}{\textcolor{OrangeRed}{✘}}%
 % \newcommand*{\cmark}{\textcolor{linkcolor}{✔}}%
 %
-% Summary of available options.
+% Summary of available options:
 %
 % \setlength{\tabcolsep}{0.25em}
 % \begin{center}
@@ -1757,7 +1753,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \settowidth{\descrwidth}{\textsf{v1.0, (ctan), 2019-07-30} }
 %
 % \begin{description}[font=\small\sffamily,wide=0pt,style=multiline,leftmargin=\descrwidth,nosep,noitemsep]
-% \item [\fileversion{} (devp), \filedate]
+% \item [\fileversion{} (dev), \filedate]
 %    \begin{itemize}
 %    \item Fix nested environment in \hologo{plainTeX} and \hologo{ConTeXt}.
 %    \item Modified default value in |\getstored|.
