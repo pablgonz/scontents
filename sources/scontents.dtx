@@ -2798,7 +2798,10 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
       \bool_lazy_and:nnT
         { \l_@@_storing_bool }
         { \tl_if_empty_p:N \l_@@_macro_tmp_tl }
-        { \msg_warning:nnx { scontents } { empty-environment } { \l_@@_env_name_tl } }
+        {
+          \msg_warning:nnx { scontents } { empty-environment }
+            { \l_@@_env_name_tl }
+        }
     }
 %    \end{macrocode}
 % \end{macro}
