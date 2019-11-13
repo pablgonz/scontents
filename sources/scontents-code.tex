@@ -357,7 +357,10 @@
       \bool_lazy_and:nnT
         { \l__scontents_storing_bool }
         { \tl_if_empty_p:N \l__scontents_macro_tmp_tl }
-        { \msg_warning:nnn { scontents } { empty-environment } }
+        {
+          \msg_warning:nnx { scontents } { empty-environment }
+            { \l__scontents_env_name_tl }
+        }
     }
   \cs_new_protected:Npn \__scontents_file_tl_write_start:n #1
     {
@@ -837,7 +840,7 @@
     This~command~only~accepts~the~key~'width-tab'.
   }
 \msg_new:nnn { scontents } { empty-environment }
-  { scontents~environment~empty~\msg_line_context:. }
+  { environment~'#1'~empty~\msg_line_context:. }
 \msg_new:nnnn { scontents } { verbatim-newline }
   { Verbatim~argument~of~#1~ended~by~end~of~line. }
   {

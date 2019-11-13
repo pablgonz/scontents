@@ -620,4 +620,20 @@ This text is in the outermost environment (after nested).
 % count
 Number of items stored in  \verb+outer+ \countsc{outer}\par
 Number of items stored in  \verb+inner+ \countsc{inner}
+
+% \newenvsc{scnest}[store-env=nest]
+\subsection{newenvsc}
+\newenvsc{scnest}[store-env=nest,print-env=false]
+
+\begin{scnest}
+This text is in the outermost environment (before nested).
+\begin{scnest}[store-env=innernest]
+This text is found in the most inner environment.
+\end{scnest}
+This text is in the outermost environment (after nested).
+\end{scnest}
+
+\getstored{nest}\par
+\getstored{innernest}
+
 \end{document}
