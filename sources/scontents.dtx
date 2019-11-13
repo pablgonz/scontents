@@ -2616,38 +2616,37 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \myenv{scontents}, we define a generic environment and make all other
 % environment as wappers around that one.
 %
-% \begin{macro}{\newenvsc,\l_@@_env_name_tl,\@@_scontents_setenv:nnn}
-%   The \cs{newenvsc} command defines two functions \cs[no-index]{@@_#2_env_begin:}
-%   and \cs[no-index]{@@_#2_env_end:}, which set the current environment's
+% \begin{macro}{\newenvsc,\l_@@_env_name_tl,\@@_scontents_setenv:nn}
+%   The \cs{newenvsc} command defines two functions \cs[no-index]{@@_\#1_env_begin:}
+%   and \cs[no-index]{@@_\#1_env_end:}, which set the current environment's
 %   default properties and then call the generic \cs{@@_env_generic_begin:} and
 %   \cs{@@_env_generic_end:}.
 %    \begin{macrocode}
 \tl_new:N \l_@@_env_name_tl
-\cs_new_protected:Npn \@@_scontents_setenv:nnn #1 #2 #3
+\cs_new_protected:Npn \@@_scontents_setenv:nn #1 #2
   {
-    \cs_new_protected:cpn { @@_#2_env_begin: }
+    \cs_new_protected:cpn { @@_#1_env_begin: }
       {
-        \tl_set:Nn \l_@@_name_seq_env_tl {#2}
         \tl_set:Nn \l_@@_env_name_tl {#1}
-        \keys_set:nn { scontents } {#3}
+        \keys_set:nn { scontents } {#2}
         \@@_setup_verb_processor:
         \@@_env_generic_begin:
       }
-    \cs_new_protected:cpn { @@_#2_env_end: }
+    \cs_new_protected:cpn { @@_#1_env_end: }
       { \@@_env_generic_end: }
     \exp_args:Nooo % http://nooooooooooooooo.com
     \@@_env_define:nnn { \tl_to_str:n {#1} }
-      { \cs:w @@_#2_env_begin: \cs_end: }
-      { \cs:w @@_#2_env_end: \cs_end: }
+      { \cs:w @@_#1_env_begin: \cs_end: }
+      { \cs:w @@_#1_env_end: \cs_end: }
   }
 %</core>
 %<*loader>
-\NewDocumentCommand { \newenvsc } { m m O{} }
+\NewDocumentCommand { \newenvsc } { m O{} }
   {
-%<latex|plain>    \cs_if_exist:cTF { #2 }
-%<context>    \cs_if_exist:cTF { start #2 }
-      { \msg_error:nnn { scontents } { env-already-exists } {#2} }
-      { \@@_scontents_setenv:nnn {#2} {#1} {#3} }
+%<latex|plain>    \cs_if_exist:cTF { #1 }
+%<context>    \cs_if_exist:cTF { start #1 }
+      { \msg_error:nnn { scontents } { env-already-exists } {#1} }
+      { \@@_scontents_setenv:nn {#1} {#2} }
   }
 \cs_new_protected:Npn \@@_env_define:nnn #1 #2 #3
   {
@@ -2697,7 +2696,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   Now defining the \myenv{scontents} environment should be easy:
 %    \begin{macrocode}
 %</core>
-%<loader>\newenvsc{contents}{scontents}[]
+%<loader>\newenvsc{scontents}
 %<*core>
 %    \end{macrocode}
 % \end{macro}
@@ -2788,7 +2787,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
       \tl_if_blank:nF {#2}
         {
           \msg_error:nnxn { scontents } { junk-after-begin }
-            { after~\c_backslash_str begin { \tl_use:N \l_@@_env_name_tl } #1 } {#2}
+            { after~\c_backslash_str begin { \l_@@_env_name_tl } #1 } {#2}
         }
       \@@_make_control_chars_active:
       \@@_file_tl_write_start:V \l_@@_fname_out_tl
@@ -3060,7 +3059,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
     \use:x
       {
         \cs_set_protected:Npn \exp_not:N \@@_analyse_nesting_generic:w ####1
-          \c_backslash_str #1 \tl_use:N \l_@@_env_name_tl ####2 \exp_not:N \q_@@_stop
+          \c_backslash_str #1 \tl_use:N \l_@@_env_name_tl
+            ####2 \exp_not:N \q_@@_stop
       }   { \@@_analyse_nesting_generic_process:nn {##1} {##2} }
   }
 %</core>

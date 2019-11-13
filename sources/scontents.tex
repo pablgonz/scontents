@@ -137,11 +137,11 @@
 \ExplSyntaxOn
 \char_set_catcode:nn { `\@ } { \l__scontents_tmpa_int }
 \__scontents_compat_restore:
-\NewDocumentCommand { \newenvsc } { m m O{} }
+\NewDocumentCommand { \newenvsc } { m O{} }
   {
-    \cs_if_exist:cTF { #2 }
-      { \msg_error:nnn { scontents } { env-already-exists } {#2} }
-      { \__scontents_scontents_setenv:nnn {#2} {#1} {#3} }
+    \cs_if_exist:cTF { #1 }
+      { \msg_error:nnn { scontents } { env-already-exists } {#1} }
+      { \__scontents_scontents_setenv:nn {#1} {#2} }
   }
 \cs_new_protected:Npn \__scontents_env_define:nnn #1 #2 #3
   {
@@ -155,7 +155,7 @@
         \group_end:
       }
   }
-\newenvsc{contents}{scontents}[]
+\newenvsc{scontents}
 \NewDocumentCommand \__scontents_grab_optional:w { r[] }
   { \__scontents_grab_optional:n {#1} }
 \cs_new_protected:Npn \__scontents_analyse_nesting_format:n

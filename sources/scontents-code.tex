@@ -287,22 +287,21 @@
     \__scontents_append_contents:Vx #2 { \exp_not:V #1 }
   }
 \tl_new:N \l__scontents_env_name_tl
-\cs_new_protected:Npn \__scontents_scontents_setenv:nnn #1 #2 #3
+\cs_new_protected:Npn \__scontents_scontents_setenv:nn #1 #2
   {
-    \cs_new_protected:cpn { __scontents_#2_env_begin: }
+    \cs_new_protected:cpn { __scontents_#1_env_begin: }
       {
-        \tl_set:Nn \l__scontents_name_seq_env_tl {#2}
         \tl_set:Nn \l__scontents_env_name_tl {#1}
-        \keys_set:nn { scontents } {#3}
+        \keys_set:nn { scontents } {#2}
         \__scontents_setup_verb_processor:
         \__scontents_env_generic_begin:
       }
-    \cs_new_protected:cpn { __scontents_#2_env_end: }
+    \cs_new_protected:cpn { __scontents_#1_env_end: }
       { \__scontents_env_generic_end: }
     \exp_args:Nooo % http://nooooooooooooooo.com
     \__scontents_env_define:nnn { \tl_to_str:n {#1} }
-      { \cs:w __scontents_#2_env_begin: \cs_end: }
-      { \cs:w __scontents_#2_env_end: \cs_end: }
+      { \cs:w __scontents_#1_env_begin: \cs_end: }
+      { \cs:w __scontents_#1_env_end: \cs_end: }
   }
 \cs_new_protected:Npn \__scontents_env_generic_begin:
   {
@@ -347,7 +346,7 @@
       \tl_if_blank:nF {#2}
         {
           \msg_error:nnxn { scontents } { junk-after-begin }
-            { after~\c_backslash_str begin { \tl_use:N \l__scontents_env_name_tl } #1 } {#2}
+            { after~\c_backslash_str begin { \l__scontents_env_name_tl } #1 } {#2}
         }
       \__scontents_make_control_chars_active:
       \__scontents_file_tl_write_start:V \l__scontents_fname_out_tl
@@ -554,7 +553,8 @@
     \use:x
       {
         \cs_set_protected:Npn \exp_not:N \__scontents_analyse_nesting_generic:w ####1
-          \c_backslash_str #1 \tl_use:N \l__scontents_env_name_tl ####2 \exp_not:N \q__scontents_stop
+          \c_backslash_str #1 \tl_use:N \l__scontents_env_name_tl
+            ####2 \exp_not:N \q__scontents_stop
       }   { \__scontents_analyse_nesting_generic_process:nn {##1} {##2} }
   }
 \cs_new_protected:Npn \__scontents_atend_environment:
