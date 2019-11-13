@@ -286,12 +286,30 @@
     \tl_log:N #1
     \__scontents_append_contents:Vx #2 { \exp_not:V #1 }
   }
-\cs_new_protected:Npn \__scontents_scontents_env_begin:
+\tl_new:N \l__scontents_env_name_tl
+\cs_new_protected:Npn \__scontents_scontents_setenv:nnn #1 #2 #3
+  {
+    \cs_new_protected:cpn { __scontents_#2_env_begin: }
+      {
+        \tl_set:Nn \l__scontents_name_seq_env_tl {#2}
+        \tl_set:Nn \l__scontents_env_name_tl {#1}
+        \keys_set:nn { scontents } {#3}
+        \__scontents_setup_verb_processor:
+        \__scontents_env_generic_begin:
+      }
+    \cs_new_protected:cpn { __scontents_#2_env_end: }
+      { \__scontents_env_generic_end: }
+    \exp_args:Nooo % http://nooooooooooooooo.com
+    \__scontents_env_define:nnn { \tl_to_str:n {#1} }
+      { \cs:w __scontents_#2_env_begin: \cs_end: }
+      { \cs:w __scontents_#2_env_end: \cs_end: }
+  }
+\cs_new_protected:Npn \__scontents_env_generic_begin:
   {
     \char_set_catcode_active:N \^^M
     \__scontents_start_environment:w
   }
-\cs_new_protected:Npn \__scontents_scontents_env_end:
+\cs_new_protected:Npn \__scontents_env_generic_end:
   {
     \__scontents_stop_environment:
     \__scontents_atend_environment:
@@ -329,7 +347,7 @@
       \tl_if_blank:nF {#2}
         {
           \msg_error:nnxn { scontents } { junk-after-begin }
-            { after~\c_backslash_str begin{scontents} #1 } {#2}
+            { after~\c_backslash_str begin { \tl_use:N \l__scontents_env_name_tl } #1 } {#2}
         }
       \__scontents_make_control_chars_active:
       \__scontents_file_tl_write_start:V \l__scontents_fname_out_tl
@@ -371,48 +389,62 @@
         \__scontents_make_control_chars_active:
         \__scontents_ret:w
     }
-  \use:x
+  \cs_new:Npn \__scontents_setup_verb_processor:
     {
-      \cs_new:Npn \exp_not:N \__scontents_verb_processor_iterate:w
-        ##1 \c__scontents_end_env_tl
-        ##2 \c__scontents_end_env_tl
-        ##3 \exp_not:N \q__scontents_stop
-    } {
-        \tl_if_blank:nTF {#3}
-          {
-            \__scontents_analyse_nesting:n {#1}
-            \__scontents_verb_processor_output:n {#1}
-          }
-          {
-            \__scontents_if_nested:TF
-              {
-                \__scontents_nesting_decr:
-                \__scontents_verb_processor_output:x
-                  { \exp_not:n {#1} \c__scontents_end_env_tl \exp_not:n {#2} }
-              }
-              {
-                \tl_if_blank:nF {#1}
-                  { \__scontents_verb_processor_output:n {#1} }
-                \cs_set_protected:Npx \__scontents_ret:w
-                  {
-                    \__scontents_format_case:nnn
-                      { \exp_not:N \end{scontents} } % LaTeX
-                      { \endscontents } % Plain/Generic
-                      { \stopscontents } % ConTeXt
-                    \bool_lazy_or:nnF
-                      { \tl_if_blank_p:n {#2} }
-                      { \str_if_eq_p:ee {#2} { \c_percent_str } }
-                      {
-                        \str_if_eq:VnF \c__scontents_hidden_space_str {#2}
-                          { \msg_warning:nnn { scontents } { rescanning-text } {#2} }
-                        \__scontents_rescan_tokens:n {#2}
-                      }
-                  }
-                \char_set_active_eq:NN ^^M \__scontents_ret:w
-              }
-          }
-        ^^M
-      }
+      \use:x
+        {
+          \cs_set:Npn \exp_not:N \__scontents_verb_processor_iterate:w
+            ####1 \c__scontents_end_env_tl
+            ####2 \c__scontents_end_env_tl
+            ####3 \exp_not:N \q__scontents_stop
+        }   { \__scontents_verb_processor_iterate:nnn {##1} {##2} {##3} }
+    }
+  \cs_new:Npn \__scontents_verb_processor_iterate:nnn #1 #2 #3
+    {
+      \tl_if_blank:nTF {#3}
+        {
+          \__scontents_analyse_nesting:n {#1}
+          \__scontents_verb_processor_output:n {#1}
+        }
+        {
+          \__scontents_if_nested:TF
+            {
+              \__scontents_nesting_decr:
+              \__scontents_verb_processor_output:x
+                { \exp_not:n {#1} \c__scontents_end_env_tl \exp_not:n {#2} }
+            }
+            {
+              \tl_if_blank:nF {#1}
+                { \__scontents_verb_processor_output:n {#1} }
+              \cs_set_protected:Npx \__scontents_ret:w
+                {
+                  \__scontents_env_end_function:
+                  \bool_lazy_or:nnF
+                    { \tl_if_blank_p:n {#2} }
+                    { \str_if_eq_p:ee {#2} { \c_percent_str } }
+                    {
+                      \str_if_eq:VnF \c__scontents_hidden_space_str {#2}
+                        { \msg_warning:nnn { scontents } { rescanning-text } {#2} }
+                      \__scontents_rescan_tokens:n {#2}
+                    }
+                }
+              \char_set_active_eq:NN ^^M \__scontents_ret:w
+            }
+        }
+      ^^M
+    }
+  \cs_new:Npn \__scontents_env_end_function:
+    {
+      \__scontents_format_case:nnn
+        { \exp_not:N \end { \if_false: } \fi: }
+        { \exp_after:wN \exp_not:N \cs:w end }
+        { \exp_after:wN \exp_not:N \cs:w stop }
+      \tl_use:N \l__scontents_env_name_tl
+      \__scontents_format_case:nnn
+        { \if_false: { \fi: } }
+        { \cs_end: }
+        { \cs_end: }
+    }
   \cs_new_protected:Npn \__scontents_file_write_stop:N #1
     {
       \bool_if:NT \l__scontents_writing_bool
@@ -483,7 +515,7 @@
         \__scontents_tl_if_head_is_q_mark:nTF {#2}
           { \__scontents_use_none_delimit_by_q_stop:w }
           {
-            \str_if_eq:eeT {#2} { scontents }
+            \str_if_eq:VnT \l__scontents_env_name_tl {#2}
               { \__scontents_nesting_incr: }
             \__scontents_analyse_nesting_latex:w
           }
@@ -507,14 +539,23 @@
       }
       { \__scontents_analyse_nesting_generic:w #2 \q__scontents_stop }
   }
-\cs_new_protected:Npx \__scontents_analyse_nesting_generic:nn #1 #2
+\cs_new_protected:Npn \__scontents_analyse_nesting_generic:nn #1 #2
   {
-    \cs_set_protected:Npn \exp_not:N \__scontents_analyse_nesting_generic:w ##1
-      \c_backslash_str #1 scontents ##2 \exp_not:N \q__scontents_stop
-      { \exp_not:N \__scontents_analyse_nesting_generic_process:nn {##1} {##2} }
-    \exp_not:N \__scontents_analyse_nesting_generic:w #2
-      \c_backslash_str #1 scontents
-        \exp_not:N \q__scontents_mark \exp_not:N \q__scontents_stop
+    \__scontents_define_generic_nesting_function:n {#1}
+    \use:x
+      {
+        \exp_not:N \__scontents_analyse_nesting_generic:w #2
+          \c_backslash_str #1 \tl_use:N \l__scontents_env_name_tl
+            \exp_not:N \q__scontents_mark \exp_not:N \q__scontents_stop
+      }
+  }
+\cs_new_protected:Npn \__scontents_define_generic_nesting_function:n #1
+  {
+    \use:x
+      {
+        \cs_set_protected:Npn \exp_not:N \__scontents_analyse_nesting_generic:w ####1
+          \c_backslash_str #1 \tl_use:N \l__scontents_env_name_tl ####2 \exp_not:N \q__scontents_stop
+      }   { \__scontents_analyse_nesting_generic_process:nn {##1} {##2} }
   }
 \cs_new_protected:Npn \__scontents_atend_environment:
   {
