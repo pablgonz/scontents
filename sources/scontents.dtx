@@ -1943,7 +1943,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %<latex|plain>    end
 %<context>    stop
 %<latex>    \c_left_brace_str
-      scontents
+      \exp_not:N \l_@@_env_name_tl
 %<latex>    \c_right_brace_str
   }
 %    \end{macrocode}
@@ -2610,47 +2610,95 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % \subsection{Construction of environment \env{scontents}}
 %
-% We define the environment \env{scontents}, next to the system
-% \myoarg{key \textnormal{\textcolor{gray}{=}} val}. The environment
-% is divided into two parts.
+% \subsection{The \cs{newenvsc} command}
 %
-% \begin{macro}{
-%     scontents,
-%     \scontents,
-%     \startscontents,
-%     \endscontents,
-%     \stopscontents,
-%     \@@_scontents_env_begin:,
-%     \@@_scontents_env_end:,
-%   }
-%   This is the main environment used in the document.
+% In order to be able to define environments that behave similarly to
+% \myenv{scontents}, we define a generic environment and make all other
+% environment as wappers around that one.
 %
+% \begin{macro}{\newenvsc,\l_@@_env_name_tl,\@@_scontents_setenv:nnn}
+%   The \cs{newenvsc} command defines two functions \cs[no-index]{@@_#2_env_begin:}
+%   and \cs[no-index]{@@_#2_env_end:}, which set the current environment's
+%   default properties and then call the generic \cs{@@_env_generic_begin:} and
+%   \cs{@@_env_generic_end:}.
 %    \begin{macrocode}
+\tl_new:N \l_@@_env_name_tl
+\cs_new_protected:Npn \@@_scontents_setenv:nnn #1 #2 #3
+  {
+    \cs_new_protected:cpn { @@_#2_env_begin: }
+      {
+        \tl_set:Nn \l_@@_name_seq_env_tl {#2}
+        \tl_set:Nn \l_@@_env_name_tl {#1}
+        \keys_set:nn { scontents } {#3}
+        \@@_setup_verb_processor:
+        \@@_env_generic_begin:
+      }
+    \cs_new_protected:cpn { @@_#2_env_end: }
+      { \@@_env_generic_end: }
+    \exp_args:Nooo % http://nooooooooooooooo.com
+    \@@_env_define:nnn { \tl_to_str:n {#1} }
+      { \cs:w @@_#2_env_begin: \cs_end: }
+      { \cs:w @@_#2_env_end: \cs_end: }
+  }
 %</core>
 %<*loader>
-%<!context>\NewDocumentEnvironment { scontents } { }
-%<context>\cs_new_protected:Npn \startscontents
+\NewDocumentCommand { \newenvsc } { m m O{} }
   {
-%<plain|context>    \group_begin:
-    \@@_scontents_env_begin:
+%<latex|plain>    \cs_if_exist:cTF { #2 }
+%<context>    \cs_if_exist:cTF { start #2 }
+      { \msg_error:nnn { scontents } { env-already-exists } {#2} }
+      { \@@_scontents_setenv:nnn {#2} {#1} {#3} }
   }
-%<context>\cs_new_protected:Npn \stopscontents
+\cs_new_protected:Npn \@@_env_define:nnn #1 #2 #3
   {
-    \@@_scontents_env_end:
-%<plain|context>    \group_end:
+%<latex|plain>    \NewDocumentEnvironment {#1} { }
+%<context>    \cs_new_protected:cpn { start #1 }
+      {
+%<!latex>        \group_begin:
+          #2
+      }
+%<context>    \cs_new_protected:cpn { stop #1 }
+      {
+          #3
+%<!latex>        \group_end:
+      }
   }
 %</loader>
 %<*core>
-\cs_new_protected:Npn \@@_scontents_env_begin:
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{
+%     \@@_env_generic_begin:,
+%     \@@_env_generic_begin:,
+%   }
+%   Now we define the generic environment \cs{@@_env_generic_begin:}
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_env_generic_begin:
   {
     \char_set_catcode_active:N \^^M
     \@@_start_environment:w
   }
-\cs_new_protected:Npn \@@_scontents_env_end:
+\cs_new_protected:Npn \@@_env_generic_end:
   {
     \@@_stop_environment:
     \@@_atend_environment:
   }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{
+%     scontents,
+%     \scontents,
+%     \endscontents,
+%     \startscontents,
+%     \stopscontents,
+%   }
+%   Now defining the \myenv{scontents} environment should be easy:
+%    \begin{macrocode}
+%</core>
+%<loader>\newenvsc{contents}{scontents}[]
+%<*core>
 %    \end{macrocode}
 % \end{macro}
 %
@@ -2740,7 +2788,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
       \tl_if_blank:nF {#2}
         {
           \msg_error:nnxn { scontents } { junk-after-begin }
-            { after~\c_backslash_str begin{scontents} #1 } {#2}
+            { after~\c_backslash_str begin { \tl_use:N \l_@@_env_name_tl } #1 } {#2}
         }
       \@@_make_control_chars_active:
       \@@_file_tl_write_start:V \l_@@_fname_out_tl
@@ -2760,6 +2808,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %     \@@_file_tl_write_start:n,
 %     \@@_file_tl_write_start:V,
 %     \@@_verb_processor_iterate:w,
+%     \@@_verb_processor_iterate:nnn,
+%     \@@_setup_verb_processor:,
 %     \@@_file_write_stop:N,
 %     \@@_remove_leading_nl:n,
 %     \@@_remove_leading_nl:w,
@@ -2806,48 +2856,62 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
         \@@_make_control_chars_active:
         \@@_ret:w
     }
-  \use:x
+  \cs_new:Npn \@@_setup_verb_processor:
     {
-      \cs_new:Npn \exp_not:N \@@_verb_processor_iterate:w
-        ##1 \c_@@_end_env_tl
-        ##2 \c_@@_end_env_tl
-        ##3 \exp_not:N \q_@@_stop
-    } {
-        \tl_if_blank:nTF {#3}
-          {
-            \@@_analyse_nesting:n {#1}
-            \@@_verb_processor_output:n {#1}
-          }
-          {
-            \@@_if_nested:TF
-              {
-                \@@_nesting_decr:
-                \@@_verb_processor_output:x
-                  { \exp_not:n {#1} \c_@@_end_env_tl \exp_not:n {#2} }
-              }
-              {
-                \tl_if_blank:nF {#1}
-                  { \@@_verb_processor_output:n {#1} }
-                \cs_set_protected:Npx \@@_ret:w
-                  {
-                    \@@_format_case:nnn
-                      { \exp_not:N \end{scontents} } % LaTeX
-                      { \endscontents } % Plain/Generic
-                      { \stopscontents } % ConTeXt
-                    \bool_lazy_or:nnF
-                      { \tl_if_blank_p:n {#2} }
-                      { \str_if_eq_p:ee {#2} { \c_percent_str } }
-                      {
-                        \str_if_eq:VnF \c_@@_hidden_space_str {#2}
-                          { \msg_warning:nnn { scontents } { rescanning-text } {#2} }
-                        \@@_rescan_tokens:n {#2}
-                      }
-                  }
-                \char_set_active_eq:NN ^^M \@@_ret:w
-              }
-          }
-        ^^M
-      }
+      \use:x
+        {
+          \cs_set:Npn \exp_not:N \@@_verb_processor_iterate:w
+            ####1 \c_@@_end_env_tl
+            ####2 \c_@@_end_env_tl
+            ####3 \exp_not:N \q_@@_stop
+        }   { \@@_verb_processor_iterate:nnn {##1} {##2} {##3} }
+    }
+  \cs_new:Npn \@@_verb_processor_iterate:nnn #1 #2 #3
+    {
+      \tl_if_blank:nTF {#3}
+        {
+          \@@_analyse_nesting:n {#1}
+          \@@_verb_processor_output:n {#1}
+        }
+        {
+          \@@_if_nested:TF
+            {
+              \@@_nesting_decr:
+              \@@_verb_processor_output:x
+                { \exp_not:n {#1} \c_@@_end_env_tl \exp_not:n {#2} }
+            }
+            {
+              \tl_if_blank:nF {#1}
+                { \@@_verb_processor_output:n {#1} }
+              \cs_set_protected:Npx \@@_ret:w
+                {
+                  \@@_env_end_function:
+                  \bool_lazy_or:nnF
+                    { \tl_if_blank_p:n {#2} }
+                    { \str_if_eq_p:ee {#2} { \c_percent_str } }
+                    {
+                      \str_if_eq:VnF \c_@@_hidden_space_str {#2}
+                        { \msg_warning:nnn { scontents } { rescanning-text } {#2} }
+                      \@@_rescan_tokens:n {#2}
+                    }
+                }
+              \char_set_active_eq:NN ^^M \@@_ret:w
+            }
+        }
+      ^^M
+    }
+  \cs_new:Npn \@@_env_end_function:
+    {
+      \@@_format_case:nnn
+        { \exp_not:N \end { \if_false: } \fi: }
+        { \exp_after:wN \exp_not:N \cs:w end }
+        { \exp_after:wN \exp_not:N \cs:w stop }
+      \tl_use:N \l_@@_env_name_tl
+      \@@_format_case:nnn
+        { \if_false: { \fi: } }
+        { \cs_end: }
+        { \cs_end: }
+    }
   \cs_new_protected:Npn \@@_file_write_stop:N #1
     {
       \bool_if:NT \l_@@_writing_bool
@@ -2952,7 +3016,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
         \@@_tl_if_head_is_q_mark:nTF {#2}
           { \@@_use_none_delimit_by_q_stop:w }
           {
-            \str_if_eq:eeT {#2} { scontents }
+            \str_if_eq:VnT \l_@@_env_name_tl {#2}
               { \@@_nesting_incr: }
             \@@_analyse_nesting_latex:w
           }
@@ -2981,14 +3045,23 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
       }
       { \@@_analyse_nesting_generic:w #2 \q_@@_stop }
   }
-\cs_new_protected:Npx \@@_analyse_nesting_generic:nn #1 #2
+\cs_new_protected:Npn \@@_analyse_nesting_generic:nn #1 #2
   {
-    \cs_set_protected:Npn \exp_not:N \@@_analyse_nesting_generic:w ##1
-      \c_backslash_str #1 scontents ##2 \exp_not:N \q_@@_stop
-      { \exp_not:N \@@_analyse_nesting_generic_process:nn {##1} {##2} }
-    \exp_not:N \@@_analyse_nesting_generic:w #2
-      \c_backslash_str #1 scontents
-        \exp_not:N \q_@@_mark \exp_not:N \q_@@_stop
+    \@@_define_generic_nesting_function:n {#1}
+    \use:x
+      {
+        \exp_not:N \@@_analyse_nesting_generic:w #2
+          \c_backslash_str #1 \tl_use:N \l_@@_env_name_tl
+            \exp_not:N \q_@@_mark \exp_not:N \q_@@_stop
+      }
+  }
+\cs_new_protected:Npn \@@_define_generic_nesting_function:n #1
+  {
+    \use:x
+      {
+        \cs_set_protected:Npn \exp_not:N \@@_analyse_nesting_generic:w ####1
+          \c_backslash_str #1 \tl_use:N \l_@@_env_name_tl ####2 \exp_not:N \q_@@_stop
+      }   { \@@_analyse_nesting_generic_process:nn {##1} {##2} }
   }
 %</core>
 %<*loader>
@@ -3491,7 +3564,6 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \end{macro}
 %
 % \subsection{The command \cs{countsc}}
-%
 %
 % \begin{macro}{\countsc}
 %   User command §\countsc§ to count number of contents stored in |seq|.

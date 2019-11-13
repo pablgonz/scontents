@@ -19,12 +19,14 @@ Leaving:
 \hello :D
 \endscontents
 
-\scontents[store-env=nest]
+\newenvsc{nest}{scnest}
+
+\scnest
 \def\nested{A}
-\scontents[store-env=nest]
+\scnest
 \def\nested{B}
-\endscontents
-\endscontents
+\endscnest
+\endscnest
 
 \Scontents*{\abcde}
 \Scontents*|\fghij|

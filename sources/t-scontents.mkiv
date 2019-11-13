@@ -62,7 +62,7 @@
   {
     \c_backslash_str
     stop
-      scontents
+      \exp_not:N \l__scontents_env_name_tl
   }
 \file_input:n { scontents-code.tex }
 \cs_new:Npn \__scontents_format_case:nnn #1 #2 #3
@@ -145,16 +145,26 @@
 \ExplSyntaxOn
 \char_set_catcode:nn { `\@ } { \l__scontents_tmpa_int }
 \__scontents_compat_restore:
-\cs_new_protected:Npn \startscontents
+\NewDocumentCommand { \newenvsc } { m m O{} }
   {
-    \group_begin:
-    \__scontents_scontents_env_begin:
+    \cs_if_exist:cTF { start #2 }
+      { \msg_error:nnn { scontents } { env-already-exists } {#2} }
+      { \__scontents_scontents_setenv:nnn {#2} {#1} {#3} }
   }
-\cs_new_protected:Npn \stopscontents
+\cs_new_protected:Npn \__scontents_env_define:nnn #1 #2 #3
   {
-    \__scontents_scontents_env_end:
-    \group_end:
+    \cs_new_protected:cpn { start #1 }
+      {
+        \group_begin:
+          #2
+      }
+    \cs_new_protected:cpn { stop #1 }
+      {
+          #3
+        \group_end:
+      }
   }
+\newenvsc{contents}{scontents}[]
 \NewDocumentCommand \__scontents_grab_optional:w { r[] }
   { \__scontents_grab_optional:n {#1} }
 \cs_new_protected:Npn \__scontents_analyse_nesting_format:n
