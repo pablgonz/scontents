@@ -2918,7 +2918,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
           }
         \tl_clear:N \l_@@_file_tl
         \seq_map_function:NN \l_char_special_seq \char_set_catcode_other:N
-        \int_step_function:nnN { 128 } { 255 } \char_set_catcode_letter:n
+        \int_step_function:nnnN { 128 } { 1 } { 255 } \char_set_catcode_letter:n
         \cs_set_protected:Npx \@@_ret:w ##1 ^^M
           {
             \exp_not:N \@@_verb_processor_iterate:w
