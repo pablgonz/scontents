@@ -288,7 +288,6 @@
       { \mymarg[type=tt,cbc=gray,ac=lightgray,cf=optcolor]{#4} }
     \par
     \group_end:
-    \MYSortIndex{Commands}{Commands ~ provide  ~ by ~ \pkglogo :}%
   }
 
 % \keyexamp{mmm}
@@ -400,7 +399,7 @@
     commentstyle  = \ttfamily\small\color{lightgray},%
 % Important words 1
     keywordstyle  = [1]{\color{gray}},%
-    keywords      = [1]{begin,end,Verbatim,env},%
+    keywords      = [1]{begin,end,Verbatim,env,myseq,false},%
 % Other words 2
     keywordstyle  = [2]{\color{blue!75}},%
     keywords      = [2]{usepackage,section,documentclass,input,usemodule,
@@ -412,7 +411,7 @@
 % Reserved words 4 (scontents pkg)
     keywordstyle  = [4]{\color{pkgcolor}},%
     keywords      = [4]{scontents,Scontents,getstored,typestored,verbatimsc,%
-                    endverbatimsc,countsc,meaningsc,foreachsc,macros
+                    endverbatimsc,countsc,meaningsc,foreachsc,macros,newenvsc,
                     endscontents,startscontents,stopscontents,scontents.tex},%
 % Reserved words 5 (in red)
     keywordstyle  = [5]{\color{red}},%
@@ -427,7 +426,7 @@
 % Reserved words 7 (OrangeRed)
     keywordstyle  = [7]{\color{OrangeRed}},%
     keywords      = [7]{DefineVerbatimEnvironment,lstnewenvironment,newminted,%
-                    newtheorem,newenvironment,VerbatimEnvironment},%
+                    newtheorem,newenvironment,VerbatimEnvironment,myenvstore},%
 % literate
     literate      =*{\{}{{{\color{gray}{\char`\{}}}}{1}
                     {\}}{{{\color{gray}{\char`\}}}}}{1}
@@ -976,6 +975,7 @@ This text is in the outer environment (after nested).
 % must add \texttt{\textcolor{optcolor}{-8bit}} at the command line,
 % otherwise you will get \hologo{TeX}-"TAB" (§^^I§) in \mymeta{file.ext}.
 %
+%
 % \subsection{The command \cs{Scontents}}
 % \label{sec:Scontents}
 %
@@ -1029,6 +1029,42 @@ This text is in the outer environment (after nested).
 % Sets if the \mymeta{stored content} is displayed or not at the time of
 % running the command. The content is extracted from the \mymeta{sequence}
 % in which it is stored.
+%
+% \subsection{The command \cs{newenvsc}}
+% \label{sec:newenvsc}
+% 
+% \newsavebox{\exaboxtmp}
+% \begin{lrbox}{\exaboxtmp}
+%    \small\ttfamily
+%    \textcolor{pkgcolor}{\textbackslash newenvsc}\mymarg[type=tt]{env name}\myoarg[type=tt]{initial keys}
+% \end{lrbox}
+%
+% \vspace*{-10pt}
+%
+% \begin{function}{\newenvsc}
+%   \begin{syntax}
+%    \usebox{\exaboxtmp}
+%   \end{syntax}
+% \end{function}
+%
+% The command \ics*{newenvsc} allows you to create \mymeta{new environments}
+% based on the same characteristics of the \myenv*{scontents} environment.
+% The values entered in \myoarg{initial keys} will be considered as the
+% default values for this new environment and the valid \mymeta{keys} are the
+% same as those of the \myenv*{scontents} environment. For example:
+%
+% \iffalse
+%<*example>
+% \fi
+\begin{examplecode}[frame=single]
+\newenvsc{myenvstore}[store-env=myseq,print-env=false]
+\end{examplecode}
+% \iffalse
+%</example>
+% \fi
+%
+% created the §myenvstore§ environment that stored the content in the §myseq§
+% sequence and will not display the content when it is executed.
 %
 % \subsection{The command \cs{getstored}}
 % \label{sec:getstored}
@@ -1138,7 +1174,7 @@ This text is in the outer environment (after nested).
 % a real \emph{verbatim} environment. The \mypkg{verbatim} package is not
 % compatible with the implementation of the \myenv*{verbatimsc} environment.
 %
-% \newpage
+%^^A \newpage
 %
 % The \myenv*{verbatimsc} environment can be customized in the following ways:
 %
@@ -1544,7 +1580,6 @@ This is from the verbatim environment:
 % \textattachfile[color=linkcolor,print=false]{scexamp5.ltx}{\faFile*[regular]}.
 % \lstinputlisting[language=scontents-doc,numbers=left]{scexamp5.ltx}
 %
-% \subsection{Customization of \texttt{verbatimsc}}
 %
 % \subsubsection*{Example 6}
 %
@@ -1552,6 +1587,37 @@ This is from the verbatim environment:
 %<*example>
 % \fi
 \begin{scontents}[write-out=scexamp6.ltx]
+% arara: pdflatex
+% arara: clean: { extensions: [ aux, log] }
+\documentclass[10pt]{article}
+\usepackage{scontents}
+\newenvsc{forshort}[store-env=forshort,print-env=false]
+\begin{document}
+
+Something in the whole course.
+
+\begin{forshort}
+    Just a summary...
+\end{forshort}
+
+\end{document}
+\end{scontents}
+% \iffalse
+%</example>
+% \fi
+%
+% Adapted from \href{https://tex.stackexchange.com/q/509595/7832}{Environment hiding its content}
+% \textattachfile[color=linkcolor,print=false]{scexamp6.ltx}{\faFile*[regular]}.
+% \lstinputlisting[language=scontents-doc,numbers=left]{scexamp6.ltx}
+%
+% \subsection{Customization of \texttt{verbatimsc}}
+%
+% \subsubsection*{Example 7}
+%
+% \iffalse
+%<*example>
+% \fi
+\begin{scontents}[write-out=scexamp7.ltx]
 \documentclass{article}
 % arara: pdflatex
 % arara: clean: { extensions: [ aux, log] }
@@ -1609,15 +1675,15 @@ Prove new \Verb*{ fancyvrb whit braces } and environment \verb+Verbatim*+
 %
 % Customization of \myenv*{verbatimsc} using the \mypkg{fancyvrb} and
 % \mypkg{tcolorbox} package
-% \textattachfile[color=linkcolor,print=false]{scexamp6.ltx}{\faFile*[regular]}.
-% \lstinputlisting[language=scontents-doc,numbers=left]{scexamp6.ltx}
+% \textattachfile[color=linkcolor,print=false]{scexamp7.ltx}{\faFile*[regular]}.
+% \lstinputlisting[language=scontents-doc,numbers=left]{scexamp7.ltx}
 %
-% \subsubsection*{Example 7}
+% \subsubsection*{Example 8}
 %
 % \iffalse
 %<*example>
 % \fi
-\begin{scontents}[write-out=scexamp7.ltx]
+\begin{scontents}[write-out=scexamp8.ltx]
 % arara: pdflatex
 % arara: clean: { extensions: [ aux, log] }
 \documentclass{article}
@@ -1675,15 +1741,15 @@ and more.+
 % \fi
 %
 % Customization of \myenv*{verbatimsc} using the \mypkg{listings} package
-% \textattachfile[color=linkcolor,print=false]{scexamp7.ltx}{\faFile*[regular]}.
-% \lstinputlisting[language=scontents-doc,numbers=left]{scexamp7.ltx}
+% \textattachfile[color=linkcolor,print=false]{scexamp8.ltx}{\faFile*[regular]}.
+% \lstinputlisting[language=scontents-doc,numbers=left]{scexamp8.ltx}
 %
-% \subsubsection*{Example 8}
+% \subsubsection*{Example 9}
 %
 % \iffalse
 %<*example>
 % \fi
-\begin{scontents}[write-out=scexamp8.ltx]
+\begin{scontents}[write-out=scexamp9.ltx]
 % arara: xelatex : {shell: true, options: [-8bit]}
 % arara: clean: { extensions: [ aux, log] }
 \documentclass{article}
@@ -1734,8 +1800,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \fi
 %
 % Customization of \myenv*{verbatimsc} using the \mypkg{minted} package
-% \textattachfile[color=linkcolor,print=false]{scexamp8.ltx}{\faFile*[regular]}.
-% \lstinputlisting[language=scontents-doc,numbers=left]{scexamp8.ltx}
+% \textattachfile[color=linkcolor,print=false]{scexamp9.ltx}{\faFile*[regular]}.
+% \lstinputlisting[language=scontents-doc,numbers=left]{scexamp9.ltx}
 %
 % \newpage
 %
@@ -1755,6 +1821,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \begin{description}[font=\small\sffamily,wide=0pt,style=multiline,leftmargin=\descrwidth,nosep,noitemsep]
 % \item [\fileversion{} (dev), \filedate]
 %    \begin{itemize}
+%    \item Add |\newenvsc| command.
 %    \item Fix nested environment in \hologo{plainTeX} and \hologo{ConTeXt}.
 %    \item Modified default value in |\getstored|.
 %    \item Add |overwrite| key to reduce |I/O| operations.
@@ -2610,11 +2677,11 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % \subsection{Construction of environment \env{scontents}}
 %
-% \subsection{The \cs{newenvsc} command}
-%
 % In order to be able to define environments that behave similarly to
 % \myenv{scontents}, we define a generic environment and make all other
 % environment as wappers around that one.
+%
+% \subsubsection{The command \cs{newenvsc}}
 %
 % \begin{macro}{\newenvsc,\l_@@_env_name_tl,\@@_scontents_setenv:nn}
 %   The \cs{newenvsc} command defines two functions \cs[no-index]{@@_\#1_env_begin:}
@@ -2634,7 +2701,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
       }
     \cs_new_protected:cpn { @@_#1_env_end: }
       { \@@_env_generic_end: }
-    \exp_args:Nooo % http://nooooooooooooooo.com
+    \exp_args:Nooo % http://nooooooooooooooo.com :) jeje
     \@@_env_define:nnn { \tl_to_str:n {#1} }
       { \cs:w @@_#1_env_begin: \cs_end: }
       { \cs:w @@_#1_env_end: \cs_end: }
@@ -2667,6 +2734,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
+% \subsubsection{Generic definition of the environment}
+%
 % \begin{macro}{
 %     \@@_env_generic_begin:,
 %     \@@_env_generic_begin:,
@@ -2685,6 +2754,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
   }
 %    \end{macrocode}
 % \end{macro}
+%
+% \subsubsection{Definition of the environment \env{scontents}}
 %
 % \begin{macro}{
 %     scontents,
