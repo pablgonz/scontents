@@ -426,7 +426,10 @@
                     { \str_if_eq_p:ee {#2} { \c_percent_str } }
                     {
                       \str_if_eq:VnF \c__scontents_hidden_space_str {#2}
-                        { \msg_warning:nnn { scontents } { rescanning-text } {#2} }
+                        {
+                          \msg_warning:nnnn { scontents } { rescanning-text }
+                            {#2} { \tl_use:N \l__scontents_env_name_tl }
+                        }
                       \__scontents_rescan_tokens:n {#2}
                     }
                 }
@@ -767,7 +770,7 @@
     \\ \\
     #2
   }
-\msg_new:nnn { scontents } { env-already-defined }
+\msg_new:nnnn { scontents } { env-already-defined }
   { Environment~'#1'~already~defined! }
   {
     You~have~used~\newenvsc
@@ -783,9 +786,9 @@
 \msg_new:nnn { scontents } { writing-file }
   { Writing~file~'#1'. }
 \msg_new:nnn { scontents } { rescanning-text }
-  { Rescanning~text~'#1'~after~\c_backslash_str end{scontents}~\msg_line_context:.}
+  { Rescanning~text~'#1'~after~\c_backslash_str end{#2}~\msg_line_context:.}
 \msg_new:nnn { scontents } { multiple-begin }
-  { Multiple~\c_backslash_str begin{scontents}~\msg_line_context:.}
+  { Multiple~\c_backslash_str begin{ \l__scontents_env_name_tl }~\msg_line_context:.}
 \msg_new:nnn { scontents } { undefined-storage }
   { Storage~named~'#1'~is~not~defined. }
 \msg_new:nnn { scontents } { index-out-of-range }
