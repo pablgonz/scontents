@@ -976,6 +976,42 @@ This text is in the outer environment (after nested).
 % otherwise you will get \hologo{TeX}-"TAB" (§^^I§) in \mymeta{file.ext}.
 %
 %
+% \subsection{The command \cs{newenvsc}}
+% \label{sec:newenvsc}
+% 
+% \newsavebox{\exaboxtmp}
+% \begin{lrbox}{\exaboxtmp}
+%    \small\ttfamily
+%    \textcolor{pkgcolor}{\textbackslash newenvsc}\mymarg[type=tt]{env name}\myoarg[type=tt]{initial keys}
+% \end{lrbox}
+%
+% \vspace*{-10pt}
+%
+% \begin{function}{\newenvsc}
+%   \begin{syntax}
+%    \usebox{\exaboxtmp}
+%   \end{syntax}
+% \end{function}
+%
+% The command \ics*{newenvsc} allows you to create \mymeta{new environments}
+% based on the same characteristics of the \myenv*{scontents} environment.
+% The values entered in \myoarg{initial keys} will be considered as the
+% default values for this new environment and the valid \mymeta{keys} are the
+% same as those of the \myenv*{scontents} environment. For example:
+%
+% \iffalse
+%<*example>
+% \fi
+\begin{examplecode}[frame=single]
+\newenvsc{myenvstore}[store-env=myseq,print-env=false]
+\end{examplecode}
+% \iffalse
+%</example>
+% \fi
+%
+% created the §myenvstore§ environment that stored the content in the §myseq§
+% sequence and will not display the content when it is executed.
+%
 % \subsection{The command \cs{Scontents}}
 % \label{sec:Scontents}
 %
@@ -1029,42 +1065,6 @@ This text is in the outer environment (after nested).
 % Sets if the \mymeta{stored content} is displayed or not at the time of
 % running the command. The content is extracted from the \mymeta{sequence}
 % in which it is stored.
-%
-% \subsection{The command \cs{newenvsc}}
-% \label{sec:newenvsc}
-% 
-% \newsavebox{\exaboxtmp}
-% \begin{lrbox}{\exaboxtmp}
-%    \small\ttfamily
-%    \textcolor{pkgcolor}{\textbackslash newenvsc}\mymarg[type=tt]{env name}\myoarg[type=tt]{initial keys}
-% \end{lrbox}
-%
-% \vspace*{-10pt}
-%
-% \begin{function}{\newenvsc}
-%   \begin{syntax}
-%    \usebox{\exaboxtmp}
-%   \end{syntax}
-% \end{function}
-%
-% The command \ics*{newenvsc} allows you to create \mymeta{new environments}
-% based on the same characteristics of the \myenv*{scontents} environment.
-% The values entered in \myoarg{initial keys} will be considered as the
-% default values for this new environment and the valid \mymeta{keys} are the
-% same as those of the \myenv*{scontents} environment. For example:
-%
-% \iffalse
-%<*example>
-% \fi
-\begin{examplecode}[frame=single]
-\newenvsc{myenvstore}[store-env=myseq,print-env=false]
-\end{examplecode}
-% \iffalse
-%</example>
-% \fi
-%
-% created the §myenvstore§ environment that stored the content in the §myseq§
-% sequence and will not display the content when it is executed.
 %
 % \subsection{The command \cs{getstored}}
 % \label{sec:getstored}
