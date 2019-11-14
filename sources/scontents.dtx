@@ -2712,7 +2712,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
   {
 %<latex|plain>    \cs_if_exist:cTF { #1 }
 %<context>    \cs_if_exist:cTF { start #1 }
-      { \msg_error:nnn { scontents } { env-already-exists } {#1} }
+      { \msg_error:nnn { scontents } { env-already-defined } {#1} }
       { \@@_scontents_setenv:nn {#1} {#2} }
   }
 \cs_new_protected:Npn \@@_env_define:nnn #1 #2 #3
@@ -3678,6 +3678,13 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
     Junk~characters~#1~\msg_line_context: :
     \\ \\
     #2
+  }
+\msg_new:nnn { scontents } { env-already-defined }
+  { Environment~'#1'~already~defined! }
+  {
+    You~have~used~\newenvsc
+    with~an~environment~that~already~has~a~definition. \\ \\
+    The~existing~definition~of~'#1'~will~not~be~altered.
   }
 \msg_new:nnn { scontents } { empty-stored-content }
   { Empty~value~for~key~'getstored'~\msg_line_context:. }

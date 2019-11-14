@@ -767,6 +767,13 @@
     \\ \\
     #2
   }
+\msg_new:nnn { scontents } { env-already-defined }
+  { Environment~'#1'~already~defined! }
+  {
+    You~have~used~\newenvsc
+    with~an~environment~that~already~has~a~definition. \\ \\
+    The~existing~definition~of~'#1'~will~not~be~altered.
+  }
 \msg_new:nnn { scontents } { empty-stored-content }
   { Empty~value~for~key~'getstored'~\msg_line_context:. }
 \msg_new:nnn { scontents } { empty-variable }
