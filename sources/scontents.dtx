@@ -79,6 +79,7 @@
 \usepackage{adjustbox,multicol,listings,accsupp,titletoc}
 \usepackage{scontents} % main
 \usepackage[contents]{colordoc}
+% \show\docCodelineNo
 \def\textnew#1{\color{color-def}#1\/}
 \def\AltMacroFont{\fontencoding\encodingdefault
                   \fontfamily\ttdefault
@@ -1946,13 +1947,13 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
   {scontents} {\ScontentsFileDate} {\ScontentsFileVersion} {\ScontentsFileDescription}
 \@ifpackageloaded { verbatim }
   {
-    \iow_term:n
+    \msg_set:nnn { scontents } { unsupported-verbatim }
       {
-        The~implementation~of~the~'verbatimsc'~environment~\\
-        used~by~\tl_to_str:n{\typestored}~is~not~compatible~with~package\\
-        'verbatim'.~Review~the~documentation~and~redefine~\\
-        the~'verbatimsc'~environment.
+        The~implementation~of~the~'verbatimsc'~environment~used~by~
+        \iow_char:N \\typestored~is~not~compatible~with~package~'verbatim'.~
+        Review~the~documentation~and~redefine~the~'verbatimsc'~environment.
       }
+    \msg_warning:nn { scontents } { unsupported-verbatim }
   } { }
 %</latex>
 %    \end{macrocode}
