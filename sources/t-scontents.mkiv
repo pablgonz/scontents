@@ -126,7 +126,7 @@
 \cs_new:Npn \__scontents_parse_version_auxii:w #1-#2-#3#4#5 \q_mark
   { \tl_if_blank:nF {#2} {#1} #2 #3 #4 }
 \__scontents_compat_redefine:Npn \ProvidesExplPackage #1 #2 #3 #4
-  { \__scontents_provides_aux:nn {#1} { #2 \ifx\relax#3\relax\else v#3\space\fi #4 } }
+  { \__scontents_provides_aux:nn {#1} { #2 \tl_if_empty:nF {#3} {#3~} #4 } }
 \cs_new_protected:Npn \__scontents_provides_aux:nn #1 #2
   {
     \tl_gset:cx { ver@#1.sty } {#2}

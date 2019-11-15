@@ -35,13 +35,13 @@
   {scontents} {\ScontentsFileDate} {\ScontentsFileVersion} {\ScontentsFileDescription}
 \@ifpackageloaded { verbatim }
   {
-    \iow_term:n
+    \msg_set:nnn { scontents } { unsupported-verbatim }
       {
-        The~implementation~of~the~'verbatimsc'~environment~\\
-        used~by~\tl_to_str:n{\typestored}~is~not~compatible~with~package\\
-        'verbatim'.~Review~the~documentation~and~redefine~\\
-        the~'verbatimsc'~environment.
+        The~implementation~of~the~'verbatimsc'~environment~used~by~
+        \iow_char:N \\typestored~is~not~compatible~with~package~'verbatim'.~
+        Review~the~documentation~and~redefine~the~'verbatimsc'~environment.
       }
+    \msg_warning:nn { scontents } { unsupported-verbatim }
   } { }
 \tl_new:N \g__scontents_end_verbatimsc_tl
 \tl_gset_rescan:Nnn
