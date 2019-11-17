@@ -104,6 +104,15 @@
 |catcode`| 12|gdef|sxmacro@code#1%    \end{macrocode*}[|liii@xmacro@code[#1]|end[macrocode*]]
 |endgroup
 
+% Other patch for colordoc.sty to work xelatex
+\makeatletter
+\def\@moddecr#1{%
+    \global\advance#1\m@ne
+    \reset@color
+    \ifnum#1>\z@\else
+        \global#1\@colorlevels\fi}
+\makeatother
+
 \EnableCrossrefs
 % \PageIndex % \CodelineIndex undoes what \PageIndex does
 % \CodelineIndex tries to open another write stream for the index file. We don't
@@ -391,7 +400,7 @@
     texcsstyle    = *,%
     escapechar    = Ç,%
     extendedchars = true,%
-    %keepspaces    = true,%
+    keepspaces    = true,%
     stringstyle   = {\color{red}},%
     basicstyle    = \ttfamily\small,%
     alsoletter    = {-,@,.},%
@@ -979,7 +988,7 @@ This text is in the outer environment (after nested).
 %
 % \subsection{The command \cs{newenvsc}}
 % \label{sec:newenvsc}
-% 
+%
 % \newsavebox{\exaboxtmp}
 % \begin{lrbox}{\exaboxtmp}
 %    \small\ttfamily
@@ -1820,7 +1829,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \settowidth{\descrwidth}{\textsf{v1.0, (ctan), 2019-07-30} }
 %
 % \begin{description}[font=\small\sffamily,wide=0pt,style=multiline,leftmargin=\descrwidth,nosep,noitemsep]
-% \item [\fileversion{} (dev), \filedate]
+% \item [\fileversion{} (ctan), \filedate]
 %    \begin{itemize}
 %    \item Add |\newenvsc| command.
 %    \item Fix nested environment in \hologo{plainTeX} and \hologo{ConTeXt}.
@@ -1928,8 +1937,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % Now we define some common macros to hold the package date and version:
 %    \begin{macrocode}
-%<loader>\def\ScontentsFileDate{2019-12-25}%
-%<core>\def\ScontentsCoreFileDate{2019-12-25}%
+%<loader>\def\ScontentsFileDate{2019-11-18}%
+%<core>\def\ScontentsCoreFileDate{2019-11-18}%
 %<*loader>
 \def\ScontentsFileVersion{1.8}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
