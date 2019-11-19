@@ -34,7 +34,6 @@
 \usepackage[top=0.5in,bottom=0.3in,left=2in,right=0.7in,footskip=0.2in,headheight=1cm,headsep=0.27cm]{geometry}
 \usepackage[osf,mono=false,scale=0.95,llscaled=0.95]{libertine}
 \setmonofont[
-    %Ligatures      = TeX,
     Numbers        = OldStyle,
     Scale          = 0.80,
     UprightFont    = *-Regular,
@@ -103,15 +102,6 @@
 |gdef|xmacro@code#1%    \end{macrocode}[|liii@xmacro@code[#1]|end[macrocode]]
 |catcode`| 12|gdef|sxmacro@code#1%    \end{macrocode*}[|liii@xmacro@code[#1]|end[macrocode*]]
 |endgroup
-
-% Other patch for colordoc.sty to work xelatex
-\makeatletter
-\def\@moddecr#1{%
-    \global\advance#1\m@ne
-    \reset@color
-    \ifnum#1>\z@\else
-        \global#1\@colorlevels\fi}
-\makeatother
 
 \EnableCrossrefs
 % \PageIndex % \CodelineIndex undoes what \PageIndex does
@@ -1006,8 +996,8 @@ This text is in the outer environment (after nested).
 % The command \ics*{newenvsc} allows you to create \mymeta{new environments}
 % based on the same characteristics of the \myenv*{scontents} environment.
 % The values entered in \myoarg{initial keys} will be considered as the
-% default values for this new environment and the valid \mymeta{keys} are the
-% same as those of the \myenv*{scontents} environment. For example:
+% default values for this new environment and the valid \mymeta{keys} are
+% \mykey{store-env} and \mykey{print-env}. For example:
 %
 % \iffalse
 %<*example>
@@ -1476,7 +1466,7 @@ seventies that the \NSA\ has known that for 40 years.\par
 \end{tikzpicture}
 
 \begin{tikzpicture}
-\getstored[3]{tikz}
+\getstored{tikz}
 \end{tikzpicture}
 
 \begin{scontents}[store-env=buffer]
@@ -1537,11 +1527,11 @@ Something for \verb|other|.
 \textbf{Let's print them}
 
 This is first stored in main: \getstored[1]{main}\par
-This is second stored in main: \getstored[2]{main}\par
-This is stored in other: \getstored[1]{other}
+This is second stored in main: \getstored{main}\par
+This is stored in other: \getstored{other}
 
 \textbf{Print all of stored in main}\par
-\foreachsc[sep={\\[10pt]}]{a}
+\foreachsc[sep={\\[10pt]}]{main}
 \end{document}
 \end{scontents}
 % \iffalse
@@ -1668,7 +1658,7 @@ Prove new \Verb*{ fancyvrb whit braces } and environment \verb+Verbatim*+
 
 \section{Test \texttt{\textbackslash getstored}}
 \getstored[1]{contents}\par
-\getstored[2]{contents}
+\getstored{contents}
 
 \section{Test \texttt{\textbackslash meaningsc}}
 \meaningsc[1]{contents}\par
@@ -1738,7 +1728,7 @@ Prove \lstinline[basicstyle=\ttfamily]| lstinline | and environment \verb+Verbat
 and more.+
 
 \section{Test \texttt{\textbackslash getstored}}
-\getstored[2]{contents}\par
+\getstored{contents}\par
 \getstored[1]{contents}
 
 \section{Test \texttt{\textbackslash typestored}}
@@ -1798,7 +1788,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 
 \section{Test \texttt{\textbackslash getstored}}
 \getstored[1]{contents}\par
-\getstored[2]{contents}
+\getstored{contents}
 
 \section{Test \texttt{\textbackslash typestored}}
 \typestored[1]{contents}
