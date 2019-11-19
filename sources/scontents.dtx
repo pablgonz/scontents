@@ -3372,8 +3372,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
         \@@_foreach_add_body:n
       \tl_gset:Nx \g_@@_temp_tl
         {
-          \seq_use:Nn \l_@@_foreach_print_seq
-            { \tl_use:N \l_@@_foreach_sep_tl }
+          \exp_args:NNV \seq_use:Nn
+            \l_@@_foreach_print_seq \l_@@_foreach_sep_tl
         }
     \group_end:
     \exp_after:wN \tl_gclear:N
