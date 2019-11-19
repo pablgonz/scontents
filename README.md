@@ -21,8 +21,12 @@ The package loads and depends on updated versions of:
 The package `scontents` is present in `TeXLive` and `MiKTeX`, use the
 package manager to install.
 
-For manual installation, download [scontents.zip](https://github.com/pablgonz/scontents/releases/download/v1.7/scontents-1.8.zip) and unzip it, then move
-the files to appropriate locations:
+For manual installation, download [scontents.zip](https://github.com/pablgonz/scontents/releases/download/v1.7/scontents-1.8.zip) and unzip it,
+then run:
+```
+$ pdftex scontents.ins
+```
+and move all files to appropriate locations:
 ```
   scontents.tex      -> TDS:tex/generic/scontents/
   scontents-code.tex -> TDS:tex/generic/scontents/

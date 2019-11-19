@@ -46,7 +46,7 @@ docfiles = {"sources/scontents.pdf","sources/scontents.dtx","sources/scontents.i
 textfiles= {"sources/README.md"}
 
 -- Compile documentation with xelatex to reduce pdf size
-typesetexe = "xelatex"
+typesetexe = "lualatex"
 typesetopts= "-8bit"
 packtdszip   = false
 
