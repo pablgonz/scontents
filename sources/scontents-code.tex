@@ -313,7 +313,8 @@
 \cs_new_protected:Npn \__scontents_env_generic_end:
   {
     \__scontents_stop_environment:
-    \__scontents_finish_storing:NN \l__scontents_macro_tmp_tl \l__scontents_name_seq_env_tl
+    \__scontents_finish_storing:NNN \l__scontents_macro_tmp_tl
+      \l__scontents_name_seq_env_tl \l__scontents_print_env_bool
   }
 \cs_new_protected:Npn \__scontents_grab_optional:n #1
   {
@@ -565,20 +566,14 @@
             ####2 \exp_not:N \q__scontents_stop
       }   { \__scontents_analyse_nesting_generic_process:nn {##1} {##2} }
   }
-\cs_new_protected:Npn \__scontents_finish_storing:NN #1 #2
+\cs_new_protected:Npn \__scontents_finish_storing:NNN #1 #2 #3
   {
     \bool_if:NT \l__scontents_storing_bool
       {
         \bool_if:NF \l__scontents_forced_eol_bool
-          {
-            \tl_put_right:Nx #1 %\l__scontents_macro_tmp_tl
-              { \c__scontents_hidden_space_str }
-          }
-        \__scontents_store_to_seq:NN #1 %\l__scontents_macro_tmp_tl\l__scontents_name_seq_env_tl
-          #2 % \l__scontents_name_seq_env_tl
-        \bool_if:NT \l__scontents_print_env_bool
-          % { \__scontents_lastfrom_seq:n \l__scontents_name_seq_env_tl }
-          { \__scontents_lastfrom_seq:n #2 }
+          { \tl_put_right:Nx #1 { \c__scontents_hidden_space_str } }
+        \__scontents_store_to_seq:NN #1 #2
+        \bool_if:NT #3 { \__scontents_lastfrom_seq:n #2 }
       }
   }
 \cs_if_exist:NF \dospecials
@@ -609,7 +604,8 @@
   }
 \cs_new_protected:Npn \__scontents_Scontents_finish:
   {
-      \__scontents_finish_storing:NN \l__scontents_temp_tl \l__scontents_name_seq_cmd_tl
+      \__scontents_finish_storing:NNN \l__scontents_temp_tl
+        \l__scontents_name_seq_cmd_tl \l__scontents_print_cmd_bool
     \group_end:
   }
 \cs_new_protected:Npn \__scontents_getstored_internal:nn #1 #2
