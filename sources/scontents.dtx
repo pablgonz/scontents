@@ -2752,7 +2752,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 \cs_new_protected:Npn \@@_env_generic_end:
   {
     \@@_stop_environment:
-    \@@_atend_environment:
+    \@@_finish_storing:NN \l_@@_macro_tmp_tl \l_@@_name_seq_env_tl
   }
 %    \end{macrocode}
 % \end{macro}
@@ -3157,24 +3157,19 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % \subsubsection{Recording of the content in the sequence}
 %
-% \begin{macro}{\@@_atend_environment:}
+% \begin{macro}{\@@_finish_storing:NN}
 %   Finishes the environment by optionally calling \cs{@@_store_to_seq:}
 %   and then clearing the temporary token list.
 %
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_atend_environment:
+\cs_new_protected:Npn \@@_finish_storing:NN #1 #2
   {
     \bool_if:NT \l_@@_storing_bool
       {
         \bool_if:NF \l_@@_forced_eol_bool
-          {
-            \tl_put_right:Nx \l_@@_macro_tmp_tl
-              { \c_@@_hidden_space_str }
-          }
-        \@@_store_to_seq:NN \l_@@_macro_tmp_tl
-          \l_@@_name_seq_env_tl
-        \bool_if:NT \l_@@_print_env_bool
-          { \@@_lastfrom_seq:n \l_@@_name_seq_env_tl }
+          { \tl_put_right:Nx #1 { \c_@@_hidden_space_str } }
+        \@@_store_to_seq:NN #1 #2
+        \bool_if:NT \l_@@_print_env_bool { \@@_lastfrom_seq:n #2 }
       }
   }
 %</core>
@@ -3308,11 +3303,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
   }
 \cs_new_protected:Npn \@@_Scontents_finish:
   {
-      \bool_if:NF \l_@@_forced_eol_bool
-        { \tl_put_right:Nx \l_@@_temp_tl { \c_@@_hidden_space_str } }
-      \@@_store_to_seq:NN \l_@@_temp_tl \l_@@_name_seq_cmd_tl
-      \bool_if:NT \l_@@_print_cmd_bool
-        { \@@_lastfrom_seq:n \l_@@_name_seq_cmd_tl }
+      \@@_finish_storing:NN \l_@@_temp_tl \l_@@_name_seq_cmd_tl
     \group_end:
   }
 %    \end{macrocode}
