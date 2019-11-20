@@ -2661,6 +2661,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
     \group_insert_after:N \tl_gclear:N
     \group_insert_after:N \g_@@_temp_tl
   }
+\cs_generate_variant:Nn \@@_lastfrom_seq:n { V }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -3170,7 +3171,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
         \bool_if:NF \l_@@_forced_eol_bool
           { \tl_put_right:Nx #1 { \c_@@_hidden_space_str } }
         \@@_store_to_seq:NN #1 #2
-        \bool_if:NT #3 { \@@_lastfrom_seq:n #2 }
+        \bool_if:NT #3 { \@@_lastfrom_seq:V #2 }
       }
   }
 %</core>

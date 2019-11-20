@@ -283,6 +283,7 @@
     \group_insert_after:N \tl_gclear:N
     \group_insert_after:N \g__scontents_temp_tl
   }
+\cs_generate_variant:Nn \__scontents_lastfrom_seq:n { V }
 \cs_new_protected:Npn \__scontents_store_to_seq:NN #1#2
   {
     \tl_log:N #1
@@ -573,7 +574,7 @@
         \bool_if:NF \l__scontents_forced_eol_bool
           { \tl_put_right:Nx #1 { \c__scontents_hidden_space_str } }
         \__scontents_store_to_seq:NN #1 #2
-        \bool_if:NT #3 { \__scontents_lastfrom_seq:n #2 }
+        \bool_if:NT #3 { \__scontents_lastfrom_seq:V #2 }
       }
   }
 \cs_if_exist:NF \dospecials
