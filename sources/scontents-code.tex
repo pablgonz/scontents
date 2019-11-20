@@ -581,8 +581,39 @@
     \cs_new:Npn \dospecials
       { \seq_map_function:NN \l_char_special_seq \do }
   }
+\int_new:N \l__scontents_save_sf_int
+\dim_new:N \l__scontents_save_skip_dim
+\cs_new_protected:Npn \__scontents_bsphack:
+  {
+    \scan_stop:
+    \mode_if_norizontal:T
+      {
+        \dim_set_eq:NN \l__scontents_save_skip_dim \tex_lastskip:D
+        \int_set_eq:NN \l__scontents_save_sf_int \tex_spacefactor:D
+      }
+  }
+\cs_new_protected:Npn \__scontents_esphack:
+  {
+    \scan_stop:
+    \mode_if_horizontal:T
+      {
+        \int_set_eq:NN \tex_spacefactor:D \l__scontents_save_sf_int
+        \dim_compare:nNnT { \l__scontents_save_skip_dim } > { \c_zero_dim }
+          {
+            \dim_compare:nNnT { \tex_lastskip:D } = { \c_zero_dim }
+              {
+                \nobreak
+                \skip_horizontal:n { \c_zero_skip }
+              }
+            \tex_ignorespaces:D
+          }
+      }
+  }
+\cs_gset_eq:NN \__scontents_bsphack: \@bsphack
+\cs_gset_eq:NN \__scontents_esphack: \@esphack
 \cs_new_protected:Npn \__scontents_Scontents_internal:nn #1 #2
   {
+    \__scontents_bsphack:
     \group_begin:
       \tl_if_novalue:nF {#2}
         { \keys_set:nn { scontents / Scontents } {#2} }
@@ -604,9 +635,13 @@
   }
 \cs_new_protected:Npn \__scontents_Scontents_finish:
   {
-      \__scontents_finish_storing:NNN \l__scontents_temp_tl
-        \l__scontents_name_seq_cmd_tl \l__scontents_print_cmd_bool
+        \__scontents_finish_storing:NNN \l__scontents_temp_tl
+          \l__scontents_name_seq_cmd_tl \l__scontents_print_cmd_bool
+      \use:x
+        {
     \group_end:
+    \bool_if:NF \l__scontents_print_cmd_bool { \__scontents_esphack: }
+        }
   }
 \cs_new_protected:Npn \__scontents_getstored_internal:nn #1 #2
   {

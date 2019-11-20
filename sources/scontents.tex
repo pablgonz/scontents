@@ -211,6 +211,8 @@
     \cs_new:Npn \dospecials
       { \seq_map_function:NN \l_char_special_seq \do }
   }
+\cs_gset_eq:NN \__scontents_bsphack: \@bsphack
+\cs_gset_eq:NN \__scontents_esphack: \@esphack
 \NewDocumentCommand { \Scontents }{ !s !O{} }
   { \__scontents_Scontents_internal:nn {#1} {#2} }
 \NewDocumentCommand { \__scontents_verb_arg:w } { +v }
