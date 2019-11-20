@@ -3246,6 +3246,48 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
+% \begin{macro}{\@@_bsphack:,\@@_esphack:}
+%   \pkg{xparse} also requires \LaTeX's §\dospecials§. In case it doesn't
+%   exist (at the time \pkg{scontents} is loaded) we define §\dospecials§
+%   to use the \cs{l_char_special_seq}.
+%    \begin{macrocode}
+%<*core>
+\int_new:N \l_@@_save_sf_int
+\dim_new:N \l_@@_save_skip_dim
+\cs_new_protected:Npn \@@_bsphack:
+  {
+    \scan_stop:
+    \mode_if_norizontal:T
+      {
+        \dim_set_eq:NN \l_@@_save_skip_dim \tex_lastskip:D
+        \int_set_eq:NN \l_@@_save_sf_int \tex_spacefactor:D
+      }
+  }
+\cs_new_protected:Npn \@@_esphack:
+  {
+    \scan_stop:
+    \mode_if_horizontal:T
+      {
+        \int_set_eq:NN \tex_spacefactor:D \l_@@_save_sf_int
+        \dim_compare:nNnT { \l_@@_save_skip_dim } > { \c_zero_dim }
+          {
+            \dim_compare:nNnT { \tex_lastskip:D } = { \c_zero_dim }
+              {
+                \nobreak
+                \skip_horizontal:n { \c_zero_skip }
+              }
+            \tex_ignorespaces:D
+          }
+      }
+  }
+%</core>
+%<latex>
+\cs_gset_eq:NN \@@_bsphack: \@bsphack
+\cs_gset_eq:NN \@@_esphack: \@esphack
+%<latex>
+%    \end{macrocode}
+% \end{macro}
+%
 % \subsection{The command \cs{Scontents}}
 %
 % User command to \mymeta{stored content}, adapted from
@@ -3277,6 +3319,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %<*core>
 \cs_new_protected:Npn \@@_Scontents_internal:nn #1 #2
   {
+    \@@_bsphack:
     \group_begin:
       \tl_if_novalue:nF {#2}
         { \keys_set:nn { scontents / Scontents } {#2} }
@@ -3304,9 +3347,13 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
   }
 \cs_new_protected:Npn \@@_Scontents_finish:
   {
-      \@@_finish_storing:NNN \l_@@_temp_tl
-        \l_@@_name_seq_cmd_tl \l_@@_print_cmd_bool
+        \@@_finish_storing:NNN \l_@@_temp_tl
+          \l_@@_name_seq_cmd_tl \l_@@_print_cmd_bool
+      \use:x
+        {
     \group_end:
+    \bool_if:NF \l_@@_print_cmd_bool { \@@_esphack: }
+        }
   }
 %    \end{macrocode}
 % \end{macro}
