@@ -29,6 +29,8 @@
 %% 
 \def\ScontentsCoreFileDate{2019-11-18}%
 \begingroup
+  \catcode32=10
+  \endlinechar=32
   \def\next{\endgroup}%
   \expandafter\ifx\csname PackageError\endcsname\relax
     \begingroup
@@ -50,17 +52,17 @@
           }%
         \endgroup
         \endinput
-      }
+      }%
   \else
     \ifx\ScontentsFileDate\ScontentsCoreFileDate
     \else
       \def\next
         {%
-          \PackageError{scontents}{Mismatched~scontents~files~detected}
+          \PackageError{scontents}{Mismatched scontents files detected}
             {%
-              You~have~attempted~to~load~scontents~with~mismatched~files:~
-              probably~you~have~one~or~more~files~'locally~installed'~which~
-              are~in~conflict.~Loading~of~scontents~will~abort.
+              You have attempted to load scontents with mismatched files:
+              probably you have one or more files 'locally installed' which
+              are in conflict. Loading of scontents will abort.
             }%
           \endgroup
           \endinput
