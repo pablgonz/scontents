@@ -47,7 +47,7 @@ textfiles= {"sources/README.md"}
 
 -- Compile documentation with xelatex to reduce pdf size
 typesetexe = "lualatex"
-typesetopts= "-8bit"
+-- typesetopts= "-8bit"
 packtdszip   = false
 
 excludefiles = { "scontents/scontents.sty","scontents/scontents-code.tex" }
