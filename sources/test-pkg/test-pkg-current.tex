@@ -636,4 +636,22 @@ This text is in the outermost environment (after nested).
 \getstored{nest}\par
 \getstored{innernest}
 
+% write-cmd and write-out
+\subsection{write-cmd}
+% write-out
+Text
+\Scontents*[write-out=one.ltx]{Something
+A \TeX \textbf{B} and tab ??? Z.}
+% write-cmd
+\Scontents*[store-cmd=writekey,overwrite,write-cmd=writekey1.tsc]{Something  \verb|B|.}
+\Scontents*[store-cmd=writekey,write-cmd=writekey2.tsc]+Something  \verb|C|.+
+Text
+% count
+Number of items stored in  \verb+writekey+ \countsc{writekey}.\par
+% foreachsc
+\foreachsc[sep={\\[10pt]}]{writekey}
+% getstored
+\getstored[1]{writekey}\par
+\getstored{writekey}
+
 \end{document}

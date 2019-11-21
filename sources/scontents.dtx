@@ -2318,12 +2318,25 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \begin{macrocode}
 \keys_define:nn { scontents / Scontents }
   {
-    print-cmd .meta:nn   = { scontents } { print-cmd = #1 },
-    print-cmd .default:n = true,
-    store-cmd .meta:nn   = { scontents } { store-cmd = #1 },
-    force-eol .meta:nn   = { scontents } { force-eol = #1 },
-    force-eol .default:n = true,
-    unknown   .code:n    = { \@@_parse_command_keys:n {#1} }
+    write-cmd .code:n           = {
+                                    \bool_set_true:N \l_@@_writing_bool
+                                    \tl_set:Nn \l_@@_fname_out_tl {#1}
+                                  },
+    write-out .code:n           = {
+                                    \bool_set_false:N \l_@@_storing_bool
+                                    \bool_set_true:N  \l_@@_writing_bool
+                                    \tl_set:Nn \l_@@_fname_out_tl {#1}
+                                  },
+    write-env .value_required:n = true,
+    write-out .value_required:n = true,
+    print-cmd .meta:nn          = { scontents } { print-cmd = #1 },
+    print-cmd .default:n        = true,
+    store-cmd .meta:nn          = { scontents } { store-cmd = #1 },
+    force-eol .meta:nn          = { scontents } { force-eol = #1 },
+    force-eol .default:n        = true,
+    overwrite .meta:nn          = { scontents } { overwrite = #1 },
+    overwrite .default:n        = true,
+    unknown   .code:n           = { \@@_parse_command_keys:n {#1} }
   }
 %    \end{macrocode}
 %
@@ -2358,7 +2371,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
     wrapper .code:n           = {
                                   \bool_set_true:N \l_@@_foreach_wrapper_bool
                                   \cs_set_protected:Npn
-                                    \@@_foreach_wrapper:n ##1 {#1}
+                                  \@@_foreach_wrapper:n ##1 {#1}
                                 },
     wrapper .value_required:n = true,
     sep     .tl_set:N         = \l_@@_foreach_sep_tl,
@@ -3348,7 +3361,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
   }
 \cs_new_protected:Npn \@@_Scontents_finish:
   {
-        \@@_finish_storing:NNN \l_@@_temp_tl
+      \@@_file_write_cmd:VV \l_@@_fname_out_tl \l_@@_temp_tl
+      \@@_finish_storing:NNN \l_@@_temp_tl
           \l_@@_name_seq_cmd_tl \l_@@_print_cmd_bool
       \use:x
         {
@@ -3356,6 +3370,27 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
     \bool_if:NF \l_@@_print_cmd_bool { \@@_esphack: }
         }
   }
+\cs_new_protected:Npn \@@_file_write_cmd:nn #1#2
+  {
+    \bool_if:nT  { \l_@@_writing_bool && \l_@@_overwrite_bool }
+      {
+         \file_if_exist:nTF {#1}
+           { \msg_warning:nnx { scontents } { overwrite-file } {#1} }
+           { \msg_warning:nnx { scontents } { writing-file } {#1} }
+         \iow_open:Nn \l_@@_file_iow {#1}
+         \iow_now:Nx  \l_@@_file_iow {#2}
+         \iow_close:N \l_@@_file_iow
+      }
+    \bool_if:nT  { \l_@@_writing_bool && !\l_@@_overwrite_bool }
+      {
+         \file_if_exist:nF {#1}
+           { \msg_warning:nnx { scontents } { writing-file } {#1} }
+         \iow_open:Nn \l_@@_file_iow {#1}
+         \iow_now:Nx  \l_@@_file_iow {#2}
+         \iow_close:N \l_@@_file_iow
+      }
+  }
+\cs_generate_variant:Nn \@@_file_write_cmd:nn { VV }
 %    \end{macrocode}
 % \end{macro}
 %
