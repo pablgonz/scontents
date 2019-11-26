@@ -654,4 +654,26 @@ Number of items stored in  \verb+writekey+ \countsc{writekey}.\par
 \getstored[1]{writekey}\par
 \getstored{writekey}
 
+\subsection{envname=maybePrint}
+\newenvsc{maybePrint}[store-env=maybePrint,print-env=false]
+START
+\begin{maybePrint}
+  $\langle$environment contents$\rangle$
+\end{maybePrint}
+TEXT
+
+% \setupsc[envname=maybePrint]{print-env=true}
+\setupsc{print-env=true}
+
+START
+\begin{maybePrint}
+  $\langle$environment contents$\rangle$
+\end{maybePrint}
+TEXT
+
+START
+\begin{maybePrint}
+  $\langle$environment contents$\rangle$
+\end{maybePrint}
+TEXT
 \end{document}
