@@ -775,9 +775,13 @@
 %
 % The command \ics*{setupsc} sets the \mymeta{keys} in a global way,
 % it can be used both in the preamble and in the body of the document
-% as many times as desired. It only has effect on the commands and environments
-% defined by the package itself, that is, it will have no effect on the
-% environments created by \ics*{newenvsc} for example.
+% as many times as desired. However, options set in the declaration of
+% an environment (with \ics*{newenvsc}) have precedence over options
+% set with \ics*{setupsc}.
+%
+% Options in the optional arguments of environments and
+% commands have the highest precedence, overriding both
+% options in \ics*{newenvsc}, and in \ics*{setupsc}.
 % \end{function}
 %
 % \keyexamp{verb-font}{font family}{\textnormal{\ttfamily\textbackslash{}ttfamily}}
