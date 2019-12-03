@@ -45,9 +45,8 @@ function update_tag (file,content,tagname,tagdate)
 docfiles = {"sources/scontents.pdf","sources/scontents.dtx","sources/scontents.ins"}
 textfiles= {"sources/README.md"}
 
--- Compile documentation with xelatex to reduce pdf size
+-- Compile documentation with lualatex
 typesetexe = "lualatex"
--- typesetopts= "-8bit"
 packtdszip   = false
 
 excludefiles = { "scontents/scontents.sty","scontents/scontents-code.tex" }
