@@ -1852,6 +1852,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % \newpage
 %
+%
 % \section{Change history}
 % \label{sec:changes}
 %
@@ -1941,6 +1942,30 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % \printindex[userdoc]
 %
+% \let\stdsection\section
+% \def\section*#1{\stdsection{#1}}
+%
+% \begin{thebibliography}{9}
+% \bibitem{expl3} The \hologo{LaTeX3} Project. \enquote{The \textsf{expl3}
+% package}. Available from
+% \textsc{ctan}, \url{https://www.ctan.org/pkg/expl3}, 2019.
+%
+% \bibitem{xparse} The \hologo{LaTeX3} Project. \enquote{The \textsf{xparse}
+% package}. Available from
+% \textsc{ctan}, \url{https://www.ctan.org/pkg/xparse}, 2019.
+%
+% \bibitem{l3keys} The \hologo{LaTeX3} Project. \enquote{The \textsf{l3keys2e}
+% package}. Available from
+% \textsc{ctan}, \url{https://www.ctan.org/pkg/l3keys2e}, 2019.
+%
+% \bibitem{keyval} \textsc{Wright, Joseph}. \enquote{Programming
+% \textsf{key–value} in \textsf{expl3}}. Available from
+% \textsc{TUGboat},
+% \url{https://www.tug.org/TUGboat/tb31-1/tb97wright-l3keys.pdf}, 2010.
+% \end{thebibliography}
+%
+% \let\section\stdsection
+%
 % \newpage
 %
 % \StartImplementation
@@ -1957,7 +1982,6 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % }
 % \printindex
 % }
-%
 %
 % \section{Implementation}
 % \label{sec:Implementation}
