@@ -660,19 +660,22 @@
   {
     \bool_if:NT \l__scontents_writing_bool
       {
-        \bool_if:NTF \l__scontents_overwrite_bool
+        \file_if_exist:nTF {#1}
           {
-            \file_if_exist:nTF {#1}
+            \bool_if:NTF \l__scontents_overwrite_bool
               { \msg_warning:nnx { scontents } { overwrite-file } {#1} }
-              { \msg_warning:nnx { scontents } { writing-file } {#1} }
+              {
+                \msg_warning:nnx { scontents } { not-writing } {#1}
+                \use_none:nn
+              }
           }
+          { \msg_warning:nnx { scontents } { writing-file } {#1} }
+        \use:n
           {
-            \file_if_exist:nF {#1}
-              { \msg_warning:nnx { scontents } { writing-file } {#1} }
+            \iow_open:Nn \l__scontents_file_iow {#1}
+            \iow_now:Nn  \l__scontents_file_iow {#2}
+            \iow_close:N \l__scontents_file_iow
           }
-        \iow_open:Nn \l__scontents_file_iow {#1}
-        \iow_now:Nn  \l__scontents_file_iow {#2}
-        \iow_close:N \l__scontents_file_iow
       }
   }
 \cs_generate_variant:Nn \__scontents_file_write_cmd:nn { VV }
@@ -848,6 +851,8 @@
   { Overwriting~file~'#1'. }
 \msg_new:nnn { scontents } { writing-file }
   { Writing~file~'#1'. }
+\msg_new:nnn { scontents } { not-writing }
+  { File~`#1'~already~exists.~Not~writing. }
 \msg_new:nnn { scontents } { rescanning-text }
   { Rescanning~text~'#1'~after~\c_backslash_str end{#2}~\msg_line_context:.}
 \msg_new:nnn { scontents } { multiple-begin }
