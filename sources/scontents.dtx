@@ -3454,7 +3454,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
            { \msg_warning:nnx { scontents } { overwrite-file } {#1} }
            { \msg_warning:nnx { scontents } { writing-file } {#1} }
          \iow_open:Nn \l_@@_file_iow {#1}
-         \iow_now:Nx  \l_@@_file_iow {#2}
+         \iow_now:Nn  \l_@@_file_iow {#2}
          \iow_close:N \l_@@_file_iow
       }
     \bool_if:nT  { \l_@@_writing_bool && !\l_@@_overwrite_bool }
@@ -3462,7 +3462,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
          \file_if_exist:nF {#1}
            { \msg_warning:nnx { scontents } { writing-file } {#1} }
          \iow_open:Nn \l_@@_file_iow {#1}
-         \iow_now:Nx  \l_@@_file_iow {#2}
+         \iow_now:Nn  \l_@@_file_iow {#2}
          \iow_close:N \l_@@_file_iow
       }
   }
