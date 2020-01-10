@@ -2277,6 +2277,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 \bool_set_false:N \l_@@_foreach_stop_bool
 \bool_new:N \l_@@_foreach_wrapper_bool
 \bool_set_false:N \l_@@_foreach_wrapper_bool
+\bool_new:N \l_@@_writable_bool
 %    \end{macrocode}
 % \end{macro}
 %
@@ -2996,8 +2997,12 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
   \cs_new_protected:Npn \@@_file_tl_write_start:n #1
     {
       \group_begin:
-        \@@_file_if_writable_do:nn {#1}
-          { \iow_open:Nn \l_@@_file_iow {#1} }
+        \@@_file_if_writable:nTF {#1}
+          {
+            \bool_set_true:N \l_@@_writable_bool
+            \iow_open:Nn \l_@@_file_iow {#1}
+          }
+          { \bool_set_false:N \l_@@_writable_bool }
         \tl_clear:N \l_@@_file_tl
         \seq_map_function:NN \l_char_special_seq \char_set_catcode_other:N
         \int_step_function:nnnN { 128 } { 1 } { 255 } \char_set_catcode_letter:n
@@ -3072,7 +3077,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
     }
   \cs_new_protected:Npn \@@_file_write_stop:N #1
     {
-      \bool_if:NT \l_@@_writing_bool
+      \bool_if:NT \l_@@_writable_bool
         { \iow_close:N \l_@@_file_iow }
       \use:x
         {
@@ -3114,7 +3119,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \begin{macrocode}
   \cs_new_protected:Npn \@@_verb_processor_output:n #1
     {
-      \bool_if:NT \l_@@_writing_bool
+      \bool_if:NT \l_@@_writable_bool
         { \iow_now:Nn \l_@@_file_iow {#1} }
       \bool_if:NT \l_@@_storing_bool
         { \tl_put_right:Nn \l_@@_file_tl { ^^J #1 } }
@@ -3437,29 +3442,35 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
   }
 \cs_new_protected:Npn \@@_file_write_cmd:nn #1#2
   {
-    \@@_file_if_writable_do:nn {#1}
+    \@@_file_if_writable:nT {#1}
       {
         \iow_open:Nn \l_@@_file_iow {#1}
         \iow_now:Nn  \l_@@_file_iow {#2}
         \iow_close:N \l_@@_file_iow
       }
   }
-\cs_new_protected:Npn \@@_file_if_writable_do:nn #1 #2
+\prg_new_protected_conditional:Npnn \@@_file_if_writable:n #1 { T, F, TF }
   {
-    \bool_if:NT \l_@@_writing_bool
+    \bool_if:NTF \l_@@_writing_bool
       {
         \file_if_exist:nTF {#1}
           {
             \bool_if:NTF \l_@@_overwrite_bool
-              { \msg_warning:nnx { scontents } { overwrite-file } {#1} }
+              {
+                \msg_warning:nnx { scontents } { overwrite-file } {#1}
+                \prg_return_true:
+              }
               {
                 \msg_warning:nnx { scontents } { not-writing } {#1}
-                \use_none:nn
+                \prg_return_false:
               }
           }
-          { \msg_warning:nnx { scontents } { writing-file } {#1} }
-        \use:n {#2}
+          {
+            \msg_warning:nnx { scontents } { writing-file } {#1}
+            \prg_return_true:
+          }
       }
+      { \prg_return_false: }
   }
 \cs_generate_variant:Nn \@@_file_write_cmd:nn { VV }
 %    \end{macrocode}

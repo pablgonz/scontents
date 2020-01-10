@@ -124,6 +124,7 @@
 \bool_set_false:N \l__scontents_foreach_stop_bool
 \bool_new:N \l__scontents_foreach_wrapper_bool
 \bool_set_false:N \l__scontents_foreach_wrapper_bool
+\bool_new:N \l__scontents_writable_bool
 \seq_new:N \l__scontents_foreach_print_seq
 \str_const:Nx \c__scontents_hidden_space_str
   { \c_percent_str \c_circumflex_str \c_circumflex_str A scheol \c_percent_str }
@@ -382,8 +383,12 @@
   \cs_new_protected:Npn \__scontents_file_tl_write_start:n #1
     {
       \group_begin:
-        \__scontents_file_if_writable_do:nn {#1}
-          { \iow_open:Nn \l__scontents_file_iow {#1} }
+        \__scontents_file_if_writable:nTF {#1}
+          {
+            \bool_set_true:N \l__scontents_writable_bool
+            \iow_open:Nn \l__scontents_file_iow {#1}
+          }
+          { \bool_set_false:N \l__scontents_writable_bool }
         \tl_clear:N \l__scontents_file_tl
         \seq_map_function:NN \l_char_special_seq \char_set_catcode_other:N
         \int_step_function:nnnN { 128 } { 1 } { 255 } \char_set_catcode_letter:n
@@ -458,7 +463,7 @@
     }
   \cs_new_protected:Npn \__scontents_file_write_stop:N #1
     {
-      \bool_if:NT \l__scontents_writing_bool
+      \bool_if:NT \l__scontents_writable_bool
         { \iow_close:N \l__scontents_file_iow }
       \use:x
         {
@@ -489,7 +494,7 @@
   \cs_new:Npn \__scontents_remove_leading_nl:w ^^J { }
   \cs_new_protected:Npn \__scontents_verb_processor_output:n #1
     {
-      \bool_if:NT \l__scontents_writing_bool
+      \bool_if:NT \l__scontents_writable_bool
         { \iow_now:Nn \l__scontents_file_iow {#1} }
       \bool_if:NT \l__scontents_storing_bool
         { \tl_put_right:Nn \l__scontents_file_tl { ^^J #1 } }
@@ -647,29 +652,35 @@
   }
 \cs_new_protected:Npn \__scontents_file_write_cmd:nn #1#2
   {
-    \__scontents_file_if_writable_do:nn {#1}
+    \__scontents_file_if_writable:nT {#1}
       {
         \iow_open:Nn \l__scontents_file_iow {#1}
         \iow_now:Nn  \l__scontents_file_iow {#2}
         \iow_close:N \l__scontents_file_iow
       }
   }
-\cs_new_protected:Npn \__scontents_file_if_writable_do:nn #1 #2
+\prg_new_protected_conditional:Npnn \__scontents_file_if_writable:n #1 { T, F, TF }
   {
-    \bool_if:NT \l__scontents_writing_bool
+    \bool_if:NTF \l__scontents_writing_bool
       {
         \file_if_exist:nTF {#1}
           {
             \bool_if:NTF \l__scontents_overwrite_bool
-              { \msg_warning:nnx { scontents } { overwrite-file } {#1} }
+              {
+                \msg_warning:nnx { scontents } { overwrite-file } {#1}
+                \prg_return_true:
+              }
               {
                 \msg_warning:nnx { scontents } { not-writing } {#1}
-                \use_none:nn
+                \prg_return_false:
               }
           }
-          { \msg_warning:nnx { scontents } { writing-file } {#1} }
-        \use:n {#2}
+          {
+            \msg_warning:nnx { scontents } { writing-file } {#1}
+            \prg_return_true:
+          }
       }
+      { \prg_return_false: }
   }
 \cs_generate_variant:Nn \__scontents_file_write_cmd:nn { VV }
 \cs_new_protected:Npn \__scontents_getstored_internal:nn #1 #2
