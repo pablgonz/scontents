@@ -664,7 +664,7 @@
            { \msg_warning:nnx { scontents } { overwrite-file } {#1} }
            { \msg_warning:nnx { scontents } { writing-file } {#1} }
          \iow_open:Nn \l__scontents_file_iow {#1}
-         \iow_now:Nx  \l__scontents_file_iow {#2}
+         \iow_now:Nn  \l__scontents_file_iow {#2}
          \iow_close:N \l__scontents_file_iow
       }
     \bool_if:nT  { \l__scontents_writing_bool && !\l__scontents_overwrite_bool }
@@ -672,7 +672,7 @@
          \file_if_exist:nF {#1}
            { \msg_warning:nnx { scontents } { writing-file } {#1} }
          \iow_open:Nn \l__scontents_file_iow {#1}
-         \iow_now:Nx  \l__scontents_file_iow {#2}
+         \iow_now:Nn  \l__scontents_file_iow {#2}
          \iow_close:N \l__scontents_file_iow
       }
   }
