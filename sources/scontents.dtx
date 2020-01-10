@@ -2996,19 +2996,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
   \cs_new_protected:Npn \@@_file_tl_write_start:n #1
     {
       \group_begin:
-        \bool_if:nT  { \l_@@_writing_bool && \l_@@_overwrite_bool }
-          {
-             \file_if_exist:nTF {#1}
-               { \msg_warning:nnx { scontents } { overwrite-file } {#1} }
-               { \msg_warning:nnx { scontents } { writing-file } {#1} }
-             \iow_open:Nn \l_@@_file_iow {#1}
-          }
-        \bool_if:nT  { \l_@@_writing_bool && !\l_@@_overwrite_bool }
-          {
-             \file_if_exist:nF {#1}
-               { \msg_warning:nnx { scontents } { writing-file } {#1} }
-              \iow_open:Nn \l_@@_file_iow {#1}
-          }
+        \@@_file_if_writable_do:nn {#1}
+          { \iow_open:Nn \l_@@_file_iow {#1} }
         \tl_clear:N \l_@@_file_tl
         \seq_map_function:NN \l_char_special_seq \char_set_catcode_other:N
         \int_step_function:nnnN { 128 } { 1 } { 255 } \char_set_catcode_letter:n
@@ -3448,6 +3437,15 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
   }
 \cs_new_protected:Npn \@@_file_write_cmd:nn #1#2
   {
+    \@@_file_if_writable_do:nn {#1}
+      {
+        \iow_open:Nn \l_@@_file_iow {#1}
+        \iow_now:Nn  \l_@@_file_iow {#2}
+        \iow_close:N \l_@@_file_iow
+      }
+  }
+\cs_new_protected:Npn \@@_file_if_writable_do:nn #1 #2
+  {
     \bool_if:NT \l_@@_writing_bool
       {
         \file_if_exist:nTF {#1}
@@ -3460,12 +3458,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
               }
           }
           { \msg_warning:nnx { scontents } { writing-file } {#1} }
-        \use:n
-          {
-            \iow_open:Nn \l_@@_file_iow {#1}
-            \iow_now:Nn  \l_@@_file_iow {#2}
-            \iow_close:N \l_@@_file_iow
-          }
+        \use:n {#2}
       }
   }
 \cs_generate_variant:Nn \@@_file_write_cmd:nn { VV }
