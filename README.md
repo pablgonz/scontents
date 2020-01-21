@@ -2,7 +2,7 @@
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/pablgonz/scontents?label=version)
 ![GitHub Release Date](https://img.shields.io/github/release-date/pablgonz/scontents)
 ![GitHub last commit](https://img.shields.io/github/last-commit/pablgonz/scontents)
-![GitHub commits since latest release](https://img.shields.io/github/commits-since/pablgonz/scontents/v1.9)
+![GitHub commits since latest release](https://img.shields.io/github/commits-since/pablgonz/scontents/v1.8)
 
 ## Description
 This package allows to store `LaTeX` code, including _"verbatim"_, in <code>&lt;sequences&gt;</code>
