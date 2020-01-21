@@ -1,6 +1,6 @@
 -- Build script for scontents
 pkgversion   = "1.9"
-pkgdate      = "2019-12-25"
+pkgdate      = "2020-01-21"
 
 module       = "scontents"
 ctanpkg      = "scontents"

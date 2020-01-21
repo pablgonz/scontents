@@ -78,4 +78,4 @@ conditions of the [LaTeX Project Public License](https://www.latex-project.org/l
 
 ## Copyright
 
-Copyright 2019 by Pablo González L.
+Copyright 2019-2020 by Pablo González L.
