@@ -21,7 +21,7 @@ The package loads and depends on updated versions of:
 The package `scontents` is present in `TeXLive` and `MiKTeX`, use the
 package manager to install.
 
-For manual installation, download [scontents.zip](https://github.com/pablgonz/scontents/releases/download/v1.7/scontents-1.8.zip) and unzip it,
+For manual installation, download [scontents.zip](https://github.com/pablgonz/scontents/releases/download/v1.8/scontents-1.8.zip) and unzip it,
 then run:
 ```
 $ pdftex scontents.ins
