@@ -36,9 +36,9 @@ function update_tag (file,content,tagname,tagdate)
    content = string.gsub (content,
                          "Date: %d%d%d%d%-%d%d%-%d%d",
                          "Date: ".. tagdate.."" )
-   content = string.gsub (content,
-                         "scontents/v%d%.%d",
-                         "scontents/v"..pkgversion.."" )
+--   content = string.gsub (content,
+--                         "scontents/v%d%.%d",
+--                         "scontents/v"..pkgversion.."" )
  return content
   end
  return content
@@ -48,7 +48,7 @@ function update_tag (file,content,tagname,tagdate)
 function tag_hook(tagname)
     print('** Extract files from <scontents.ins>, current version '..pkgversion..' **')
     run("sources/", "pdftex --interaction=batchmode scontents.ins")
-    print('** Run lualatex to extract example files **')
+    print('** Running lualatex to extract example files **')
     run("sources/", "lualatex --draftmode --interaction=batchmode scontents.dtx")
     print('** Running pdflatex on <scexamp1.ltx> using arara tool **')
     run("sources/", "arara scexamp1.ltx")
@@ -72,8 +72,18 @@ function tag_hook(tagname)
     print('** Running xelatex on <scexamp9.ltx> using arara tool **')
     run("sources/", "arara scexamp9.ltx")
     print('** All sample files were successfully compiled **')
-    print('** Running local repository cleanup **')
-    os.execute("git clean -xdfq")
+    print('** Copy package files from sources/ to sources/test-pkg/ **')
+    cp("*.tex", "sources/", "sources/test-pkg")
+    cp("*.sty", "sources/", "sources/test-pkg")
+    cp("*.mkiv", "sources/", "sources/test-pkg")
+    print('** Running pdflatex on <test-pkg-current> **')
+    run("sources/test-pkg/", "pdflatex test-pkg-current.tex")
+    print('** Running pdftex on <test-format.plain> **')
+    run("sources/test-pkg/", "pdftex test-format.plain.tex")
+    print('** Running latex on <test-format.latex> **')
+    run("sources/test-pkg/", "latex test-format.latex.tex")
+    -- print('** Running local repository cleanup **')
+    --os.execute("git clean -xdfq")
 end
 
 -- ctan setup
