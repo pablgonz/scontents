@@ -1,4 +1,8 @@
 -- Build script for scontents
+-- l3build tag
+-- l3build ctan
+-- l3build clean
+
 pkgversion   = "1.9"
 pkgdate      = "2020-01-21"
 
@@ -36,17 +40,23 @@ function update_tag (file,content,tagname,tagdate)
    content = string.gsub (content,
                          "Date: %d%d%d%d%-%d%d%-%d%d",
                          "Date: ".. tagdate.."" )
---   content = string.gsub (content,
---                         "scontents/v%d%.%d",
---                         "scontents/v"..pkgversion.."" )
+   content = string.gsub (content,
+                         "scontents/v%d%.%d",
+                         "scontents/v"..pkgversion.."" )
  return content
   end
  return content
  end
 
--- Test example files before tag in git and ctan upload
+
+-- Store last package tag on git
+local handle = io.popen("git describe --tags --abbrev=0")
+local oldtag = handle:read("*a")
+handle:close()
+
+-- Test files before tag in git and ctan upload
 function tag_hook(tagname)
-    print('** Extract files from <scontents.ins>, current version '..pkgversion..' **')
+    print('** Extract files from <scontents.ins>, current v'..pkgversion..' **')
     run("sources/", "pdftex --interaction=batchmode scontents.ins")
     print('** Running lualatex to extract example files **')
     run("sources/", "lualatex --draftmode --interaction=batchmode scontents.dtx")
@@ -82,8 +92,19 @@ function tag_hook(tagname)
     run("sources/test-pkg/", "pdftex test-format.plain.tex")
     print('** Running latex on <test-format.latex> **')
     run("sources/test-pkg/", "latex test-format.latex.tex")
-    -- print('** Running local repository cleanup **')
-    --os.execute("git clean -xdfq")
+    run("sources/test-pkg/", "dvips test-format.latex.dvi")
+    run("sources/test-pkg/", "ps2pdf test-format.latex.ps")
+    print('** All tests have been successfully completed **')
+    print('****** Configuration for Github and CTAN ******')
+    print('** Running local repository cleanup **')
+    os.execute("git clean -xdfq")
+    print('** We check if there are modifications in the generated files to make a commit **')
+    os.execute("git status")
+    print('** The last tag marked for scontens is: '..oldtag..' **')
+    print('** If everything is OK, you just need to execute manually **')
+    print("git commit -a -m 'Release v"..pkgversion.."'")
+    print("git tag -a v"..pkgversion.." -m 'Release v"..pkgversion.."'")
+    print("Now you just need to run l3build ctan and upload it")
 end
 
 -- ctan setup
