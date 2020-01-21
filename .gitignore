@@ -15,6 +15,7 @@ build/*
 *.hd
 *.xdv
 *.ins
+*.txt
 
 ## atach
 *.atfi
