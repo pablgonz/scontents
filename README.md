@@ -2,7 +2,7 @@
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/pablgonz/scontents?label=version)
 ![GitHub Release Date](https://img.shields.io/github/release-date/pablgonz/scontents)
 ![GitHub last commit](https://img.shields.io/github/last-commit/pablgonz/scontents)
-![GitHub commits since latest release](https://img.shields.io/github/commits-since/pablgonz/scontents/v1.8)
+![GitHub commits since latest release](https://img.shields.io/github/commits-since/pablgonz/scontents/v1.9)
 
 ## Description
 This package allows to store `LaTeX` code, including _"verbatim"_, in <code>&lt;sequences&gt;</code>
@@ -21,7 +21,7 @@ The package loads and depends on updated versions of:
 The package `scontents` is present in `TeXLive` and `MiKTeX`, use the
 package manager to install.
 
-For manual installation, download [scontents.zip](https://github.com/pablgonz/scontents/releases/download/v1.8/scontents-1.8.zip) and unzip it,
+For manual installation, download [scontents.zip](http://mirrors.ctan.org/macros/latex/contrib/scontents.zip) and unzip it,
 then run:
 ```
 $ pdftex scontents.ins

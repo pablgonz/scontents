@@ -6,7 +6,7 @@ module       = "scontents"
 ctanpkg      = "scontents"
 ctanzip      = ctanpkg.."-"..pkgversion
 
-tagfiles     = {"sources/README.md","sources/scontents.ins","sources/scontents.dtx"}
+tagfiles     = {"sources/README.md","sources/scontents.ins","sources/scontents.dtx", "README.md"}
 
 function update_tag (file,content,tagname,tagdate)
  tagdate = string.gsub (pkgdate,"-", "-")
@@ -36,10 +36,45 @@ function update_tag (file,content,tagname,tagdate)
    content = string.gsub (content,
                          "Date: %d%d%d%d%-%d%d%-%d%d",
                          "Date: ".. tagdate.."" )
+   content = string.gsub (content,
+                         "scontents/v%d%.%d",
+                         "scontents/v"..pkgversion.."" )
  return content
   end
  return content
  end
+
+-- Test example files before tag in git and ctan upload
+function tag_hook(tagname)
+    print('** Extract files from <scontents.ins>, current version '..pkgversion..' **')
+    run("sources/", "pdftex --interaction=batchmode scontents.ins")
+    print('** Run lualatex to extract example files **')
+    run("sources/", "lualatex --draftmode --interaction=batchmode scontents.dtx")
+    print('** Running pdflatex on <scexamp1.ltx> using arara tool **')
+    run("sources/", "arara scexamp1.ltx")
+    print('** Running pdflatex on <scexamp2.ltx> using arara tool **')
+    run("sources/", "arara scexamp2.ltx")
+    print('** Running pdflatex on <scexamp3.ltx> using arara tool **')
+    run("sources/", "arara scexamp3.ltx")
+    print('** Running pdflatex on <scexamp4.ltx> using arara tool **')
+    run("sources/", "arara scexamp4.ltx")
+    print('** Running pdflatex on <scexamp5.ltx> using arara tool **')
+    run("sources/", "arara scexamp5.ltx")
+    print('** Running pdflatex on <scexamp6.ltx> using arara tool **')
+    run("sources/", "arara scexamp6.ltx")
+    print('** Running pdflatex on <scexamp7.ltx> using arara tool **')
+    print('Customization of verbatimsc using the fancyvrb and tcolorbox package')
+    run("sources/", "arara scexamp7.ltx")
+    print('Customization of verbatimsc using the listings package')
+    print('** Running pdflatex on <scexamp8.ltx> using arara tool **')
+    run("sources/", "arara scexamp8.ltx")
+    print('Customization of verbatimsc using the minted package')
+    print('** Running xelatex on <scexamp9.ltx> using arara tool **')
+    run("sources/", "arara scexamp9.ltx")
+    print('** All sample files were successfully compiled **')
+    print('** Running local repository cleanup **')
+    os.execute("git clean -xdfq")
+end
 
 -- ctan setup
 docfiles = {"sources/scontents.pdf","sources/scontents.dtx","sources/scontents.ins"}
