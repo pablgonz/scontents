@@ -3343,7 +3343,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 \cs_new_protected:Npn \@@_bsphack:
   {
     \scan_stop:
-    \mode_if_norizontal:T
+    \mode_if_horizontal:T
       {
         \dim_set_eq:NN \l_@@_save_skip_dim \tex_lastskip:D
         \int_set_eq:NN \l_@@_save_sf_int \tex_spacefactor:D
