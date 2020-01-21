@@ -104,6 +104,7 @@ function tag_hook(tagname)
     print('** If everything is OK, you just need to execute manually **')
     print("git commit -a -m 'Release v"..pkgversion.."'")
     print("git tag -a v"..pkgversion.." -m 'Release v"..pkgversion.."'")
+    print("git push --tags")
     print("Now you just need to run l3build ctan and upload it")
 end
 
