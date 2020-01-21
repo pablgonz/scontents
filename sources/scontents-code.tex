@@ -594,7 +594,7 @@
 \cs_new_protected:Npn \__scontents_bsphack:
   {
     \scan_stop:
-    \mode_if_norizontal:T
+    \mode_if_horizontal:T
       {
         \dim_set_eq:NN \l__scontents_save_skip_dim \tex_lastskip:D
         \int_set_eq:NN \l__scontents_save_sf_int \tex_spacefactor:D
