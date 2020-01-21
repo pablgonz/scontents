@@ -1,6 +1,6 @@
 % \iffalse meta-comment
 %
-% Copyright (C) 2019 by Pablo González L <pablgonz@educarchile.cl>
+% Copyright (C) 2019-2020 by Pablo González L <pablgonz@educarchile.cl>
 %
 % This work may be distributed and/or modified under the conditions of the
 % LaTeX Project Public License, either version 1.3c of this license or (at
@@ -530,7 +530,7 @@
 }
 \setfoot{\rlap{\hskip\dimexpr-\oddsidemargin-1in\relax%
          \parbox{1.93\paperwidth}{\hfil\thepage\,/\,\pageref{LastPage}}}}%
-        {\parbox{\textwidth}{\raggedright \textcolor{gray}{\raisebox{-1pt}{\textcopyright}{}2019 by Pablo González}}}%
+        {\parbox{\textwidth}{\raggedright \textcolor{gray}{\raisebox{-1pt}{\textcopyright}{}2019--2020 by Pablo González}}}%
         {}%
 \sethead{\llap{\raisebox{0.55cm}{\parbox{\dimexpr\oddsidemargin+1in\relax}{\makebox[0pt][l]{\hspace{15pt}\pkglogo\space\fileversion}}}}}
         {\raisebox{0.55cm}{\parbox{\textwidth}{\hspace*{-\oddsidemargin}\centering\small\S.\thesection\space\sectiontitle}}}%
@@ -585,7 +585,7 @@
 %    \filedate.}\\[25pt]
 %    \author{
 %    \large
-%    \raisebox{-1pt}{\textcopyright}{}2019 by Pablo González\thanks{
+%    \raisebox{-1pt}{\textcopyright}{}2019--2020 by Pablo González\thanks{
 %    E-mail: \textcolor{OrangeRed}{\textsf{\guillemotleft}}\email{pablgonz@educarchile.cl}\textcolor{OrangeRed}{\textsf{\guillemotright}}.
 %       }%
 %    }
@@ -1869,6 +1869,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \begin{description}[font=\small\sffamily,wide=0pt,style=multiline,leftmargin=\descrwidth,nosep,noitemsep]
 % \item [\fileversion{} (dev), \filedate]
 %    \begin{itemize}
+%    \item Update and improvements in the internal code.
+%    \item Updating the generic code for |I/O| verification.
 %    \item Add |write-cmd| and |write-out| keys for |\Scontents*|.
 %    \item Fix |sep| key in |\foreachsc|.
 %    \end{itemize}
@@ -2003,8 +2005,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % Now we define some common macros to hold the package date and version:
 %    \begin{macrocode}
-%<loader>\def\ScontentsFileDate{2019-12-25}%
-%<core>\def\ScontentsCoreFileDate{2019-12-25}%
+%<loader>\def\ScontentsFileDate{2020-01-21}%
+%<core>\def\ScontentsCoreFileDate{2020-01-21}%
 %<*loader>
 \def\ScontentsFileVersion{1.9}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
