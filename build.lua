@@ -3,14 +3,22 @@
 -- l3build ctan
 -- l3build clean
 
-pkgversion   = "1.9"
-pkgdate      = "2020-01-21"
+module     = "scontents"
+pkgmajor   = "1"
+pkgmenor   = "9"
+pkgmicro   = "a"
 
-module       = "scontents"
-ctanpkg      = "scontents"
-ctanzip      = ctanpkg.."-"..pkgversion
+-- We assign the package version <number.number(number|leter)?>
+pkgversion = string.format("%i.%s%s", pkgmajor, pkgmenor,pkgmicro)
 
-tagfiles     = {"sources/README.md","sources/scontents.ins","sources/scontents.dtx", "README.md"}
+-- Package date
+pkgdate    = "2020-01-21" -- Use os.date("!%Y-%m-%d") in future
+
+-- ctan setup
+ctanpkg    = "scontents"
+ctanzip    = ctanpkg.."-"..pkgversion
+
+tagfiles   = {"sources/README.md","sources/scontents.ins","sources/scontents.dtx", "README.md"}
 
 function update_tag (file,content,tagname,tagdate)
  tagdate = string.gsub (pkgdate,"-", "-")
@@ -19,7 +27,7 @@ function update_tag (file,content,tagname,tagdate)
                          "date=%d%d%d%d%-%d%d%-%d%d",
                          "date="..tagdate.."")
   content = string.gsub (content,
-                         "version=%d%.%d",
+                         "version=%d%.%d%w?",
                          "version=".. pkgversion ..""  )
   return content
  elseif string.match (file, "scontents.dtx") then
@@ -35,14 +43,14 @@ function update_tag (file,content,tagname,tagdate)
   return content
  elseif string.match (file, "README.md") then
    content = string.gsub (content,
-                         "Version: %d%.%d",
+                         "Version: %d%.%d%w?",
                          "Version: "..pkgversion.."" )
    content = string.gsub (content,
                          "Date: %d%d%d%d%-%d%d%-%d%d",
                          "Date: ".. tagdate.."" )
    content = string.gsub (content,
                          "scontents/v%d%.%d",
-                         "scontents/v"..pkgversion.."" )
+                         "scontents/v".. pkgmajor..'.'..pkgmenor.."")
  return content
   end
  return content
@@ -50,7 +58,7 @@ function update_tag (file,content,tagname,tagdate)
 
 
 -- Store last package tag on git
-local handle = io.popen("git describe --tags --abbrev=0")
+local handle = io.popen('git for-each-ref refs/tags --sort=-taggerdate --format="%(refname:short)" --count=1')
 local oldtag = handle:read("*a")
 handle:close()
 
@@ -100,7 +108,7 @@ function tag_hook(tagname)
     print('** Running local repository cleanup **')
     os.execute("git clean -xdfq")
     print('** We check if there are modifications in the generated files to make a commit **')
-    os.execute("git status")
+    os.execute("git status -s")
     print('** The last tag marked for scontens is: '..oldtag..' **')
     print('** If everything is OK, you just need to execute manually **')
     print("git commit -a -m 'Release v"..pkgversion.."'")
@@ -109,7 +117,6 @@ function tag_hook(tagname)
     print("Now you just need to run l3build ctan and upload it")
 end
 
--- ctan setup
 docfiles = {"sources/scontents.pdf","sources/scontents.dtx","sources/scontents.ins"}
 textfiles= {"sources/README.md"}
 

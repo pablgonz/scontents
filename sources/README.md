@@ -1,5 +1,5 @@
 ## scontents — Stores LaTeX contents in memory or files
-- Version: 1.9
+- Version: 1.9a
 - Date: 2020-01-21
 - Author: Pablo González
 
@@ -17,15 +17,18 @@ The package loads and depends on updated versions of:
 
 ## Installation
 
-The package `scontents` is present in `TeXLive` and `MiKTeX`, use the 
+The package `scontents` is present in `TeXLive` and `MiKTeX`, use the
 package manager to install.
 
-For manual installation, download `scontents.zip` and unzip it, 
+For manual installation, download [scontents.zip](http://mirrors.ctan.org/macros/latex/contrib/scontents.zip) and unzip it,
 then run:
+
 ```
 $ pdftex scontents.ins
 ```
+
 and move all files to appropriate locations:
+
 ```
   scontents.tex      -> TDS:tex/generic/scontents/
   scontents-code.tex -> TDS:tex/generic/scontents/
@@ -37,6 +40,7 @@ and move all files to appropriate locations:
   scontents.ins      -> TDS:source/latex/scontents/
 ```
 then run `mktexlsr`.
+
 ## Examples
 
 The file <code>&lt;scontents.pdf&gt;</code> contains attached examples, which can be extracted
@@ -45,6 +49,7 @@ from the PDF viewer or from the command line by running:
 ```
 $ pdfdetach -saveall scontents.pdf
 ```
+
 and then you can use the excellent `arara` tool to compile them.
 
 ## License
