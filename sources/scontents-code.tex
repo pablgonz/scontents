@@ -223,7 +223,7 @@
     unknown   .code:n  = { \__scontents_parse_type_meaning_key:n {#1} }
   }
 \cs_new_protected:Npn \__scontents_parse_environment_keys:n #1
-  { \exp_args:NV \__scontents_parse_environment_keys:nn \l_keys_key_tl {#1} }
+  { \exp_args:NV \__scontents_parse_environment_keys:nn \l_keys_key_str {#1} }
 \cs_new_protected:Npn \__scontents_parse_environment_keys:nn #1#2
   {
     \tl_if_blank:nTF {#2}
@@ -231,7 +231,7 @@
       { \msg_error:nnnn { scontents } { env-key-value-unknown } {#1} {#2} }
   }
 \cs_new_protected:Npn \__scontents_parse_command_keys:n #1
-  { \exp_args:NV \__scontents_parse_command_keys:nn \l_keys_key_tl {#1} }
+  { \exp_args:NV \__scontents_parse_command_keys:nn \l_keys_key_str {#1} }
 \cs_new_protected:Npn \__scontents_parse_command_keys:nn #1#2
   {
     \tl_if_blank:nTF {#2}
@@ -245,9 +245,9 @@
       { \msg_error:nnnn { scontents } { for-key-value-unknown } {#1} {#2} }
   }
 \cs_new_protected:Npn \__scontents_parse_foreach_keys:n #1
-  { \exp_args:NV \__scontents_parse_foreach_keys:nn \l_keys_key_tl {#1} }
+  { \exp_args:NV \__scontents_parse_foreach_keys:nn \l_keys_key_str {#1} }
 \cs_new_protected:Npn \__scontents_parse_type_meaning_key:n #1
-  { \exp_args:NV \__scontents_parse_type_meaning_key:nn \l_keys_key_tl {#1} }
+  { \exp_args:NV \__scontents_parse_type_meaning_key:nn \l_keys_key_str {#1} }
 \cs_new_protected:Npn \__scontents_parse_type_meaning_key:nn #1#2
   {
     \tl_if_empty:fTF { \int_to_roman:n { -0 #1 } }
