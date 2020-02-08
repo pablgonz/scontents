@@ -6,13 +6,13 @@
 module     = "scontents"
 pkgmajor   = "1"
 pkgmenor   = "9"
-pkgmicro   = "a"
+pkgmicro   = "b"
 
 -- We assign the package version <number.number(number|leter)?>
 pkgversion = string.format("%i.%s%s", pkgmajor, pkgmenor,pkgmicro)
 
 -- Package date
-pkgdate    = "2020-01-21" -- Use os.date("!%Y-%m-%d") in future
+pkgdate    = "2020-02-08" -- Use os.date("!%Y-%m-%d") in future
 
 -- ctan setup
 ctanpkg    = "scontents"
@@ -42,22 +42,22 @@ function update_tag (file,content,tagname,tagdate)
                          "\\ScontentsFileVersion{"..pkgversion.."}")
   return content
  elseif string.match (file, "README.md") then
-   content = string.gsub (content,
+  content = string.gsub (content,
                          "Version: %d%.%d%w?",
                          "Version: "..pkgversion.."" )
-   content = string.gsub (content,
+  content = string.gsub (content,
                          "Date: %d%d%d%d%-%d%d%-%d%d",
                          "Date: ".. tagdate.."" )
-   content = string.gsub (content,
+  content = string.gsub (content,
                          "scontents/v%d%.%d",
                          "scontents/v".. pkgmajor..'.'..pkgmenor.."")
-   return content
+  return content
  end
 end
 
 -- Store last package tag on git
-local handle = io.popen('git for-each-ref refs/tags --sort=-taggerdate --format="%(refname:short)" --count=1')
-local oldtag = string.gsub(handle:read("*a"), '%s+', '')
+local handle   = io.popen('git for-each-ref refs/tags --sort=-taggerdate --format="%(refname:short)" --count=1')
+local tagongit = string.gsub(handle:read("*a"), '%s+', '')
 handle:close()
 
 -- Test files before tag in git and ctan upload
@@ -123,7 +123,7 @@ function tag_hook(tagname)
   print('*****************************************************************')
   print('*************** Configuration for Github and CTAN ***************')
   os.execute("git clean -xdfq")
-  print('** The last tag marked for scontens in github is: '..oldtag..' **')
+  print('** The last tag marked for scontens in github is: '..tagongit..' **')
   print('**** Check if there are modifications in the generated files ****')
   os.execute("git status -s")
   print('* If it shows files that start with M you need to make a commit *')
@@ -135,15 +135,25 @@ function tag_hook(tagname)
   print('*****************************************************************')
 end
 
-docfiles = {"sources/scontents.pdf","sources/scontents.dtx","sources/scontents.ins"}
-textfiles= {"sources/README.md"}
-
--- Compile documentation with lualatex
-typesetexe = "lualatex"
 packtdszip   = false
-
 excludefiles = { "scontents/scontents.sty","scontents/scontents-code.tex" }
-sourcefiles  = { "sources/scontents.dtx","sources/scontents.sty","sources/scontents-code.tex" }
-typesetfiles = { "scontents.dtx" }
+sourcefiles  = { "sources/scontents.dtx","sources/scontents.ins","sources/scontents.sty","sources/scontents-code.tex"}
+installfiles = { "scontents.sty","scontents-code.tex","scontents.tex","t-scontents.mkiv"}
 
-typesetruns = 3
+tdslocations={
+"tex/generic/scontents/scontents.tex",
+"tex/generic/scontents/scontents-code.tex",
+"tex/latex/scontents/scontents.sty",
+"tex/context/third/scontents/t-scontents.mkiv",
+"doc/latex/scontents/README.md",
+"doc/latex/scontents/scontents.pdf",
+"source/latex/scontents/scontents.dtx",
+"source/latex/scontents/scontents.ins"
+}
+
+-- Documentation
+docfiles     = {"sources/scontents.pdf"}
+textfiles    = {"sources/README.md"}
+typesetexe   = "lualatex"
+typesetfiles = { "scontents.dtx" }
+typesetruns  = 3
