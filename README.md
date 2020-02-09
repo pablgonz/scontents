@@ -49,6 +49,19 @@ $ pdfdetach -saveall scontents.pdf
 ```
 and then you can use the excellent `arara` tool to compile them.
 
+## Development
+
+The version numbers and dates are guaranteed to be correct in
+the repository is in the `l3build` configuration file `build.lua`. If it is
+important to you that the files created have the correct version and date, you
+should run `l3build tag` before any other build-related task.
+
+`scontents` utilizes the `l3build` system. You can run `l3build unpack` to extract
+the code files into the directory `build/unpacked/`.
+If you want to build the documentation run `l3build doc`, the resulting PDF will
+be in the main directory. Running `l3build install` will put all files  in your
+`TEXMFHOME`, `l3build uninstall` will remove them.
+
 ## License
 The scontents package may be modified and distributed under the terms and
 conditions of the [LaTeX Project Public License](https://www.latex-project.org/lppl/), version 1.3c or greater.

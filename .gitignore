@@ -46,6 +46,7 @@ _minted*
 *.synctex(busy)
 *.pdfsync
 *.zip
+*.curlopt
 
 ## For testing
 **/sources/test-pkg/scontents.sty

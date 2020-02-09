@@ -1,23 +1,42 @@
 -- Build script for scontents
 -- l3build tag
+-- l3build doc
 -- l3build ctan
+-- l3build upload
 -- l3build clean
 
 module     = "scontents"
+pkgdate    = "2020-02-09"
 pkgmajor   = "1"
 pkgmenor   = "9"
-pkgmicro   = "b"
+pkgmicro   = "c"
 
 -- We assign the package version <number.number(number|leter)?>
 pkgversion = string.format("%i.%s%s", pkgmajor, pkgmenor,pkgmicro)
 
--- Package date
-pkgdate    = "2020-02-08" -- Use os.date("!%Y-%m-%d") in future
+-- Local instalation
+excludefiles = { "scontents/scontents.sty","scontents/scontents-code.tex" }
+sourcefiles  = { "sources/scontents.dtx","sources/scontents.ins","sources/scontents.sty","sources/scontents-code.tex"}
+installfiles = { "scontents.sty","scontents-code.tex","scontents.tex","t-scontents.mkiv"}
+tdslocations={
+"tex/generic/scontents/scontents.tex",
+"tex/generic/scontents/scontents-code.tex",
+"tex/latex/scontents/scontents.sty",
+"tex/context/third/scontents/t-scontents.mkiv",
+"doc/latex/scontents/README.md",
+"doc/latex/scontents/scontents.pdf",
+"source/latex/scontents/scontents.dtx",
+"source/latex/scontents/scontents.ins"
+}
 
--- ctan setup
-ctanpkg    = "scontents"
-ctanzip    = ctanpkg.."-"..pkgversion
+-- Documentation
+docfiles     = {"sources/scontents.pdf"}
+textfiles    = {"sources/README.md"}
+typesetexe   = "lualatex"
+typesetfiles = { "scontents.dtx" }
+typesetruns  = 3
 
+-- Update tag in pkg files
 tagfiles   = {"sources/README.md","sources/scontents.ins","sources/scontents.dtx", "README.md"}
 
 function update_tag (file,content,tagname,tagdate)
@@ -55,12 +74,19 @@ function update_tag (file,content,tagname,tagdate)
  end
 end
 
--- Store last package tag on git
+-- Write announcement text
+function announcement ()
+local f = io.open("announcement.txt", "w")
+f:write("Changes in the version " .. pkgversion .. " " .. pkgdate ..":\n")
+f:close()
+end
+
+-- Store last tag register on git
 local handle   = io.popen('git for-each-ref refs/tags --sort=-taggerdate --format="%(refname:short)" --count=1')
 local tagongit = string.gsub(handle:read("*a"), '%s+', '')
 handle:close()
 
--- Test files before tag in git and ctan upload
+-- Test files before tag in git (and ctan upload)
 function tag_hook(tagname)
   print('*****************************************************************')
   print('****** Extract files from scontents.ins, v'..pkgversion..' '..pkgdate..' *******')
@@ -131,29 +157,35 @@ function tag_hook(tagname)
   --print("git commit -a -m 'Release v"..pkgversion.."'")
   print("git tag -a v"..pkgversion.." -m 'Release v"..pkgversion.."'")
   print("git push --tags")
-  print('****** Now you just need to run l3build ctan and upload it ******')
+  print('*** Edit announcement.txt and add the changes for this version **')
+  announcement ()
+  print('**** Then run l3build ctan, l3build upload and l3build clean ****')
   print('*****************************************************************')
 end
 
-packtdszip   = false
-excludefiles = { "scontents/scontents.sty","scontents/scontents-code.tex" }
-sourcefiles  = { "sources/scontents.dtx","sources/scontents.ins","sources/scontents.sty","sources/scontents-code.tex"}
-installfiles = { "scontents.sty","scontents-code.tex","scontents.tex","t-scontents.mkiv"}
+-- ctan setup
+packtdszip = false
+ctanpkg    = "scontents"
+ctanzip    = ctanpkg.."-"..pkgversion
 
-tdslocations={
-"tex/generic/scontents/scontents.tex",
-"tex/generic/scontents/scontents-code.tex",
-"tex/latex/scontents/scontents.sty",
-"tex/context/third/scontents/t-scontents.mkiv",
-"doc/latex/scontents/README.md",
-"doc/latex/scontents/scontents.pdf",
-"source/latex/scontents/scontents.dtx",
-"source/latex/scontents/scontents.ins"
+uploadconfig = {
+  author       = "Pablo González Luengo",
+  uploader     = "Pablo González Luengo",
+  email        = "pablgonz@yahoo.com",
+  pkg          = ctanpkg,
+  version      = pkgversion,
+  license      = "lppl1.3c",
+  summary      = "Stores LaTeX contents in memory or files",
+  description  =[[This package stores valid LaTeX code in memory (sequences) using the l3seq module of expl3. The stored content (including verbatim) can be used as many times as desired in the document, additionally can be written to external files if desired.]],
+  topic        = { "File management", "Experimental LaTeX3" },
+  ctanPath     = "/macros/latex/contrib/" .. ctanpkg,
+  repository   = "https://github.com/pablgonz/" .. module,
+  bugtracker   = "https://github.com/pablgonz/" .. module .. "/issues",
+  support      = "https://github.com/pablgonz/" .. module .. "/issues",
+  note         = [[Uploaded automatically by l3build...]],
+  update       = true,
+  announcement_file = "announcement.txt"
 }
 
--- Documentation
-docfiles     = {"sources/scontents.pdf"}
-textfiles    = {"sources/README.md"}
-typesetexe   = "lualatex"
-typesetfiles = { "scontents.dtx" }
-typesetruns  = 3
+-- Cleanup .zip and .curlopt files
+cleanfiles = {"scontents-"..pkgversion..".curlopt", "scontents-"..pkgversion..".zip"}

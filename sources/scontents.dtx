@@ -506,13 +506,13 @@
 % Config hyperref
 \hypersetup{
    allcolors          = linkcolor,
-   colorlinks         = true,%
-   linktoc            = all,%
-   pdftitle           = {.:: The scontents package --- \fileinfo{} ::.},%
+   colorlinks         = true,
+   linktoc            = all,
+   pdftitle           = {.:: The scontents package --- \fileinfo{} ::.},
    pdfauthor          = {Pablo González L},
-   pdfsubject         = {Documentation for \fileversion{} [\filedate] },%
+   pdfsubject         = {Documentation for \fileversion{} [\filedate] },
    pdfkeywords        = {sequences, contents, external files, expl3, xparse, l3seq, store contents},
-   bookmarksopenlevel = 1,%
+   bookmarksopenlevel = 1
   }
 
 % Configuration titleps and titlesec
@@ -580,7 +580,7 @@
 %    \scalebox{1.57}{\pkglogo}\\[2pt]
 %    \Large
 %    \textsf{Stores \hologo{LaTeX}}{ \fetamontotf{contents} }\\[3pt]
-%    \fileversion{} --- \filedate\thanks{
+%    \fileversion \quad \filedate\thanks{
 %    This file describes a documentation for \fileversion, last revised
 %    \filedate.}\\[25pt]
 %    \author{
@@ -610,12 +610,23 @@
 %
 % \setlength{\parskip}{3pt}
 %
+% \section{Description of the package}
+%
+% \begin{scontents}[store-env=description, print-env=true]
+% The \mypkg*{scontents} package allows to \mymeta{store contents} in \mymeta{sequences}
+% or \mymeta{external files}. In some ways it is similar to the \mypkg{filecontentsdef}
+% package, with the difference in which the \mymeta{content} is stored. The idea behind
+% this package is to get an approach to \hologo{ConTeXt} \enquote{\emph{buffers}} by
+% making use \mymeta{sequences}.
+% \end{scontents}
+%
 % \section{Motivation and Acknowledgments}
 %
 % In \hologo{LaTeX} there is no direct way to record content for later use, although
 % you can do this using §\macros§, recording \mymeta[type=rm]{verbatim content}  is a
-% problem, usually you can avoid this by creating external files or boxes. The
-% general idea of this package is to try to imitate this implementation
+% problem, usually you can avoid this by creating external files or boxes.
+%
+% The general idea of this package is to try to imitate this implementation
 % \enquote{\emph{buffers}} that has \hologo{ConTeXt} which allows you to save content in
 % memory, including \emph{verbatim}, to be used later. The package
 % \mypkg{filecontentsdef} solves this problem and since \mypkg{expl3} has an
@@ -641,6 +652,10 @@
 % \item \href{https://tex.stackexchange.com/q/373647/7832}{Collect contents of an environment (that contains verbatim content)}
 % \end{enumerate}
 %
+% \thispagestyle{plain}
+% \newpage
+% \pagestyle{myheader}
+%
 % \section{License and Requirements}
 % \label{sec:licence}
 %
@@ -649,30 +664,39 @@
 % (\url{http://www.latex-project.org/lppl.txt}). The software has the status
 % \enquote{maintained}.
 %
-% \medskip
-%
 % The \mypkg*{scontents} package loads \mypkg{expl3}, \mypkg{xparse} and
 % \mypkg{l3keys2e}. This package can be used with "plain", "context", "xelatex",
 % "lualatex", "pdflatex" and the classical workflow §latex>dvips>ps2pdf§.
 %
-% \thispagestyle{plain}
-%
-% \newpage
-%
-% \pagestyle{myheader}
-%
 % \section{The \texttt{scontents} package}
 % \label{sec:pkgscontents}
 %
-% \subsection{Description of the package and load}
+% \subsection{Installation}
 %
-% \begin{scontents}[store-env=description, print-env=true]
-% The \mypkg*{scontents} package allows to \mymeta{store contents} in \mymeta{sequences}
-% or \mymeta{external files}. In some ways it is similar to the \mypkg{filecontentsdef}
-% package, with the difference in which the \mymeta{content} is stored. The idea behind
-% this package is to get an approach to \hologo{ConTeXt} \enquote{\emph{buffers}} by
-% making use \mymeta{sequences}.
-% \end{scontents}
+% The package \mypkg*{scontents} is present in \hologo{TeX}Live and \hologo{MiKTeX},
+% use the package manager to install. For manual installation, download
+% \href{http://mirrors.ctan.org/macros/latex/contrib/scontents.zip}{scontents.zip}
+% and unzip it, run \lstinline[language=scontents-doc,basicstyle=\ttfamily]+pdftex scontents.ins+
+% and move all files to appropriate locations, then run "mktexlsr".
+%
+% \iffalse
+%<*example>
+% \fi
+\begin{examplecode}[frame=single,language={}]
+  scontents.tex       >  TDS:tex/generic/scontents/
+  scontents-code.tex  >  TDS:tex/generic/scontents/
+  scontents.sty       >  TDS:tex/latex/scontents/
+  t-scontents.mkiv    >  TDS:tex/context/third/scontents/
+  scontents.pdf       >  TDS:doc/latex/scontents/
+  README.md           >  TDS:doc/latex/scontents/
+  scontents.dtx       >  TDS:source/latex/scontents/
+  scontents.ins       >  TDS:source/latex/scontents/
+\end{examplecode}
+% \iffalse
+%</example>
+% \fi
+%
+% \subsection{Loading and options}
 %
 % The package is loaded in the usual way:
 %
@@ -796,7 +820,7 @@
 % environment and the \mykey{store-cmd} key of the \ics*{Scontents} command. This key is
 % only available as a package option or using \ics*{setupsc}.
 %
-% \newpage
+% \medskip
 %
 % \keyexamp{overwrite}{true \textnormal{\textcolor{lightgray}{\textbar}} false}{false}
 % Sets whether the \mymeta{files} generated by \mykey{write-out} and \mykey{write-env}
@@ -1198,7 +1222,6 @@ This text is in the outer environment (after nested).
 % stored in the \mymarg{seq name}. The key \mykey{width-tab} is available for
 % this command.
 %
-%
 % \subsection{The environment \env{verbatimsc}}
 % \label{sec:verbatimsc}
 %
@@ -1214,7 +1237,6 @@ This text is in the outer environment (after nested).
 % a real \emph{verbatim} environment. The \mypkg{verbatim} package is not
 % compatible with the implementation of the \myenv*{verbatimsc} environment.
 %
-%^^A \newpage
 %
 % The \myenv*{verbatimsc} environment can be customized in the following ways:
 %
@@ -1852,7 +1874,6 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % \newpage
 %
-%
 % \section{Change history}
 % \label{sec:changes}
 %
@@ -1864,10 +1885,15 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % \setlist[itemize,1]{label=\textendash,wide=0.5em,nosep,noitemsep,leftmargin=10pt}
 % \newlength\descrwidth
-% \settowidth{\descrwidth}{\textsf{v1.0, (ctan), 2019-07-30} }
+% \settowidth{\descrwidth}{\textsf{v1.0a, (ctan), 2019-07-30} }
 %
 % \begin{description}[font=\small\sffamily,wide=0pt,style=multiline,leftmargin=\descrwidth,nosep,noitemsep]
 % \item [\fileversion{} (ctan), \filedate]
+%    \begin{itemize}
+%    \item Replace |\l_keys_key_tl| by |\l_keys_key_str|.
+%    \item Minor adjustments in the documentation
+%    \end{itemize}
+% \item [v1.9 (ctan), 2020-01-21]
 %    \begin{itemize}
 %    \item Update and improvements in the internal code.
 %    \item Updating the generic code for |I/O| verification.
@@ -2005,10 +2031,10 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % Now we define some common macros to hold the package date and version:
 %    \begin{macrocode}
-%<loader>\def\ScontentsFileDate{2020-02-08}%
-%<core>\def\ScontentsCoreFileDate{2020-02-08}%
+%<loader>\def\ScontentsFileDate{2020-02-09}%
+%<core>\def\ScontentsCoreFileDate{2020-02-09}%
 %<*loader>
-\def\ScontentsFileVersion{1.9b}%
+\def\ScontentsFileVersion{1.9c}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
 %    \end{macrocode}
 %
