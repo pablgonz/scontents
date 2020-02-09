@@ -39,7 +39,8 @@ and move all files to appropriate locations:
   scontents.dtx      -> TDS:source/latex/scontents/
   scontents.ins      -> TDS:source/latex/scontents/
 ```
-then run `mktexlsr`.
+then run `mktexlsr`. To produce the documentation with source code run `pdftex scontents.ins` and
+`lualatex scontents.dtx` three times.
 
 ## Examples
 
