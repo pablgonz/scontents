@@ -13,7 +13,7 @@ pkgmenor = "9"
 pkgmicro = "c"
 
 -- We assign the package version <number.number(number|leter)?>
-pkgversion = string.format("%i.%s%s", pkgmajor, pkgmenor,pkgmicro)
+pkgversion = string.format("%i.%s%s",pkgmajor,pkgmenor,pkgmicro)
 
 -- Local instalation
 sourcefiledir = "sources/"
@@ -34,13 +34,7 @@ tdslocations  = {
 }
 
 -- Documentation
---[[
-This line confuses l3build
-docfiles = { "sources/README.md" }
-For some reason, when generating the .zip file
-copy README.md instead of sources/README.md
-but the file in build/doc is the correct.
---]]
+docfiles     = { "sources/README.md" }
 textfiles    = { "sources/README.md" }
 typesetexe   = "lualatex"
 typesetopts  = "--interaction=batchmode"
@@ -176,6 +170,15 @@ end
 
 -- ctan setup
 packtdszip = false
+--[[
+You need to have the lines :
+docfiles  = { "sources/README.md" }
+textfiles = { "sources/README.md" }
+Otherwise
+ctanreadme = "sources/README.md"
+will not respect the file path and will take the README.md file from the
+repository and replace sources/README.md
+--]]
 ctanreadme = "sources/README.md"
 ctanpkg    = "scontents"
 ctanzip    = ctanpkg.."-"..pkgversion
