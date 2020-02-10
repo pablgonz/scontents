@@ -34,14 +34,21 @@ tdslocations  = {
 }
 
 -- Documentation
+--[[
+This line confuses l3build
+docfiles = { "sources/README.md" }
+For some reason, when generating the .zip file
+copy README.md instead of sources/README.md
+but the file in build/doc is the correct.
+--]]
 textfiles    = { "sources/README.md" }
 typesetexe   = "lualatex"
-typesetopts  = "--interaction=batchmode --recorder"
+typesetopts  = "--interaction=batchmode"
 typesetfiles = { "scontents.dtx" }
 typesetruns  = 3
 
--- Update tag in pkg files
-tagfiles   = { "sources/README.md","sources/scontents.ins","sources/scontents.dtx", "README.md" }
+-- Update tag in pkg files, the full path is needed to avoid conflicts with README.md
+tagfiles = { "sources/README.md","sources/scontents.ins","sources/scontents.dtx", "README.md" }
 
 function update_tag (file,content,tagname,tagdate)
  tagdate = string.gsub (pkgdate,"-", "-")
@@ -90,7 +97,7 @@ local handle   = io.popen('git for-each-ref refs/tags --sort=-taggerdate --forma
 local tagongit = string.gsub(handle:read("*a"), '%s+', '')
 handle:close()
 
--- Test files before tag in git (and ctan upload)
+-- Test files before tag in git and ctan upload
 function tag_hook(tagname)
   print('*****************************************************************')
   print('****** Extract files from scontents.ins, v'..pkgversion..' '..pkgdate..' *******')
@@ -192,5 +199,5 @@ uploadconfig = {
   announcement_file = "announcement.txt"
 }
 
--- Cleanup .zip and .curlopt files
+-- Clean .zip and .curlopt files
 cleanfiles = {"scontents-"..pkgversion..".curlopt", "scontents-"..pkgversion..".zip"}
