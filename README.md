@@ -53,9 +53,16 @@ and then you can use the excellent `arara` tool to compile them.
 ## Development
 
 The version numbers and dates are guaranteed to be correct in
-the repository is in the `l3build` configuration file `build.lua`. If it is
-important to you that the files created have the correct version and date, you
-should run `l3build tag` before any other build-related task.
+the repository is in the `l3build` configuration file `build.lua`.
+The scheme used for version numbering is as follows:
+
+- `pkgmajor`: Major version
+- `pkgmenor`: Minor version
+- `pkgmicro`: Revision
+
+The date format (`pkgdate`) is `YYYY-MM-DD`. If it is important to you
+that the files created have the correct version and date, you should run
+`l3build tag` before any other build-related task.
 
 `scontents` utilizes the `l3build` system. You can run `l3build unpack` to extract
 the code files into the directory `build/unpacked/`.
@@ -77,7 +84,6 @@ conditions of the [LaTeX Project Public License](https://www.latex-project.org/l
     ├── scontents-code.tex
     ├── scontents.dtx
     ├── scontents.ins
-    ├── scontents.log
     ├── scontents.sty
     ├── scontents.tex
     ├── t-scontents.mkiv
