@@ -1,24 +1,28 @@
 -- Build script for scontents
 -- l3build tag
 -- l3build doc
+-- l3build install [--full]
 -- l3build ctan
--- l3build upload
+-- l3build upload [--debug]
 -- l3build clean
 
-module     = "scontents"
-pkgdate    = "2020-02-09"
-pkgmajor   = "1"
-pkgmenor   = "9"
-pkgmicro   = "c"
+module   = "scontents"
+pkgdate  = "2020-02-09"
+pkgmajor = "1"
+pkgmenor = "9"
+pkgmicro = "c"
 
 -- We assign the package version <number.number(number|leter)?>
 pkgversion = string.format("%i.%s%s", pkgmajor, pkgmenor,pkgmicro)
 
 -- Local instalation
-excludefiles = { "scontents/scontents.sty","scontents/scontents-code.tex" }
-sourcefiles  = { "sources/scontents.dtx","sources/scontents.ins","sources/scontents.sty","sources/scontents-code.tex"}
-installfiles = { "scontents.sty","scontents-code.tex","scontents.tex","t-scontents.mkiv"}
-tdslocations={
+sourcefiledir = "sources/"
+unpackfiles   = { "scontents.ins" }
+unpackexe     = "luatex"
+unpackopts    = "--interaction=batchmode"
+sourcefiles   = { "scontents.dtx","scontents.ins" }
+installfiles  = { "scontents.sty","scontents-code.tex","scontents.tex","t-scontents.mkiv" }
+tdslocations  = {
 "tex/generic/scontents/scontents.tex",
 "tex/generic/scontents/scontents-code.tex",
 "tex/latex/scontents/scontents.sty",
@@ -30,14 +34,14 @@ tdslocations={
 }
 
 -- Documentation
-docfiles     = {"sources/scontents.pdf"}
-textfiles    = {"sources/README.md"}
+textfiles    = { "sources/README.md" }
 typesetexe   = "lualatex"
+typesetopts  = "--interaction=batchmode --recorder"
 typesetfiles = { "scontents.dtx" }
 typesetruns  = 3
 
 -- Update tag in pkg files
-tagfiles   = {"sources/README.md","sources/scontents.ins","sources/scontents.dtx", "README.md"}
+tagfiles   = { "sources/README.md","sources/scontents.ins","sources/scontents.dtx", "README.md" }
 
 function update_tag (file,content,tagname,tagdate)
  tagdate = string.gsub (pkgdate,"-", "-")
@@ -47,7 +51,7 @@ function update_tag (file,content,tagname,tagdate)
                          "date="..tagdate.."")
   content = string.gsub (content,
                          "version=%d%.%d%w?",
-                         "version=".. pkgversion ..""  )
+                         "version=".. pkgversion .."")
   return content
  elseif string.match (file, "scontents.dtx") then
   content = string.gsub (content,
@@ -63,10 +67,10 @@ function update_tag (file,content,tagname,tagdate)
  elseif string.match (file, "README.md") then
   content = string.gsub (content,
                          "Version: %d%.%d%w?",
-                         "Version: "..pkgversion.."" )
+                         "Version: "..pkgversion.."")
   content = string.gsub (content,
                          "Date: %d%d%d%d%-%d%d%-%d%d",
-                         "Date: ".. tagdate.."" )
+                         "Date: ".. tagdate.."")
   content = string.gsub (content,
                          "scontents/v%d%.%d",
                          "scontents/v".. pkgmajor..'.'..pkgmenor.."")
@@ -165,6 +169,7 @@ end
 
 -- ctan setup
 packtdszip = false
+ctanreadme = "sources/README.md"
 ctanpkg    = "scontents"
 ctanzip    = ctanpkg.."-"..pkgversion
 

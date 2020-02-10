@@ -24,7 +24,7 @@ package manager to install.
 For manual installation, download [scontents.zip](http://mirrors.ctan.org/macros/latex/contrib/scontents.zip) and unzip it,
 then run:
 ```
-$ pdftex scontents.ins
+$ luatex scontents.ins
 ```
 and move all files to appropriate locations:
 ```
@@ -37,7 +37,7 @@ and move all files to appropriate locations:
   scontents.dtx      -> TDS:source/latex/scontents/
   scontents.ins      -> TDS:source/latex/scontents/
 ```
-then run `mktexlsr`. To produce the documentation with source code run `pdftex scontents.ins` and
+then run `mktexlsr`. To produce the documentation with source code run `luatex scontents.ins` and
 `lualatex scontents.dtx` three times.
 
 ## Examples
