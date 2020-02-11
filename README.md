@@ -2,7 +2,6 @@
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/pablgonz/scontents?label=version)
 ![GitHub Release Date](https://img.shields.io/github/release-date/pablgonz/scontents)
 ![GitHub last commit](https://img.shields.io/github/last-commit/pablgonz/scontents)
-![GitHub commits since latest release](https://img.shields.io/github/commits-since/pablgonz/scontents/v1.9)
 
 ## Description
 This package allows to store `LaTeX` code, including _"verbatim"_, in <code>&lt;sequences&gt;</code>
@@ -28,14 +27,13 @@ $ luatex scontents.ins
 ```
 and move all files to appropriate locations:
 ```
-  scontents.tex      -> TDS:tex/generic/scontents/
-  scontents-code.tex -> TDS:tex/generic/scontents/
-  scontents.sty      -> TDS:tex/latex/scontents/
-  t-scontents.mkiv   -> TDS:tex/context/third/scontents/
-  scontents.pdf      -> TDS:doc/latex/scontents/
-  README.md          -> TDS:doc/latex/scontents/
-  scontents.dtx      -> TDS:source/latex/scontents/
-  scontents.ins      -> TDS:source/latex/scontents/
+  scontents.tex      -> TDS:tex/generic/scontents/scontents.tex
+  scontents-code.tex -> TDS:tex/generic/scontents/scontents-code.tex
+  scontents.sty      -> TDS:tex/latex/scontents/scontents.sty
+  t-scontents.mkiv   -> TDS:tex/context/third/scontents/t-scontents.mkiv
+  scontents.pdf      -> TDS:doc/latex/scontents/scontents.pdf
+  scontents.dtx      -> TDS:source/latex/scontents/scontents.dtx
+  scontents.ins      -> TDS:source/latex/scontents/scontents.ins
 ```
 then run `mktexlsr`. To produce the documentation with source code run `luatex scontents.ins` and
 `lualatex scontents.dtx` three times.
@@ -64,11 +62,12 @@ The date format (`pkgdate`) is `YYYY-MM-DD`. If it is important to you
 that the files created have the correct version and date, you should run
 `l3build tag` before any other build-related task.
 
-`scontents` utilizes the `l3build` system. You can run `l3build unpack` to extract
-the code files into the directory `build/unpacked/`.
-If you want to build the documentation run `l3build doc`, the resulting PDF will
-be in the main directory. Running `l3build install` will put all files  in your
-`TEXMFHOME`, `l3build uninstall` will remove them.
+`scontents` utilizes the `l3build` system. You can run:
+
+- `l3build unpack` to extract the code files into the directory `build/unpacked/`.
+- `l3build doc` to build the documentation.
+- `l3build install` put all files  in your `TEXMFHOME`.
+- `l3build uninstall` will remove them.
 
 ## License
 The scontents package may be modified and distributed under the terms and
@@ -80,7 +79,7 @@ conditions of the [LaTeX Project Public License](https://www.latex-project.org/l
 ├── README.md
 ├── build.lua
 └── sources
-    ├── README.md
+    ├── CTANREADME.md
     ├── scontents-code.tex
     ├── scontents.dtx
     ├── scontents.ins

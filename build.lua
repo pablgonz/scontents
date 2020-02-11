@@ -37,7 +37,7 @@ sourcefiledir = "./sources"
 --[[
     List of files to which the version and date will be updated
 --]]
-tagfiles = { "sources/scontents.ins","sources/scontents.dtx", "sources/CTANREADME.md","README.md","ctan.ann" }
+tagfiles = { "sources/scontents.ins","sources/scontents.dtx","sources/CTANREADME.md","ctan.ann" }
 
 function update_tag (file,content,tagname,tagdate)
  tagdate = string.gsub (pkgdate,"-", "-")
@@ -67,11 +67,6 @@ function update_tag (file,content,tagname,tagdate)
   content = string.gsub (content,
                          "Date: %d%d%d%d%-%d%d%-%d%d",
                          "Date: ".. tagdate.."")
- end
- if string.match (file, "README.md") then
-  content = string.gsub (content,
-                         "scontents/v%d%.%d",
-                         "scontents/v".. pkgmajor..'.'..pkgmenor.."")
  end
  if string.match (file, "ctan.ann") then
   content = string.gsub (content,
