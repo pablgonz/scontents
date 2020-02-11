@@ -1,6 +1,6 @@
 ## scontents — Stores LaTeX contents in memory or files
-- Version: 1.9c
-- Date: 2020-02-09
+- Version: 1.9d
+- Date: 2020-02-11
 - Author: Pablo González
 
 ## Description
@@ -27,17 +27,17 @@ then run:
 $ luatex scontents.ins
 ```
 
-and move all files to appropriate locations:
+Now the different files must be moved into the different directories in your
+installation `TDS` tree or in your `TEXMFHOME`:
 
 ```
-  scontents.tex      -> TDS:tex/generic/scontents/
-  scontents-code.tex -> TDS:tex/generic/scontents/
-  scontents.sty      -> TDS:tex/latex/scontents/
-  t-scontents.mkiv   -> TDS:tex/context/third/scontents/
-  scontents.pdf      -> TDS:doc/latex/scontents/
-  README.md          -> TDS:doc/latex/scontents/
-  scontents.dtx      -> TDS:source/latex/scontents/
-  scontents.ins      -> TDS:source/latex/scontents/
+  scontents.tex      -> TDS:tex/generic/scontents/scontents.tex
+  scontents-code.tex -> TDS:tex/generic/scontents/scontents-code.tex
+  scontents.sty      -> TDS:tex/latex/scontents/scontents.sty
+  t-scontents.mkiv   -> TDS:tex/context/third/scontents/t-scontents.mkiv
+  scontents.pdf      -> TDS:doc/latex/scontents/scontents.pdf
+  scontents.dtx      -> TDS:source/latex/scontents/scontents.dtx
+  scontents.ins      -> TDS:source/latex/scontents/scontents.ins
 ```
 then run `mktexlsr`. To produce the documentation with source code run `luatex scontents.ins` and
 `lualatex scontents.dtx` three times.

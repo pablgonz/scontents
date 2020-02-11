@@ -6,43 +6,20 @@
 -- l3build upload [--debug]
 -- l3build clean
 
-module   = "scontents"
-pkgdate  = "2020-02-09"
-pkgmajor = "1"
-pkgmenor = "9"
-pkgmicro = "c"
-
--- We assign the package version <number.number(number|leter)?>
+-- General package identification
+module     = "scontents"
+ctanpkg    = "scontents"
+pkgdate    = "2020-02-11"
+pkgmajor   = "1"
+pkgmenor   = "9"
+pkgmicro   = "d"
 pkgversion = string.format("%i.%s%s",pkgmajor,pkgmenor,pkgmicro)
 
--- Local instalation
-sourcefiledir = "sources/"
-unpackfiles   = { "scontents.ins" }
-unpackexe     = "luatex"
-unpackopts    = "--interaction=batchmode"
-sourcefiles   = { "scontents.dtx","scontents.ins" }
-installfiles  = { "scontents.sty","scontents-code.tex","scontents.tex","t-scontents.mkiv" }
-tdslocations  = {
-"tex/generic/scontents/scontents.tex",
-"tex/generic/scontents/scontents-code.tex",
-"tex/latex/scontents/scontents.sty",
-"tex/context/third/scontents/t-scontents.mkiv",
-"doc/latex/scontents/README.md",
-"doc/latex/scontents/scontents.pdf",
-"source/latex/scontents/scontents.dtx",
-"source/latex/scontents/scontents.ins"
-}
+-- Location of the package's source files
+sourcefiledir = "./sources"
 
--- Documentation
-docfiles     = { "sources/README.md" }
-textfiles    = { "sources/README.md" }
-typesetexe   = "lualatex"
-typesetopts  = "--interaction=batchmode"
-typesetfiles = { "scontents.dtx" }
-typesetruns  = 3
-
--- Update tag in pkg files, the full path is needed to avoid conflicts with README.md
-tagfiles = { "sources/README.md","sources/scontents.ins","sources/scontents.dtx", "README.md" }
+-- List of files to which the version and date will be updated
+tagfiles = { "sources/scontents.ins","sources/scontents.dtx", "sources/CTANREADME.md","README.md","ctan.ann" }
 
 function update_tag (file,content,tagname,tagdate)
  tagdate = string.gsub (pkgdate,"-", "-")
@@ -65,128 +42,59 @@ function update_tag (file,content,tagname,tagdate)
                          "\\ScontentsFileVersion{(.-)}",
                          "\\ScontentsFileVersion{"..pkgversion.."}")
   return content
- elseif string.match (file, "README.md") then
+ elseif string.match (file, "CTANREADME.md") then
   content = string.gsub (content,
                          "Version: %d%.%d%w?",
                          "Version: "..pkgversion.."")
   content = string.gsub (content,
                          "Date: %d%d%d%d%-%d%d%-%d%d",
                          "Date: ".. tagdate.."")
+  return content
+ elseif string.match (file, "README.md") then
   content = string.gsub (content,
                          "scontents/v%d%.%d",
                          "scontents/v".. pkgmajor..'.'..pkgmenor.."")
   return content
+ elseif string.match (file, "ctan.ann") then
+  content = string.gsub (content,
+                         "v%d%.%d%w? %d%d%d%d%-%d%d%-%d%d",
+                         "v"..pkgversion..' '..tagdate.."")
+  return content
  end
-end
+ return content
+ end
 
--- Write announcement text
-function announcement ()
-local f = io.open("announcement.txt", "w")
-f:write("Changes in the version " .. pkgversion .. " " .. pkgdate ..":\n")
-f:close()
-end
-
--- Store last tag register on git
-local handle   = io.popen('git for-each-ref refs/tags --sort=-taggerdate --format="%(refname:short)" --count=1')
-local tagongit = string.gsub(handle:read("*a"), '%s+', '')
-handle:close()
-
--- Test files before tag in git and ctan upload
-function tag_hook(tagname)
-  print('*****************************************************************')
-  print('****** Extract files from scontents.ins, v'..pkgversion..' '..pkgdate..' *******')
-  run("sources/", "pdftex -interaction=batchmode scontents.ins")
-  print('*****************************************************************')
-  print('******** Compiling tests for scontents v'..pkgversion..' '..pkgdate..' *********')
-  cp("*.tex", "sources/", "sources/test-pkg")
-  cp("*.sty", "sources/", "sources/test-pkg")
-  cp("*.mkiv", "sources/", "sources/test-pkg")
-  print('*********** Running pdflatex on test-pkg-current.tex ************')
-  print('*****************************************************************')
-  run("sources/test-pkg/", "pdflatex -interaction=nonstopmode test-pkg-current.tex")
-  print('*****************************************************************')
-  print('************ Running pdftex on test-format.plain.tex ************')
-  print('*****************************************************************')
-  run("sources/test-pkg/", "pdftex test-format.plain.tex")
-  print('*****************************************************************')
-  print('*****  Running latex>dvips>ps2pdf on test-format.latex.tex ******')
-  print('*****************************************************************')
-  run("sources/test-pkg/", "latex test-format.latex.tex")
-  run("sources/test-pkg/", "dvips test-format.latex.dvi")
-  run("sources/test-pkg/", "ps2pdf test-format.latex.ps")
-  print('*****************************************************************')
-  print('********** All tests have been successfully completed ***********')
-  print('** Running lualatex on scontents.dtx to extract example files **')
-  print('*****************************************************************')
-  run("sources/", "lualatex --draftmode --interaction=batchmode scontents.dtx")
-  print('*****************************************************************')
-  print('****** Compiling the example files, using v'..pkgversion..' '..pkgdate..' ******')
-  print('******* Running pdflatex on scexamp1.ltx using arara tool *******')
-  run("sources/", "arara scexamp1.ltx")
-  print('*****************************************************************')
-  print('******* Running pdflatex on scexamp2.ltx using arara tool *******')
-  run("sources/", "arara scexamp2.ltx")
-  print('*****************************************************************')
-  print('******* Running pdflatex on scexamp3.ltx using arara tool *******')
-  run("sources/", "arara scexamp3.ltx")
-  print('*****************************************************************')
-  print('******* Running pdflatex on scexamp4.ltx using arara tool *******')
-  run("sources/", "arara scexamp4.ltx")
-  print('*****************************************************************')
-  print('******* Running pdflatex on scexamp5.ltx using arara tool *******')
-  run("sources/", "arara scexamp5.ltx")
-  print('*****************************************************************')
-  print('******* Running pdflatex on scexamp6.ltx using arara tool *******')
-  run("sources/", "arara scexamp6.ltx")
-  print('*****************************************************************')
-  print('******* Running pdflatex on scexamp7.ltx using arara tool *******')
-  print('Customization of verbatimsc using the fancyvrb and tcolorbox package')
-  run("sources/", "arara scexamp7.ltx")
-  print('*****************************************************************')
-  print('******* Running pdflatex on scexamp8.ltx using arara tool *******')
-  print('Customization of verbatimsc using the listings package')
-  run("sources/", "arara scexamp8.ltx")
-  print('*****************************************************************')
-  print('******* Running xelatex on scexamp9.ltx using arara tool ********')
-  print('Customization of verbatimsc using the minted package')
-  run("sources/", "arara scexamp9.ltx")
-  print('********** All sample files were successfully compiled **********')
-  print('*****************************************************************')
-  print('*************** Configuration for Github and CTAN ***************')
-  os.execute("git clean -xdfq")
-  print('** The last tag marked for scontens in github is: '..tagongit..' **')
-  print('**** Check if there are modifications in the generated files ****')
-  os.execute("git status -s")
-  print('* If it shows files that start with M you need to make a commit *')
-  print('**** If everything is OK, you just need to execute manually *****')
-  --print("git commit -a -m 'Release v"..pkgversion.."'")
-  print("git tag -a v"..pkgversion.." -m 'Release v"..pkgversion.."'")
-  print("git push --tags")
-  print('*** Edit announcement.txt and add the changes for this version **')
-  announcement ()
-  print('**** Then run l3build ctan, l3build upload and l3build clean ****')
-  print('*****************************************************************')
-end
-
--- ctan setup
-packtdszip = false
 --[[
-You need to have the lines :
-docfiles  = { "sources/README.md" }
-textfiles = { "sources/README.md" }
-Otherwise
-ctanreadme = "sources/README.md"
-will not respect the file path and will take the README.md file from the
-repository and replace sources/README.md
+    Configuration of files for local installation,
+    documentation and package distribution in zip.
 --]]
-ctanreadme = "sources/README.md"
-ctanpkg    = "scontents"
-ctanzip    = ctanpkg.."-"..pkgversion
 
+textfiles    = {"sources/CTANREADME.md"}
+ctanreadme   = "CTANREADME.md"
+packtdszip   = false
+installfiles = {"**/*.sty", "**/*.tex", "**/*.mkiv" }
+sourcefiles  = {"**/*.dtx", "**/*.ins"}
+unpackexe    = "luatex"
+unpackopts   = "--interaction=batchmode"
+unpackfiles  = { "scontents.ins" }
+typesetexe   = "lualatex"
+typesetopts  = "--interaction=batchmode"
+typesetfiles = { "scontents.dtx" }
+typesetruns  = 3
+tdslocations = {
+"tex/generic/scontents/scontents.tex",
+"tex/generic/scontents/scontents-code.tex",
+"tex/latex/scontents/scontents.sty",
+"tex/context/third/scontents/t-scontents.mkiv",
+"doc/latex/scontents/scontents.pdf",
+"source/latex/scontents/scontents.dtx",
+"source/latex/scontents/scontents.ins"
+}
+
+--  Configuration for package distribution in ctan
 uploadconfig = {
   author       = "Pablo González Luengo",
   uploader     = "Pablo González Luengo",
-  email        = "pablgonz@yahoo.com",
   pkg          = ctanpkg,
   version      = pkgversion,
   license      = "lppl1.3c",
@@ -198,9 +106,87 @@ uploadconfig = {
   bugtracker   = "https://github.com/pablgonz/" .. module .. "/issues",
   support      = "https://github.com/pablgonz/" .. module .. "/issues",
   note         = [[Uploaded automatically by l3build...]],
-  update       = true,
-  announcement_file = "announcement.txt"
+  update       = true
 }
 
--- Clean .zip and .curlopt files
-cleanfiles = {"scontents-"..pkgversion..".curlopt", "scontents-"..pkgversion..".zip"}
+-- Store last tag register on git in tagongit
+local handle   = io.popen('git for-each-ref refs/tags --sort=-taggerdate --format="%(refname:short)" --count=1')
+local tagongit = string.gsub(handle:read("*a"), '%s+', '')
+handle:close()
+
+
+function interact_git ()
+  print('*************** Configuration for Github and CTAN ***************')
+  os.execute("git clean -xdfq")
+  print('*** We must add the changes for this version in ctan.ann file ***')
+  print('**** Check if there are modifications in the generated files ****')
+  os.execute("git status -s")
+  print('* If it shows files that start with M you need to make a commit *')
+  print('**** The last tag marked for ' ..module.. ' in github is: '..tagongit..'  ****')
+  --print('**** If everything is OK, you just need to execute manually *****')
+  --print("git commit -a -m 'Release v"..pkgversion.."'")
+  print("git tag -a v"..pkgversion.." -m 'Release v"..pkgversion.."'")
+  print("git push --tags")
+  print('**** Then run l3build ctan, l3build upload and l3build clean ****')
+  print('*****************************************************************')
+end
+
+
+--[[
+    We added a new target "testpkg" to run the tests files in test-pkg/.
+--]]
+if options["target"] == "testpkg" then
+  print('*****************************************************************')
+  print('****** Extract files from scontents.ins, v'..pkgversion..' '..pkgdate..' *******')
+  run("sources/", "pdftex -interaction=batchmode scontents.ins")
+  print('******** Compiling tests for scontents v'..pkgversion..' '..pkgdate..' *********')
+  cp("*.tex", "sources/", "sources/test-pkg")
+  cp("*.sty", "sources/", "sources/test-pkg")
+  cp("*.mkiv","sources/", "sources/test-pkg")
+  print('*********** Running pdflatex on test-pkg-current.tex ************')
+  run("sources/test-pkg/", "pdflatex -interaction=nonstopmode test-pkg-current.tex")
+  print('************ Running pdftex on test-format.plain.tex ************')
+  run("sources/test-pkg/", "pdftex test-format.plain.tex")
+  print('*****  Running latex>dvips>ps2pdf on test-format.latex.tex ******')
+  run("sources/test-pkg/", "latex test-format.latex.tex")
+  run("sources/test-pkg/", "dvips test-format.latex.dvi")
+  run("sources/test-pkg/", "ps2pdf test-format.latex.ps")
+  print('********** All tests have been successfully completed ***********')
+  interact_git ()
+  os.exit()
+end
+
+--[[
+    We added a new target "examples" to run the examples files in scontenst.dtx.
+--]]
+if options["target"] == "examples" then
+  print('*****************************************************************')
+  print('****** Extract files from scontents.ins, v'..pkgversion..' '..pkgdate..' *******')
+  run("sources/", "pdftex -interaction=batchmode scontents.ins")
+  print('** Running lualatex on scontents.dtx to extract example files **')
+  run("sources/", "lualatex --draftmode --interaction=batchmode scontents.dtx")
+  print('****** Compiling the example files, using v'..pkgversion..' '..pkgdate..' ******')
+  print('******* Running pdflatex on scexamp1.ltx using arara tool *******')
+  run("sources/", "arara scexamp1.ltx")
+  print('******* Running pdflatex on scexamp2.ltx using arara tool *******')
+  run("sources/", "arara scexamp2.ltx")
+  print('******* Running pdflatex on scexamp3.ltx using arara tool *******')
+  run("sources/", "arara scexamp3.ltx")
+  print('******* Running pdflatex on scexamp4.ltx using arara tool *******')
+  run("sources/", "arara scexamp4.ltx")
+  print('******* Running pdflatex on scexamp5.ltx using arara tool *******')
+  run("sources/", "arara scexamp5.ltx")
+  print('******* Running pdflatex on scexamp6.ltx using arara tool *******')
+  run("sources/", "arara scexamp6.ltx")
+  print('******* Running pdflatex on scexamp7.ltx using arara tool *******')
+  print('Customization of verbatimsc using the fancyvrb and tcolorbox package')
+  run("sources/", "arara scexamp7.ltx")
+  print('******* Running pdflatex on scexamp8.ltx using arara tool *******')
+  print('Customization of verbatimsc using the listings package')
+  run("sources/", "arara scexamp8.ltx")
+  print('******* Running xelatex on scexamp9.ltx using arara tool ********')
+  print('Customization of verbatimsc using the minted package')
+  --run("sources/", "xelatex --shell-escape -8bit scexamp9.ltx")
+  print('********** All sample files were successfully compiled **********')
+  os.exit()
+end
