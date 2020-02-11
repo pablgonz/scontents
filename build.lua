@@ -48,8 +48,8 @@ function update_tag (file,content,tagname,tagdate)
   content = string.gsub (content,
                          "version=%d%.%d%w?",
                          "version=".. pkgversion .."")
-  return content
- elseif string.match (file, "scontents.dtx") then
+ end
+ if string.match (file, "scontents.dtx") then
   content = string.gsub (content,
                          "\\ScontentsFileDate{(.-)}",
                          "\\ScontentsFileDate{"..tagdate.."}")
@@ -59,28 +59,27 @@ function update_tag (file,content,tagname,tagdate)
   content = string.gsub (content,
                          "\\ScontentsFileVersion{(.-)}",
                          "\\ScontentsFileVersion{"..pkgversion.."}")
-  return content
- elseif string.match (file, "CTANREADME.md") then
+ end
+ if string.match (file, "CTANREADME.md") then
   content = string.gsub (content,
                          "Version: %d%.%d%w?",
                          "Version: "..pkgversion.."")
   content = string.gsub (content,
                          "Date: %d%d%d%d%-%d%d%-%d%d",
                          "Date: ".. tagdate.."")
-  return content
- elseif string.match (file, "README.md") then
+ end
+ if string.match (file, "README.md") then
   content = string.gsub (content,
                          "scontents/v%d%.%d",
                          "scontents/v".. pkgmajor..'.'..pkgmenor.."")
-  return content
- elseif string.match (file, "ctan.ann") then
+ end
+ if string.match (file, "ctan.ann") then
   content = string.gsub (content,
                          "v%d%.%d%w? %d%d%d%d%-%d%d%-%d%d",
                          "v"..pkgversion..' '..tagdate.."")
-  return content
  end
  return content
- end
+end
 
 --[[
     Configuration of files for local installation,
@@ -89,6 +88,7 @@ function update_tag (file,content,tagname,tagdate)
 
 textfiles    = {"sources/CTANREADME.md"}
 ctanreadme   = "CTANREADME.md"
+ctanzip      = ctanpkg.."-"..pkgversion
 packtdszip   = false
 installfiles = {"**/*.sty", "**/*.tex", "**/*.mkiv" }
 sourcefiles  = {"**/*.dtx", "**/*.ins"}
@@ -99,7 +99,7 @@ typesetexe   = "lualatex"
 typesetopts  = "--interaction=batchmode"
 typesetfiles = { "scontents.dtx" }
 typesetruns  = 3
-cleanfiles = { ""..module.."-ctan.curlopt", ""..ctanpkg.."-ctan.zip"}
+cleanfiles   = { ""..ctanzip..".curlopt", ""..ctanzip..".zip" }
 tdslocations = {
 "tex/generic/scontents/scontents.tex",
 "tex/generic/scontents/scontents-code.tex",
@@ -130,14 +130,6 @@ uploadconfig = {
   note         = [[Uploaded automatically by l3build...]],
   update       = true
 }
-
---[[
-    Store last tag register on git in tagongit
---]]
-
-local handle   = io.popen('git for-each-ref refs/tags --sort=-taggerdate --format="%(refname:short)" --count=1')
-local tagongit = string.gsub(handle:read("*a"), '%s+', '')
-handle:close()
 
 --[[
     We added a new target "testpkg" to run the tests
@@ -200,25 +192,73 @@ if options["target"] == "examples" then
 end
 
 --[[
-    We added a new target "release" to do the
-    final checks for git and ctan, the file
-    ctan.ann no follow up in git.
+    We added a new target "release" to do the final checks for git and
+    ctan, the file ctan.ann no follow up in git.
     git update-index --assume-unchanged ctan.ann
 --]]
+
+current_tags = nil
+do
+  local f = assert(io.open("sources/scontents.dtx", "r"))
+  current_tags = f:read("*all")
+  f:close()
+end
+current_pkgv = string.match(current_tags,"\\ScontentsFileVersion{(.-)}")
+current_date = string.match(current_tags,"\\ScontentsFileDate{(.-)}")
+
+status_bool = false
 if options["target"] == "release" then
   print('*************** Configuration for Github and CTAN ***************')
   os.execute("git clean -xdfq")
-  print('*** We must add the changes for this version in ctan.ann file ***')
-  print('**** Check if there are modifications in the generated files ****')
-  os.execute("git status -s")
-  print('* If it shows files that start with M you need to make a commit *')
-  print('***** The last tag marked for ' ..module.. ' in github is: '..tagongit..'  *****')
-  print('**** If everything is OK, you just need to execute manually *****')
-  print("git tag -a v"..pkgversion.." -m 'Release v"..pkgversion.."' && git push --tags")
-  print('Then we executed:')
-  print("l3build ctan && l3build upload -F ctan.ann --debug")
-  print('And finally (if everything is ok):')
-  print("l3build upload -F ctan.ann && l3build clean")
-  print('*****************************************************************')
-  os.exit()
+  local handle    = io.popen('git status --porcelain --untracked-files=no')
+  local gitstatus = string.gsub(handle:read("*a"),'%s*$','')
+  handle:close()
+  local handle    = io.popen('git log --branches --not --remotes')
+  local gitpush   = string.gsub(handle:read("*a"),'%s*$','')
+  handle:close()
+  local handle    = io.popen('git for-each-ref refs/tags --sort=-taggerdate --format="%(refname:short)" --count=1')
+  local tagongit  = string.gsub(handle:read("*a"),'%s*$','')
+  handle:close()
+  if status_bool then
+    return true
+  end
+  if gitstatus=="" then
+    if gitpush=="" then
+      print('** Checking for pending commits')
+    else
+      print('** There are pending commits, running git push')
+      os.execute("git push")
+      print('** You must run l3build release again')
+      os.exit()
+    end
+    print('** The last tag marked for ' ..module.. ' in github is: '..tagongit..'')
+    print('** The new tag marked for ' ..module.. ' in github will be: v'..pkgversion..'')
+    print('** Current version (defined in the scontents.dtx file): '..current_pkgv)
+    print('** Current date (defined in the scontents.dtx file): '..current_date)
+    if pkgversion==current_pkgv and pkgdate==current_date then
+      print('** The version number and date are consistent with build.lua')
+    else
+      print('** The version number or date are inconsistent with build.lua')
+      print('** You must run: l3build tag')
+      os.exit()
+    end
+    print('** Everything is correct, we record changes in git by running')
+    print("git tag -a v"..pkgversion.." -m 'Release v"..pkgversion.."' && git push --tags")
+    os.execute("git tag -a v"..pkgversion.." -m 'Release v"..pkgversion.."' && git push --tags")
+    print('** We created the compressed package to send to ctan')
+    os.execute("l3build ctan && l3build upload -F ctan.ann --debug")
+    print('** We must add the changes for this version in ctan.ann file')
+    print('** And finally (if everything is ok) execute manually (without --debug):')
+    print('l3build upload -F ctan.ann')
+    print('*****************************************************************')
+    status_bool = true
+    os.exit()
+    return status_bool
+  else
+    print(gitstatus)
+    print('** Aborting, git status is not clean, need to make a commit')
+    status_bool = false
+    os.exit()
+    return status_bool
+  end
 end
