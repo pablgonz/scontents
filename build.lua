@@ -99,7 +99,7 @@ typesetexe   = "lualatex"
 typesetopts  = "--interaction=batchmode"
 typesetfiles = { "scontents.dtx" }
 typesetruns  = 3
-cleanfiles   = { ""..ctanzip..".curlopt", ""..ctanzip..".zip" }
+cleanfiles   = { ctanzip..".curlopt", ctanzip..".zip" }
 tdslocations = {
 "tex/generic/scontents/scontents.tex",
 "tex/generic/scontents/scontents-code.tex",
@@ -227,12 +227,12 @@ if options["target"] == "release" then
       print('** Checking for pending commits')
     else
       print('** There are pending commits, running git push')
-      os.execute("git push")
+      --os.execute("git push")
       print('** You must run l3build release again')
       os.exit()
     end
-    print('** The last tag marked for ' ..module.. ' in github is: '..tagongit..'')
-    print('** The new tag marked for ' ..module.. ' in github will be: v'..pkgversion..'')
+    print('** The last tag marked for ' ..module.. ' in github is: '..tagongit)
+    print('** The new tag marked for ' ..module.. ' in github will be: v'..pkgversion)
     print('** Current version (defined in the scontents.dtx file): '..current_pkgv)
     print('** Current date (defined in the scontents.dtx file): '..current_date)
     if pkgversion==current_pkgv and pkgdate==current_date then
@@ -243,10 +243,10 @@ if options["target"] == "release" then
       os.exit()
     end
     print('** Everything is correct, we record changes in git by running')
-    print("git tag -a v"..pkgversion.." -m 'Release v"..pkgversion.."' && git push --tags")
-    os.execute("git tag -a v"..pkgversion.." -m 'Release v"..pkgversion.."' && git push --tags")
+    print("git tag -a v"..pkgversion.." -m 'Release v"..pkgversion.." "..pkgdate.."' && git push --tags")
+    --os.execute("git tag -a v"..pkgversion.." -m 'Release v"..pkgversion.."' && git push --tags")
     print('** We created the compressed package to send to ctan')
-    os.execute("l3build ctan && l3build upload -F ctan.ann --debug")
+    --os.execute("l3build ctan && l3build upload -F ctan.ann --debug")
     print('** We must add the changes for this version in ctan.ann file')
     print('** And finally (if everything is ok) execute manually (without --debug):')
     print('l3build upload -F ctan.ann')
