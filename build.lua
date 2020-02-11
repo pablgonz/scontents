@@ -1,12 +1,26 @@
--- Build script for scontents
--- l3build tag
--- l3build doc
--- l3build install [--full]
--- l3build ctan
--- l3build upload [--debug]
--- l3build clean
+--[[
+   Configuration script for l3build from the scontents package
+   At the moment the possible options that can be passed on to
+   l3build are:
+   * tag        : Update the version and date
+   * doc        : Generate the documentation
+   * unpack     : Unpacks the source files
+   * install    : Install the package locally, you can use
+                  it in conjunction with [--full] [--dry-run]
+   * uninstall  : Uninstall the package locally
+   * clean      : Clean the directory tree and some files
+   * ctan       : Generate the compressed package (.zip)
+   * upload     : Upload the package to ctan, you must add
+                  -F ctan.ann in conjunction with [--debug]
+   * testpkg    : Compile the tests included in the test-pkg/
+   * examples   : Compile the example files included in the .dtx
+   * release    : It performs the checks before generating a public
+                  release (on git and ctan).
+--]]
 
--- General package identification
+--[[
+    General package identification
+--]]
 module     = "scontents"
 ctanpkg    = "scontents"
 pkgdate    = "2020-02-11"
@@ -15,10 +29,14 @@ pkgmenor   = "9"
 pkgmicro   = "d"
 pkgversion = string.format("%i.%s%s",pkgmajor,pkgmenor,pkgmicro)
 
--- Location of the package's source files
+--[[
+    Location of the package's source files
+--]]
 sourcefiledir = "./sources"
 
--- List of files to which the version and date will be updated
+--[[
+    List of files to which the version and date will be updated
+--]]
 tagfiles = { "sources/scontents.ins","sources/scontents.dtx", "sources/CTANREADME.md","README.md","ctan.ann" }
 
 function update_tag (file,content,tagname,tagdate)
@@ -81,6 +99,7 @@ typesetexe   = "lualatex"
 typesetopts  = "--interaction=batchmode"
 typesetfiles = { "scontents.dtx" }
 typesetruns  = 3
+cleanfiles = { ""..module.."-ctan.curlopt", ""..ctanpkg.."-ctan.zip"}
 tdslocations = {
 "tex/generic/scontents/scontents.tex",
 "tex/generic/scontents/scontents-code.tex",
@@ -91,10 +110,13 @@ tdslocations = {
 "source/latex/scontents/scontents.ins"
 }
 
---  Configuration for package distribution in ctan
+--[[
+    Configuration for package distribution in ctan
+--]]
 uploadconfig = {
   author       = "Pablo González Luengo",
   uploader     = "Pablo González Luengo",
+  email        = "pablgonz@yahoo.com",
   pkg          = ctanpkg,
   version      = pkgversion,
   license      = "lppl1.3c",
@@ -109,31 +131,17 @@ uploadconfig = {
   update       = true
 }
 
--- Store last tag register on git in tagongit
+--[[
+    Store last tag register on git in tagongit
+--]]
+
 local handle   = io.popen('git for-each-ref refs/tags --sort=-taggerdate --format="%(refname:short)" --count=1')
 local tagongit = string.gsub(handle:read("*a"), '%s+', '')
 handle:close()
 
-
-function interact_git ()
-  print('*************** Configuration for Github and CTAN ***************')
-  os.execute("git clean -xdfq")
-  print('*** We must add the changes for this version in ctan.ann file ***')
-  print('**** Check if there are modifications in the generated files ****')
-  os.execute("git status -s")
-  print('* If it shows files that start with M you need to make a commit *')
-  print('**** The last tag marked for ' ..module.. ' in github is: '..tagongit..'  ****')
-  --print('**** If everything is OK, you just need to execute manually *****')
-  --print("git commit -a -m 'Release v"..pkgversion.."'")
-  print("git tag -a v"..pkgversion.." -m 'Release v"..pkgversion.."'")
-  print("git push --tags")
-  print('**** Then run l3build ctan, l3build upload and l3build clean ****')
-  print('*****************************************************************')
-end
-
-
 --[[
-    We added a new target "testpkg" to run the tests files in test-pkg/.
+    We added a new target "testpkg" to run the tests
+    files in test-pkg/.
 --]]
 if options["target"] == "testpkg" then
   print('*****************************************************************')
@@ -152,12 +160,12 @@ if options["target"] == "testpkg" then
   run("sources/test-pkg/", "dvips test-format.latex.dvi")
   run("sources/test-pkg/", "ps2pdf test-format.latex.ps")
   print('********** All tests have been successfully completed ***********')
-  interact_git ()
   os.exit()
 end
 
 --[[
-    We added a new target "examples" to run the examples files in scontenst.dtx.
+    We added a new target "examples" to run the examples
+    files in scontents.dtx.
 --]]
 if options["target"] == "examples" then
   print('*****************************************************************')
@@ -188,5 +196,29 @@ if options["target"] == "examples" then
   print('Customization of verbatimsc using the minted package')
   --run("sources/", "xelatex --shell-escape -8bit scexamp9.ltx")
   print('********** All sample files were successfully compiled **********')
+  os.exit()
+end
+
+--[[
+    We added a new target "release" to do the
+    final checks for git and ctan, the file
+    ctan.ann no follow up in git.
+    git update-index --assume-unchanged ctan.ann
+--]]
+if options["target"] == "release" then
+  print('*************** Configuration for Github and CTAN ***************')
+  os.execute("git clean -xdfq")
+  print('*** We must add the changes for this version in ctan.ann file ***')
+  print('**** Check if there are modifications in the generated files ****')
+  os.execute("git status -s")
+  print('* If it shows files that start with M you need to make a commit *')
+  print('***** The last tag marked for ' ..module.. ' in github is: '..tagongit..'  *****')
+  print('**** If everything is OK, you just need to execute manually *****')
+  print("git tag -a v"..pkgversion.." -m 'Release v"..pkgversion.."' && git push --tags")
+  print('Then we executed:')
+  print("l3build ctan && l3build upload -F ctan.ann --debug")
+  print('And finally (if everything is ok):')
+  print("l3build upload -F ctan.ann && l3build clean")
+  print('*****************************************************************')
   os.exit()
 end
