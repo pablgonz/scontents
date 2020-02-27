@@ -14,7 +14,7 @@
                   -F ctan.ann in conjunction with [--debug]
    * testpkg    : Compile the tests included in the test-pkg/
    * tagged     : Check version and date in files
-   * examples   : Compile the example files included in the .dtx
+   * examples   : Compile the example files included in .dtx file
    * release    : It performs the checks before generating a public
                   release (on git and ctan).
 --]]
@@ -57,7 +57,7 @@ makeindexopts = "-q"
 tagfiles = {"sources/scontents.ins", "sources/scontents.dtx", "sources/CTANREADME.md", "ctan.ann"}
 local mydate = os.date("!%Y-%m-%d")
 
-function update_tag (file,content,tagname,tagdate)
+function update_tag(file,content,tagname,tagdate)
   if not tagname and tagdate == mydate then
     tagname = pkgversion
     tagdate = pkgdate
@@ -77,10 +77,10 @@ function update_tag (file,content,tagname,tagdate)
   if string.match(file, "scontents.ins") then
     content = string.gsub(content,
                           "date=%d%d%d%d%-%d%d%-%d%d",
-                          "date="..tagdate.."")
+                          "date="..tagdate)
     content = string.gsub(content,
                           "version=%d%.%d%w?",
-                          "version="..tagname.."")
+                          "version="..tagname)
   end
   if string.match(file, "scontents.dtx") then
     content = string.gsub(content,
@@ -96,15 +96,15 @@ function update_tag (file,content,tagname,tagdate)
   if string.match(file, "CTANREADME.md") then
     content = string.gsub(content,
                           "Version: %d%.%d%w?",
-                          "Version: "..tagname.."")
+                          "Version: "..tagname)
     content = string.gsub(content,
                           "Date: %d%d%d%d%-%d%d%-%d%d",
-                          "Date: ".. tagdate.."")
+                          "Date: ".. tagdate)
   end
   if string.match(file,"ctan.ann") then
     content = string.gsub(content,
                          "v%d%.%d%w? %d%d%d%d%-%d%d%-%d%d",
-                         "v"..tagname..' '..tagdate.."")
+                         "v"..tagname..' '..tagdate)
   end
   return content
 end
@@ -116,7 +116,7 @@ ctanzip    = ctanpkg.."-"..pkgversion
 packtdszip = false
 
 -- Clean files
-cleanfiles = {ctanzip..".curlopt", ctanzip..".zip"}
+cleanfiles = {module..".pdf", ctanzip..".curlopt", ctanzip..".zip"}
 
 --  Configuration for package distribution in ctan
 uploadconfig = {
@@ -134,6 +134,7 @@ uploadconfig = {
   bugtracker   = "https://github.com/pablgonz/" .. module .. "/issues",
   support      = "https://github.com/pablgonz/" .. module .. "/issues",
   note         = [[Uploaded automatically by l3build...]],
+  announcement_file="ctan.ann",
   update       = true
 }
 
@@ -145,25 +146,30 @@ local function os_message(text)
 end
 
 -- Compiling documentation step by step :)
+--[[
+function docinit_hook()
+  errorlevel = cp("*.sty", unpackdir, typesetdir)
+  errorlevel = cp("*.tex", unpackdir, typesetdir)
+  if errorlevel ~= 0 then
+    error("** Error!!: Can't copy all files from "..unpackdir.." to "..typesetdir)
+    return errorlevel
+  else
+    print("** Copying all files from "..unpackdir.." to "..typesetdir)
+  end
+  return 0
+end
+
 function typeset(file)
   local file = jobname(sourcefiledir.."/scontents.dtx")
-  errorlevel = run(typesetdir, "lualatex --interaction=batchmode --draftmode "..file..".dtx >"..os_null)
+  errorlevel = run(typesetdir, "lualatex --interaction=batchmode "..file..".dtx >"..os_null)
   if errorlevel ~= 0 then
     error("** Error!!: lualatex --interaction=batchmode "..file..".dtx")
     return errorlevel
   else
     os_message("** Running: lualatex --interaction=batchmode "..file..".dtx: OK")
   end
-  -- index userdoc
-  errorlevel = makeindex("userdoc", typesetdir, ".idx", ".ind", ".ilg", indexstyle)
-  if errorlevel ~= 0 then
-    error("** Error!!: makeindex -s gind.ist -o userdoc.ind userdoc.idx")
-    return errorlevel
-  else
-    os_message("** Running: makeindex -s gind.ist -o userdoc.ind userdoc.idx: OK")
-  end
-  -- index main
-  local file = jobname(sourcefiledir.."/scontents.dtx")
+  local file = jobname(unpackdir.."/userdoc.ind")
+  --errorlevel = run(typesetdir, "makeindex -s gind.ist -o "..file..".ind "..file..".idx")
   errorlevel = makeindex(file, typesetdir, ".idx", ".ind", ".ilg", indexstyle)
   if errorlevel ~= 0 then
     error("** Error!!: makeindex -s gind.ist -o "..file..".ind "..file..".idx")
@@ -171,7 +177,16 @@ function typeset(file)
   else
     os_message("** Running: makeindex -s gind.ist -o "..file..".ind "..file..".idx: OK")
   end
-  errorlevel = run(typesetdir, "lualatex --interaction=batchmode --draftmode "..file..".dtx >"..os_null)
+  local file = jobname(sourcefiledir.."/scontents.dtx")
+  --errorlevel = run(typesetdir, "makeindex -q -s gind.ist -o "..file..".ind "..file..".idx")
+  errorlevel = makeindex(file, typesetdir, ".idx", ".ind", ".ilg", indexstyle)
+  if errorlevel ~= 0 then
+    error("** Error!!: makeindex -s gind.ist -o "..file..".ind "..file..".idx")
+    return errorlevel
+  else
+    os_message("** Running: makeindex -s gind.ist -o "..file..".ind "..file..".idx: OK")
+  end
+  errorlevel = run(typesetdir, "lualatex --interaction=batchmode "..file..".dtx >"..os_null)
   if errorlevel ~= 0 then
     error("** Error!!: lualatex --interaction=batchmode "..file..".dtx")
     return errorlevel
@@ -187,7 +202,7 @@ function typeset(file)
   end
   return 0
 end
-
+--]]
 -- Create check_marked_tags() function
 local function check_marked_tags()
   local f = assert(io.open("sources/scontents.dtx", "r"))
@@ -216,7 +231,6 @@ if options["target"] == "tagged" then
 end
 
 -- We added a new target "testpkg" to run the tests files in test-pkg/
-
 if options["target"] == "testpkg" then
   local file = jobname(sourcefiledir.."/scontents.ins")
   errorlevel = run(sourcefiledir, "pdftex -interaction=batchmode "..file..".ins > "..os_null)
