@@ -3,8 +3,8 @@
    At the moment the possible options that can be passed on to
    l3build are:
    * tag        : Update the version and date
-   * doc        : Generate the documentation
-   * unpack     : Unpacks the source files
+   * doc        : Generate the documentation [-q]
+   * unpack     : Unpacks the source files [-q]
    * install    : Install the package locally, you can use
                   it in conjunction with [--full] [--dry-run]
    * uninstall  : Uninstall the package locally
@@ -13,6 +13,7 @@
    * upload     : Upload the package to ctan, you must add
                   -F ctan.ann in conjunction with [--debug]
    * testpkg    : Compile the tests included in the test-pkg/
+   * tagged     : Check version and date in files
    * examples   : Compile the example files included in the .dtx
    * release    : It performs the checks before generating a public
                   release (on git and ctan).
@@ -333,6 +334,14 @@ if options["target"] == "release" then
     os_message("** Checking git branch '"..gitbranch.."': OK")
   else
     error("** Error!!: You must be on the 'master' branch")
+  end
+  local file = jobname(sourcefiledir.."/scontents.ins")
+  errorlevel = run(sourcefiledir, "luatex --interaction=batchmode "..file..".ins > "..os_null)
+  if errorlevel ~= 0 then
+    error("** Error!!: luatex -interaction=batchmode "..file..".ins")
+    return errorlevel
+  else
+    os_message("** Running: luatex -interaction=batchmode "..file..".ins")
   end
   if gitstatus == "" then
     os_message("** Checking status of the files: OK")
