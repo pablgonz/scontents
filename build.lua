@@ -18,96 +18,106 @@
                   release (on git and ctan).
 --]]
 
---[[
-    General package identification
---]]
+-- General package identification
 module     = "scontents"
-ctanpkg    = "scontents"
-pkgdate    = "2020-02-11"
-pkgmajor   = "1"
-pkgmenor   = "9"
-pkgmicro   = "d"
-pkgversion = string.format("%i.%s%s",pkgmajor,pkgmenor,pkgmicro)
+pkgversion = "1.9e"
+pkgdate    = "2020-02-27"
 
---[[
-    Location of the package's source files
---]]
+-- Configuration of files for build and installation
+maindir       = "."
 sourcefiledir = "./sources"
-
---[[
-    List of files to which the version and date will be updated
---]]
-tagfiles = { "sources/scontents.ins","sources/scontents.dtx","sources/CTANREADME.md","ctan.ann" }
-
-function update_tag (file,content,tagname,tagdate)
- tagdate = string.gsub (pkgdate,"-", "-")
- if string.match (file, "scontents.ins" ) then
-  content = string.gsub (content,
-                         "date=%d%d%d%d%-%d%d%-%d%d",
-                         "date="..tagdate.."")
-  content = string.gsub (content,
-                         "version=%d%.%d%w?",
-                         "version=".. pkgversion .."")
- end
- if string.match (file, "scontents.dtx") then
-  content = string.gsub (content,
-                         "\\ScontentsFileDate{(.-)}",
-                         "\\ScontentsFileDate{"..tagdate.."}")
-  content = string.gsub (content,
-                         "\\ScontentsCoreFileDate{(.-)}",
-                         "\\ScontentsCoreFileDate{"..tagdate.."}")
-  content = string.gsub (content,
-                         "\\ScontentsFileVersion{(.-)}",
-                         "\\ScontentsFileVersion{"..pkgversion.."}")
- end
- if string.match (file, "CTANREADME.md") then
-  content = string.gsub (content,
-                         "Version: %d%.%d%w?",
-                         "Version: "..pkgversion.."")
-  content = string.gsub (content,
-                         "Date: %d%d%d%d%-%d%d%-%d%d",
-                         "Date: ".. tagdate.."")
- end
- if string.match (file, "ctan.ann") then
-  content = string.gsub (content,
-                         "v%d%.%d%w? %d%d%d%d%-%d%d%-%d%d",
-                         "v"..pkgversion..' '..tagdate.."")
- end
- return content
-end
-
---[[
-    Configuration of files for local installation,
-    documentation and package distribution in zip.
---]]
-
-textfiles    = {"sources/CTANREADME.md"}
-ctanreadme   = "CTANREADME.md"
-ctanzip      = ctanpkg.."-"..pkgversion
-packtdszip   = false
-installfiles = {"**/*.sty", "**/*.tex", "**/*.mkiv" }
-sourcefiles  = {"**/*.dtx", "**/*.ins"}
-unpackexe    = "luatex"
-unpackopts   = "--interaction=batchmode"
-unpackfiles  = { "scontents.ins" }
-typesetexe   = "lualatex"
-typesetopts  = "--interaction=batchmode"
-typesetfiles = { "scontents.dtx" }
-typesetruns  = 3
-cleanfiles   = { ctanzip..".curlopt", ctanzip..".zip" }
-tdslocations = {
-"tex/generic/scontents/scontents.tex",
-"tex/generic/scontents/scontents-code.tex",
-"tex/latex/scontents/scontents.sty",
-"tex/context/third/scontents/t-scontents.mkiv",
-"doc/latex/scontents/scontents.pdf",
-"source/latex/scontents/scontents.dtx",
-"source/latex/scontents/scontents.ins"
+textfiledir   = "./sources"
+textfiles     = {textfiledir.."/CTANREADME.md"}
+sourcefiles   = {"**/*.dtx", "**/*.ins"}
+installfiles  = {"**/*.sty", "**/*.tex", "**/*.mkiv"}
+tdslocations  = {
+  "tex/generic/scontents/scontents.tex",
+  "tex/generic/scontents/scontents-code.tex",
+  "tex/latex/scontents/scontents.sty",
+  "tex/context/third/scontents/t-scontents.mkiv",
+  "doc/latex/scontents/scontents.pdf",
+  "source/latex/scontents/scontents.dtx",
+  "source/latex/scontents/scontents.ins"
 }
 
---[[
-    Configuration for package distribution in ctan
---]]
+-- Unpacking files from .ins file
+unpackfiles = { "scontents.ins" }
+unpackopts  = "--interaction=batchmode"
+unpackexe   = "luatex"
+
+-- Generating documentation
+typesetfiles  = {"scontents.dtx"}
+typesetexe    = "lualatex"
+typesetopts   = "--interaction=batchmode"
+typesetruns   = 3
+makeindexopts = "-q"
+
+-- Update package date and version
+tagfiles = {"sources/scontents.ins", "sources/scontents.dtx", "sources/CTANREADME.md", "ctan.ann"}
+local mydate = os.date("!%Y-%m-%d")
+
+function update_tag (file,content,tagname,tagdate)
+  if not tagname and tagdate == mydate then
+    tagname = pkgversion
+    tagdate = pkgdate
+    print("** "..file.." have been tagged with the version and date of build.lua")
+  else
+    local v_maj, v_min = string.match(tagname, "^v?(%d+)(%S*)$")
+    if v_maj == "" or not v_min then
+      print("Error!!: Invalid tag '"..tagname.."', none of the files have been tagged")
+      os.exit(0)
+    else
+      tagname = string.format("%i%s", v_maj, v_min)
+      tagdate = mydate
+    end
+    print("** "..file.." have been tagged with the version "..tagname.." and date "..mydate)
+  end
+
+  if string.match(file, "scontents.ins") then
+    content = string.gsub(content,
+                          "date=%d%d%d%d%-%d%d%-%d%d",
+                          "date="..tagdate.."")
+    content = string.gsub(content,
+                          "version=%d%.%d%w?",
+                          "version="..tagname.."")
+  end
+  if string.match(file, "scontents.dtx") then
+    content = string.gsub(content,
+                          "\\ScontentsFileDate{(.-)}",
+                          "\\ScontentsFileDate{"..tagdate.."}")
+    content = string.gsub(content,
+                          "\\ScontentsCoreFileDate{(.-)}",
+                          "\\ScontentsCoreFileDate{"..tagdate.."}")
+    content = string.gsub(content,
+                          "\\ScontentsFileVersion{(.-)}",
+                          "\\ScontentsFileVersion{"..tagname.."}")
+  end
+  if string.match(file, "CTANREADME.md") then
+    content = string.gsub(content,
+                          "Version: %d%.%d%w?",
+                          "Version: "..tagname.."")
+    content = string.gsub(content,
+                          "Date: %d%d%d%d%-%d%d%-%d%d",
+                          "Date: ".. tagdate.."")
+  end
+  if string.match(file,"ctan.ann") then
+    content = string.gsub(content,
+                         "v%d%.%d%w? %d%d%d%d%-%d%d%-%d%d",
+                         "v"..tagname..' '..tagdate.."")
+  end
+  return content
+end
+
+-- Configuration for ctan
+ctanreadme = "CTANREADME.md"
+ctanpkg    = "scontents"
+ctanzip    = ctanpkg.."-"..pkgversion
+packtdszip = false
+
+-- Clean files
+cleanfiles = {ctanzip..".curlopt", ctanzip..".zip"}
+
+--  Configuration for package distribution in ctan
 uploadconfig = {
   author       = "Pablo González Luengo",
   uploader     = "Pablo González Luengo",
@@ -126,134 +136,235 @@ uploadconfig = {
   update       = true
 }
 
---[[
-    We added a new target "testpkg" to run the tests
-    files in test-pkg/.
---]]
-if options["target"] == "testpkg" then
-  print('*****************************************************************')
-  print('****** Extract files from scontents.ins, v'..pkgversion..' '..pkgdate..' *******')
-  run("sources/", "pdftex -interaction=batchmode scontents.ins")
-  print('******** Compiling tests for scontents v'..pkgversion..' '..pkgdate..' *********')
-  cp("*.tex", "sources/", "sources/test-pkg")
-  cp("*.sty", "sources/", "sources/test-pkg")
-  cp("*.mkiv","sources/", "sources/test-pkg")
-  print('*********** Running pdflatex on test-pkg-current.tex ************')
-  run("sources/test-pkg/", "pdflatex -interaction=nonstopmode test-pkg-current.tex")
-  print('************ Running pdftex on test-format.plain.tex ************')
-  run("sources/test-pkg/", "pdftex test-format.plain.tex")
-  print('*****  Running latex>dvips>ps2pdf on test-format.latex.tex ******')
-  run("sources/test-pkg/", "latex test-format.latex.tex")
-  run("sources/test-pkg/", "dvips test-format.latex.dvi")
-  run("sources/test-pkg/", "ps2pdf test-format.latex.ps")
-  print('********** All tests have been successfully completed ***********')
-  os.exit()
+-- Line length in 80 characters
+local function os_message(text)
+  local mymax = 77 - string.len(text) - string.len("done")
+  local msg = text.." "..string.rep(".", mymax).." done"
+  return print(msg)
 end
 
---[[
-    We added a new target "examples" to run the examples
-    files in scontents.dtx.
---]]
-if options["target"] == "examples" then
-  print('*****************************************************************')
-  print('****** Extract files from scontents.ins, v'..pkgversion..' '..pkgdate..' *******')
-  run("sources/", "pdftex -interaction=batchmode scontents.ins")
-  print('** Running lualatex on scontents.dtx to extract example files **')
-  run("sources/", "lualatex --draftmode --interaction=batchmode scontents.dtx")
-  print('****** Compiling the example files, using v'..pkgversion..' '..pkgdate..' ******')
-  print('******* Running pdflatex on scexamp1.ltx using arara tool *******')
-  run("sources/", "arara scexamp1.ltx")
-  print('******* Running pdflatex on scexamp2.ltx using arara tool *******')
-  run("sources/", "arara scexamp2.ltx")
-  print('******* Running pdflatex on scexamp3.ltx using arara tool *******')
-  run("sources/", "arara scexamp3.ltx")
-  print('******* Running pdflatex on scexamp4.ltx using arara tool *******')
-  run("sources/", "arara scexamp4.ltx")
-  print('******* Running pdflatex on scexamp5.ltx using arara tool *******')
-  run("sources/", "arara scexamp5.ltx")
-  print('******* Running pdflatex on scexamp6.ltx using arara tool *******')
-  run("sources/", "arara scexamp6.ltx")
-  print('******* Running pdflatex on scexamp7.ltx using arara tool *******')
-  print('Customization of verbatimsc using the fancyvrb and tcolorbox package')
-  run("sources/", "arara scexamp7.ltx")
-  print('******* Running pdflatex on scexamp8.ltx using arara tool *******')
-  print('Customization of verbatimsc using the listings package')
-  run("sources/", "arara scexamp8.ltx")
-  print('******* Running xelatex on scexamp9.ltx using arara tool ********')
-  print('Customization of verbatimsc using the minted package')
-  --run("sources/", "xelatex --shell-escape -8bit scexamp9.ltx")
-  print('********** All sample files were successfully compiled **********')
-  os.exit()
-end
-
---[[
-    We added a new target "release" to do the final checks for git and
-    ctan, the file ctan.ann no follow up in git.
-    git update-index --assume-unchanged ctan.ann
---]]
-
-current_tags = nil
-do
-  local f = assert(io.open("sources/scontents.dtx", "r"))
-  current_tags = f:read("*all")
-  f:close()
-end
-current_pkgv = string.match(current_tags,"\\ScontentsFileVersion{(.-)}")
-current_date = string.match(current_tags,"\\ScontentsFileDate{(.-)}")
-
-status_bool = false
-if options["target"] == "release" then
-  print('*************** Configuration for Github and CTAN ***************')
-  os.execute("git clean -xdfq")
-  local handle    = io.popen('git status --porcelain --untracked-files=no')
-  local gitstatus = string.gsub(handle:read("*a"),'%s*$','')
-  handle:close()
-  local handle    = io.popen('git log --branches --not --remotes')
-  local gitpush   = string.gsub(handle:read("*a"),'%s*$','')
-  handle:close()
-  local handle    = io.popen('git for-each-ref refs/tags --sort=-taggerdate --format="%(refname:short)" --count=1')
-  local tagongit  = string.gsub(handle:read("*a"),'%s*$','')
-  handle:close()
-  if status_bool then
-    return true
-  end
-  if gitstatus=="" then
-    if gitpush=="" then
-      print('** Checking for pending commits')
-    else
-      print('** There are pending commits, running git push')
-      os.execute("git push")
-      print('** You must run l3build release again')
-      os.exit()
-    end
-    print('** The last tag marked for ' ..module.. ' in github is: '..tagongit)
-    print('** The new tag marked for ' ..module.. ' in github will be: v'..pkgversion)
-    print('** Current version (defined in the scontents.dtx file): '..current_pkgv)
-    print('** Current date (defined in the scontents.dtx file): '..current_date)
-    if pkgversion==current_pkgv and pkgdate==current_date then
-      print('** The version number and date are consistent with build.lua')
-    else
-      print('** The version number or date are inconsistent with build.lua')
-      print('** You must run: l3build tag')
-      os.exit()
-    end
-    print('** Everything is correct, we record changes in git by running')
-    print("git tag -a v"..pkgversion.." -m 'Release v"..pkgversion.." "..pkgdate.."' && git push --tags")
-    os.execute("git tag -a v"..pkgversion.." -m 'Release v"..pkgversion.." "..pkgdate.."' && git push --tags")
-    print('** We created the compressed package to send to ctan')
-    os.execute("l3build ctan && l3build upload -F ctan.ann --debug")
-    print('** We must add the changes for this version in ctan.ann file')
-    print('** And finally (if everything is ok) execute manually (without --debug):')
-    print('l3build upload -F ctan.ann')
-    print('*****************************************************************')
-    status_bool = true
-    os.exit()
-    return status_bool
+-- Compiling documentation step by step :)
+function typeset(file)
+  local file = jobname(sourcefiledir.."/scontents.dtx")
+  errorlevel = run(typesetdir, "lualatex --interaction=batchmode --draftmode "..file..".dtx >"..os_null)
+  if errorlevel ~= 0 then
+    error("** Error!!: lualatex --interaction=batchmode "..file..".dtx")
+    return errorlevel
   else
-    print(gitstatus)
-    print('** Aborting, git status is not clean, need to make a commit')
-    status_bool = false
-    os.exit()
-    return status_bool
+    os_message("** Running: lualatex --interaction=batchmode "..file..".dtx: OK")
   end
+  -- index userdoc
+  errorlevel = makeindex("userdoc", typesetdir, ".idx", ".ind", ".ilg", indexstyle)
+  if errorlevel ~= 0 then
+    error("** Error!!: makeindex -s gind.ist -o userdoc.ind userdoc.idx")
+    return errorlevel
+  else
+    os_message("** Running: makeindex -s gind.ist -o userdoc.ind userdoc.idx: OK")
+  end
+  -- index main
+  local file = jobname(sourcefiledir.."/scontents.dtx")
+  errorlevel = makeindex(file, typesetdir, ".idx", ".ind", ".ilg", indexstyle)
+  if errorlevel ~= 0 then
+    error("** Error!!: makeindex -s gind.ist -o "..file..".ind "..file..".idx")
+    return errorlevel
+  else
+    os_message("** Running: makeindex -s gind.ist -o "..file..".ind "..file..".idx: OK")
+  end
+  errorlevel = run(typesetdir, "lualatex --interaction=batchmode --draftmode "..file..".dtx >"..os_null)
+  if errorlevel ~= 0 then
+    error("** Error!!: lualatex --interaction=batchmode "..file..".dtx")
+    return errorlevel
+  else
+    os_message("** Running: lualatex --interaction=batchmode "..file..".dtx: OK")
+  end
+  errorlevel = run(typesetdir, "lualatex --interaction=batchmode "..file..".dtx >"..os_null)
+  if errorlevel ~= 0 then
+    error("** Error!!: lualatex --interaction=batchmode "..file..".dtx")
+    return errorlevel
+  else
+    os_message("** Running: lualatex --interaction=batchmode "..file..".dtx: OK")
+  end
+  return 0
+end
+
+-- Create check_marked_tags() function
+local function check_marked_tags()
+  local f = assert(io.open("sources/scontents.dtx", "r"))
+  marked_tags = f:read("*all")
+  f:close()
+  local m_pkgd = string.match(marked_tags, "\\ScontentsFileDate{(.-)}")
+  local m_pkgv = string.match(marked_tags, "\\ScontentsFileVersion{(.-)}")
+  if pkgversion == m_pkgv and pkgdate == m_pkgd then
+    os_message("** Checking version and date: OK")
+  else
+    print("** Warning: scontents.dtx is marked with version "..m_pkgv.." and date "..m_pkgd)
+    print("** Warning: build.lua is marked with version "..pkgversion.." and date "..pkgdate)
+    print("** Check version and date in build.lua then run l3build tag")
+  end
+end
+
+-- Config tag_hook
+function tag_hook(tagname)
+  check_marked_tags()
+end
+
+-- Add "tagged" target to l3build CLI
+if options["target"] == "tagged" then
+  check_marked_tags()
+  os.exit(0)
+end
+
+-- We added a new target "testpkg" to run the tests files in test-pkg/
+
+if options["target"] == "testpkg" then
+  local file = jobname(sourcefiledir.."/scontents.ins")
+  errorlevel = run(sourcefiledir, "pdftex -interaction=batchmode "..file..".ins > "..os_null)
+  if errorlevel ~= 0 then
+    error("** Error!!: pdftex -interaction=batchmode "..file..".ins")
+    return errorlevel
+  else
+    os_message("** Running: pdftex -interaction=batchmode "..file..".ins")
+  end
+  errorlevel = cp("*.*", sourcefiledir, "sources/test-pkg")
+  if errorlevel ~= 0 then
+    error("** Error!!: Can't copy files from "..sourcefiledir.." to ./sources/test-pkg")
+    return errorlevel
+  else
+    os_message("** Copying files from "..sourcefiledir.." to to sources/test-pkg: OK")
+  end
+  os_message("** Running: pdflatex -interaction=batchmode "..file..".tex")
+  local file = jobname("sources/test-pkg/test-pkg-current.tex")
+  run("./sources/test-pkg", "pdflatex -no-file-line-error -interaction=nonstopmode "..file..".tex")
+  local file = jobname("sources/test-pkg/test-format.plain.tex")
+  errorlevel = run("./sources/test-pkg", "pdftex "..file..".tex > "..os_null)
+  if errorlevel ~= 0 then
+    error("** Error!!: pdftex "..file..".tex")
+    return errorlevel
+  else
+    os_message("** Running: pdftex "..file..".tex")
+  end
+  local file = jobname("./sources/test-pkg/test-format.latex.tex")
+  errorlevel = run("sources/test-pkg", "latex "..file..".tex > "..os_null)
+  if errorlevel ~= 0 then
+    error("** Error!!: latex "..file..".tex")
+    return errorlevel
+  else
+    os_message("** Running: latex "..file..".tex")
+  end
+  errorlevel = run("sources/test-pkg", "dvips -q "..file..".dvi > "..os_null)
+  if errorlevel ~= 0 then
+    error("** Error!!: dvips "..file..".dvi")
+    return errorlevel
+  else
+    os_message("** Running: dvips "..file..".dvi")
+  end
+  errorlevel = run("sources/test-pkg", "ps2pdf "..file..".ps > "..os_null)
+  if errorlevel ~= 0 then
+    error("** Error!!: ps2pdf "..file..".ps")
+    return errorlevel
+  else
+    os_message("** Running: ps2pdf "..file..".ps")
+  end
+  os.exit(0)
+end
+
+-- We added a new target "examples" to run the examples files for scontents
+samples = {
+  "scexamp1.ltx",
+  "scexamp2.ltx",
+  "scexamp3.ltx",
+  "scexamp4.ltx",
+  "scexamp5.ltx",
+  "scexamp6.ltx",
+  "scexamp7.ltx",
+  "scexamp8.ltx",
+  "scexamp9.ltx"
+}
+
+if options["target"] == "examples" then
+  local file = jobname(sourcefiledir.."/scontents.ins")
+  errorlevel = run(sourcefiledir, "luatex --interaction=batchmode "..file..".ins > "..os_null)
+  if errorlevel ~= 0 then
+    error("** Error!!: luatex -interaction=batchmode "..file..".ins")
+    return errorlevel
+  else
+    os_message("** Running: luatex -interaction=batchmode "..file..".ins")
+  end
+  errorlevel = run(sourcefiledir, "lualatex --draftmode --interaction=batchmode "..file..".dtx > "..os_null)
+  if errorlevel ~= 0 then
+    error("** Error!!: lualatex -interaction=batchmode "..file..".dtx")
+    return errorlevel
+  else
+    os_message("** Running: lualatex -interaction=batchmode "..file..".dtx")
+  end
+  for i, samples in ipairs(samples) do
+    errorlevel = run("sources/", "arara "..samples.." > "..os_null)
+    if errorlevel ~= 0 then
+      error("** Error!!: arara "..samples)
+      return errorlevel
+    else
+      os_message("** Running: arara "..samples)
+    end
+  end
+  os.exit(0)
+end
+
+
+-- We added a new target "release" to do the final checks for git and ctan
+local function os_capture(cmd, raw)
+  local f = assert(io.popen(cmd, 'r'))
+  local s = assert(f:read('*a'))
+  f:close()
+  if raw then return s end
+    s = string.gsub(s, '^%s+', '')
+    s = string.gsub(s, '%s+$', '')
+    s = string.gsub(s, '[\n\r]+', ' ')
+  return s
+end
+
+local gitbranch = os_capture("git symbolic-ref --short HEAD")
+local gitstatus = os_capture("git status --porcelain")
+local tagongit  = os_capture('git for-each-ref refs/tags --sort=-taggerdate --format="%(refname:short)" --count=1')
+local gitpush   = os_capture("git log --branches --not --remotes")
+
+if options["target"] == "release" then
+  -- os.execute("git clean -xdfq")
+  if gitbranch == "master" then
+    os_message("** Checking git branch '"..gitbranch.."': OK")
+  else
+    error("** Error!!: You must be on the 'master' branch")
+  end
+  if gitstatus == "" then
+    os_message("** Checking status of the files: OK")
+  else
+    error("** Error!!: Files have been edited, please commit all changes")
+  end
+  if gitpush == "" then
+    os_message("** Checking pending commits: OK")
+  else
+    error("** Error!!: There are pending commits, please run git push")
+  end
+  check_marked_tags()
+  local pkgversion = "v"..pkgversion
+  os_message("** Checking last tag marked in GitHub "..tagongit..": OK")
+  errorlevel = os.execute("git tag -a "..pkgversion.." -m 'Release "..pkgversion.." "..pkgdate.."'")
+  if errorlevel ~= 0 then
+    error("** Error!!: run git tag -d "..pkgversion.." && git push --delete origin "..pkgversion)
+    return errorlevel
+  else
+    os_message("** Running: git tag -a "..pkgversion.." -m 'Release "..pkgversion.." "..pkgdate.."'")
+  end
+  os_message("** Running: git push --tags --quiet")
+  os.execute("git push --tags --quiet")
+  if fileexists(ctanzip..".zip") then
+    os_message("** Checking "..ctanzip..".zip file to send to CTAN: OK")
+  else
+    os_message("** Creating "..ctanzip..".zip file to send to CTAN")
+    os.execute("l3build ctan > "..os_null)
+  end
+  os_message("** Running: l3build upload -F ctan.ann --debug")
+  os.execute("l3build upload -F ctan.ann --debug >"..os_null)
+  print("** Now check "..ctanzip..".curlopt file and add changes to ctan.ann")
+  print("** If everything is OK run (manually): l3build upload -F ctan.ann")
+  os.exit(0)
 end

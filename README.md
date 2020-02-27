@@ -4,12 +4,14 @@
 ![GitHub last commit](https://img.shields.io/github/last-commit/pablgonz/scontents)
 
 ## Description
+
 This package allows to store `LaTeX` code, including _"verbatim"_, in <code>&lt;sequences&gt;</code>
 using the `l3seq` module of `expl3`. The <code>&lt;stored content&gt;</code> can be used
 as many times as desired in the document, additionally you can write to <code>&lt;external files&gt;</code>
 or show it in <code>&lt;verbatim style&gt;</code>.
 
 ## Requirements
+
 The package loads and depends on updated versions of:
 - [expl3](https://ctan.org/pkg/expl3)
 - [l3keys2e](https://ctan.org/pkg/l3keys2e)
@@ -22,10 +24,13 @@ package manager to install.
 
 For manual installation, download [scontents.zip](http://mirrors.ctan.org/macros/latex/contrib/scontents.zip) and unzip it,
 then run:
+
 ```
 $ luatex scontents.ins
 ```
+
 and move all files to appropriate locations:
+
 ```
   scontents.tex      -> TDS:tex/generic/scontents/scontents.tex
   scontents-code.tex -> TDS:tex/generic/scontents/scontents-code.tex
@@ -35,6 +40,7 @@ and move all files to appropriate locations:
   scontents.dtx      -> TDS:source/latex/scontents/scontents.dtx
   scontents.ins      -> TDS:source/latex/scontents/scontents.ins
 ```
+
 then run `mktexlsr`. To produce the documentation with source code run `luatex scontents.ins` and
 `lualatex scontents.dtx` three times.
 
@@ -46,17 +52,13 @@ from the PDF viewer or from the command line by running:
 ```
 $ pdfdetach -saveall scontents.pdf
 ```
+
 and then you can use the excellent `arara` tool to compile them.
 
 ## Development
 
 The version numbers and dates are guaranteed to be correct in
 the repository is in the `l3build` configuration file `build.lua`.
-The scheme used for version numbering is as follows:
-
-- `pkgmajor`: Major version
-- `pkgmenor`: Minor version
-- `pkgmicro`: Revision
 
 The date format (`pkgdate`) is `YYYY-MM-DD`. If it is important to you
 that the files created have the correct version and date, you should run
@@ -68,8 +70,11 @@ that the files created have the correct version and date, you should run
 - `l3build doc` to build the documentation.
 - `l3build install` put all files  in your `TEXMFHOME`.
 - `l3build uninstall` will remove them.
+- `l3build testpkg` to test files.
+- `l3build examples` to compile example files.
 
 ## License
+
 The scontents package may be modified and distributed under the terms and
 conditions of the [LaTeX Project Public License](https://www.latex-project.org/lppl/), version 1.3c or greater.
 
@@ -78,6 +83,10 @@ conditions of the [LaTeX Project Public License](https://www.latex-project.org/l
 ```
 ├── README.md
 ├── build.lua
+├── build.lua
+├── ctan.ann
+├── ctan.note
+├── mypersonaldata.lua
 └── sources
     ├── CTANREADME.md
     ├── scontents-code.tex

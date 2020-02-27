@@ -1,9 +1,11 @@
 ## scontents — Stores LaTeX contents in memory or files
-- Version: 1.9d
-- Date: 2020-02-11
+
+- Version: 1.9e
+- Date: 2020-02-27
 - Author: Pablo González
 
 ## Description
+
 This package allows to store `LaTeX` code, including _"verbatim"_, in <code>&lt;sequences&gt;</code>
 using the `l3seq` module of `expl3`. The <code>&lt;stored content&gt;</code> can be used
 as many times as desired in the document, additionally you can write to <code>&lt;external files&gt;</code>
@@ -39,6 +41,7 @@ installation `TDS` tree or in your `TEXMFHOME`:
   scontents.dtx      -> TDS:source/latex/scontents/scontents.dtx
   scontents.ins      -> TDS:source/latex/scontents/scontents.ins
 ```
+
 then run `mktexlsr`. To produce the documentation with source code run `luatex scontents.ins` and
 `lualatex scontents.dtx` three times.
 
@@ -54,6 +57,7 @@ $ pdfdetach -saveall scontents.pdf
 and then you can use the excellent `arara` tool to compile them.
 
 ## License
+
 The scontents package may be modified and distributed under the terms and
 conditions of the [LaTeX Project Public License](https://www.latex-project.org/lppl/), version 1.3c or greater.
 

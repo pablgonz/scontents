@@ -14,7 +14,6 @@ build/*
 *.glo
 *.hd
 *.xdv
-*.ins
 *.txt
 
 ## atach
@@ -49,6 +48,9 @@ _minted*
 *.curlopt
 
 ## For testing
+**/sources/test-pkg/CTANREADME.md
+**/sources/test-pkg/scontents.ins
+**/sources/test-pkg/scontents.dtx
 **/sources/test-pkg/scontents.sty
 **/sources/test-pkg/scontents.tex
 **/sources/test-pkg/scontents-code.tex
