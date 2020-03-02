@@ -48,10 +48,10 @@ unpackexe   = "luatex"
 
 -- Generating documentation
 typesetfiles  = {"scontents.dtx"}
-typesetexe    = "lualatex"
-typesetopts   = "--interaction=batchmode"
-typesetruns   = 3
-makeindexopts = "-q"
+-- typesetexe    = "lualatex"
+-- typesetopts   = "--interaction=batchmode"
+-- typesetruns   = 2
+-- makeindexopts = "-q"
 
 -- Update package date and version
 tagfiles = {"sources/scontents.ins", "sources/scontents.dtx", "sources/CTANREADME.md", "ctan.ann"}
@@ -146,47 +146,18 @@ local function os_message(text)
 end
 
 -- Compiling documentation step by step :)
---[[
 function docinit_hook()
-  errorlevel = cp("*.sty", unpackdir, typesetdir)
-  errorlevel = cp("*.tex", unpackdir, typesetdir)
+  errorlevel = (cp("*.tex", unpackdir, typesetdir) + cp("*.sty", unpackdir, typesetdir))
   if errorlevel ~= 0 then
-    error("** Error!!: Can't copy all files from "..unpackdir.." to "..typesetdir)
+    error("** Error!!: Can't copy .tex and .sty files from "..unpackdir.." to "..typesetdir)
     return errorlevel
-  else
-    print("** Copying all files from "..unpackdir.." to "..typesetdir)
   end
   return 0
 end
 
 function typeset(file)
   local file = jobname(sourcefiledir.."/scontents.dtx")
-  errorlevel = run(typesetdir, "lualatex --interaction=batchmode "..file..".dtx >"..os_null)
-  if errorlevel ~= 0 then
-    error("** Error!!: lualatex --interaction=batchmode "..file..".dtx")
-    return errorlevel
-  else
-    os_message("** Running: lualatex --interaction=batchmode "..file..".dtx: OK")
-  end
-  local file = jobname(unpackdir.."/userdoc.ind")
-  --errorlevel = run(typesetdir, "makeindex -s gind.ist -o "..file..".ind "..file..".idx")
-  errorlevel = makeindex(file, typesetdir, ".idx", ".ind", ".ilg", indexstyle)
-  if errorlevel ~= 0 then
-    error("** Error!!: makeindex -s gind.ist -o "..file..".ind "..file..".idx")
-    return errorlevel
-  else
-    os_message("** Running: makeindex -s gind.ist -o "..file..".ind "..file..".idx: OK")
-  end
-  local file = jobname(sourcefiledir.."/scontents.dtx")
-  --errorlevel = run(typesetdir, "makeindex -q -s gind.ist -o "..file..".ind "..file..".idx")
-  errorlevel = makeindex(file, typesetdir, ".idx", ".ind", ".ilg", indexstyle)
-  if errorlevel ~= 0 then
-    error("** Error!!: makeindex -s gind.ist -o "..file..".ind "..file..".idx")
-    return errorlevel
-  else
-    os_message("** Running: makeindex -s gind.ist -o "..file..".ind "..file..".idx: OK")
-  end
-  errorlevel = run(typesetdir, "lualatex --interaction=batchmode "..file..".dtx >"..os_null)
+  errorlevel = run(typesetdir, "lualatex --interaction=batchmode --draftmode "..file..".dtx >"..os_null)
   if errorlevel ~= 0 then
     error("** Error!!: lualatex --interaction=batchmode "..file..".dtx")
     return errorlevel
@@ -202,7 +173,7 @@ function typeset(file)
   end
   return 0
 end
---]]
+
 -- Create check_marked_tags() function
 local function check_marked_tags()
   local f = assert(io.open("sources/scontents.dtx", "r"))

@@ -75,7 +75,7 @@
 \usepackage[sf,bf,compact,medium,pagestyles]{titlesec}
 \usepackage{lastpage,microtype,attachfile2}
 \usepackage{adjustbox,multicol,listings,accsupp,titletoc}
-\usepackage[quiet]{imakeidx}
+\usepackage{imakeidx}
 \usepackage{scontents} % main
 \usepackage[contents]{colordoc}
 % \show\docCodelineNo
@@ -129,8 +129,8 @@
 \ExplSyntaxOff
 
 \indexsetup{level=\section,firstpagestyle=myheader,othercode=\pagestyle{myheader}}
-\makeindex[name=userdoc,options=-q -s gind.ist,columnsep=15pt,title={Index of Documentation}]
-\makeindex[options=-q -s gind.ist,columnsep=15pt,title={Index of Implementation}]
+\makeindex[name=userdoc,options={-q -s gind.ist},columnsep=15pt,title={Index of Documentation}]
+\makeindex[options={-q -s gind.ist},columnsep=15pt,title={Index of Implementation}]
 % Now, after imakeidx opens the write stream for the index file, we copy
 % the reference to \@indexfile:
 \makeatletter
