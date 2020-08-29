@@ -1,8 +1,6 @@
 ## scontents — Stores LaTeX contents in memory or files
 
-- Version: 1.9e
-- Date: 2020-02-27
-- Author: Pablo González
+Release v1.9f \[2020-08-28\]
 
 ## Description
 
@@ -12,6 +10,7 @@ as many times as desired in the document, additionally you can write to <code>&l
 or show it in <code>&lt;verbatim style&gt;</code>.
 
 ## Requirements
+
 The package loads and depends on updated versions of:
 - [expl3](https://ctan.org/pkg/expl3)
 - [l3keys2e](https://ctan.org/pkg/l3keys2e)
@@ -19,7 +18,7 @@ The package loads and depends on updated versions of:
 
 ## Installation
 
-The package `scontents` is present in `TeXLive` and `MiKTeX`, use the
+The package `scontents` is present in `TeX Live` and `MiKTeX`, use the
 package manager to install.
 
 For manual installation, download [scontents.zip](http://mirrors.ctan.org/macros/latex/contrib/scontents.zip) and unzip it,
@@ -62,7 +61,12 @@ The scontents package may be modified and distributed under the terms and
 conditions of the [LaTeX Project Public License](https://www.latex-project.org/lppl/), version 1.3c or greater.
 
 ## Contents
+
 - README.md (this file)
 - scontents.pdf  (documentation)
 - scontents.dtx  (master file that produced all files)
 - scontents.ins  (installer to extract all files)
+
+## Author and copyright
+
+Copyright 2019-2020 by Pablo González L.

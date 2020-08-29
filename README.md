@@ -19,7 +19,7 @@ The package loads and depends on updated versions of:
 
 ## Installation
 
-The package `scontents` is present in `TeXLive` and `MiKTeX`, use the
+The package `scontents` is present in `TeX Live` and `MiKTeX`, use the
 package manager to install.
 
 For manual installation, download [scontents.zip](http://mirrors.ctan.org/macros/latex/contrib/scontents.zip) and unzip it,

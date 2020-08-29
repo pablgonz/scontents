@@ -32,7 +32,7 @@
 % so that entries written to both streams end up in the same file.
 \usepackage[english]{babel}
 \usepackage[top=0.5in,bottom=0.3in,left=2in,right=0.7in,footskip=0.2in,headheight=1cm,headsep=0.27cm]{geometry}
-\usepackage[osf,mono=false,scale=0.95,llscaled=0.95]{libertine}
+\usepackage[osf,nomath,mono=false,ScaleSF=0.95,ScaleRM=0.95]{libertinus-otf}
 \setmonofont[
     Numbers        = OldStyle,
     Scale          = 0.80,
@@ -69,7 +69,7 @@
 \newfontfamily\fetamontotf{ffmw10.otf}[
    Scale             = 0.95,%
    RawFeature        = {+latn,+rand,+kern,+size},%
-   FontFace          = {bx}{n}{ffmw10.otf},
+   FontFace          = {b}{n}{ffmw10.otf},%
    ]
 \usepackage[svgnames]{xcolor}
 \usepackage[sf,bf,compact,medium,pagestyles]{titlesec}
@@ -674,7 +674,7 @@
 %
 % \subsection{Installation}
 %
-% The package \mypkg*{scontents} is present in \hologo{TeX}Live and \hologo{MiKTeX},
+% The package \mypkg*{scontents} is present in \hologo{TeX} Live and \hologo{MiKTeX},
 % use the package manager to install. For manual installation, download
 % \href{http://mirrors.ctan.org/macros/latex/contrib/scontents.zip}{scontents.zip}
 % and unzip it, run \lstinline[language=scontents-doc,basicstyle=\ttfamily]+luatex scontents.ins+
@@ -758,10 +758,10 @@
 %
 % Some users use horizontal "TAB"s \enquote{\LKeyTab} from keyboard to indented the source
 % code of the document and depending on the text editor used, some will use real "TAB"s
-% (\enquote{hard tabs}), others with \enquote{soft tabs}(\verb*|  | or \verb*|    |)
+% (\enquote{\emph{hard tabs}}), others with \enquote{\emph{soft tabs}}(\verb*|  | or \verb*|    |)
 % or both.
 %
-% At first glance it may seem the same, but the way in which "TAB"s (\enquote{hard tabs})
+% At first glance it may seem the same, but the way in which "TAB"s (\enquote{\emph{hard tabs}})
 % are processed according to the context in which they are found within
 % a file, both in \mymeta{reading}\footnote{Check the answer given by Ulrich Diez
 % in \href{https://tex.stackexchange.com/a/508103/7832}{Keyboard TAB
@@ -773,7 +773,7 @@
 % are treated as explicit spaces (in most contexts) and is the behavior when
 % \mymeta{stored contents}, but when \mymeta{writing files} these are preserved.
 %
-% With a \hologo{TeX}Live distribution, the "TAB" character is \enquote{printable}
+% With a \hologo{TeX} Live distribution, the "TAB" character is \enquote{\emph{printable}}
 % for "latex", "pdflatex" and "lualatex", but if you use "xelatex" you
 % must add the \texttt{\textcolor{optcolor}{-8bit}} option on the command
 % line, otherwise you will get \hologo{TeX}-"TAB" (§^^I§) in the \mymeta{output file}.
@@ -1821,7 +1821,7 @@ and more.+
 %<*example>
 % \fi
 \begin{scontents}[write-out=scexamp9.ltx]
-% arara: xelatex : {shell: true, options: [-8bit]}
+% arara: xelatex: {shell: true, options: [-8bit]}
 % arara: clean: { extensions: [ aux, log] }
 \documentclass{article}
 \usepackage{scontents}
@@ -2034,10 +2034,10 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % Now we define some common macros to hold the package date and version:
 %    \begin{macrocode}
-%<loader>\def\ScontentsFileDate{2020-02-27}%
-%<core>\def\ScontentsCoreFileDate{2020-02-27}%
+%<loader>\def\ScontentsFileDate{2020-08-28}%
+%<core>\def\ScontentsCoreFileDate{2020-08-28}%
 %<*loader>
-\def\ScontentsFileVersion{1.9e}%
+\def\ScontentsFileVersion{1.9f}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
 %    \end{macrocode}
 %
