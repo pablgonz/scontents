@@ -33,22 +33,26 @@
 \usepackage[english]{babel}
 \usepackage[top=0.5in,bottom=0.3in,left=2in,right=0.7in,footskip=0.2in,headheight=1cm,headsep=0.27cm]{geometry}
 \usepackage[osf,nomath,mono=false,ScaleSF=0.95,ScaleRM=0.95]{libertinus-otf}
+% Set Monospace font, fix 'quotes' in verbatim
+\usepackage{sourcecodepro}
+\defaultfontfeatures[\ttfamily]
+  {
+    Numbers   = OldStyle,
+    Scale     = 0.80,
+    Extension = .otf,
+  }
 \setmonofont[
-    Numbers        = OldStyle,
-    Scale          = 0.80,
     UprightFont    = *-Regular,
     ItalicFont     = *-RegularIt,
     BoldFont       = *-Semibold,
     BoldItalicFont = *-SemiboldIt,
-    RawFeature     = {+zero,+ss06},
-    FontFace       = {m}{sc}{LinBiolinum_R.otf},
-    Extension      = .otf]{SourceCodePro}
-\newfontfamily\sourcecodeprolight{SourceCodePro-Regular.otf}[
+    RawFeature     = {+zero,+ss06}]{SourceCodePro}
+\newfontfamily\mysourcecodeprolight{SourceCodePro-Regular.otf}[
     Scale = 0.80,FakeStretch =0.75,
     FontFace = {m}{it}{Font =SourceCodePro-RegularIt.otf,Color=FF0000}]
 \RenewDocumentCommand{\MacroLongFont}{}
   {
-    \sourcecodeprolight\small
+    \mysourcecodeprolight\small
   }
 % The character of visible space is now taken from Latin Modern Mono
 % to prevent fonts in T1. The original definition for xetex/luatex is
@@ -69,7 +73,7 @@
 \newfontfamily\fetamontotf{ffmw10.otf}[
    Scale             = 0.95,%
    RawFeature        = {+latn,+rand,+kern,+size},%
-   FontFace          = {b}{n}{ffmw10.otf},%
+   FontFace          = {b}{n}{ffmw10.otf},% fix raplece font
    ]
 \usepackage[svgnames]{xcolor}
 \usepackage[sf,bf,compact,medium,pagestyles]{titlesec}
