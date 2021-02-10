@@ -83,10 +83,7 @@ conditions of the [LaTeX Project Public License](https://www.latex-project.org/l
 ```
 ├── README.md
 ├── build.lua
-├── build.lua
 ├── ctan.ann
-├── ctan.note
-├── mypersonaldata.lua
 └── sources
     ├── CTANREADME.md
     ├── scontents-code.tex
@@ -106,4 +103,4 @@ conditions of the [LaTeX Project Public License](https://www.latex-project.org/l
 
 ## Copyright
 
-Copyright 2019-2020 by Pablo González L.
+Copyright 2019-2021 by Pablo González L.

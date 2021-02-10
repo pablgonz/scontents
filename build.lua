@@ -21,8 +21,8 @@
 
 -- General package identification
 module     = "scontents"
-pkgversion = "1.9f"
-pkgdate    = "2020-08-28"
+pkgversion = "1.9g"
+pkgdate    = "2021-02-10"
 
 -- Configuration of files for build and installation
 maindir       = "."
@@ -393,7 +393,7 @@ if options["target"] == "clean" then
   os_message("** Running: git clean -xdfq")
 end
 
--- We added a new target "release" to do the final checks for git and ctan
+-- Capture os cmd for git
 local function os_capture(cmd, raw)
   local f = assert(io.popen(cmd, 'r'))
   local s = assert(f:read('*a'))
@@ -405,13 +405,14 @@ local function os_capture(cmd, raw)
   return s
 end
 
-local gitbranch = os_capture("git symbolic-ref --short HEAD")
-local gitstatus = os_capture("git status --porcelain")
-local tagongit  = os_capture('git for-each-ref refs/tags --sort=-taggerdate --format="%(refname:short)" --count=1')
-local gitpush   = os_capture("git log --branches --not --remotes")
-
+-- We added a new target "release" to do the final checks for git and ctan
 if options["target"] == "release" then
   -- os.execute("git clean -xdfq")
+  local gitbranch = os_capture("git symbolic-ref --short HEAD")
+  local gitstatus = os_capture("git status --porcelain")
+  local tagongit  = os_capture('git for-each-ref refs/tags --sort=-taggerdate --format="%(refname:short)" --count=1')
+  local gitpush   = os_capture("git log --branches --not --remotes")
+
   if gitbranch == "master" then
     os_message("** Checking git branch '"..gitbranch.."': OK")
   else
