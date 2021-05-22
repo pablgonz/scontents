@@ -535,7 +535,7 @@
 }
 \setfoot{\rlap{\hskip\dimexpr-\oddsidemargin-1in\relax%
          \parbox{1.93\paperwidth}{\hfil\thepage\,/\,\pageref{LastPage}}}}%
-        {\parbox{\textwidth}{\raggedright \textcolor{gray}{\raisebox{-1pt}{\textcopyright}{}2019--2020 by Pablo González}}}%
+        {\parbox{\textwidth}{\raggedright \textcolor{gray}{\raisebox{-1pt}{\textcopyright}{}2019--2021 by Pablo González}}}%
         {}%
 \sethead{\llap{\raisebox{0.55cm}{\parbox{\dimexpr\oddsidemargin+1in\relax}{\makebox[0pt][l]{\hspace{15pt}\pkglogo\space\fileversion}}}}}
         {\raisebox{0.55cm}{\parbox{\textwidth}{\hspace*{-\oddsidemargin}\centering\small\S.\thesection\space\sectiontitle}}}%
@@ -1898,6 +1898,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \item [\fileversion{} (ctan), \filedate]
 %    \begin{itemize}
 %    \item Replace |\l_keys_key_tl| by |\l_keys_key_str|.
+%    \item Replace |\int_set:Nn| by |\dim_zero:N| in |\parindent|.
+%    \item Replace |\int_set:Nn| by |\skip_set:Nn| in |\parskip|.
 %    \item Minor adjustments in the documentation
 %    \end{itemize}
 % \item [v1.9 (ctan), 2020-01-21]
