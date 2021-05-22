@@ -27,8 +27,8 @@
 %%                                 t-scontents.mkiv and
 %%                                 scontents-code.tex.
 %% 
-\def\ScontentsFileDate{2021-02-10}%
-\def\ScontentsFileVersion{1.9g}%
+\def\ScontentsFileDate{2021-05-22}%
+\def\ScontentsFileVersion{1.9h}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
 \input expl3-generic.tex
 \ExplSyntaxOn
@@ -172,9 +172,9 @@
 \cs_new_protected:Npn \__scontents_verbatimsc_aux:
   {
     \skip_vertical:N \parskip
-    \int_set:Nn \parindent { 0pt }
+    \dim_zero:N \parindent
     \skip_set:Nn \parfillskip { 0pt plus 1fil }
-    \int_set:Nn \parskip { 0pt plus0pt minus0pt }
+    \skip_set:Nn \parskip { 0pt plus0pt minus0pt }
     \tex_par:D
     \bool_set_false:N \l__scontents_temp_bool
     \cs_set:Npn \par

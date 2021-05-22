@@ -2038,10 +2038,10 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % Now we define some common macros to hold the package date and version:
 %    \begin{macrocode}
-%<loader>\def\ScontentsFileDate{2021-02-10}%
-%<core>\def\ScontentsCoreFileDate{2021-02-10}%
+%<loader>\def\ScontentsFileDate{2021-05-22}%
+%<core>\def\ScontentsCoreFileDate{2021-05-22}%
 %<*loader>
-\def\ScontentsFileVersion{1.9g}%
+\def\ScontentsFileVersion{1.9h}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
 %    \end{macrocode}
 %
@@ -3312,9 +3312,9 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 \cs_new_protected:Npn \@@_verbatimsc_aux:
   {
     \skip_vertical:N \parskip
-    \int_set:Nn \parindent { 0pt }
+    \dim_zero:N \parindent
     \skip_set:Nn \parfillskip { 0pt plus 1fil }
-    \int_set:Nn \parskip { 0pt plus0pt minus0pt }
+    \skip_set:Nn \parskip { 0pt plus0pt minus0pt }
     \tex_par:D
     \bool_set_false:N \l_@@_temp_bool
     \cs_set:Npn \par
