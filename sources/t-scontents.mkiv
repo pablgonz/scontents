@@ -139,10 +139,13 @@
   { \__scontents_stararg:nn { } { } }
 \int_set:Nn \l__scontents_tmpa_int { \char_value_catcode:n { `\@ } }
 \char_set_catcode_letter:N \@
-\exp_after:wN
-\ExplSyntaxOff
-\file_input:n { xparse.sty }
-\ExplSyntaxOn
+\file_if_exist:nTF { xparse-generic.tex }
+  { \file_input:n { xparse-generic.tex } }
+  {
+    \ExplSyntaxOff
+    \file_input:n { xparse.sty }
+    \ExplSyntaxOn
+  }
 \char_set_catcode:nn { `\@ } { \l__scontents_tmpa_int }
 \__scontents_compat_restore:
 \NewDocumentCommand { \newenvsc } { m O{} }

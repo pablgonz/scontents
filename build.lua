@@ -21,8 +21,8 @@
 
 -- General package identification
 module     = "scontents"
-pkgversion = "1.9h"
-pkgdate    = "2021-05-22"
+pkgversion = "1.9i"
+pkgdate    = "2021-12-13"
 
 -- Configuration of files for build and installation
 maindir       = "."
@@ -272,12 +272,12 @@ if options["target"] == "testpkg" then
   end
   -- Fisrt, no check error level :(
   local file = jobname(tmpdir.."/test-pkg-current.tex")
-  print("Running furst test on the file"..file..".tex using [pdflatex]")
+  print("Running first test on the file: "..file..".tex using [pdflatex]")
   os_message("** Running: pdflatex -interaction=batchmode "..file..".tex")
   errorlevel = run(tmpdir, "pdflatex -no-file-line-error -interaction=nonstopmode "..file..".tex")
   -- Second
   local file = jobname(tmpdir.."/test-format.plain.tex")
-  print("Running second test on the file"..file..".tex using [pdftex]")
+  print("Running second test on the file: "..file..".tex using [pdftex]")
   errorlevel = run(tmpdir, "pdftex "..file..".tex > "..os_null)
   if errorlevel ~= 0 then
     error("** Error!!: pdftex "..file..".tex")
@@ -287,7 +287,7 @@ if options["target"] == "testpkg" then
   end
   --Third
   local file = jobname(tmpdir.."/test-format.latex.tex")
-  print("Running third test on the file"..file..".tex using [latex>dvips>ps2pdf]")
+  print("Running third test on the file: "..file..".tex using [latex>dvips>ps2pdf]")
   errorlevel = run(tmpdir, "latex "..file..".tex > "..os_null)
   if errorlevel ~= 0 then
     error("** Error!!: latex "..file..".tex")
@@ -311,7 +311,7 @@ if options["target"] == "testpkg" then
   end
   -- Fourth
   local file = jobname(tmpdir.."/test-format.context.tex")
-  print("Running fourth test on the file"..file..".tex using [context]")
+  print("Running fourth test on the file: "..file..".tex using [context]")
   errorlevel = run(tmpdir, "context "..file..".tex > "..os_null)
   if errorlevel ~= 0 then
     error("** Error!!: context "..file..".tex")
