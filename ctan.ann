@@ -1,3 +1,4 @@
-Changes in v1.9i 2021-12-13:
--
--
+Changes in v1.9j 2022-03-16:
+- Adapting the verbatimsc environment for compatibility with the verbatim package.
+- Removed compatibility layer for older LaTeX releases.
+- Fix loader in plain TeX and ConTeXt.

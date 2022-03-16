@@ -33,16 +33,16 @@
 %% scontents.dtx  (with options: `loader,context')
 %D  \module
 %D    [     file=t-scontents,
-%D       version=1.9h,
+%D       version=1.9j,
 %D         title=\CONTEXT\ User Module,
 %D      subtitle=Storing Contents,
 %D        author=Pablo González,
-%D          date=2021-05-22,
+%D          date=2022-03-16,
 %D     copyright=Pablo González,
 %D         email=pablgonz@educarchile.cl,
 %D       license=LPPL]
-\def\ScontentsFileDate{2021-05-22}%
-\def\ScontentsFileVersion{1.9h}%
+\def\ScontentsFileDate{2022-03-16}%
+\def\ScontentsFileVersion{1.9j}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
 \writestatus{loading}{User Module scontents v\ScontentsFileVersion}
 \unprotect
@@ -69,85 +69,10 @@
   {#3} % ConTeXt
 \keys_define:nn { scontents }
   { verb-font .initial:n = \tt }
-\seq_new:N \l__scontents_compat_seq
-\cs_new_protected:Npn \__scontents_compat_redefine:Npn #1
-  {
-    \seq_put_right:Nn \l__scontents_compat_seq {#1}
-    \cs_set_eq:cN { __scontents_saved_\cs_to_str:N #1: } #1
-    \cs_new_protected:Npn #1
-  }
-\cs_new_protected:Npn \__scontents_compat_restore:
-  { \seq_map_function:NN \l__scontents_compat_seq \__scontents_compat_restore:N }
-\cs_new_protected:Npn \__scontents_compat_restore:N #1
-  {
-    \cs_set_eq:Nc #1 { __scontents_saved_\cs_to_str:N #1: }
-    \cs_undefine:c { __scontents_saved_\cs_to_str:N #1: }
-  }
-\cs_generate_variant:Nn \__scontents_compat_redefine:Npn { c }
-\cs_new_protected:Npn \__scontents_optarg:nn #1 #2
-  { \peek_charcode_ignore_spaces:NTF [ {#1} {#1[#2]} }
-\cs_new_protected:Npn \__scontents_stararg:nn #1 #2
-  { \peek_charcode_remove_ignore_spaces:NTF * {#1} {#2} }
-\__scontents_compat_redefine:Npn \RequirePackage
-  { \__scontents_optarg:nn { \__scontents_require_auxi:wn } { } }
-\cs_new_protected:Npn \__scontents_require_auxi:wn [#1] #2
-  { \__scontents_optarg:nn { \__scontents_require_auxii:wnw [{#1}]{#2} } { } }
-\cs_new:Npn \__scontents_zap_space:ww #1~#2
-  {
-    #1 \if_meaning:w #2 \q_mark
-      \exp_after:wN \use_none:n
-    \else:
-      \exp_after:wN \__scontents_zap_space:ww
-    \fi: #2
-  }
-\cs_new_protected:Npn \__scontents_require_auxii:wnw [#1] #2 [#3]
-  {
-    \tl_set:Nx \l__scontents_temp_tl { \__scontents_zap_space:ww #2 ~ \q_mark }
-    \clist_map_function:NN \l__scontents_temp_tl \__scontents_require_auxiii:n
-  }
-\cs_new_protected:Npn \__scontents_require_auxiii:n #1
-  {
-    \str_if_eq:eeF {expl3} {#1}
-      { \msg_error:nnn { scontents } { invalid-package } {#1} }
-  }
-\msg_new:nnn { scontents } { invalid-package }
-  { Package~'#1'~invalid~in~scontents.~This~is~an~error~in~scontents. }
-\__scontents_compat_redefine:cpn { @ifpackagelater } #1
-  { \exp_args:Nc \__scontents_package_later_aux:Nn { ver@#1.sty } }
-\cs_new_protected:Npn \__scontents_package_later_aux:Nn #1 #2
-  {
-    \int_compare:nNnTF
-      { \exp_after:wN \__scontents_parse_version:w #1 //00 \q_mark } <
-      { \exp_after:wN \__scontents_parse_version:w #2 //00 \q_mark }
-  }
-\cs_new:Npn \__scontents_parse_version:w #1 { \__scontents_parse_version_auxi:w 0#1 }
-\cs_new:Npn \__scontents_parse_version_auxi:w #1/#2/#3#4#5 \q_mark
-  { \__scontents_parse_version_auxii:w #1-#2-#3#4 \q_mark }
-\cs_new:Npn \__scontents_parse_version_auxii:w #1-#2-#3#4#5 \q_mark
-  { \tl_if_blank:nF {#2} {#1} #2 #3 #4 }
-\__scontents_compat_redefine:Npn \ProvidesExplPackage #1 #2 #3 #4
-  { \__scontents_provides_aux:nn {#1} { #2 \tl_if_empty:nF {#3} {#3~} #4 } }
-\cs_new_protected:Npn \__scontents_provides_aux:nn #1 #2
-  {
-    \tl_gset:cx { ver@#1.sty } {#2}
-    \iow_log:n { Package~#1:~#2 }
-    \ExplSyntaxOn
-  }
-\__scontents_compat_redefine:Npn \DeclareOption
-  { \__scontents_stararg:nn { \use_none:n } { \use_none:nn } }
-\__scontents_compat_redefine:Npn \ProcessOptions
-  { \__scontents_stararg:nn { } { } }
 \int_set:Nn \l__scontents_tmpa_int { \char_value_catcode:n { `\@ } }
 \char_set_catcode_letter:N \@
-\file_if_exist:nTF { xparse-generic.tex }
-  { \file_input:n { xparse-generic.tex } }
-  {
-    \ExplSyntaxOff
-    \file_input:n { xparse.sty }
-    \ExplSyntaxOn
-  }
+\file_input:n { xparse-generic.tex }
 \char_set_catcode:nn { `\@ } { \l__scontents_tmpa_int }
-\__scontents_compat_restore:
 \NewDocumentCommand { \newenvsc } { m O{} }
   {
     \cs_if_exist:cTF { start #1 }

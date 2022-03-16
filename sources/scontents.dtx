@@ -1897,7 +1897,9 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \begin{description}[font=\small\sffamily,wide=0pt,style=multiline,leftmargin=\descrwidth,nosep,noitemsep]
 % \item [\fileversion{} (ctan), \filedate]
 %    \begin{itemize}
-%    \item Fix loader in |plain TeX| and |ConText|. % FIXME hologo
+%    \item Adapting the |verbatimsc| environment for compatibility with the |verbatim| package.
+%    \item Removed compatibility layer for older \hologo{LaTeX} releases.
+%    \item Fix loader in \hologo{plainTeX} and \hologo{ConTeXt}.
 %    \item Replace |\l_keys_key_tl| by |\l_keys_key_str|.
 %    \item Replace |\int_set:Nn| by |\dim_zero:N| in |\parindent|.
 %    \item Replace |\int_set:Nn| by |\skip_set:Nn| in |\parskip|.
@@ -2041,10 +2043,10 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % Now we define some common macros to hold the package date and version:
 %    \begin{macrocode}
-%<loader>\def\ScontentsFileDate{2021-12-13}%
-%<core>\def\ScontentsCoreFileDate{2021-12-13}%
+%<loader>\def\ScontentsFileDate{2022-03-16}%
+%<core>\def\ScontentsCoreFileDate{2022-03-16}%
 %<*loader>
-\def\ScontentsFileVersion{1.9i}%
+\def\ScontentsFileVersion{1.9j}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
 %    \end{macrocode}
 %
@@ -2620,115 +2622,16 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % \subsection{Compatibility layer with Plain}
 %
-% When loading the package outside of \LaTeX{} we can't usually use \pkg{xparse}.
-% However since \pkg{xparse} doesn't actually hold any dependency with \LaTeX{}
-% except for package-loading commands, we can emulate those commands (much like
-% in \pkg{miniltx}) so that \pkg{xparse} is loadable in any format.
-%
-% The bunch of macros below is adapted from the \LaTeX{} kernel (greatly simplified).
 %    \begin{macrocode}
 %</core>
 %<*loader&!latex>
-\seq_new:N \l_@@_compat_seq
-\cs_new_protected:Npn \@@_compat_redefine:Npn #1
-  {
-    \seq_put_right:Nn \l_@@_compat_seq {#1}
-    \cs_set_eq:cN { @@_saved_\cs_to_str:N #1: } #1
-    \cs_new_protected:Npn #1
-  }
-\cs_new_protected:Npn \@@_compat_restore:
-  { \seq_map_function:NN \l_@@_compat_seq \@@_compat_restore:N }
-\cs_new_protected:Npn \@@_compat_restore:N #1
-  {
-    \cs_set_eq:Nc #1 { @@_saved_\cs_to_str:N #1: }
-    \cs_undefine:c { @@_saved_\cs_to_str:N #1: }
-  }
-\cs_generate_variant:Nn \@@_compat_redefine:Npn { c }
-\cs_new_protected:Npn \@@_optarg:nn #1 #2
-  { \peek_charcode_ignore_spaces:NTF [ {#1} {#1[#2]} }
-\cs_new_protected:Npn \@@_stararg:nn #1 #2
-  { \peek_charcode_remove_ignore_spaces:NTF * {#1} {#2} }
-\@@_compat_redefine:Npn \RequirePackage
-  { \@@_optarg:nn { \@@_require_auxi:wn } { } }
-\cs_new_protected:Npn \@@_require_auxi:wn [#1] #2
-  { \@@_optarg:nn { \@@_require_auxii:wnw [{#1}]{#2} } { } }
-\cs_new:Npn \@@_zap_space:ww #1~#2
-  {
-    #1 \if_meaning:w #2 \q_mark
-      \exp_after:wN \use_none:n
-    \else:
-      \exp_after:wN \@@_zap_space:ww
-    \fi: #2
-  }
-\cs_new_protected:Npn \@@_require_auxii:wnw [#1] #2 [#3]
-  {
-    \tl_set:Nx \l_@@_temp_tl { \@@_zap_space:ww #2 ~ \q_mark }
-    \clist_map_function:NN \l_@@_temp_tl \@@_require_auxiii:n
-  }
-\cs_new_protected:Npn \@@_require_auxiii:n #1
-  {
-    \str_if_eq:eeF {expl3} {#1}
-      { \msg_error:nnn { scontents } { invalid-package } {#1} }
-  }
-\msg_new:nnn { scontents } { invalid-package }
-  { Package~'#1'~invalid~in~scontents.~This~is~an~error~in~scontents. }
-\@@_compat_redefine:cpn { @ifpackagelater } #1
-  { \exp_args:Nc \@@_package_later_aux:Nn { ver@#1.sty } }
-\cs_new_protected:Npn \@@_package_later_aux:Nn #1 #2
-  {
-    \int_compare:nNnTF
-      { \exp_after:wN \@@_parse_version:w #1 //00 \q_mark } <
-      { \exp_after:wN \@@_parse_version:w #2 //00 \q_mark }
-  }
-\cs_new:Npn \@@_parse_version:w #1 { \@@_parse_version_auxi:w 0#1 }
-\cs_new:Npn \@@_parse_version_auxi:w #1/#2/#3#4#5 \q_mark
-  { \@@_parse_version_auxii:w #1-#2-#3#4 \q_mark }
-\cs_new:Npn \@@_parse_version_auxii:w #1-#2-#3#4#5 \q_mark
-  { \tl_if_blank:nF {#2} {#1} #2 #3 #4 }
-\@@_compat_redefine:Npn \ProvidesExplPackage #1 #2 #3 #4
-  { \@@_provides_aux:nn {#1} { #2 \tl_if_empty:nF {#3} {#3~} #4 } }
-\cs_new_protected:Npn \@@_provides_aux:nn #1 #2
-  {
-    \tl_gset:cx { ver@#1.sty } {#2}
-    \iow_log:n { Package~#1:~#2 }
-    \ExplSyntaxOn
-  }
-\@@_compat_redefine:Npn \DeclareOption
-  { \@@_stararg:nn { \use_none:n } { \use_none:nn } }
-\@@_compat_redefine:Npn \ProcessOptions
-  { \@@_stararg:nn { } { } }
-%    \end{macrocode}
-%
-% Now that the compatibility layer is defined, we can finally load \pkg{xparse}.
-% \pkg{xparse} expects to be loaded with §\ExplSyntaxOff§ (not much harm would
-% be done otherwise, but just to be on the safe side).
-%
-% Within \pkg{xparse} a §\RequirePackage{expl3}§ is done. We can ignore that since
-% we have already loaded \pkg{expl3}. Next, a §\@ifpackagelater§ test is done:
-% we do that test too to ensure that \pkg{xparse} is compatible with the current
-% running version of \pkg{expl3}. The following §\ProvidesExplPackage§ simply
-% defines §\ver@xparse.sty§ for any other package that might uset it, and then
-% does §\ExplSyntaxOn§. At the end of the package, \pkg{xparse} parses (heh)
-% the package options. Since we don't have those in non-\LaTeX{} formats, they are
-% ignored. Okay, so load \pkg{xparse}:
-%    \begin{macrocode}
 \int_set:Nn \l_@@_tmpa_int { \char_value_catcode:n { `\@ } }
 \char_set_catcode_letter:N \@
-\file_if_exist:nTF { xparse-generic.tex }
-  { \file_input:n { xparse-generic.tex } }
-  {
-    \ExplSyntaxOff
-    \file_input:n { xparse.sty }
-    \ExplSyntaxOn
-  }
+\file_input:n { xparse-generic.tex }
 \char_set_catcode:nn { `\@ } { \l_@@_tmpa_int }
-\@@_compat_restore:
 %</loader&!latex>
 %<*core>
 %    \end{macrocode}
-% (actually we don't need to do §\ExplSyntaxOn§ there because we don't have
-%  \LaTeX{}'s full package loading mechanism, so the \pkg{expl3} syntax remains
-%  active after \pkg{xparse} is loaded, but it doesn't harm either).
 %
 % \subsection{Programming of the sequences}
 %
