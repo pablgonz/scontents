@@ -1241,9 +1241,7 @@ This text is in the outer environment (after nested).
 %
 % One consideration to keep in mind is that this is a \emph{representation}
 % of the \mymeta{stored content} in a \emph{verbatim} environment and not
-% a real \emph{verbatim} environment. The \mypkg{verbatim} package is not
-% compatible with the implementation of the \myenv*{verbatimsc} environment.
-%
+% a real \emph{verbatim} environment.
 %
 % The \myenv*{verbatimsc} environment can be customized in the following ways:
 %
@@ -2053,28 +2051,18 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % The \LaTeX{} loader is fairly simple: just load the dependencies, load the
 % core code, and then set interfaces up.
 %
-% We also check if the \pkg{verbatim} package is loaded and show a compatibility
-% warning.
 %    \begin{macrocode}
 %<*latex>
-\RequirePackage{expl3,xparse,l3keys2e}[2019/05/28]
+\RequirePackage{l3keys2e}[2020/02/08]
 \ProvidesExplPackage
   {scontents} {\ScontentsFileDate} {\ScontentsFileVersion} {\ScontentsFileDescription}
-\@ifpackageloaded { verbatim }
-  {
-    \msg_set:nnn { scontents } { unsupported-verbatim }
-      {
-        The~implementation~of~the~'verbatimsc'~environment~used~by~
-        \iow_char:N \\typestored~is~not~compatible~with~package~'verbatim'.~
-        Review~the~documentation~and~redefine~the~'verbatimsc'~environment.
-      }
-    \msg_warning:nn { scontents } { unsupported-verbatim }
-  } { }
 %</latex>
 %    \end{macrocode}
-% The Plain and \hologo{ConTeXt} loaders are similar (probably because I don't
+%
+% The \hologo{plainTeX} and \hologo{ConTeXt} loaders are similar (probably because I don't
 % know how to make a proper \hologo{ConTeXt} module :-). We define a
 % \LaTeX{}-style §\ver@scontents.sty§ macro with version info (just in case):
+%
 %    \begin{macrocode}
 %<*!latex>
 %<context>\writestatus{loading}{User Module scontents v\ScontentsFileVersion}
@@ -2087,7 +2075,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %</!latex>
 %    \end{macrocode}
 %
-% In Plain, check that the package isn't being loaded twice (\LaTeX{} and
+% In \hologo{plainTeX}, check that the package isn't being loaded twice (\LaTeX{} and
 % \hologo{ConTeXt} already defend against that):
 %    \begin{macrocode}
 %<*plain>
@@ -2745,7 +2733,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
   }
 %</core>
 %<*loader>
-\NewDocumentCommand { \newenvsc } { m O{} }
+\NewDocumentCommand \newenvsc { m O{} }
   {
 %<latex|plain>    \cs_if_exist:cTF { #1 }
 %<context>    \cs_if_exist:cTF { start #1 }
@@ -3341,7 +3329,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 %    \begin{macrocode}
 %<*loader>
-\NewDocumentCommand { \Scontents }{ !s !O{} }
+\NewDocumentCommand \Scontents { !s !O{} }
   { \@@_Scontents_internal:nn {#1} {#2} }
 %</loader>
 %<*core>
@@ -3363,7 +3351,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
   }
 %</core>
 %<*loader>
-\NewDocumentCommand { \@@_verb_arg:w } { +v }
+\NewDocumentCommand \@@_verb_arg:w { +v }
   { \@@_verb_arg_internal:n {#1} }
 %</loader>
 %<*core>
@@ -3429,7 +3417,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \begin{macrocode}
 %</core>
 %<*loader>
-\NewDocumentCommand { \getstored } { O{-1} m }
+\NewDocumentCommand \getstored { O{-1} m }
   { \@@_getstored_internal:nn {#1} {#2} }
 %</loader>
 %<*core>
@@ -3454,7 +3442,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \begin{macrocode}
 %</core>
 %<*loader>
-\NewDocumentCommand { \foreachsc } { o m }
+\NewDocumentCommand \foreachsc { o m }
   { \@@_foreachsc_internal:nn {#1} {#2} }
 %</loader>
 %<*core>
@@ -3510,7 +3498,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \begin{macrocode}
 %</core>
 %<*loader>
-\NewDocumentCommand { \typestored } { o m }
+\NewDocumentCommand \typestored { o m }
   { \@@_typestored_internal:nn {#1} {#2} }
 %</loader>
 %<*core>
@@ -3587,7 +3575,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
     \cs_set_eq:cN { @xverbatim } \@@_xverb:
     \verbatim
   }
-  { }
+  { \endverbatim }
 %</latex>
 %<context>\definetyping[verbatimsc]
 %</loader>
@@ -3700,7 +3688,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \begin{macrocode}
 %</core>
 %<*loader>
-\NewDocumentCommand { \setupsc } { +m }
+\NewDocumentCommand \setupsc { +m }
   { \keys_set:nn { scontents } {#1} }
 %</loader>
 %<*core>
@@ -3715,7 +3703,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \begin{macrocode}
 %</core>
 %<*loader>
-\NewDocumentCommand { \meaningsc } { o m }
+\NewDocumentCommand \meaningsc { o m }
   { \@@_meaningsc_internal:nn {#1} {#2} }
 %</loader>
 %<*core>
@@ -3752,7 +3740,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \begin{macrocode}
 %</core>
 %<*loader>
-\NewExpandableDocumentCommand { \countsc } { m }
+\NewExpandableDocumentCommand \countsc { m }
   { \seq_count:c { g_@@_name_#1_seq } }
 %</loader>
 %<*core>
@@ -3768,7 +3756,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \begin{macrocode}
 %</core>
 %<*loader>
-\NewDocumentCommand { \cleanseqsc } { m }
+\NewDocumentCommand \cleanseqsc { m }
   { \seq_clear_new:c { g_@@_name_#1_seq } }
 %</loader>
 %<*core>

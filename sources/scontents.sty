@@ -30,19 +30,9 @@
 \def\ScontentsFileDate{2022-03-16}%
 \def\ScontentsFileVersion{1.9j}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
-\RequirePackage{expl3,xparse,l3keys2e}[2019/05/28]
+\RequirePackage{l3keys2e}[2020/02/08]
 \ProvidesExplPackage
   {scontents} {\ScontentsFileDate} {\ScontentsFileVersion} {\ScontentsFileDescription}
-\@ifpackageloaded { verbatim }
-  {
-    \msg_set:nnn { scontents } { unsupported-verbatim }
-      {
-        The~implementation~of~the~'verbatimsc'~environment~used~by~
-        \iow_char:N \\typestored~is~not~compatible~with~package~'verbatim'.~
-        Review~the~documentation~and~redefine~the~'verbatimsc'~environment.
-      }
-    \msg_warning:nn { scontents } { unsupported-verbatim }
-  } { }
 \tl_new:N \g__scontents_end_verbatimsc_tl
 \tl_gset_rescan:Nnn
   \g__scontents_end_verbatimsc_tl
@@ -66,7 +56,7 @@
 \keys_define:nn { scontents }
   { verb-font .initial:n = \ttfamily }
 \ProcessKeysOptions { scontents }
-\NewDocumentCommand { \newenvsc } { m O{} }
+\NewDocumentCommand \newenvsc { m O{} }
   {
     \cs_if_exist:cTF { #1 }
       { \msg_error:nnn { scontents } { env-already-defined } {#1} }
@@ -89,15 +79,15 @@
   \__scontents_analyse_nesting_latex:n
 \cs_gset_eq:NN \__scontents_bsphack: \@bsphack
 \cs_gset_eq:NN \__scontents_esphack: \@esphack
-\NewDocumentCommand { \Scontents }{ !s !O{} }
+\NewDocumentCommand \Scontents { !s !O{} }
   { \__scontents_Scontents_internal:nn {#1} {#2} }
-\NewDocumentCommand { \__scontents_verb_arg:w } { +v }
+\NewDocumentCommand \__scontents_verb_arg:w { +v }
   { \__scontents_verb_arg_internal:n {#1} }
-\NewDocumentCommand { \getstored } { O{-1} m }
+\NewDocumentCommand \getstored { O{-1} m }
   { \__scontents_getstored_internal:nn {#1} {#2} }
-\NewDocumentCommand { \foreachsc } { o m }
+\NewDocumentCommand \foreachsc { o m }
   { \__scontents_foreachsc_internal:nn {#1} {#2} }
-\NewDocumentCommand { \typestored } { o m }
+\NewDocumentCommand \typestored { o m }
   { \__scontents_typestored_internal:nn {#1} {#2} }
 \use:x
   {
@@ -110,18 +100,18 @@
     \cs_set_eq:cN { @xverbatim } \__scontents_xverb:
     \verbatim
   }
-  { }
+  { \endverbatim }
 \group_begin:
   \cs_new_protected:Npn \__scontents_plain_disable_outer_par:
     { }
 \group_end:
-\NewDocumentCommand { \setupsc } { +m }
+\NewDocumentCommand \setupsc { +m }
   { \keys_set:nn { scontents } {#1} }
-\NewDocumentCommand { \meaningsc } { o m }
+\NewDocumentCommand \meaningsc { o m }
   { \__scontents_meaningsc_internal:nn {#1} {#2} }
-\NewExpandableDocumentCommand { \countsc } { m }
+\NewExpandableDocumentCommand \countsc { m }
   { \seq_count:c { g__scontents_name_#1_seq } }
-\NewDocumentCommand { \cleanseqsc } { m }
+\NewDocumentCommand \cleanseqsc { m }
   { \seq_clear_new:c { g__scontents_name_#1_seq } }
 \endinput
 %%

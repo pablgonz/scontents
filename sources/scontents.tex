@@ -65,7 +65,7 @@
 \char_set_catcode_letter:N \@
 \file_input:n { xparse-generic.tex }
 \char_set_catcode:nn { `\@ } { \l__scontents_tmpa_int }
-\NewDocumentCommand { \newenvsc } { m O{} }
+\NewDocumentCommand \newenvsc { m O{} }
   {
     \cs_if_exist:cTF { #1 }
       { \msg_error:nnn { scontents } { env-already-defined } {#1} }
@@ -139,15 +139,15 @@
     \cs_new:Npn \dospecials
       { \seq_map_function:NN \l_char_special_seq \do }
   }
-\NewDocumentCommand { \Scontents }{ !s !O{} }
+\NewDocumentCommand \Scontents { !s !O{} }
   { \__scontents_Scontents_internal:nn {#1} {#2} }
-\NewDocumentCommand { \__scontents_verb_arg:w } { +v }
+\NewDocumentCommand \__scontents_verb_arg:w { +v }
   { \__scontents_verb_arg_internal:n {#1} }
-\NewDocumentCommand { \getstored } { O{-1} m }
+\NewDocumentCommand \getstored { O{-1} m }
   { \__scontents_getstored_internal:nn {#1} {#2} }
-\NewDocumentCommand { \foreachsc } { o m }
+\NewDocumentCommand \foreachsc { o m }
   { \__scontents_foreachsc_internal:nn {#1} {#2} }
-\NewDocumentCommand { \typestored } { o m }
+\NewDocumentCommand \typestored { o m }
   { \__scontents_typestored_internal:nn {#1} {#2} }
 \use:x
   {
@@ -166,13 +166,13 @@
       }
     }
 \group_end:
-\NewDocumentCommand { \setupsc } { +m }
+\NewDocumentCommand \setupsc { +m }
   { \keys_set:nn { scontents } {#1} }
-\NewDocumentCommand { \meaningsc } { o m }
+\NewDocumentCommand \meaningsc { o m }
   { \__scontents_meaningsc_internal:nn {#1} {#2} }
-\NewExpandableDocumentCommand { \countsc } { m }
+\NewExpandableDocumentCommand \countsc { m }
   { \seq_count:c { g__scontents_name_#1_seq } }
-\NewDocumentCommand { \cleanseqsc } { m }
+\NewDocumentCommand \cleanseqsc { m }
   { \seq_clear_new:c { g__scontents_name_#1_seq } }
 \ExplSyntaxOff
 \endinput
