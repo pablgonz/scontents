@@ -590,13 +590,13 @@
       { \seq_map_function:NN \l_char_special_seq \do }
   }
 \int_new:N \l__scontents_save_sf_int
-\dim_new:N \l__scontents_save_skip_dim
+\skip_new:N \l__scontents_save_skip
 \cs_new_protected:Npn \__scontents_bsphack:
   {
     \scan_stop:
     \mode_if_horizontal:T
       {
-        \dim_set_eq:NN \l__scontents_save_skip_dim \tex_lastskip:D
+        \skip_set_eq:NN \l__scontents_save_skip \tex_lastskip:D
         \int_set_eq:NN \l__scontents_save_sf_int \tex_spacefactor:D
       }
   }
@@ -606,9 +606,9 @@
     \mode_if_horizontal:T
       {
         \int_set_eq:NN \tex_spacefactor:D \l__scontents_save_sf_int
-        \dim_compare:nNnT { \l__scontents_save_skip_dim } > { \c_zero_dim }
+        \dim_compare:nNnT { \l__scontents_save_skip } > { \c_zero_skip }
           {
-            \dim_compare:nNnT { \tex_lastskip:D } = { \c_zero_dim }
+            \dim_compare:nNnT { \tex_lastskip:D } = { \c_zero_skip }
               {
                 \nobreak
                 \skip_horizontal:n { \c_zero_skip }

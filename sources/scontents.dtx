@@ -1898,10 +1898,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \item Adapting the |verbatimsc| environment (compatibility |verbatim| package).
 %    \item Removed compatibility layer for older \hologo{LaTeX} releases.
 %    \item Fix loader in \hologo{plainTeX} and \hologo{ConTeXt}.
-%    \item Replace |\l_keys_key_tl| by |\l_keys_key_str|.
-%    \item Replace |\int_set:Nn| by |\dim_zero:N| in |\parindent|.
-%    \item Replace |\int_set:Nn| by |\skip_set:Nn| in |\parskip|.
-%    \item Minor adjustments in the documentation
+%    \item Minor adjustments in the documentation.
 %    \end{itemize}
 % \item [v1.9 (ctan), 2020-01-21]
 %    \begin{itemize}
@@ -3269,13 +3266,13 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \begin{macrocode}
 %<*core>
 \int_new:N \l_@@_save_sf_int
-\dim_new:N \l_@@_save_skip_dim
+\skip_new:N \l_@@_save_skip
 \cs_new_protected:Npn \@@_bsphack:
   {
     \scan_stop:
     \mode_if_horizontal:T
       {
-        \dim_set_eq:NN \l_@@_save_skip_dim \tex_lastskip:D
+        \skip_set_eq:NN \l_@@_save_skip \tex_lastskip:D
         \int_set_eq:NN \l_@@_save_sf_int \tex_spacefactor:D
       }
   }
@@ -3285,9 +3282,9 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
     \mode_if_horizontal:T
       {
         \int_set_eq:NN \tex_spacefactor:D \l_@@_save_sf_int
-        \dim_compare:nNnT { \l_@@_save_skip_dim } > { \c_zero_dim }
+        \dim_compare:nNnT { \l_@@_save_skip } > { \c_zero_skip }
           {
-            \dim_compare:nNnT { \tex_lastskip:D } = { \c_zero_dim }
+            \dim_compare:nNnT { \tex_lastskip:D } = { \c_zero_skip }
               {
                 \nobreak
                 \skip_horizontal:n { \c_zero_skip }
