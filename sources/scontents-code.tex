@@ -329,7 +329,7 @@
   {
     \__scontents_stop_environment:
     \__scontents_finish_storing:NNN \l__scontents_macro_tmp_tl
-      \l__scontents_name_seq_env_tl \l__scontents_print_env_bool
+    \l__scontents_name_seq_env_tl \l__scontents_print_env_bool
   }
 \cs_new_protected:Npn \__scontents_grab_optional:n #1
   {
@@ -608,7 +608,7 @@
         \int_set_eq:NN \tex_spacefactor:D \l__scontents_save_sf_int
         \dim_compare:nNnT { \l__scontents_save_skip } > { \c_zero_skip }
           {
-            \dim_compare:nNnT { \tex_lastskip:D } = { \c_zero_skip }
+            \skip_if_eq:nnT { \tex_lastskip:D } { \c_zero_skip }
               {
                 \nobreak
                 \skip_horizontal:n { \c_zero_skip }

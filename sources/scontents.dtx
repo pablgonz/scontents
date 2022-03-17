@@ -2773,7 +2773,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
   {
     \@@_stop_environment:
     \@@_finish_storing:NNN \l_@@_macro_tmp_tl
-      \l_@@_name_seq_env_tl \l_@@_print_env_bool
+    \l_@@_name_seq_env_tl \l_@@_print_env_bool
   }
 %    \end{macrocode}
 % \end{macro}
@@ -3284,7 +3284,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
         \int_set_eq:NN \tex_spacefactor:D \l_@@_save_sf_int
         \dim_compare:nNnT { \l_@@_save_skip } > { \c_zero_skip }
           {
-            \dim_compare:nNnT { \tex_lastskip:D } = { \c_zero_skip }
+            \skip_if_eq:nnT { \tex_lastskip:D } { \c_zero_skip }
               {
                 \nobreak
                 \skip_horizontal:n { \c_zero_skip }
