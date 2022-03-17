@@ -15,7 +15,6 @@ or show it in <code>&lt;verbatim style&gt;</code>.
 The package loads and depends on updated versions of:
 - [expl3](https://ctan.org/pkg/expl3)
 - [l3keys2e](https://ctan.org/pkg/l3keys2e)
-- [xparse](https://ctan.org/pkg/xparse)
 
 ## Installation
 
@@ -103,4 +102,4 @@ conditions of the [LaTeX Project Public License](https://www.latex-project.org/l
 
 ## Copyright
 
-Copyright 2019-2021 by Pablo González L.
+Copyright 2019-2022 by Pablo González L.
