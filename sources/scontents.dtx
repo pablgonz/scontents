@@ -2429,7 +2429,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
                                     \bool_set_true:N  \l_@@_writing_bool
                                     \tl_set:Nn \l_@@_fname_out_tl {#1}
                                   },
-    write-env .value_required:n = true,
+    write-cmd .value_required:n = true,
     write-out .value_required:n = true,
     print-cmd .meta:nn          = { scontents } { print-cmd = #1 },
     print-cmd .default:n        = true,
