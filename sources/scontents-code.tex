@@ -70,6 +70,11 @@
     \fi
   \fi
 \next
+\tl_new:N \l__scontents_macro_tmp_tl
+\tl_new:N \l__scontents_temp_tl
+\tl_new:N \g__scontents_temp_tl
+\int_new:N \l__scontents_tmpa_int
+\bool_new:N \l__scontents_temp_bool
 \keys_define:nn { scontents }
   {
     store-env .tl_set:N         = \l__scontents_name_seq_env_tl,
@@ -100,18 +105,14 @@
     store-all .meta:n           = { store-env = #1 , store-cmd = #1 },
     store-all .value_required:n = true
   }
-\tl_new:N \l__scontents_macro_tmp_tl
 \tl_new:N \l__scontents_fname_out_tl
-\tl_new:N \l__scontents_temp_tl
 \tl_new:N \l__scontents_file_tl
-\tl_new:N \g__scontents_temp_tl
 \tl_new:N \l__scontents_foreach_name_seq_tl
 \tl_new:N \l__scontents_foreach_before_tl
 \tl_new:N \l__scontents_foreach_after_tl
 \int_new:N \l__scontents_foreach_stop_int
 \int_new:N \l__scontents_seq_item_int
 \int_new:N \l__scontents_env_nesting_int
-\int_new:N \l__scontents_tmpa_int
 \bool_new:N \l__scontents_writing_bool
 \bool_set_false:N \l__scontents_writing_bool
 \bool_new:N \l__scontents_storing_bool
@@ -130,6 +131,8 @@
   { \c_percent_str \c_circumflex_str \c_circumflex_str A scheol \c_percent_str }
 \quark_new:N \q__scontents_stop
 \quark_new:N \q__scontents_mark
+\int_new:N \l__scontents_save_sf_int
+\skip_new:N \l__scontents_save_skip
 \iow_new:N \l__scontents_file_iow
 \cs_new_protected:Npn \__scontents_rescan_tokens:n #1 { \tex_scantokens:D {#1} }
 \cs_generate_variant:Nn \__scontents_rescan_tokens:n { V, x }
@@ -172,7 +175,7 @@
                                     \bool_set_true:N  \l__scontents_writing_bool
                                     \tl_set:Nn \l__scontents_fname_out_tl {#1}
                                   },
-    write-env .value_required:n = true,
+    write-cmd .value_required:n = true,
     write-out .value_required:n = true,
     print-cmd .meta:nn          = { scontents } { print-cmd = #1 },
     print-cmd .default:n        = true,
@@ -303,7 +306,6 @@
     \tl_log:N #1
     \__scontents_append_contents:Vx #2 { \exp_not:V #1 }
   }
-\tl_new:N \l__scontents_env_name_tl
 \cs_new_protected:Npn \__scontents_scontents_setenv:nn #1 #2
   {
     \cs_new_protected:cpn { __scontents_#1_env_begin: }
@@ -589,8 +591,6 @@
     \cs_new:Npn \dospecials
       { \seq_map_function:NN \l_char_special_seq \do }
   }
-\int_new:N \l__scontents_save_sf_int
-\skip_new:N \l__scontents_save_skip
 \cs_new_protected:Npn \__scontents_bsphack:
   {
     \scan_stop:

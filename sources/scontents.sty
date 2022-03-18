@@ -34,14 +34,14 @@
 \ProvidesExplPackage
   {scontents} {\ScontentsFileDate} {\ScontentsFileVersion} {\ScontentsFileDescription}
 \tl_new:N \g__scontents_end_verbatimsc_tl
-\tl_gset_rescan:Nnn
-  \g__scontents_end_verbatimsc_tl
+\tl_gset_rescan:Nnn \g__scontents_end_verbatimsc_tl
   {
     \char_set_catcode_other:N \\
     \char_set_catcode_other:N \{
     \char_set_catcode_other:N \}
   }
   { \end{verbatimsc} }
+\tl_new:N \l__scontents_env_name_tl
 \tl_const:Nx \c__scontents_end_env_tl
   {
     \c_backslash_str

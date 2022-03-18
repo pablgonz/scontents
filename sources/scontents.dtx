@@ -2087,14 +2087,18 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %</plain>
 %    \end{macrocode}
 %
-% \begin{macro}{\g_@@_end_verbatimsc_tl,\c_@@_end_env_tl}
-%   A token list to match when ending \env{verbatimsc} and \env{scontents}
-%   environments.
+% \subsection{Definition of variables by format}
+%
+% We define and set variables that must be handled separately in order
+% to work properly with \hologo{plainTeX}, \hologo{ConTeXt} and \LaTeX.
+%
+% \begin{macro}{\g_@@_end_verbatimsc_tl}
+%   A global token list \cs{g_@@_end_verbatimsc_tl} match when ending
+%   \env{verbatimsc} environment.
 %
 %    \begin{macrocode}
 \tl_new:N \g_@@_end_verbatimsc_tl
-\tl_gset_rescan:Nnn
-  \g_@@_end_verbatimsc_tl
+\tl_gset_rescan:Nnn \g_@@_end_verbatimsc_tl
   {
     \char_set_catcode_other:N \\
 %<*latex>
@@ -2105,6 +2109,15 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %<latex>  { \end{verbatimsc} }
 %<plain>  { \endverbatimsc }
 %<context>  { \stopverbatimsc }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\c_@@_end_env_tl,\l_@@_env_name_tl}
+%   A token list \cs{c_@@_end_env_tl} match when ending environments
+%   defined by and \cs{l_@@_env_name_tl} storing the name of environments defined by...
+%
+%    \begin{macrocode}
+\tl_new:N \l_@@_env_name_tl
 \tl_const:Nx \c_@@_end_env_tl
   {
     \c_backslash_str
@@ -2179,6 +2192,38 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 \next
 %    \end{macrocode}
 %
+% \subsection{Definition of temporary variables}
+%
+% \begin{macro}{\l_@@_macro_tmp_tl,\l_@@_temp_tl,\g_@@_temp_tl,\l_@@_tmpa_int,
+%               \l_@@_temp_bool}
+%   \cs{l_@@_macro_tmp_tl} is a temporary token list to hold the contents
+%   of the macro/environment. \cs{l_@@_temp_tl}, \cs{g_@@_temp_tl}, \cs{l_@@_tmpa_int}
+%   and \cs{l_@@_temp_bool} are generic temporary vars.
+%    \begin{macrocode}
+\tl_new:N \l_@@_macro_tmp_tl
+\tl_new:N \l_@@_temp_tl
+\tl_new:N \g_@@_temp_tl
+\int_new:N \l_@@_tmpa_int
+\bool_new:N \l_@@_temp_bool
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsection{Compatibility layer with \hologo{plainTeX} and \hologo{ConTeXt}}
+%
+% When loading the package outside of \LaTeX{} we can't usually use \pkg{xparse}.
+% However since \pkg{xparse} now \pkg{xparse-generic} is part of the \LaTeX{} kernel is loadable in any format.
+%
+%    \begin{macrocode}
+%</core>
+%<*loader&!latex>
+\int_set:Nn \l_@@_tmpa_int { \char_value_catcode:n { `\@ } }
+\char_set_catcode_letter:N \@
+\file_input:n { xparse-generic.tex }
+\char_set_catcode:nn { `\@ } { \l_@@_tmpa_int }
+%</loader&!latex>
+%<*core>
+%    \end{macrocode}
+%
 % \subsection{Definition of common keys}
 %
 % We create some common \mymeta{keys} that will be used by the options passed to
@@ -2233,14 +2278,11 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % Now we declare the internal variables we will use.
 %
-% \begin{macro}{\l_@@_macro_tmp_tl,\l_@@_fname_out_tl,\l_@@_temp_tl,
-%               \l_@@_file_tl,\g_@@_temp_tl,\l_@@_foreach_name_seq_tl,
+% \begin{macro}{\l_@@_fname_out_tl,\l_@@_file_tl,\l_@@_foreach_name_seq_tl,
 %               \l_@@_foreach_before_tl,\l_@@_foreach_after_tl}
-%   \cs{l_@@_macro_tmp_tl} is a temporary token list to hold the contents
-%   of the macro/environment, \cs{l_@@_fname_out_tl} is used as the name
-%   of the output file, when there's one, \cs{l_@@_file_tl} holds the contents
-%   of an environment as it's being read, and \cs{l_@@_temp_tl} and
-%   \cs{g_@@_temp_tl} are generic temporary token lists.
+%   \cs{l_@@_fname_out_tl} is used for store the name
+%   of the \meta{output file}, when there's one, \cs{l_@@_file_tl} holds the contents
+%   of an environment as it's being read.
 %
 %   \cs{l_@@_foreach_name_seq_tl} is the name assigned to the sequence on
 %   which the loop will be made, \cs{l_@@_foreach_before_tl} and \cs{l_@@_foreach_after_tl}
@@ -2248,19 +2290,15 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   and after the execution of the §\foreachsc§ loop.
 %
 %    \begin{macrocode}
-\tl_new:N \l_@@_macro_tmp_tl
 \tl_new:N \l_@@_fname_out_tl
-\tl_new:N \l_@@_temp_tl
 \tl_new:N \l_@@_file_tl
-\tl_new:N \g_@@_temp_tl
 \tl_new:N \l_@@_foreach_name_seq_tl
 \tl_new:N \l_@@_foreach_before_tl
 \tl_new:N \l_@@_foreach_after_tl
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\l_@@_seq_item_int,\l_@@_env_nesting_int,\l_@@_tmpa_int,
-%    \l_@@_foreach_stop_int}
+% \begin{macro}{\l_@@_seq_item_int,\l_@@_env_nesting_int,\l_@@_foreach_stop_int}
 %   \cs{l_@@_seq_item_int} stores the index in the sequence of the item
 %   requested to \cs{typestored} or \cs{meaningsc}. \cs{l_@@_env_nesting_int}
 %   stores the current nesting level of the \env{scontents} environment.
@@ -2271,7 +2309,6 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 \int_new:N \l_@@_foreach_stop_int
 \int_new:N \l_@@_seq_item_int
 \int_new:N \l_@@_env_nesting_int
-\int_new:N \l_@@_tmpa_int
 %    \end{macrocode}
 % \end{macro}
 %
@@ -2287,7 +2324,6 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 \bool_set_true:N  \l_@@_storing_bool
 %    \end{macrocode}
 % \end{macro}
-%
 %
 % \begin{macro}{\l_@@_foreach_before_bool,\l_@@_foreach_after_bool,
 %               \l_@@_foreach_stop_bool,\l_@@_foreach_wrapper_bool}
@@ -2335,6 +2371,16 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 \quark_new:N \q_@@_mark
 %    \end{macrocode}
 % \end{macro}
+%
+% \begin{macro}{\l_@@_save_sf_int,\l_@@_save_skip}
+%   Internal variables used by functions \cs{@@_bsphack:} and \cs{@@_esphack:}.
+%
+%    \begin{macrocode}
+\int_new:N \l_@@_save_sf_int
+\skip_new:N \l_@@_save_skip
+%    \end{macrocode}
+% \end{macro}
+%
 %
 % \begin{macro}{\l_@@_file_iow}
 %   An output stream for saving the contents of an environment to a file.
@@ -2605,19 +2651,6 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
-% \subsection{Compatibility layer with Plain}
-%
-%    \begin{macrocode}
-%</core>
-%<*loader&!latex>
-\int_set:Nn \l_@@_tmpa_int { \char_value_catcode:n { `\@ } }
-\char_set_catcode_letter:N \@
-\file_input:n { xparse-generic.tex }
-\char_set_catcode:nn { `\@ } { \l_@@_tmpa_int }
-%</loader&!latex>
-%<*core>
-%    \end{macrocode}
-%
 % \subsection{Programming of the sequences}
 %
 %   The storage of the package is done using |seq| variables.  Here we
@@ -2705,13 +2738,12 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % \subsubsection{The command \cs{newenvsc}}
 %
-% \begin{macro}{\newenvsc,\l_@@_env_name_tl,\@@_scontents_setenv:nn}
+% \begin{macro}{\newenvsc,\@@_scontents_setenv:nn}
 %   The \cs{newenvsc} command defines two functions \cs[no-index]{@@_\#1_env_begin:}
 %   and \cs[no-index]{@@_\#1_env_end:}, which set the current environment's
 %   default properties and then call the generic \cs{@@_env_generic_begin:} and
 %   \cs{@@_env_generic_end:}.
 %    \begin{macrocode}
-\tl_new:N \l_@@_env_name_tl
 \cs_new_protected:Npn \@@_scontents_setenv:nn #1 #2
   {
     \cs_new_protected:cpn { @@_#1_env_begin: }
@@ -3096,6 +3128,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
   }
 \cs_new:Npn \@@_use_none_delimit_by_q_stop:w #1 \q_@@_stop { }
 %    \end{macrocode}
+%
 %   In \LaTeX{}, environments start with §\begin{<env>}§, so checking if a
 %   string contains §\begin{scontents}§ is straightforward. Since no §}§ can
 %   appear inside §<env>§, then just a macro delimited by §}§ is enough.
@@ -3121,6 +3154,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
     \exp_not:N \q_@@_stop
   }
 %    \end{macrocode}
+%
 %   In other formats, however, we don't have an \enquote{end anchor} to delimit the
 %   environment name, so a delimited macro won't help. We have to search for
 %   the entire environment command (usually §\scontents§ and §\startscontents§).
@@ -3194,7 +3228,6 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   In Plain we emulate \LaTeX's \env{verbatim} environment.
 %    \begin{macrocode}
 %<*plain>
-\bool_new:N \l_@@_temp_bool
 \cs_new_protected:Npn \verbatimsc
   {
     \group_begin:
@@ -3260,13 +3293,9 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \end{macro}
 %
 % \begin{macro}{\@@_bsphack:,\@@_esphack:}
-%   \pkg{xparse} also requires \LaTeX's §\dospecials§. In case it doesn't
-%   exist (at the time \pkg{scontents} is loaded) we define §\dospecials§
-%   to use the \cs{l_char_special_seq}.
+%    TODO: WRITE HERE
 %    \begin{macrocode}
 %<*core>
-\int_new:N \l_@@_save_sf_int
-\skip_new:N \l_@@_save_skip
 \cs_new_protected:Npn \@@_bsphack:
   {
     \scan_stop:

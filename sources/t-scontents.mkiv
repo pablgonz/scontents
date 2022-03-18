@@ -52,12 +52,12 @@
   v\ScontentsFileVersion\space \ScontentsFileDescription }
 \iow_log:x { Package: ~ scontents ~ \use:c { ver @ scontents . sty } }
 \tl_new:N \g__scontents_end_verbatimsc_tl
-\tl_gset_rescan:Nnn
-  \g__scontents_end_verbatimsc_tl
+\tl_gset_rescan:Nnn \g__scontents_end_verbatimsc_tl
   {
     \char_set_catcode_other:N \\
   }
   { \stopverbatimsc }
+\tl_new:N \l__scontents_env_name_tl
 \tl_const:Nx \c__scontents_end_env_tl
   {
     \c_backslash_str
@@ -67,12 +67,12 @@
 \file_input:n { scontents-code.tex }
 \cs_new:Npn \__scontents_format_case:nnn #1 #2 #3
   {#3} % ConTeXt
-\keys_define:nn { scontents }
-  { verb-font .initial:n = \tt }
 \int_set:Nn \l__scontents_tmpa_int { \char_value_catcode:n { `\@ } }
 \char_set_catcode_letter:N \@
 \file_input:n { xparse-generic.tex }
 \char_set_catcode:nn { `\@ } { \l__scontents_tmpa_int }
+\keys_define:nn { scontents }
+  { verb-font .initial:n = \tt }
 \NewDocumentCommand \newenvsc { m O{} }
   {
     \cs_if_exist:cTF { start #1 }
