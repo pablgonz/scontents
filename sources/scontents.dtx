@@ -2114,7 +2114,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % \begin{macro}{\c_@@_end_env_tl,\l_@@_env_name_tl}
 %   A token list \cs{c_@@_end_env_tl} match when ending environments
-%   defined by and \cs{l_@@_env_name_tl} storing the name of environments defined by...
+%   defined by \cs{newenvsc}, \cs{l_@@_env_name_tl} storing the name
+%   of environments defined by \cs{newenvsc}.
 %
 %    \begin{macrocode}
 \tl_new:N \l_@@_env_name_tl
@@ -2274,7 +2275,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %<*core>
 %    \end{macrocode}
 %
-% \subsection{Internal variables}
+% \subsection{Internal variables and utility functions}
 %
 % Now we declare the internal variables we will use.
 %
@@ -2653,10 +2654,11 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % \subsection{Programming of the sequences}
 %
+% \begin{macro}{\@@_append_contents:nn,\@@_append_contents:Vx}
 %   The storage of the package is done using |seq| variables.  Here we
 %   set up the macros that will manage the variables.
-% \begin{macro}{\@@_append_contents:nn}
-%   \cs{@@_append_contents:nn} creates a seq variable if one didn't
+%
+%   The function \cs{@@_append_contents:nn} creates a |seq| variable if one didn't
 %   exist and appends the contents in the argument to the right of the
 %   sequence.
 %
@@ -2674,7 +2676,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \end{macro}
 %
 % \begin{macro}{\@@_getfrom_seq:nn,\@@_getfrom_seq:nnn}
-%   \cs{@@_getfrom_seq:nn} retrieves the saved item from the
+%   The function \cs{@@_getfrom_seq:nn} retrieves the saved item from the
 %   sequence.
 %
 %    \begin{macrocode}
@@ -2699,8 +2701,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\@@_lastfrom_seq:n}
-%   \cs{@@_lastfrom_seq:n} retrieves the last saved item from the
+% \begin{macro}{\@@_lastfrom_seq:n,\@@_lastfrom_seq:V}
+%   The function \cs{@@_lastfrom_seq:n} retrieves the last saved item from the
 %   sequence when \cs{l_@@_print_env_bool} or \cs{l_@@_print_cmd_bool}
 %   is true.
 %
@@ -2718,7 +2720,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \end{macro}
 %
 % \begin{macro}{\@@_store_to_seq:NN}
-%   The \cs{@@_store_to_seq:NN} writes the recorded contents
+%   The function \cs{@@_store_to_seq:NN} writes the recorded contents
 %   in §#1§ to the log and stores it in §#2§.
 %
 %    \begin{macrocode}
@@ -2790,11 +2792,10 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % \subsubsection{Generic definition of the environment}
 %
-% \begin{macro}{
-%     \@@_env_generic_begin:,
-%     \@@_env_generic_begin:,
-%   }
-%   Now we define the generic environment \cs{@@_env_generic_begin:}
+% \begin{macro}{\@@_env_generic_begin:,\@@_env_generic_end:}
+%
+%   Now we define the generic environment functions
+%   \cs{@@_env_generic_begin:} and \cs{@@_env_generic_end:}.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_env_generic_begin:
   {
@@ -2819,7 +2820,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %     \startscontents,
 %     \stopscontents,
 %   }
-%   Now defining the \myenv{scontents} environment should be easy:
+%   Finaly defining the \myenv{scontents} environment should be easy :)
 %    \begin{macrocode}
 %</core>
 %<loader>\newenvsc{scontents}
