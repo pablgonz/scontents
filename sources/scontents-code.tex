@@ -117,6 +117,7 @@
 \bool_set_false:N \l__scontents_writing_bool
 \bool_new:N \l__scontents_storing_bool
 \bool_set_true:N  \l__scontents_storing_bool
+\bool_new:N \l__scontents_writable_bool
 \bool_new:N \l__scontents_foreach_before_bool
 \bool_set_false:N \l__scontents_foreach_before_bool
 \bool_new:N \l__scontents_foreach_after_bool
@@ -125,7 +126,6 @@
 \bool_set_false:N \l__scontents_foreach_stop_bool
 \bool_new:N \l__scontents_foreach_wrapper_bool
 \bool_set_false:N \l__scontents_foreach_wrapper_bool
-\bool_new:N \l__scontents_writable_bool
 \seq_new:N \l__scontents_foreach_print_seq
 \str_const:Nx \c__scontents_hidden_space_str
   { \c_percent_str \c_circumflex_str \c_circumflex_str A scheol \c_percent_str }
@@ -642,8 +642,10 @@
 \cs_new_protected:Npn \__scontents_Scontents_finish:
   {
       \__scontents_file_write_cmd:VV \l__scontents_fname_out_tl \l__scontents_temp_tl
-      \__scontents_finish_storing:NNN \l__scontents_temp_tl
-          \l__scontents_name_seq_cmd_tl \l__scontents_print_cmd_bool
+      \__scontents_finish_storing:NNN
+        \l__scontents_temp_tl
+        \l__scontents_name_seq_cmd_tl
+        \l__scontents_print_cmd_bool
       \use:x
         {
     \group_end:
@@ -659,6 +661,7 @@
         \iow_close:N \l__scontents_file_iow
       }
   }
+\cs_generate_variant:Nn \__scontents_file_write_cmd:nn { VV }
 \prg_new_protected_conditional:Npnn \__scontents_file_if_writable:n #1 { T, F, TF }
   {
     \bool_if:NTF \l__scontents_writing_bool
@@ -682,7 +685,6 @@
       }
       { \prg_return_false: }
   }
-\cs_generate_variant:Nn \__scontents_file_write_cmd:nn { VV }
 \cs_new_protected:Npn \__scontents_getstored_internal:nn #1 #2
   {
     \group_begin:

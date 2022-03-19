@@ -2197,9 +2197,10 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % \begin{macro}{\l_@@_macro_tmp_tl,\l_@@_temp_tl,\g_@@_temp_tl,\l_@@_tmpa_int,
 %               \l_@@_temp_bool}
-%   \cs{l_@@_macro_tmp_tl} is a temporary token list to hold the contents
-%   of the macro/environment. \cs{l_@@_temp_tl}, \cs{g_@@_temp_tl}, \cs{l_@@_tmpa_int}
-%   and \cs{l_@@_temp_bool} are generic temporary vars.
+%   The token list \cs{l_@@_macro_tmp_tl} is a temporary token list to
+%   hold the contents of the macro/environment. \cs{l_@@_temp_tl},
+%   \cs{g_@@_temp_tl}, \cs{l_@@_tmpa_int} and \cs{l_@@_temp_bool} are
+%   generic temporary vars.
 %    \begin{macrocode}
 \tl_new:N \l_@@_macro_tmp_tl
 \tl_new:N \l_@@_temp_tl
@@ -2211,8 +2212,9 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % \subsection{Compatibility layer with \hologo{plainTeX} and \hologo{ConTeXt}}
 %
-% When loading the package outside of \LaTeX{} we can't usually use \pkg{xparse}.
-% However since \pkg{xparse} now \pkg{xparse-generic} is part of the \LaTeX{} kernel is loadable in any format.
+% When loading the package outside of \LaTeX{} we can't usually use
+% \pkg{xparse}. However since \pkg{xparse} now \pkg{ltcmd} is part of
+% the \LaTeX{} kernel is loadable in any format.
 %
 %    \begin{macrocode}
 %</core>
@@ -2225,7 +2227,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %<*core>
 %    \end{macrocode}
 %
-% \subsection{Definition of common keys}
+% \subsection{Definition of keys for the package}
 %
 % We create some common \mymeta{keys} that will be used by the options passed to
 % the package as well as by the environments and commands defined.
@@ -2313,16 +2315,17 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\l_@@_writing_bool,\l_@@_storing_bool}
+% \begin{macro}{\l_@@_writing_bool,\l_@@_storing_bool,\l_@@_writable_bool}
 %   The boolean \cs{l_@@_writing_bool} keeps track of whether we should write
 %   to a file, and \cs{l_@@_storing_bool} determines whether it is in write-only
-%   mode when the §write-out§ option is used.
+%   mode when the key §write-out§ is used.
 %
 %    \begin{macrocode}
 \bool_new:N \l_@@_writing_bool
 \bool_set_false:N \l_@@_writing_bool
 \bool_new:N \l_@@_storing_bool
 \bool_set_true:N  \l_@@_storing_bool
+\bool_new:N \l_@@_writable_bool
 %    \end{macrocode}
 % \end{macro}
 %
@@ -2339,7 +2342,6 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 \bool_set_false:N \l_@@_foreach_stop_bool
 \bool_new:N \l_@@_foreach_wrapper_bool
 \bool_set_false:N \l_@@_foreach_wrapper_bool
-\bool_new:N \l_@@_writable_bool
 %    \end{macrocode}
 % \end{macro}
 %
@@ -2391,12 +2393,13 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\@@_rescan_tokens:n}
-%   \cs{tl_rescan:nn} doesn't fit the needs of this package because
-%   it does not allow catcode changes inside the argument, so verbatim
-%   commands used inside one of \mypkg*{scontents}'s commands/environments
-%   will not work. Here we create a private copy of \cs{tex_scantokens:D}
-%   which will serve our purposes.
+% \begin{macro}{\@@_rescan_tokens:n,\@@_rescan_tokens:x,\@@_rescan_tokens:V}
+%   The function \cs{tl_rescan:nn} provided by \pkg{expl3} doesn't fit
+%   the needs of this package because it does not allow catcode changes
+%   inside the argument, so verbatim commands used inside one of
+%   \mypkg*{scontents}'s commands/environments will not work. Here we
+%   create a private copy of \cs{tex_scantokens:D} which will serve our
+%   purposes.
 %
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_rescan_tokens:n #1 { \tex_scantokens:D {#1} }
@@ -2415,7 +2418,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % \begin{macro}[int]{\tl_remove_once:NV,\tl_replace_all:Nxx,
 %     \tl_replace_all:Nxn,\tl_replace_all:Nnx,\tl_if_empty:fTF}
-%   Some nonstandard variants.
+%   Some nonstandard kernel variants.
 %
 %    \begin{macrocode}
 \cs_generate_variant:Nn \tl_remove_once:Nn { NV }
@@ -2654,13 +2657,13 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % \subsection{Programming of the sequences}
 %
-% \begin{macro}{\@@_append_contents:nn,\@@_append_contents:Vx}
 %   The storage of the package is done using |seq| variables.  Here we
 %   set up the macros that will manage the variables.
 %
-%   The function \cs{@@_append_contents:nn} creates a |seq| variable if one didn't
-%   exist and appends the contents in the argument to the right of the
-%   sequence.
+% \begin{macro}{\@@_append_contents:nn,\@@_append_contents:Vx}
+%   The function \cs{@@_append_contents:nn} creates a |seq| variable if
+%   one didn't exist and appends the contents in the argument to the
+%   right of the sequence.
 %
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_append_contents:nn #1#2
@@ -3225,8 +3228,12 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}[int]{\verbatimsc,\endverbatimsc}
-%   In Plain we emulate \LaTeX's \env{verbatim} environment.
+% \subsection{The environment \env{verbatimsc}}
+%
+% \begin{macro}[int]{\verbatimsc,\endverbatimsc,\@@_verbatimsc_aux:,
+%                    \@@_vobeyspaces:,\@@_xverb:,\@@_nolig_list:,\@@_xobeysp:}
+%   In \hologo{plainTeX} we emulate \LaTeX's \env{verbatim} environment.
+%
 %    \begin{macrocode}
 %<*plain>
 \cs_new_protected:Npn \verbatimsc
@@ -3293,8 +3300,17 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
+%
+% \subsection{The command \cs{Scontents}}
+%
+% User command to \mymeta{stored content}, adapted from
+% \url{https://tex.stackexchange.com/a/500281/7832}.
+%
+% \subsubsection{Implementation of \cs{bsphack} and \cs{esphack} for \hologo{plainTeX}}
 % \begin{macro}{\@@_bsphack:,\@@_esphack:}
-%    TODO: WRITE HERE
+%    We emulate |\bsphack| and |\esphack| for \hologo{plainTeX}.
+%    This is necessary to prevent unwanted spaces when the |print-cmd|
+%    key is false.
 %    \begin{macrocode}
 %<*core>
 \cs_new_protected:Npn \@@_bsphack:
@@ -3331,28 +3347,16 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
-% \subsection{The command \cs{Scontents}}
-%
-% User command to \mymeta{stored content}, adapted from
-% \url{https://tex.stackexchange.com/a/500281/7832}.
-%
 % \begin{macro}{
 %     \Scontents,
-%     \@@_norm_arg:n,
-%     \@@_Scontents_auxi:N,
 %     \@@_Scontents_internal:nn,
+%     \@@_norm_arg:n,
 %     \@@_verb_arg:w,
-%     \@@_verb_arg_internal:n,
 %   }
-%   The §\Scontents§ macro starts by parsing an optional argument and
-%   then delegates to \cs{@@_verb_arg:w} or \cs{@@_norm_arg:n} depending whether
-%   a star (§*§) argument is present.
-%
-%   \cs{@@_norm_arg:n} grabs a normal argument, adds it to the |seq| varaible,
-%   and optionally prints it.
-%
-%   \cs{@@_verb_arg:w} grabs a verbatim argument using \pkg{xparse}'s |+v|
-%   argument parser.
+%   The §\Scontents§ command starts by parsing an optional argument to
+%   the function \cs{@@_Scontents_internal:nn} then delegates to
+%   \cs{@@_verb_arg:w} or \cs{@@_norm_arg:n} depending whether a star
+%   (§*§) argument is present.
 %
 %    \begin{macrocode}
 %<*loader>
@@ -3371,17 +3375,43 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
         { \@@_verb_arg:w }
         { \@@_norm_arg:n }
   }
+%    \end{macrocode}
+%
+%   The function \cs{@@_norm_arg:n} grabs a normal argument, adds it to
+%   the |seq| varaible and optionally prints it.
+%
+%    \begin{macrocode}
 \cs_new_protected:Npn \@@_norm_arg:n #1
   {
       \tl_set:Nn \l_@@_temp_tl {#1}
       \@@_Scontents_finish:
   }
+%    \end{macrocode}
+%
+%   The function \cs{@@_verb_arg:w} grabs a verbatim argument using
+%   \pkg{xparse}'s |+v| argument parser.
+%
+%    \begin{macrocode}
 %</core>
 %<*loader>
 \NewDocumentCommand \@@_verb_arg:w { +v }
   { \@@_verb_arg_internal:n {#1} }
 %</loader>
 %<*core>
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{
+%     \@@_verb_arg_internal:n,
+%     \@@_Scontents_finish:,
+%     \@@_file_write_cmd:nn,
+%     \@@_file_write_cmd:VV,
+%   }
+%
+%   The function \cs{@@_verb_arg_internal:n} replace the eol |\^^M | by
+%   |\^^J| then adds it to the |seq| varaible.
+%
+%    \begin{macrocode}
 \cs_new_protected:Npn \@@_verb_arg_internal:n #1
   {
       \tl_set:Nn \l_@@_temp_tl {#1}
@@ -3391,8 +3421,10 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 \cs_new_protected:Npn \@@_Scontents_finish:
   {
       \@@_file_write_cmd:VV \l_@@_fname_out_tl \l_@@_temp_tl
-      \@@_finish_storing:NNN \l_@@_temp_tl
-          \l_@@_name_seq_cmd_tl \l_@@_print_cmd_bool
+      \@@_finish_storing:NNN
+        \l_@@_temp_tl
+        \l_@@_name_seq_cmd_tl
+        \l_@@_print_cmd_bool
       \use:x
         {
     \group_end:
@@ -3408,6 +3440,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
         \iow_close:N \l_@@_file_iow
       }
   }
+\cs_generate_variant:Nn \@@_file_write_cmd:nn { VV }
 \prg_new_protected_conditional:Npnn \@@_file_if_writable:n #1 { T, F, TF }
   {
     \bool_if:NTF \l_@@_writing_bool
@@ -3431,13 +3464,12 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
       }
       { \prg_return_false: }
   }
-\cs_generate_variant:Nn \@@_file_write_cmd:nn { VV }
 %    \end{macrocode}
 % \end{macro}
 %
 % \subsection{The command \cs{getstored}}
 %
-% \begin{macro}{\getstored}
+% \begin{macro}{\getstored,\@@_getstored_internal:nn}
 %   User command §\getstored§ to extract \mymeta{stored content} in |seq|
 %   (robust).
 %
@@ -3463,7 +3495,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % \subsection{The command \cs{foreachsc}}
 %
-% \begin{macro}{\foreachsc}
+% \begin{macro}{\foreachsc,\@@_foreachsc_internal:nn,\@@_foreach_add_body:n}
 %   User command §\foreachsc§ to loop over \mymeta{stored content} in |seq|.
 %
 %    \begin{macrocode}
@@ -3518,7 +3550,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % \subsection{The command \cs{typestored}}
 %
-% \begin{macro}{\typestored,\@@_verb_print:N,\@@_xverb:w,verbatimsc}
+% \begin{macro}{\typestored,\@@_typestored_internal:nn,\@@_verb_print:N,\@@_xverb:w,verbatimsc}
 %   The §\typestored§ commands fetches a buffer from memory, prints it
 %   to the log file, and then calls \cs{@@_verb_print:N}.
 %
@@ -3575,7 +3607,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 \group_end:
 %    \end{macrocode}
 %
-%   Finally, the §verbatimsc§ environment is defined.
+%   Finally the \hologo{LaTeX} and \hologo{ConTeXt} version of §verbatimsc§ environment is defined.
 %
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_xverb:
@@ -3610,7 +3642,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
-% \subsection{Some auxiliaries}
+% \subsubsection{Some auxiliaries functions}
 %
 % \begin{macro}{\@@_tabs_to_spaces:}
 %   In a verbatim context the |TAB| character is made active and set
@@ -3662,9 +3694,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \end{macro}
 %
 % \begin{macro}{
-%     \@@_set_active_eq:NN,
-%     \@@_make_control_chars_active:,
-%   }
+%     \@@_set_active_eq:NN, \@@_make_control_chars_active:,
+%     \@@_plain_disable_outer_par:}
 %   Shortcut definitions for common catcode changes.
 %   The §^^L§ needs a special treatment in non-\LaTeX{} mode
 %   because in Plain\,\TeX{} it is an §\outer§ token.
@@ -3724,7 +3755,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % \subsection{The command \cs{meaningsc}}
 %
-% \begin{macro}{\meaningsc}
+% \begin{macro}{\meaningsc,\@@_meaningsc_internal:nn,\@@_meaningsc:n}
 %   User command §\meaningsc§ to see content stored in |seq|.
 %
 %    \begin{macrocode}
