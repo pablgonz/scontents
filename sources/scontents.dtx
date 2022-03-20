@@ -1254,6 +1254,7 @@ This text is in the outer environment (after nested).
 \let\verbatimsc\@undefined
 \let\endverbatimsc\@undefined
 \makeatother
+\usepackage{fancyvrb}
 \DefineVerbatimEnvironment{verbatimsc}{Verbatim}{numbers=left}
 \end{examplecode}
 % \iffalse
@@ -2735,7 +2736,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
-% \subsection{Construction of environment \env{scontents}}
+% \subsection{The command \cs{newenvsc} and environment \env{scontents}}
 %
 % In order to be able to define environments that behave similarly to
 % \myenv{scontents}, we define a generic environment and make all other
@@ -2743,11 +2744,15 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % \subsubsection{The command \cs{newenvsc}}
 %
-% \begin{macro}{\newenvsc,\@@_scontents_setenv:nn}
-%   The \cs{newenvsc} command defines two functions \cs[no-index]{@@_\#1_env_begin:}
-%   and \cs[no-index]{@@_\#1_env_end:}, which set the current environment's
-%   default properties and then call the generic \cs{@@_env_generic_begin:} and
-%   \cs{@@_env_generic_end:}.
+% \begin{macro}{\newenvsc,\@@_scontents_setenv:nn,\@@_env_define:nnn}
+%   The internal function \cs{@@_scontents_setenv:nn} defines two
+%   functions \cs[no-index]{@@_\#1_env_begin:} and
+%   \cs[no-index]{@@_\#1_env_end:}, which set the current environment's
+%   name in §#1§ and \cs{l_@@_env_name_tl} and default properties in §#2§
+%   then call \cs{@@_setup_verb_processor:}, the generic
+%   \cs{@@_env_generic_begin:} and \cs{@@_env_generic_end:}.
+%
+%   Finally the function \cs{@@_env_define:nnn} will create the environments.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_scontents_setenv:nn #1 #2
   {
@@ -2833,9 +2838,6 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % \subsubsection{key val for environment}
 %
-% Define a \myoarg{key \textnormal{\textcolor{gray}{=}} val} for
-% environment \env{scontents}
-%
 % \begin{macro}{\@@_grab_optional:n,\@@_grab_optional:w}
 %   The macro \cs{@@_grab_optional:w} is called from the
 %   \env{scontents} environment with the tokens following the
@@ -2879,17 +2881,19 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   to do the heavy lifting. \cs{@@_grab_optional:w} processes the optional
 %   argument and calls \cs{@@_start_after_option:w}.
 %
-%   \cs{@@_start_after_option:w} also checks for trailing tokens after
-%   the optional argument and issues an error if any.
+%   The function \cs{@@_start_after_option:w} also checks for trailing
+%   tokens after the optional argument and issues an error if any.
 %
-%   In all cases, \cs{@@_check_line_process:xn} ckecks that
+%   In all cases, the function \cs{@@_check_line_process:xn} ckecks that
 %   everything past §\begin{scontents}§ is empty and then process
-%   the environment. \cs{@@_check_line_process:xn} calls the
-%   \cs{@@_file_tl_write_start:V} function, which will then read the contents
+%   the environment.
+%
+%   The function \cs{@@_check_line_process:xn} calls the function
+%   \cs{@@_file_tl_write_start:V} which will then read the contents
 %   of the environment and optionally store them in a token list or write to
 %   an external file.
 %
-%   When that's done, \cs{@@_file_write_stop:N} does the cleanup. This part of
+%   When that's done, the function \cs{@@_file_write_stop:N} does the cleanup. This part of
 %   the code is inspired and adapted from the code of the package \pkg{xsimverb}
 %   by Clemens Niederberger.
 %
@@ -2929,8 +2933,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
         { \l_@@_storing_bool }
         { \tl_if_empty_p:N \l_@@_macro_tmp_tl }
         {
-          \msg_warning:nnx { scontents } { empty-environment }
-            { \l_@@_env_name_tl }
+          \msg_warning:nnx { scontents } { empty-environment } { \l_@@_env_name_tl }
         }
     }
 %    \end{macrocode}
@@ -3607,7 +3610,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 \group_end:
 %    \end{macrocode}
 %
-%   Finally the \hologo{LaTeX} and \hologo{ConTeXt} version of §verbatimsc§ environment is defined.
+%   Finally the \hologo{LaTeX} and \hologo{ConTeXt} version of
+%   §verbatimsc§ environment is defined.
 %
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_xverb:
