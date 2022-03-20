@@ -378,8 +378,7 @@
         { \l__scontents_storing_bool }
         { \tl_if_empty_p:N \l__scontents_macro_tmp_tl }
         {
-          \msg_warning:nnx { scontents } { empty-environment }
-            { \l__scontents_env_name_tl }
+          \msg_warning:nnx { scontents } { empty-environment } { \l__scontents_env_name_tl }
         }
     }
   \cs_new_protected:Npn \__scontents_file_tl_write_start:n #1
