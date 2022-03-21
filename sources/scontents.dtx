@@ -425,7 +425,7 @@
 % Reserved words 6 (optcolor)
     keywordstyle  = [6]{\color{optcolor}},%
     keywords      = [6]{store-cmd,store-env,print-env,print-cmd,write-env,%
-                    start,stopt,wrapper,sep,step,before,after,write-out,%
+                    start,stopt,wrapper,sep,step,before,after,write-out,write-cmd,%
                     overwrite,width-tab,force-eol,inner,outer,I,J,M,L,Ascheol},%
 % Reserved words 7 (OrangeRed)
     keywordstyle  = [7]{\color{OrangeRed}},%
@@ -680,7 +680,7 @@
 %
 % The package \mypkg*{scontents} is present in \hologo{TeX} Live and \hologo{MiKTeX},
 % use the package manager to install. For manual installation, download
-% \href{http://mirrors.ctan.org/macros/latex/contrib/scontents.zip}{scontents.zip}
+% \href{https://mirrors.ctan.org/macros/latex/contrib/scontents.zip}{scontents.zip}
 % and unzip it, run \lstinline[language=scontents-doc,basicstyle=\ttfamily]+luatex scontents.ins+
 % and move all files to appropriate locations, then run "mktexlsr". To produce the documentation
 % with source code run \lstinline[language=scontents-doc,basicstyle=\ttfamily]+luatex scontents.ins+ and
@@ -1239,11 +1239,11 @@ This text is in the outer environment (after nested).
 % contents.
 % \end{function}
 %
-% One consideration to keep in mind is that this is a \emph{representation}
-% of the \mymeta{stored content} in a \emph{verbatim} environment and not
-% a real \emph{verbatim} environment.
+% One consideration to keep in mind is that this is a \enquote{\emph{representation}}
+% of the \mymeta{stored content} in a \enquote{\emph{verbatim}} environment.
 %
-% The \myenv*{verbatimsc} environment can be customized in the following ways:
+% The \myenv*{verbatimsc} environment can be customized in the
+% following ways after loading the \mypkg*{scontents} package:
 %
 % Using the package \mypkg{fancyvrb}:
 % \iffalse
@@ -1652,7 +1652,6 @@ This is from the verbatim environment:
 % \textattachfile[color=linkcolor,print=false]{scexamp5.ltx}{\faFile*[regular]}.
 % \lstinputlisting[language=scontents-doc,numbers=left]{scexamp5.ltx}
 %
-%
 % \subsubsection*{Example 6}
 %
 % \iffalse
@@ -2057,9 +2056,11 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %</latex>
 %    \end{macrocode}
 %
-% The \hologo{plainTeX} and \hologo{ConTeXt} loaders are similar (probably because I don't
-% know how to make a proper \hologo{ConTeXt} module :-). We define a
-% \LaTeX{}-style §\ver@scontents.sty§ macro with version info (just in case):
+% The \hologo{plainTeX} and \hologo{ConTeXt} loaders are similar
+% (probably because I don't know how to make a proper \hologo{ConTeXt}
+% module :-). We define a \LaTeX{}-style §\ver@scontents.sty§ macro with
+% version info (just in case) and add §\ExplSyntaxOn§ to be able to load
+% \pkg{xparse} later.
 %
 %    \begin{macrocode}
 %<*!latex>
@@ -2073,8 +2074,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %</!latex>
 %    \end{macrocode}
 %
-% In \hologo{plainTeX}, check that the package isn't being loaded twice (\LaTeX{} and
-% \hologo{ConTeXt} already defend against that):
+% In \hologo{plainTeX}, check that the package isn't being loaded twice
+% (\LaTeX{} and \hologo{ConTeXt} already defend against that):
 %    \begin{macrocode}
 %<*plain>
 \msg_gset:nnn { scontents } { already-loaded }
@@ -2137,13 +2138,15 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 \file_input:n { scontents-code.tex }
 %    \end{macrocode}
 %
-% Sometimes we need to detect the format from within a macro:
+% \begin{macro}{\@@_format_case:nnn}
+%   Sometimes we need to detect the format from within a macro:
 %    \begin{macrocode}
 \cs_new:Npn \@@_format_case:nnn #1 #2 #3
 %<latex>  {#1} % LaTeX
 %<plain>  {#2} % Plain/Generic
 %<context>  {#3} % ConTeXt
 %    \end{macrocode}
+% \end{macro}
 %
 % Checking that the package was loaded with the proper loader code. This code
 % was copied from \texttt{expl3-code.tex}.
@@ -2230,8 +2233,9 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % \subsection{Definition of keys for the package}
 %
-% We create some common \mymeta{keys} that will be used by the options passed to
-% the package as well as by the environments and commands defined.
+% We create some common \mymeta{keys} that will be used by the options
+% passed to the package as well as by the environments and commands
+% defined.
 %
 %    \begin{macrocode}
 \keys_define:nn { scontents }
@@ -2270,9 +2274,10 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %<plain|context>  { verb-font .initial:n = \tt }
 %    \end{macrocode}
 %
-% In \LaTeX{} mode we load \mypkg{l3keys2e} process the \mymeta{keys} as options
-% passed on to the package, the package \pkg{l3keys2e} will verify the
-% \mymeta{keys} and will return an error when they are \emph{unknown}.
+% In \LaTeX{} mode we load \mypkg{l3keys2e} process the \mymeta{keys}
+% as options passed on to the package, the package \pkg{l3keys2e} will
+% verify the \mymeta{keys} and will return an error when they are
+% \emph{unknown}.
 %    \begin{macrocode}
 %<latex>\ProcessKeysOptions { scontents }
 %<*core>
@@ -2280,22 +2285,33 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % \subsection{Internal variables and utility functions}
 %
-% Now we declare the internal variables we will use.
+% \begin{macro}{\l_@@_fname_out_tl,\l_@@_file_tl,\l_@@_file_iow}
+%   The token list \cs{l_@@_fname_out_tl} is used for store the name of
+%   the \meta{output file}, when there's one. Its value is set by the
+%   keys §write-env§, §write-out§ and §write-cmd§.
 %
-% \begin{macro}{\l_@@_fname_out_tl,\l_@@_file_tl,\l_@@_foreach_name_seq_tl,
-%               \l_@@_foreach_before_tl,\l_@@_foreach_after_tl}
-%   \cs{l_@@_fname_out_tl} is used for store the name
-%   of the \meta{output file}, when there's one, \cs{l_@@_file_tl} holds the contents
-%   of an environment as it's being read.
+%   The token list \cs{l_@@_file_tl} holds the contents of an
+%   environment, \env{scontents} by default, as it's being read.
+%   \cs{l_@@_file_iow} is an output stream for saving the contents of an
+%   environment (or command) to a file.
 %
+%   This variables is used by the function \cs{@@_file_tl_write_start:n}
+%   (see \ref{the:environment:itself}).
+%
+%    \begin{macrocode}
+\tl_new:N \l_@@_fname_out_tl
+\tl_new:N \l_@@_file_tl
+\iow_new:N \l_@@_file_iow
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\l_@@_foreach_name_seq_tl,\l_@@_foreach_before_tl,\l_@@_foreach_after_tl}
 %   \cs{l_@@_foreach_name_seq_tl} is the name assigned to the sequence on
 %   which the loop will be made, \cs{l_@@_foreach_before_tl} and \cs{l_@@_foreach_after_tl}
 %   are token lists in which the assigned material will be placed before
 %   and after the execution of the §\foreachsc§ loop.
 %
 %    \begin{macrocode}
-\tl_new:N \l_@@_fname_out_tl
-\tl_new:N \l_@@_file_tl
 \tl_new:N \l_@@_foreach_name_seq_tl
 \tl_new:N \l_@@_foreach_before_tl
 \tl_new:N \l_@@_foreach_after_tl
@@ -2304,10 +2320,10 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % \begin{macro}{\l_@@_seq_item_int,\l_@@_env_nesting_int,\l_@@_foreach_stop_int}
 %   \cs{l_@@_seq_item_int} stores the index in the sequence of the item
-%   requested to \cs{typestored} or \cs{meaningsc}. \cs{l_@@_env_nesting_int}
+%   requested to §\typestored§ or §\meaningsc§. \cs{l_@@_env_nesting_int}
 %   stores the current nesting level of the \env{scontents} environment.
-%  \cs{l_@@_foreach_stop_int} will save the value at which the §\foreachsc§
-%  loop will stop.
+%   \cs{l_@@_foreach_stop_int} will save the value at which the §\foreachsc§
+%   loop will stop.
 %
 %    \begin{macrocode}
 \int_new:N \l_@@_foreach_stop_int
@@ -2385,22 +2401,16 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
-%
-% \begin{macro}{\l_@@_file_iow}
-%   An output stream for saving the contents of an environment to a file.
-%
-%    \begin{macrocode}
-\iow_new:N \l_@@_file_iow
-%    \end{macrocode}
-% \end{macro}
-%
 % \begin{macro}{\@@_rescan_tokens:n,\@@_rescan_tokens:x,\@@_rescan_tokens:V}
 %   The function \cs{tl_rescan:nn} provided by \pkg{expl3} doesn't fit
 %   the needs of this package because it does not allow catcode changes
 %   inside the argument, so verbatim commands used inside one of
 %   \mypkg*{scontents}'s commands/environments will not work. Here we
 %   create a private copy of \cs{tex_scantokens:D} which will serve our
-%   purposes.
+%   purposes. See the answer by Ulrich Diez in
+%   \href{https://tex.stackexchange.com/a/577183/7832}{How do use
+%   \{<setup>\} in \textbackslash tl_set_rescan:Nnn to replace
+%   \textbackslash scantokens?}
 %
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_rescan_tokens:n #1 { \tex_scantokens:D {#1} }
@@ -2869,9 +2879,10 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \end{macro}
 %
 % \subsubsection{The environment itself}
+% \label{the:environment:itself}
 %
 % \begin{macro}{\@@_start_environment:w,\@@_start_after_option:w,
-%     \@@_check_line_process:xn,\@@_stop_environment:}
+%               \@@_check_line_process:xn,\@@_stop_environment:}
 %   Here we make §^^I§, §^^L§ and §^^M§ active characters so that the end of
 %   line can be \enquote{seen} to be used as a delimiter, and \hologo{TeX} doesn't try to
 %   eliminate space-like characters.
@@ -2893,9 +2904,9 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   of the environment and optionally store them in a token list or write to
 %   an external file.
 %
-%   When that's done, the function \cs{@@_file_write_stop:N} does the cleanup. This part of
-%   the code is inspired and adapted from the code of the package \pkg{xsimverb}
-%   by Clemens Niederberger.
+%   When that's done, the function \cs{@@_file_write_stop:N} does the
+%   cleanup. This part of the code is inspired and adapted from the code of
+%   the package \pkg{xsimverb} by Clemens Niederberger.
 %
 %    \begin{macrocode}
 \group_begin:
@@ -3077,13 +3088,10 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{
-%     \@@_verb_processor_output:n,
-%     \@@_verb_processor_output:x,
-%   }
-%   \cs{@@_verb_processor_output:n} does the output of each line read,
-%   to a token list and to a file, depending on the booleans
-%   \cs{l_@@_writing_bool} and \cs{l_@@_storing_bool}.
+% \begin{macro}{\@@_verb_processor_output:n,\@@_verb_processor_output:x}
+%   The function \cs{@@_verb_processor_output:n} does the output of
+%   each line read, to a token list and to a file, depending on the
+%   booleans \cs{l_@@_writing_bool} and \cs{l_@@_storing_bool}.
 %    \begin{macrocode}
   \cs_new_protected:Npn \@@_verb_processor_output:n #1
     {
@@ -3306,13 +3314,18 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % \subsection{The command \cs{Scontents}}
 %
-% User command to \mymeta{stored content}, adapted from
-% \url{https://tex.stackexchange.com/a/500281/7832}.
+% User command to \mymeta{stored content}, adapted from code by Ulrich
+% Diez in \href{https://tex.stackexchange.com/a/472044/7832}{Stringify
+% input - \textbackslash string on token list}
+% and code by user siracusa in
+% \href{https://tex.stackexchange.com/a/500281/7832}{Convert a macro from
+% Latex2e to expl3}
 %
-% \subsubsection{Implementation of \cs{bsphack} and \cs{esphack} for \hologo{plainTeX}}
+% \subsubsection{Implementation of \cs{@bsphack} and \cs{@esphack} for \hologo{plainTeX}}
+%
 % \begin{macro}{\@@_bsphack:,\@@_esphack:}
-%    We emulate |\bsphack| and |\esphack| for \hologo{plainTeX}.
-%    This is necessary to prevent unwanted spaces when the |print-cmd|
+%    We emulate §\@bsphack§ and §\@esphack§ for \hologo{plainTeX}.
+%    This is necessary to prevent unwanted spaces when the §print-cmd§
 %    key is false.
 %    \begin{macrocode}
 %<*core>
@@ -3411,8 +3424,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %     \@@_file_write_cmd:VV,
 %   }
 %
-%   The function \cs{@@_verb_arg_internal:n} replace the eol |\^^M | by
-%   |\^^J| then adds it to the |seq| varaible.
+%   The function \cs{@@_verb_arg_internal:n} replace all §\^^M§ by
+%   §\^^J§ then adds it to the |seq| varaible.
 %
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_verb_arg_internal:n #1
@@ -3553,7 +3566,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % \subsection{The command \cs{typestored}}
 %
-% \begin{macro}{\typestored,\@@_typestored_internal:nn,\@@_verb_print:N,\@@_xverb:w,verbatimsc}
+% \begin{macro}{\typestored,\@@_typestored_internal:nn,\@@_verb_print:N,
+%               \@@_xverb:w}
 %   The §\typestored§ commands fetches a buffer from memory, prints it
 %   to the log file, and then calls \cs{@@_verb_print:N}.
 %
@@ -3608,12 +3622,6 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
       \cs_set_eq:NN ^^M \@@_verb_print_EOL:
     }
 \group_end:
-%    \end{macrocode}
-%
-%   Finally the \hologo{LaTeX} and \hologo{ConTeXt} version of
-%   §verbatimsc§ environment is defined.
-%
-%    \begin{macrocode}
 \cs_new_protected:Npn \@@_xverb:
   {
     \char_set_catcode_active:n { 9 }
@@ -3621,6 +3629,14 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
     \@@_xverb:w
   }
 %</core>
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{verbatimsc}
+%   Finally the \hologo{LaTeX} and \hologo{ConTeXt} version of
+%   §verbatimsc§ environment is defined.
+%
+%    \begin{macrocode}
 %<*loader>
 %<*!context>
 \use:x

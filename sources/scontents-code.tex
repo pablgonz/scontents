@@ -107,6 +107,7 @@
   }
 \tl_new:N \l__scontents_fname_out_tl
 \tl_new:N \l__scontents_file_tl
+\iow_new:N \l__scontents_file_iow
 \tl_new:N \l__scontents_foreach_name_seq_tl
 \tl_new:N \l__scontents_foreach_before_tl
 \tl_new:N \l__scontents_foreach_after_tl
@@ -133,7 +134,6 @@
 \quark_new:N \q__scontents_mark
 \int_new:N \l__scontents_save_sf_int
 \skip_new:N \l__scontents_save_skip
-\iow_new:N \l__scontents_file_iow
 \cs_new_protected:Npn \__scontents_rescan_tokens:n #1 { \tex_scantokens:D {#1} }
 \cs_generate_variant:Nn \__scontents_rescan_tokens:n { V, x }
 \cs_new:Npx \__scontents_tab: { \c_space_tl }
