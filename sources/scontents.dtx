@@ -2285,12 +2285,12 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % \subsection{Internal variables and utility functions}
 %
-% \begin{macro}{\l_@@_fname_out_tl,\l_@@_file_tl,\l_@@_file_iow}
+% \begin{macro}{\l_@@_fname_out_tl,\l_@@_every_line_env_tl,\l_@@_file_iow}
 %   The token list \cs{l_@@_fname_out_tl} is used for store the name of
 %   the \meta{output file}, when there's one. Its value is set by the
 %   keys §write-env§, §write-out§ and §write-cmd§.
 %
-%   The token list \cs{l_@@_file_tl} holds the contents of an
+%   The token list \cs{l_@@_every_line_env_tl} holds the contents of an
 %   environment, \env{scontents} by default, as it's being read.
 %   \cs{l_@@_file_iow} is an output stream for saving the contents of an
 %   environment (or command) to a file.
@@ -2300,7 +2300,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 %    \begin{macrocode}
 \tl_new:N \l_@@_fname_out_tl
-\tl_new:N \l_@@_file_tl
+\tl_new:N \l_@@_every_line_env_tl
 \iow_new:N \l_@@_file_iow
 %    \end{macrocode}
 % \end{macro}
@@ -2754,8 +2754,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % \subsubsection{The command \cs{newenvsc}}
 %
-% \begin{macro}{\newenvsc,\@@_scontents_setenv:nn,\@@_env_define:nnn}
-%   The internal function \cs{@@_scontents_setenv:nn} defines two
+% \begin{macro}{\newenvsc,\@@_env_setting:nn,\@@_env_define:nnn}
+%   The internal function \cs{@@_env_setting:nn} defines two
 %   functions \cs[no-index]{@@_\#1_env_begin:} and
 %   \cs[no-index]{@@_\#1_env_end:}, which set the current environment's
 %   name in §#1§ and \cs{l_@@_env_name_tl} and default properties in §#2§
@@ -2764,7 +2764,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 %   Finally the function \cs{@@_env_define:nnn} will create the environments.
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_scontents_setenv:nn #1 #2
+\cs_new_protected:Npn \@@_env_setting:nn #1 #2
   {
     \cs_new_protected:cpn { @@_#1_env_begin: }
       {
@@ -2787,7 +2787,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %<latex|plain>    \cs_if_exist:cTF { #1 }
 %<context>    \cs_if_exist:cTF { start #1 }
       { \msg_error:nnn { scontents } { env-already-defined } {#1} }
-      { \@@_scontents_setenv:nn {#1} {#2} }
+      { \@@_env_setting:nn {#1} {#2} }
   }
 \cs_new_protected:Npn \@@_env_define:nnn #1 #2 #3
   {
@@ -2982,7 +2982,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
             \iow_open:Nn \l_@@_file_iow {#1}
           }
           { \bool_set_false:N \l_@@_writable_bool }
-        \tl_clear:N \l_@@_file_tl
+        \tl_clear:N \l_@@_every_line_env_tl
         \seq_map_function:NN \l_char_special_seq \char_set_catcode_other:N
         \int_step_function:nnnN { 128 } { 1 } { 255 } \char_set_catcode_letter:n
         \cs_set_protected:Npx \@@_ret:w ##1 ^^M
@@ -3064,7 +3064,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
           \bool_if:NT \l_@@_storing_bool
             {
               \tl_set:Nn \exp_not:N #1
-                { \exp_args:NV \@@_remove_leading_nl:n \l_@@_file_tl }
+                { \exp_args:NV \@@_remove_leading_nl:n \l_@@_every_line_env_tl }
             }
         }
     }
@@ -3098,7 +3098,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
       \bool_if:NT \l_@@_writable_bool
         { \iow_now:Nn \l_@@_file_iow {#1} }
       \bool_if:NT \l_@@_storing_bool
-        { \tl_put_right:Nn \l_@@_file_tl { ^^J #1 } }
+        { \tl_put_right:Nn \l_@@_every_line_env_tl { ^^J #1 } }
     }
 \group_end:
 \cs_generate_variant:Nn \@@_verb_processor_output:n { x }
@@ -3320,8 +3320,6 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % and code by user siracusa in
 % \href{https://tex.stackexchange.com/a/500281/7832}{Convert a macro from
 % Latex2e to expl3}
-%
-% \subsubsection{Implementation of \cs{@bsphack} and \cs{@esphack} for \hologo{plainTeX}}
 %
 % \begin{macro}{\@@_bsphack:,\@@_esphack:}
 %    We emulate §\@bsphack§ and §\@esphack§ for \hologo{plainTeX}.
@@ -3632,7 +3630,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{verbatimsc}
+% \begin{macro}{verbatimsc,\startverbatimsc,\stopverbatimsc}
 %   Finally the \hologo{LaTeX} and \hologo{ConTeXt} version of
 %   §verbatimsc§ environment is defined.
 %

@@ -106,7 +106,7 @@
     store-all .value_required:n = true
   }
 \tl_new:N \l__scontents_fname_out_tl
-\tl_new:N \l__scontents_file_tl
+\tl_new:N \l__scontents_every_line_env_tl
 \iow_new:N \l__scontents_file_iow
 \tl_new:N \l__scontents_foreach_name_seq_tl
 \tl_new:N \l__scontents_foreach_before_tl
@@ -306,7 +306,7 @@
     \tl_log:N #1
     \__scontents_append_contents:Vx #2 { \exp_not:V #1 }
   }
-\cs_new_protected:Npn \__scontents_scontents_setenv:nn #1 #2
+\cs_new_protected:Npn \__scontents_env_setting:nn #1 #2
   {
     \cs_new_protected:cpn { __scontents_#1_env_begin: }
       {
@@ -390,7 +390,7 @@
             \iow_open:Nn \l__scontents_file_iow {#1}
           }
           { \bool_set_false:N \l__scontents_writable_bool }
-        \tl_clear:N \l__scontents_file_tl
+        \tl_clear:N \l__scontents_every_line_env_tl
         \seq_map_function:NN \l_char_special_seq \char_set_catcode_other:N
         \int_step_function:nnnN { 128 } { 1 } { 255 } \char_set_catcode_letter:n
         \cs_set_protected:Npx \__scontents_ret:w ##1 ^^M
@@ -472,7 +472,7 @@
           \bool_if:NT \l__scontents_storing_bool
             {
               \tl_set:Nn \exp_not:N #1
-                { \exp_args:NV \__scontents_remove_leading_nl:n \l__scontents_file_tl }
+                { \exp_args:NV \__scontents_remove_leading_nl:n \l__scontents_every_line_env_tl }
             }
         }
     }
@@ -498,7 +498,7 @@
       \bool_if:NT \l__scontents_writable_bool
         { \iow_now:Nn \l__scontents_file_iow {#1} }
       \bool_if:NT \l__scontents_storing_bool
-        { \tl_put_right:Nn \l__scontents_file_tl { ^^J #1 } }
+        { \tl_put_right:Nn \l__scontents_every_line_env_tl { ^^J #1 } }
     }
 \group_end:
 \cs_generate_variant:Nn \__scontents_verb_processor_output:n { x }

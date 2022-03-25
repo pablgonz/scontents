@@ -60,7 +60,7 @@
   {
     \cs_if_exist:cTF { #1 }
       { \msg_error:nnn { scontents } { env-already-defined } {#1} }
-      { \__scontents_scontents_setenv:nn {#1} {#2} }
+      { \__scontents_env_setting:nn {#1} {#2} }
   }
 \cs_new_protected:Npn \__scontents_env_define:nnn #1 #2 #3
   {
