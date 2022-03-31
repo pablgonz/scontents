@@ -107,6 +107,21 @@
 |catcode`| 12|gdef|sxmacro@code#1%    \end{macrocode*}[|liii@xmacro@code[#1]|end[macrocode*]]
 |endgroup
 
+% Patching colordoc.sty to work with doc v3 (TeX Live 2022 & lualatex-dev)
+\usepackage{etoolbox}
+\makeatletter
+\@ifpackagelater{doc}{2022-06-01}%
+  {\patchcmd\macro@finish
+    {\ifnot@excluded % \if
+      \edef\@tempa{\noexpand\SpecialIndex{\bslash\macro@namepart}}%
+      \@tempa \fi}%
+    {\maybe@index@macro \macro@namepart}
+    {}{\FAILED}%
+   \let\default@color\current@color
+  }%
+  {}
+\makeatother
+
 \EnableCrossrefs
 % \PageIndex % \CodelineIndex undoes what \PageIndex does
 % \CodelineIndex tries to open another write stream for the index file. We don't
