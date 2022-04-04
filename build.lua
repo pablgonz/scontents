@@ -28,7 +28,7 @@ pkgdate    = "2022-04-04"
 maindir       = "."
 sourcefiledir = "./sources"
 textfiledir   = "./sources"
-textfiles     = {textfiledir.."/CTANREADME.md"}
+--textfiles     = {textfiledir.."/CTANREADME.md"}
 sourcefiles   = {"**/*.dtx", "**/*.ins"}
 installfiles  = {"**/*.sty", "**/*.tex", "**/*.mkiv"}
 tdslocations  = {
@@ -37,6 +37,7 @@ tdslocations  = {
   "tex/latex/scontents/scontents.sty",
   "tex/context/third/scontents/t-scontents.mkiv",
   "doc/latex/scontents/scontents.pdf",
+  "doc/latex/scontents/README.md",
   "source/latex/scontents/scontents.dtx",
   "source/latex/scontents/scontents.ins"
 }
@@ -113,8 +114,8 @@ cleanfiles = {module..".pdf", ctanzip..".curlopt", ctanzip..".zip"}
 
 --  Configuration for package distribution in ctan
 uploadconfig = {
-  author       = "Pablo González",
-  uploader     = "Pablo González",
+  author       = "Pablo González L",
+  uploader     = "Pablo González L",
   email        = "pablgonz@yahoo.com",
   pkg          = ctanpkg,
   version      = pkgversion,
