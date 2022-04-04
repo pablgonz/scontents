@@ -2053,10 +2053,10 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % Now we define some common macros to hold the package date and version:
 %    \begin{macrocode}
-%<loader>\def\ScontentsFileDate{2022-03-19}%
-%<core>\def\ScontentsCoreFileDate{2022-03-19}%
+%<loader>\def\ScontentsFileDate{2022-04-04}%
+%<core>\def\ScontentsCoreFileDate{2022-04-04}%
 %<*loader>
-\def\ScontentsFileVersion{1.9k}%
+\def\ScontentsFileVersion{2.0}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
 %    \end{macrocode}
 %
@@ -3648,6 +3648,10 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \begin{macro}{verbatimsc,\startverbatimsc,\stopverbatimsc}
 %   Finally the \hologo{LaTeX} and \hologo{ConTeXt} version of
 %   §verbatimsc§ environment is defined.
+%
+%   The macro §\endverbatim§ in the second argument of the §verbatimsc§
+%   environment is only needed for compatibility with the \pkg{verbatim}
+%   package.
 %
 %    \begin{macrocode}
 %<*loader>

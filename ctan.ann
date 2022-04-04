@@ -1,4 +1,4 @@
-Changes in v1.9k 2022-03-19:
+Changes in v2.0 2022-04-04:
 - Adapting the verbatimsc environment for compatibility
   with the verbatim package.
 - Removed compatibility layer for older LaTeX releases.
