@@ -14,7 +14,7 @@ or show it in <code>&lt;verbatim style&gt;</code>.
 
 The package loads and depends on updated versions of:
 - [expl3](https://ctan.org/pkg/expl3)
-- [l3keys2e](https://ctan.org/pkg/l3keys2e)
+- [latex-base](https://www.ctan.org/pkg/latex-base)
 
 ## Installation
 

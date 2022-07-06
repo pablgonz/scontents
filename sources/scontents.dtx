@@ -681,12 +681,14 @@
 %
 % Permission is granted to copy, distribute and/or modify this software under
 % the terms of the LaTeX Project Public License (lppl), version 1.3 or later
-% (\url{http://www.latex-project.org/lppl.txt}). The software has the status
+% (\url{https://www.latex-project.org/lppl.txt}). The software has the status
 % \enquote{maintained}.
 %
-% The \mypkg*{scontents} package loads \mypkg{expl3} (minimum version 2020-02-08) and
-% \mypkg{l3keys2e}. This package can be used with "plain", "context", "xelatex",
-% "lualatex", "pdflatex" and the classical workflow §latex>dvips>ps2pdf§.
+% The The \mypkg*{scontents} package is written (mostly) using
+% \mypkg{expl3}, it requires an updated version of \LaTeX{} to work
+% (minimum version 2022-06-01). This package can be used with "plain",
+% "context", "xelatex", "lualatex", "pdflatex" and the classical workflow
+% §latex>dvips>ps2pdf§.
 %
 % \section{The \texttt{scontents} package}
 % \label{sec:pkgscontents}
@@ -1706,9 +1708,9 @@ Something in the whole course.
 %<*example>
 % \fi
 \begin{scontents}[write-out=scexamp7.ltx]
-\documentclass{article}
 % arara: pdflatex
 % arara: clean: { extensions: [ aux, log] }
+\documentclass{article}
 \usepackage{scontents}
 \makeatletter
 \let\verbatimsc\@undefined
@@ -1913,7 +1915,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %        \item Fix internal code for |\typestored|.
 %        \item Replace |\cs_argument_spec:N| by |\cs_parameter_spec:N|.
 %        \item Removed |l3keys2e| package (obsolete in june 2022 \LaTeX{} release).
-%^^A        \item The \LaTeX{} release is checked in place of |l3keys2e|.
+%        \item The \LaTeX{} release is checked in place of |l3keys2e|.
 %        \item Minor adjustments in the documentation.
 %    \end{itemize}
 % \item [v2.0 (ctan), 2022-04-04]
@@ -2006,15 +2008,15 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \begin{thebibliography}{9}
 % \bibitem{expl3} The \hologo{LaTeX} Project. \enquote{The \textsf{expl3}
 % package}. Available from
-% \textsc{ctan}, \url{https://www.ctan.org/pkg/expl3}, 2020.
+% \textsc{ctan}, \url{https://www.ctan.org/pkg/expl3}, 2022.
 %
 % \bibitem{xparse} The \hologo{LaTeX} Project. \enquote{The \textsf{xparse}
 % package}. Available from
-% \textsc{ctan}, \url{https://www.ctan.org/pkg/xparse}, 2020.
+% \textsc{ctan}, \url{https://www.ctan.org/pkg/xparse}, 2022.
 %
 % \bibitem{l3keys} The \hologo{LaTeX} Project. \enquote{The \textsf{l3keys2e}
 % package}. Available from
-% \textsc{ctan}, \url{https://www.ctan.org/pkg/l3keys2e}, 2020.
+% \textsc{ctan}, \url{https://www.ctan.org/pkg/l3keys2e}, 2022.
 %
 % \bibitem{keyval} \textsc{Wright, Joseph}. \enquote{Programming
 % \textsf{key–value} in \textsf{expl3}}. Available from
@@ -2068,12 +2070,12 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
 %    \end{macrocode}
 %
-% The \LaTeX{} loader is fairly simple: just load the dependencies, load the
-% core code, and then set interfaces up.
+% The \LaTeX{} loader is quite simple, just check the kernel version, load
+% the core code, and then set interfaces up.
 %
 %    \begin{macrocode}
 %<*latex>
-\RequirePackage{l3keys2e}[2020/02/08]
+\NeedsTeXFormat{LaTeX2e}[2022-06-01]
 \ProvidesExplPackage
   {scontents} {\ScontentsFileDate} {\ScontentsFileVersion} {\ScontentsFileDescription}
 %</latex>
@@ -2297,12 +2299,11 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %<plain|context>  { verb-font .initial:n = \tt }
 %    \end{macrocode}
 %
-% In \LaTeX{} mode we load \mypkg{l3keys2e} process the \mymeta{keys}
-% as options passed on to the package, the package \pkg{l3keys2e} will
-% verify the \mymeta{keys} and will return an error when they are
-% \emph{unknown}.
+% In \LaTeX{} mode, process the \mymeta{keys} as options passed on to
+% the package, the \LaTeX{} kernel will verify the \mymeta{keys} and will
+% return an error when they are \emph{unknown}.
 %    \begin{macrocode}
-%<latex>\ProcessKeysOptions { scontents }
+%<latex>\ProcessKeyOptions [ scontents ]
 %<*core>
 %    \end{macrocode}
 %
