@@ -1910,10 +1910,17 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \begin{description}[font=\small\sffamily,wide=0pt,style=multiline,leftmargin=\descrwidth,nosep,noitemsep]
 % \item [\fileversion{} (ctan), \filedate]
 %    \begin{itemize}
-%    \item Adapting the |verbatimsc| environment (compatibility |verbatim| package).
-%    \item Removed compatibility layer for older \hologo{LaTeX} releases.
-%    \item Fix loader in \hologo{plainTeX} and \hologo{ConTeXt}.
-%    \item Minor adjustments in the documentation.
+%        \item Fix internal code for |\typestored|.
+%        \item Removed |l3keys2e| package (obsolete in june 2022 \LaTeX{} release).
+%^^A        \item The \LaTeX{} release is checked in place of |l3keys2e|.
+%        \item Minor adjustments in the documentation.
+%    \end{itemize}
+% \item [v2.0 (ctan), 2022-04-04]
+%    \begin{itemize}
+%        \item Adapting the |verbatimsc| environment (compatibility |verbatim| package).
+%        \item Removed compatibility layer for older \hologo{LaTeX} releases.
+%        \item Fix loader in \hologo{plainTeX} and \hologo{ConTeXt}.
+%        \item Minor adjustments in the documentation.
 %    \end{itemize}
 % \item [v1.9 (ctan), 2020-01-21]
 %    \begin{itemize}
@@ -2053,8 +2060,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % Now we define some common macros to hold the package date and version:
 %    \begin{macrocode}
-%<loader>\def\ScontentsFileDate{2022-04-04}%
-%<core>\def\ScontentsCoreFileDate{2022-04-04}%
+%<loader>\def\ScontentsFileDate{2022-07-06}%
+%<core>\def\ScontentsCoreFileDate{2022-07-06}%
 %<*loader>
 \def\ScontentsFileVersion{2.1}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
@@ -3697,20 +3704,20 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   §\do@noligs§ which makes sure to not consume following space
 %   tokens. The \LaTeXe{} version ends with §\char`#1§, which
 %   leaves \TeX{} still looking for an \mymeta{optional~space}.
-%   This version uses \cs{char_generate:nn} to ensure that doesn't
-%   happen.
-%
+%^^A   This version uses \cs{char_generate:nn} to ensure that doesn't
+%^^A   happen.
+%^^A   Maintain documentation at this point.
 %    \begin{macrocode}
-\cs_new:Npn \@@_do_noligs:N #1
+\cs_new_protected:Npn \@@_do_noligs:N #1
   {
     \char_set_catcode_active:N #1
-    \char_set_active_eq:Nc #1 { @@_active_char_ \token_to_str:N #1 : }
     \cs_set:cpx { @@_active_char_ \token_to_str:N #1 : }
       {
         \mode_leave_vertical:
         \tex_kern:D \c_zero_dim
-        \char_generate:nn { `#1 } { 12 }
+        \tex_char:D `\exp_not:N #1
       }
+    \char_set_active_eq:Nc #1 { @@_active_char_ \token_to_str:N #1 : }
   }
 %    \end{macrocode}
 % \end{macro}

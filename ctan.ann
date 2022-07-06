@@ -1,5 +1,3 @@
-Changes in v2.1 2022-04-04:
-- Adapting the verbatimsc environment for compatibility
-  with the verbatim package.
-- Removed compatibility layer for older LaTeX releases.
-- Fix loader in plain TeX and ConTeXt.
+Changes in v2.1 2022-07-06:
+- Fix internal code for `\typestored`.
+- Removed `l3keys2e` package (obsolete in june 2022 `LaTeX` release).

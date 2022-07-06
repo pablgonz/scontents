@@ -27,7 +27,7 @@
 %%                                 t-scontents.mkiv and
 %%                                 scontents-code.tex.
 %% 
-\def\ScontentsCoreFileDate{2022-04-04}%
+\def\ScontentsCoreFileDate{2022-07-06}%
 \begingroup
   \catcode32=10
   \endlinechar=32
@@ -778,16 +778,16 @@
   }
 \cs_new:Npn \__scontents_tabs_to_spaces:
   { \prg_replicate:nn { \l__scontents_tab_width_int } { ~ } }
-\cs_new:Npn \__scontents_do_noligs:N #1
+\cs_new_protected:Npn \__scontents_do_noligs:N #1
   {
     \char_set_catcode_active:N #1
-    \char_set_active_eq:Nc #1 { __scontents_active_char_ \token_to_str:N #1 : }
     \cs_set:cpx { __scontents_active_char_ \token_to_str:N #1 : }
       {
         \mode_leave_vertical:
         \tex_kern:D \c_zero_dim
-        \char_generate:nn { `#1 } { 12 }
+        \tex_char:D `\exp_not:N #1
       }
+    \char_set_active_eq:Nc #1 { __scontents_active_char_ \token_to_str:N #1 : }
   }
 \prg_new_protected_conditional:Npnn \__scontents_tl_if_head_is_q_mark:n #1
   { T, F, TF }
