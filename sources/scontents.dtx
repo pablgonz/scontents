@@ -6,7 +6,7 @@
 % LaTeX Project Public License, either version 1.3c of this license or (at
 % your option) any later version. The latest version of this license is in
 %
-%  http://www.latex-project.org/lppl.txt
+%  https://www.latex-project.org/lppl.txt
 %
 % and version 1.3c or later is part of all distributions of LaTeX version
 % 2005/12/01 or later.
@@ -73,7 +73,7 @@
 \newfontfamily\fetamontotf{ffmw10.otf}[
    Scale             = 0.95,%
    RawFeature        = {+latn,+rand,+kern,+size},%
-   FontFace          = {b}{n}{ffmw10.otf},% fix raplece font
+   FontFace          = {b}{n}{ffmw10.otf},% fix replace font
    ]
 \usepackage[svgnames]{xcolor}
 \usepackage[sf,bf,compact,medium,pagestyles]{titlesec}
@@ -263,7 +263,7 @@
   }
 % \envexamp{m}
 \newsavebox{\boxexaenv}
-\NewDocumentCommand{\envexamp}{m}
+\NewDocumentCommand \envexamp {m}
   {
    \begin{lrbox}{\boxexaenv}%
     \begin{minipage}[t]{\marginparwidth}%
@@ -276,7 +276,7 @@
    \end{lrbox}%
    \usebox{\boxexaenv}
   }
-\NewDocumentCommand{\envexaplain}{O{} m O{end}}
+\NewDocumentCommand \envexaplain {O{} m O{end}}
   {
    \begin{lrbox}{\boxexaenv}%
     \begin{minipage}[t]{\marginparwidth}%
@@ -291,7 +291,7 @@
   }
 
 % \cmdexamp{s m o m o}
-\DeclareDocumentCommand{\cmdexamp}{o m o m o}
+\DeclareDocumentCommand \cmdexamp {o m o m o}
   {
     \group_begin:
     \small\ttfamily
@@ -310,7 +310,7 @@
   }
 
 % \keyexamp{mmm}
-\DeclareDocumentCommand{\keyexamp}{ m m m }
+\DeclareDocumentCommand \keyexamp { m m m }
   {
     \par
     \adjustbox{outer=-\marginparsep}{\textcolor{black}{\small\ttfamily{#1}}}
@@ -322,14 +322,14 @@
   }
 
 % \mykey{m}
-\DeclareDocumentCommand{\mykey}{ m }
+\DeclareDocumentCommand \mykey { m }
   {
     \textcolor{optcolor}{\texttt{#1}}
     \MYSortIndex{Keys}{Keys>\texttt{#1}}%
   }
 
 % \mypkg{sm}
-\NewDocumentCommand{\mypkg}{sm}
+\NewDocumentCommand \mypkg {sm}
   {
     \group_begin:
     \IfBooleanTF{#1}
@@ -345,7 +345,7 @@
   }
 
 % \myenv{sm}
-\DeclareDocumentCommand{\myenv}{sm}
+\DeclareDocumentCommand \myenv {sm}
   {
     \IfBooleanTF{#1}
       {
@@ -359,7 +359,7 @@
   }
 
 % \ics{sm}
-\DeclareDocumentCommand{\ics}{sm}
+\DeclareDocumentCommand \ics {sm}
   {
     \IfBooleanTF{#1}
       {
@@ -1911,6 +1911,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \item [\fileversion{} (ctan), \filedate]
 %    \begin{itemize}
 %        \item Fix internal code for |\typestored|.
+%        \item Replace |\cs_argument_spec:N| by |\cs_parameter_spec:N|.
 %        \item Removed |l3keys2e| package (obsolete in june 2022 \LaTeX{} release).
 %^^A        \item The \LaTeX{} release is checked in place of |l3keys2e|.
 %        \item Minor adjustments in the documentation.
@@ -1924,30 +1925,30 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{itemize}
 % \item [v1.9 (ctan), 2020-01-21]
 %    \begin{itemize}
-%    \item Update and improvements in the internal code.
-%    \item Updating the generic code for |I/O| verification.
-%    \item Add |write-cmd| and |write-out| keys for |\Scontents*|.
-%    \item Fix |sep| key in |\foreachsc|.
+%        \item Update and improvements in the internal code.
+%        \item Updating the generic code for |I/O| verification.
+%        \item Add |write-cmd| and |write-out| keys for |\Scontents*|.
+%        \item Fix |sep| key in |\foreachsc|.
 %    \end{itemize}
 % \item [v1.8 (ctan), 2019-11-18]
 %    \begin{itemize}
-%    \item Add |\newenvsc| command.
-%    \item Fix nested environment in \hologo{plainTeX} and \hologo{ConTeXt}.
-%    \item Modified default value in |\getstored|.
-%    \item Add |overwrite| key to reduce |I/O| operations.
-%    \item Deleted an unnecessary group in the code.
+%        \item Add |\newenvsc| command.
+%        \item Fix nested environment in \hologo{plainTeX} and \hologo{ConTeXt}.
+%        \item Modified default value in |\getstored|.
+%        \item Add |overwrite| key to reduce |I/O| operations.
+%        \item Deleted an unnecessary group in the code.
 %    \end{itemize}
 % \item [v1.7 (ctan), 2019-10-29]
 %    \begin{itemize}
-%    \item The |verbatimsc| environment was rewritten.
-%    \item Minor adjustments in documentation.
+%        \item The |verbatimsc| environment was rewritten.
+%        \item Minor adjustments in documentation.
 %    \end{itemize}
 % \item [v1.6 (ctan), 2019-10-26]
 %    \begin{itemize}
-%    \item The internal behavior of |\getstored| has been modified.
-%    \item The internal behavior of |\foreachsc| has been modified.
-%    \item Corrected file extension for \hologo{ConTeXt}.
-%    \item Remove spurious warning.
+%        \item The internal behavior of |\getstored| has been modified.
+%        \item The internal behavior of |\foreachsc| has been modified.
+%        \item Corrected file extension for \hologo{ConTeXt}.
+%        \item Remove spurious warning.
 %    \end{itemize}
 % \item [v1.5 (ctan), 2019-10-24]
 %    \begin{itemize}
