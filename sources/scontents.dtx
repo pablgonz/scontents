@@ -2239,6 +2239,13 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
+% \begin{macro}{\l_@@_keys_tl}
+%   Stores unused keys to be frwarded to other commands.
+%    \begin{macrocode}
+\tl_new:N \l_@@_keys_tl
+%    \end{macrocode}
+% \end{macro}
+%
 % \subsection{Compatibility layer with \hologo{plainTeX} and \hologo{ConTeXt}}
 %
 % When loading the package outside of \LaTeX{} we can't usually use
@@ -2342,8 +2349,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\l_@@_seq_item_int,\l_@@_env_nesting_int,\l_@@_foreach_stop_int}
-%   \cs{l_@@_seq_item_int} stores the index in the sequence of the item
+% \begin{macro}{\l_@@_env_nesting_int,\l_@@_foreach_stop_int}
+%   \cs{l_@@_seq_item_seq} stores the indexes in the sequence of the items
 %   requested to §\typestored§ or §\meaningsc§. \cs{l_@@_env_nesting_int}
 %   stores the current nesting level of the \env{scontents} environment.
 %   \cs{l_@@_foreach_stop_int} will save the value at which the §\foreachsc§
@@ -2351,7 +2358,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 %    \begin{macrocode}
 \int_new:N \l_@@_foreach_stop_int
-\int_new:N \l_@@_seq_item_int
+\int_new:N \l_@@_seq_item_seq
 \int_new:N \l_@@_env_nesting_int
 %    \end{macrocode}
 % \end{macro}
@@ -2391,6 +2398,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 %    \begin{macrocode}
 \seq_new:N \l_@@_foreach_print_seq
+\seq_new:c { g_@@_name_sc!internal_seq }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -2413,6 +2421,27 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \begin{macrocode}
 \quark_new:N \q_@@_stop
 \quark_new:N \q_@@_mark
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\s_@@_stop,\s_@@_mark}
+%    \begin{macrocode}
+\scan_new:N \s_@@_stop
+\scan_new:N \s_@@_mark
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\l_@@_cur_seq_name_str}
+%    \begin{macrocode}
+\str_new:N \l_@@_cur_seq_name_str
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_use_i_delimit_by_s_stop:nw,\@@_use_none_delimit_by_s_stop:w}
+%    \begin{macrocode}
+\cs_new:Npn \@@_use_delimit_by_s_stop:nw #1 \s_@@_stop {#1}
+\cs_new:Npn \@@_use_i_delimit_by_s_stop:nw #1 #2 \s_@@_stop {#1}
+\cs_new:Npn \@@_use_none_delimit_by_s_stop:w #1 \s_@@_stop { }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -2459,7 +2488,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 \cs_generate_variant:Nn \tl_remove_once:Nn { NV }
 \cs_generate_variant:Nn \tl_replace_all:Nnn { Nx, Nxx, Nnx }
 \cs_generate_variant:Nn \msg_error:nnnn { nnx }
-\prg_generate_conditional_variant:Nnn \tl_if_empty:n { f } { TF }
+\prg_generate_conditional_variant:Nnn \tl_if_empty:n { f } { p, TF }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -2675,16 +2704,42 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
   { \exp_args:NV \@@_parse_type_meaning_key:nn \l_keys_key_str {#1} }
 \cs_new_protected:Npn \@@_parse_type_meaning_key:nn #1#2
   {
-    \tl_if_empty:fTF { \int_to_roman:n { -0 #1 } }
+    \tl_if_blank:nTF {#2}
+      { \@@_parse_type_meaning_range:w #1 - \q_@@_mark - \s_@@_mark }
+      { \msg_error:nnnn { scontents } { type-key-value-unknown } {#1} {#2} }
+  }
+\cs_new_protected:Npn \@@_parse_type_meaning_range:w #1 - #2 - #3 \s_@@_mark
+  {
+    \@@_range_parser:nnxn {#1} {#2}
+      { \seq_count:c { g_@@_name_\l_@@_cur_seq_name_str _seq } }
+      { \msg_error:nnn { scontents } { type-key-unknown } }
+  }
+\cs_generate_variant:Nn \@@_range_parser:nnnn { nnx }
+\cs_new_protected:Npn \@@_range_parser:nnnn #1 #2 #3
+  {
+    \exp_args:Nxx \@@_range_parser_aux:nnn
+      { \str_if_eq:nnTF {#1} { end } {#3} { \exp_not:n {#1} } }
+      { \str_if_eq:nnTF {#2} { end } {#3} { \exp_not:n {#2} } }
+  }
+\cs_new_protected:Npn \@@_range_parser_aux:nnn #1 #2 #3
+  {
+    \@@_tl_if_head_is_q_mark:nTF {#2}
       {
-        \tl_if_blank:nTF {#2}
-          { \int_set:Nn \l_@@_seq_item_int {#1} }
-          { \msg_error:nnnn { scontents } { type-key-value-unknown } {#1} {#2} }
+        \tl_if_empty:fTF { \int_to_roman:n { -0 #1 } }
+          { \seq_put_right:Nx \l_@@_seq_item_seq { \int_eval:n {#1} } }
+          { #3 {#1} }
       }
       {
-        \tl_if_blank:nTF {#2}
-          { \msg_error:nnn { scontents } { type-key-unknown } {#1} }
-          { \msg_error:nnnn { scontents } { type-key-value-unknown } {#1} {#2} }
+        \bool_lazy_and:nnTF
+            { \tl_if_empty_p:f { \int_to_roman:n { -0 #1 } } }
+            { \tl_if_empty_p:f { \int_to_roman:n { -0 #2 } } }
+          {
+            \int_compare:nNnTF {#2} > {#1}
+              { \int_step_inline:nnnn {#1} { 1 } {#2} }
+              { \int_step_inline:nnnn {#1} { -1 } {#2} }
+                { \seq_put_right:Nn \l_@@_seq_item_seq {##1} }
+          }
+          { #3 { #1-#2 } }
       }
   }
 %    \end{macrocode}
@@ -2713,11 +2768,24 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\@@_getfrom_seq:nn,\@@_getfrom_seq:nnn}
+% \begin{macro}{\@@_getfrom_seq:nn,\@@_getfrom_seq:Nn,\@@_getfrom_seq:nnn}
 %   The function \cs{@@_getfrom_seq:nn} retrieves the saved item from the
 %   sequence.
 %
 %    \begin{macrocode}
+\cs_new:Npn \@@_getfrom_seq:Nn #1#2
+  {
+    \seq_if_exist:cTF { g_@@_name_#2_seq }
+      {
+        \exp_args:Nf \@@_getfrom_seq:nNn
+          { \seq_count:c { g_@@_name_#2_seq } } #1 {#2}
+      }
+      { \msg_expandable_error:nnn { scontents } { undefined-storage } {#2} }
+  }
+\cs_new:Npn \@@_getfrom_seq:nNn #1 #2 #3
+  { \seq_map_tokens:Nn #2 { \@@_getfrom_seq_aux:nnn {#1} {#3} } }
+\cs_new:Npn \@@_getfrom_seq_aux:nnn #1 #2 #3
+  { \exp_args:Nnf \use:n { \@@_getfrom_seq:nnn {#1} } { \int_eval:n {#3} } {#2} }
 \cs_new:Npn \@@_getfrom_seq:nn #1#2
   {
     \seq_if_exist:cTF { g_@@_name_#2_seq }
@@ -3603,11 +3671,15 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 \cs_new_protected:Npn \@@_typestored_internal:nn #1 #2
   {
     \group_begin:
-      \int_set:Nn \l_@@_seq_item_int { 1 }
+      \seq_clear:N \l_@@_seq_item_seq
+      \str_set:Nx \l_@@_cur_seq_name_str {#2}
       \tl_if_novalue:nF {#1} { \keys_set:nn { scontents / typemeaning } {#1} }
+      \seq_if_empty:NT \l_@@_seq_item_seq
+        { \seq_set_from_clist:Nn \l_@@_seq_item_seq { 1 } }
       \tl_set:Nx \l_@@_temp_tl
-        { \exp_args:NV \@@_getfrom_seq:nn \l_@@_seq_item_int {#2} }
-      \tl_remove_once:NV \l_@@_temp_tl \c_@@_hidden_space_str
+        { \@@_getfrom_seq:Nn \l_@@_seq_item_seq {#2} }
+      \@@_remove_trailing_eol:N \l_@@_temp_tl
+      \tl_replace_all:Nxn \l_@@_temp_tl \c_@@_hidden_space_str { ^^J }
       \tl_log:N \l_@@_temp_tl
       \tl_if_empty:NF \l_@@_temp_tl
         { \@@_verb_print:N \l_@@_temp_tl }
@@ -3649,6 +3721,100 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
     \char_set_catcode_active:n { 9 }
     \char_set_active_eq:nN { 9 } \@@_tabs_to_spaces:
     \@@_xverb:w
+  }
+%</core>
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsection{The command \cs{mergesc}}
+%
+% \begin{macro}{\mergesc}
+%   The §\mergesc§ command parses a list given as argument, and just assembles
+%   it as a temporary internal sequence, then passes it to the requested command.
+%    \begin{macrocode}
+%<*loader>
+\NewDocumentCommand \mergesc { o m }
+  { \@@_mergesc_internal:nn {#1} {#2} }
+%</loader>
+%<*core>
+\keys_define:nn { scontents / mergesc }
+  {
+    , typestored .code:n =
+        { \cs_set_eq:NN \@@_mergesc_output_cmd:nn \@@_typestored_internal:nn }
+    , meaningsc .code:n =
+        { \cs_set_eq:NN \@@_mergesc_output_cmd:nn \@@_meaningsc_internal:nn }
+  }
+\cs_new_protected:Npn \@@_mergesc_output_cmd:nn #1 #2
+  { \msg_error:nn { scontents } { mergesc-missing-cmd } }
+\msg_new:nnn { scontents } { mergesc-missing-cmd }
+  { Missing~output~command~for~\iow_char:N\\mergesc~\msg_line_context:. }
+\cs_new_protected:Npn \@@_mergesc_internal:nn #1 #2
+  {
+    \group_begin:
+      \tl_clear:N \l_@@_keys_tl
+      \tl_if_novalue:nF {#1}
+        { \keys_set_known:nnN { scontents / mergesc } {#1} \l_@@_keys_tl }
+      \seq_gclear:c { g_@@_name_sc!internal_seq }
+      \@@_mergesc_parse_list:n {#2}
+      \exp_args:Nx \@@_mergesc_output_cmd:nn
+        { 1-end, \exp_not:V \l_@@_keys_tl } { sc!internal }
+    \group_end:
+  }
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_mergesc_parse_list:n #1
+  {
+    \clist_map_inline:nn {#1} { \@@_parse_mergesc:nw ##1 \s_@@_stop }
+    \seq_gpop_right:cN { g_@@_name_sc!internal_seq } \l_@@_temp_tl
+    \@@_remove_trailing_eol:N \l_@@_temp_tl
+    \seq_gput_right:cV { g_@@_name_sc!internal_seq } \l_@@_temp_tl
+  }
+\cs_new_protected:Npx \@@_remove_trailing_eol:N #1
+  {
+    \exp_not:N \exp_after:wN \exp_not:N \@@_remove_trailing_eol:w
+      #1 \s_@@_stop \c_@@_hidden_space_str \s_@@_stop \s_@@_mark #1
+  }
+\use:e
+  {
+    \cs_new_protected:Npn \exp_not:N \@@_remove_trailing_eol:w #1
+        \c_@@_hidden_space_str \s_@@_stop #2 \s_@@_mark #3
+  }   {
+        \tl_set:Nx #3
+          {
+            \tl_if_empty:nTF {#2}
+              { \exp_not:o { \@@_use_delimit_by_s_stop:nw #1 } }
+              { \exp_not:n {#1} }
+          }
+      }
+\cs_new_protected:Npn \@@_parse_mergesc:nw #1
+  {
+    \peek_charcode_ignore_spaces:NTF [ % ]
+      { \@@_parse_mergesc_aux:nw {#1} }
+      { \@@_parse_mergesc_aux:nw {#1} [ 1-\seq_count:c { g_@@_name_#1_seq } ] }
+  }
+\cs_new_protected:Npn \@@_parse_mergesc_aux:nw #1 [#2]
+  {
+    \seq_clear:N \l_@@_seq_item_seq
+    \clist_map_inline:nn {#2}
+      { \@@_parse_mergesc_range:nw {#1} ##1 - \q_@@_mark - \s_@@_mark }
+    \seq_map_inline:Nn \l_@@_seq_item_seq
+      {
+        \seq_gput_right:cx { g_@@_name_sc!internal_seq }
+          { \seq_item:cn { g_@@_name_#1_seq } {##1} }
+      }
+    \@@_use_none_delimit_by_s_stop:w
+  }
+\cs_new_protected:Npn \@@_parse_mergesc_range:nw #1 #2 - #3 - #4 \s_@@_mark
+  {
+    \cs_set_protected:Npn \@@_tmp:w ##1
+      {
+        \msg_error:nnxxx { scontents } { index-out-of-range }
+          {##1} {#1} { \seq_count:c { g_@@_name_#1_seq } }
+      }
+    \@@_range_parser:nnxn {#2} {#3}
+      { \seq_count:c { g_@@_name_#1_seq } }
+      { \@@_tmp:w }
   }
 %</core>
 %    \end{macrocode}
@@ -3730,7 +3896,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 \prg_new_protected_conditional:Npnn \@@_tl_if_head_is_q_mark:n #1
   { T, F, TF }
   {
-    \if_meaning:w \q_@@_mark #1 \scan_stop:
+    \exp_after:wN \if_meaning:w
+      \exp_after:wN \q_@@_mark \@@_use_i_delimit_by_s_stop:nw #1 ? \s_@@_stop
       \prg_return_true:
     \else:
       \prg_return_false:
@@ -3814,8 +3981,11 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 \cs_new_protected:Npn \@@_meaningsc_internal:nn #1 #2
   {
     \group_begin:
-      \int_set:Nn \l_@@_seq_item_int { 1 }
+      \seq_clear:N \l_@@_seq_item_seq
+      \str_set:Nx \l_@@_cur_seq_name_str {#2}
       \tl_if_novalue:nF {#1} { \keys_set:nn { scontents / typemeaning } {#1} }
+      \seq_if_empty:NT \l_@@_seq_item_seq
+        { \seq_set_from_clist:Nn \l_@@_seq_item_seq { 1 } }
       \@@_meaningsc:n {#2}
     \group_end:
   }
@@ -3824,9 +3994,9 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
   \cs_new_protected:Npn \@@_meaningsc:n #1
     {
       \tl_set:Nx \l_@@_temp_tl
-        { \exp_args:NV \@@_getfrom_seq:nn \l_@@_seq_item_int {#1} }
+        { \@@_getfrom_seq:Nn \l_@@_seq_item_seq {#1} }
       \tl_replace_all:Nxn \l_@@_temp_tl { \iow_char:N \^^J } { ~ }
-      \tl_remove_once:NV  \l_@@_temp_tl \c_@@_hidden_space_str
+      \tl_replace_all:Nxn \l_@@_temp_tl \c_@@_hidden_space_str { ~ }
       \tl_log:N \l_@@_temp_tl
       \tl_use:N \l_@@_verb_font_tl
       \tl_replace_all:Nnx \l_@@_temp_tl { ^^I } { \@@_tabs_to_spaces: }

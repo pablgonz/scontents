@@ -148,6 +148,8 @@
   { \__scontents_foreachsc_internal:nn {#1} {#2} }
 \NewDocumentCommand \typestored { o m }
   { \__scontents_typestored_internal:nn {#1} {#2} }
+\NewDocumentCommand \mergesc { o m }
+  { \__scontents_mergesc_internal:nn {#1} {#2} }
 \use:x
   {
     \cs_new_protected:Npn \exp_not:N \__scontents_xverb:w
