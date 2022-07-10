@@ -22,7 +22,7 @@
 -- General package identification
 module     = "scontents"
 pkgversion = "2.1"
-pkgdate    = "2022-07-06"
+pkgdate    = "2022-07-10"
 
 -- Configuration of files for build and installation
 maindir       = "."
@@ -154,6 +154,11 @@ function typeset(file)
   print("** Running: lualatex -draftmode -interaction=batchmode "..file..".dtx")
   errorlevel = runcmd("lualatex -draftmode -interaction=batchmode "..file..".dtx >"..os_null, typesetdir, {"TEXINPUTS","LUAINPUTS"})
   if errorlevel ~= 0 then
+    local f = assert(io.open(typesetdir.."/scontents.log", "r"))
+    err_log_file = f:read("*all")
+    print(err_log_file)
+    cp(file..".log", typesetdir, maindir)
+    cp(file..".dtx", typesetdir, maindir)
     error("** Error!!: lualatex -draftmode -interaction=batchmode "..file..".dtx")
     return errorlevel
   end
@@ -249,12 +254,18 @@ local function make_tmp_dir()
   -- Unpack files
   print("Unpacks the source files into ./"..tmpdir)
   local file = jobname(tmpdir.."/scontents.ins")
-  errorlevel = run(tmpdir, "pdftex -interaction=batchmode "..file..".ins > "..os_null)
+  errorlevel = run(tmpdir, "luatex -interaction=batchmode "..file..".ins > "..os_null)
   if errorlevel ~= 0 then
-    error("** Error!!: pdftex -interaction=batchmode "..file..".ins")
+    local f = assert(io.open(tmpdir.."/"..file..".log", "r"))
+    err_log_file = f:read("*all")
+    print(err_log_file)
+    cp(file..".log", tmpdir, maindir)
+    cp(file..".ins", tmpdir, maindir)
+    error("** Error!!: luatex -interaction=batchmode "..file..".ins")
     return errorlevel
   else
-    os_message("** Running: pdftex -interaction=batchmode "..file..".ins")
+    os_message("** Running: luatex -interaction=batchmode "..file..".ins")
+    rm(tmpdir, file..".log")
   end
   return 0
 end
@@ -281,6 +292,10 @@ if options["target"] == "testpkg" then
   print("Running second test on the file: "..file..".tex using [pdftex]")
   errorlevel = run(tmpdir, "pdftex "..file..".tex > "..os_null)
   if errorlevel ~= 0 then
+    local f = assert(io.open(tmpdir.."/"..file..".log", "r"))
+    err_log_file = f:read("*all")
+    print(err_log_file)
+    cp(file..".log", tmpdir, maindir)
     error("** Error!!: pdftex "..file..".tex")
     return errorlevel
   else
@@ -291,6 +306,10 @@ if options["target"] == "testpkg" then
   print("Running third test on the file: "..file..".tex using [latex>dvips>ps2pdf]")
   errorlevel = run(tmpdir, "latex "..file..".tex > "..os_null)
   if errorlevel ~= 0 then
+    local f = assert(io.open(tmpdir.."/"..file..".log", "r"))
+    err_log_file = f:read("*all")
+    print(err_log_file)
+    cp(file..".log", tmpdir, maindir)
     error("** Error!!: latex "..file..".tex")
     return errorlevel
   else
@@ -298,6 +317,10 @@ if options["target"] == "testpkg" then
   end
   errorlevel = run(tmpdir, "dvips -q "..file..".dvi > "..os_null)
   if errorlevel ~= 0 then
+    local f = assert(io.open(tmpdir.."/"..file..".log", "r"))
+    err_log_file = f:read("*all")
+    print(err_log_file)
+    cp(file..".log", tmpdir, maindir)
     error("** Error!!: dvips "..file..".dvi")
     return errorlevel
   else
@@ -305,6 +328,10 @@ if options["target"] == "testpkg" then
   end
   errorlevel = run(tmpdir, "ps2pdf "..file..".ps > "..os_null)
   if errorlevel ~= 0 then
+    local f = assert(io.open(tmpdir.."/"..file..".log", "r"))
+    err_log_file = f:read("*all")
+    print(err_log_file)
+    cp(file..".log", tmpdir, maindir)
     error("** Error!!: ps2pdf "..file..".ps")
     return errorlevel
   else
@@ -315,6 +342,10 @@ if options["target"] == "testpkg" then
   print("Running fourth test on the file: "..file..".tex using [context]")
   errorlevel = run(tmpdir, "context "..file..".tex > "..os_null)
   if errorlevel ~= 0 then
+    local f = assert(io.open(tmpdir.."/"..file..".log", "r"))
+    err_log_file = f:read("*all")
+    print(err_log_file)
+    cp(file..".log", tmpdir, maindir)
     error("** Error!!: context "..file..".tex")
     return errorlevel
   else
@@ -351,25 +382,30 @@ if options["target"] == "examples" then
   end
   -- List of sample files
   samples = {
-    "scexamp1.ltx",
-    "scexamp2.ltx",
-    "scexamp3.ltx",
-    "scexamp4.ltx",
-    "scexamp5.ltx",
-    "scexamp6.ltx",
-    "scexamp7.ltx",
-    "scexamp8.ltx",
-    "scexamp9.ltx",
+    "scexamp1",
+    "scexamp2",
+    "scexamp3",
+    "scexamp4",
+    "scexamp5",
+    "scexamp6",
+    "scexamp7",
+    "scexamp8",
+    "scexamp9",
   }
   -- Compiling sample files
   print("Compiling sample files in ./"..tmpdir.." using [arara]")
   for i, samples in ipairs(samples) do
-    errorlevel = run(tmpdir, "arara "..samples.." > "..os_null)
+    errorlevel = run(tmpdir, "arara "..samples..".ltx > "..os_null)
     if errorlevel ~= 0 then
-      error("** Error!!: arara "..samples)
+      local f = assert(io.open(tmpdir.."/"..samples..".log", "r"))
+      err_log_file = f:read("*all")
+      print(err_log_file)
+      cp(samples..".ltx", tmpdir, maindir)
+      cp(samples..".log", tmpdir, maindir)
+      error("** Error!!: arara "..samples..".ltx")
       return errorlevel
     else
-      os_message("** Running: arara "..samples)
+      os_message("** Running: arara "..samples..".ltx")
     end
   end
   -- Copy generated .pdf files to maindir
