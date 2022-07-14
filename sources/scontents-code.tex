@@ -230,8 +230,18 @@
   }
 \keys_define:nn { scontents / typemeaning }
   {
-    width-tab .meta:nn = { scontents } { width-tab = #1 },
-    unknown   .code:n  = { \__scontents_parse_type_meaning_key:n {#1} }
+    width-tab .meta:nn   = { scontents } { width-tab = #1 },
+    write-out .code:n    = {
+                             \bool_set_false:N \l__scontents_storing_bool
+                             \bool_set_true:N  \l__scontents_writing_bool
+                             \tl_set:Nn \l__scontents_fname_out_tl {#1}
+                           },
+    overwrite .meta:nn   = { scontents } { overwrite = #1 },
+    overwrite .default:n = true,
+    print-cmd .meta:nn   = { scontents } { print-cmd = #1 },
+    print-cmd .initial:n = false,
+    print-cmd .default:n = true,
+    unknown   .code:n    = { \__scontents_parse_type_meaning_key:n {#1} }
   }
 \cs_new_protected:Npn \__scontents_parse_environment_keys:n #1
   { \exp_args:NV \__scontents_parse_environment_keys:nn \l_keys_key_str {#1} }
@@ -783,6 +793,7 @@
   }
 \cs_new_protected:Npn \__scontents_typestored_internal:nn #1 #2
   {
+    \__scontents_bsphack:
     \group_begin:
       \seq_clear:N \l__scontents_seq_item_seq
       \str_set:Nx \l__scontents_cur_seq_name_str {#2}
@@ -795,8 +806,15 @@
       \tl_replace_all:Nxn \l__scontents_temp_tl \c__scontents_hidden_space_str { ^^J }
       \tl_log:N \l__scontents_temp_tl
       \tl_if_empty:NF \l__scontents_temp_tl
-        { \__scontents_verb_print:N \l__scontents_temp_tl }
+        {
+          \bool_if:NT \l__scontents_print_cmd_bool
+            {
+              \__scontents_verb_print:N \l__scontents_temp_tl
+            }
+        }
+      \__scontents_file_write_cmd:VV \l__scontents_fname_out_tl \l__scontents_temp_tl
     \group_end:
+    \bool_if:NF \l__scontents_print_cmd_bool { \__scontents_esphack: }
   }
 \group_begin:
   \char_set_catcode_active:N \^^M
