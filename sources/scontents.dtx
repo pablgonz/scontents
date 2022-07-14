@@ -2070,12 +2070,16 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
 %    \end{macrocode}
 %
-% The \LaTeX{} loader is quite simple, just check the kernel version, load
-% the core code, and then set interfaces up.
+% The \LaTeX{} loader is fairly simple: just load the dependencies, load the
+% core code, and then set interfaces up.
 %
 %    \begin{macrocode}
 %<*latex>
-\NeedsTeXFormat{LaTeX2e}[2022-06-01]
+\IfFormatAtLeastTF { 2022-06-01 }
+  { }
+  {
+    \RequirePackage{l3keys2e}[2020/02/08]
+  }
 \ProvidesExplPackage
   {scontents} {\ScontentsFileDate} {\ScontentsFileVersion} {\ScontentsFileDescription}
 %</latex>
@@ -2306,11 +2310,17 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %<plain|context>  { verb-font .initial:n = \tt }
 %    \end{macrocode}
 %
-% In \LaTeX{} mode, process the \mymeta{keys} as options passed on to
-% the package, the \LaTeX{} kernel will verify the \mymeta{keys} and will
-% return an error when they are \emph{unknown}.
+% In \LaTeX{} mode we load \mypkg{l3keys2e} process the \mymeta{keys}
+% as options passed on to the package, the package \pkg{l3keys2e} will
+% verify the \mymeta{keys} and will return an error when they are
 %    \begin{macrocode}
-%<latex>\ProcessKeyOptions [ scontents ]
+%<*latex>
+\IfFormatAtLeastTF { 2022-06-01 }
+  {
+    \ProcessKeyOptions [ scontents ]
+  }
+  { \ProcessKeysOptions { scontents } }
+%</latex>
 %<*core>
 %    \end{macrocode}
 %
