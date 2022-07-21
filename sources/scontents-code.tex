@@ -27,7 +27,7 @@
 %%                                 t-scontents.mkiv and
 %%                                 scontents-code.tex.
 %% 
-\def\ScontentsCoreFileDate{2022-07-14}%
+\def\ScontentsCoreFileDate{2022-07-21}%
 \begingroup
   \catcode32=10
   \endlinechar=32
@@ -228,6 +228,8 @@
     sep     .value_required:n = true,
     unknown .code:n           = { \__scontents_parse_foreach_keys:n {#1} }
   }
+\bool_new:N \l__scontents_print_aux_bool
+\bool_set_true:N  \l__scontents_print_aux_bool
 \keys_define:nn { scontents / typemeaning }
   {
     width-tab .meta:nn   = { scontents } { width-tab = #1 },
@@ -238,9 +240,6 @@
                            },
     overwrite .meta:nn   = { scontents } { overwrite = #1 },
     overwrite .default:n = true,
-    print-cmd .meta:nn   = { scontents } { print-cmd = #1 },
-    print-cmd .initial:n = false,
-    print-cmd .default:n = true,
     unknown   .code:n    = { \__scontents_parse_type_meaning_key:n {#1} }
   }
 \cs_new_protected:Npn \__scontents_parse_environment_keys:n #1
@@ -807,14 +806,17 @@
       \tl_log:N \l__scontents_temp_tl
       \tl_if_empty:NF \l__scontents_temp_tl
         {
-          \bool_if:NT \l__scontents_print_cmd_bool
+          \bool_if:NT \l__scontents_print_aux_bool
             {
               \__scontents_verb_print:N \l__scontents_temp_tl
             }
         }
       \__scontents_file_write_cmd:VV \l__scontents_fname_out_tl \l__scontents_temp_tl
+      \use:x
+        {
     \group_end:
-    \bool_if:NF \l__scontents_print_cmd_bool { \__scontents_esphack: }
+    \bool_if:NF \l__scontents_print_aux_bool { \__scontents_esphack: }
+        }
   }
 \group_begin:
   \char_set_catcode_active:N \^^M
@@ -861,7 +863,16 @@
     \group_begin:
       \tl_clear:N \l__scontents_keys_tl
       \tl_if_novalue:nF {#1}
-        { \keys_set_known:nnN { scontents / mergesc } {#1} \l__scontents_keys_tl }
+        {
+          % Add print-cmd here :D
+          \keys_define:nn { scontents / typemeaning }
+            {
+              print-cmd .bool_set:N = \l__scontents_print_aux_bool,
+              print-cmd .initial:n = false,
+              print-cmd .default:n = true,
+            }
+          \keys_set_known:nnN { scontents / mergesc } {#1} \l__scontents_keys_tl
+         }
       \seq_gclear:c { g__scontents_name_sc!internal_seq }
       \__scontents_mergesc_parse_list:n {#2}
       \exp_args:Nx \__scontents_mergesc_output_cmd:nn

@@ -2063,8 +2063,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % Now we define some common macros to hold the package date and version:
 %    \begin{macrocode}
-%<loader>\def\ScontentsFileDate{2022-07-14}%
-%<core>\def\ScontentsCoreFileDate{2022-07-14}%
+%<loader>\def\ScontentsFileDate{2022-07-21}%
+%<core>\def\ScontentsCoreFileDate{2022-07-21}%
 %<*loader>
 \def\ScontentsFileVersion{2.1}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
@@ -2614,6 +2614,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % a common \mymeta{key}.
 %
 %    \begin{macrocode}
+\bool_new:N \l_@@_print_aux_bool
+\bool_set_true:N  \l_@@_print_aux_bool
 \keys_define:nn { scontents / typemeaning }
   {
     width-tab .meta:nn   = { scontents } { width-tab = #1 },
@@ -2624,9 +2626,6 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
                            },
     overwrite .meta:nn   = { scontents } { overwrite = #1 },
     overwrite .default:n = true,
-    print-cmd .meta:nn   = { scontents } { print-cmd = #1 },
-    print-cmd .initial:n = false,
-    print-cmd .default:n = true,
     unknown   .code:n    = { \@@_parse_type_meaning_key:n {#1} }
   }
 %    \end{macrocode}
@@ -3704,14 +3703,17 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
       \tl_log:N \l_@@_temp_tl
       \tl_if_empty:NF \l_@@_temp_tl
         {
-          \bool_if:NT \l_@@_print_cmd_bool
+          \bool_if:NT \l_@@_print_aux_bool
             {
               \@@_verb_print:N \l_@@_temp_tl
             }
         }
       \@@_file_write_cmd:VV \l_@@_fname_out_tl \l_@@_temp_tl
+      \use:x
+        {
     \group_end:
-    \bool_if:NF \l_@@_print_cmd_bool { \@@_esphack: }
+    \bool_if:NF \l_@@_print_aux_bool { \@@_esphack: }
+        }
   }
 %    \end{macrocode}
 %
@@ -3781,7 +3783,16 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
     \group_begin:
       \tl_clear:N \l_@@_keys_tl
       \tl_if_novalue:nF {#1}
-        { \keys_set_known:nnN { scontents / mergesc } {#1} \l_@@_keys_tl }
+        {
+          % Add print-cmd here :D
+          \keys_define:nn { scontents / typemeaning }
+            {
+              print-cmd .bool_set:N = \l_@@_print_aux_bool,
+              print-cmd .initial:n = false,
+              print-cmd .default:n = true,
+            }
+          \keys_set_known:nnN { scontents / mergesc } {#1} \l_@@_keys_tl
+         }
       \seq_gclear:c { g_@@_name_sc!internal_seq }
       \@@_mergesc_parse_list:n {#2}
       \exp_args:Nx \@@_mergesc_output_cmd:nn

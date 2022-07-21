@@ -1,0 +1,70 @@
+name: Automated testing (TL 2020 - 2023)
+
+on:
+  push:
+    branches:
+      - "*"
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version:
+          - 2020
+          - 2021
+          - 2022
+          - 2023
+        command:
+          - testpkg
+          - examples
+          - doc
+        exclude:
+          - { version: 2020, command: doc }
+          - { version: 2021, command: doc }
+          - { version: 2022, command: doc }
+          - { version: 2023, command: testpkg }
+      fail-fast: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Run  github-actions-tune
+        uses: abbbi/github-actions-tune@v1
+
+      - name: Update sources and install ghostscript-pygments
+        uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: fonts-urw-base35 libgs9-common libijs-0.35 libjbig2dec0 libopenjp2-7 libgs9 ghostscript python3-pygments
+          version: 1.0
+
+      - name: Fix dependence hypdoc in TeX Live 2020
+        if: ${{ startsWith(matrix.version, '2020') }}
+        run: perl -i -pe 's/hypdoc/oberdiek/g' .github/tl_packages
+
+      - name: Setup TeX Live ${{ matrix.version }}
+        uses: teatimeguest/setup-texlive-action@v2
+        with:
+          version: ${{ matrix.version }}
+          package-file: .github/tl_packages
+          cache: true
+
+      - name: Install scontents package
+        run: l3build install
+
+      - name: Run "l3build ${{ matrix.command }}" (TeX Live ${{ matrix.version }})
+        run: l3build ${{ matrix.command }}
+
+      # If fail some test, upload test and log file
+      - name: Upload error files
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: github-error-files
+          path: |
+            ./*.log
+            ./*.ltx
+            ./*.ins
+            ./*.dtx
+          retention-days: 2
