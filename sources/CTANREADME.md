@@ -68,4 +68,4 @@ conditions of the [LaTeX Project Public License](https://www.latex-project.org/l
 
 ## Author and copyright
 
-Copyright 2019-2022 by Pablo González L.
+Copyright 2019-2023 by Pablo González L.
