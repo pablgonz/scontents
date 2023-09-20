@@ -309,23 +309,28 @@
     \group_end:
   }
 
-% \keyexamp{mmm}
-\DeclareDocumentCommand \keyexamp { m m m }
+% \keyexamp*{m m m}
+\NewDocumentCommand \keyexamp{s m m m }
   {
-    \par
-    \adjustbox{outer=-\marginparsep}{\textcolor{black}{\small\ttfamily{#1}}}
-    \textcolor{gray}{\,\bfseries\texttt{=}}\,{}
-    \mymarg[type=tt,cbc=gray,ac=lightgray,cf=optcolor]{\small{#2}}
-    \hfill\textcolor{gray}{\small\textsf{default}:~\emph{#3}}
-    \par
-    \MYSortIndex{Keys}{Keys>\texttt{#1}}%
+    \adjustbox{outer=-\marginparsep}{\textcolor{optcolor}{\small\ttfamily{#2}}}
+    \IfBooleanTF{#1}
+      {
+        \hphantom{\textcolor{white}{\,\bfseries\texttt{=}}\,{}}
+        \mymeta[type=tt,cbc=gray,ac=lightgray,cf=lightgray]{\small{#3}}
+      }
+      {
+        \textcolor{gray}{\,\bfseries\texttt{=}}\,{}
+        \mymarg[type=tt,cbc=gray,ac=lightgray,cf=optcolor]{\small{#3}}
+      }
+    \hfill\textcolor{gray}{\small\textsf{default}:~\emph{#4}}\par%
+    \MYSortIndex{Keys}{Keys ~ provide ~ by ~ \pkglogo :>\texttt{#2}}
   }
 
 % \mykey{m}
-\DeclareDocumentCommand \mykey { m }
+\NewDocumentCommand \mykey { m }
   {
     \textcolor{optcolor}{\texttt{#1}}
-    \MYSortIndex{Keys}{Keys>\texttt{#1}}%
+    \MYSortIndex{Keys}{Keys ~ provide ~ by ~\pkglogo :>\texttt{#1}}%
   }
 
 % \mypkg{sm}
@@ -335,31 +340,31 @@
     \IfBooleanTF{#1}
       {
         \pkglogo
-        \MYSortIndex{packages}{Packages>\texttt{#2}}
+        \MYSortIndex{packages}{Packages:>\texttt{#2}}
       }
       {
         \textcolor{darkgray}{\textsf{#2}}
-        \MYSortIndex{packages}{Packages>\texttt{#2}}%
+        \MYSortIndex{packages}{Packages:>\texttt{#2}}%
       }
      \group_end:
   }
 
 % \myenv{sm}
-\DeclareDocumentCommand \myenv {sm}
+\NewDocumentCommand \myenv {sm}
   {
     \IfBooleanTF{#1}
       {
         \textcolor{pkgcolor}{\ttfamily{#2}}%
-        \MYSortIndex{environment}{ Environment ~ provide ~ by ~\pkglogo :>\texttt{#2}}
+        \MYSortIndex{environment}{Environments ~ provide ~ by ~\pkglogo :>\texttt{#2}}
       }
       {
         \textcolor{darkgray}{\ttfamily{#2}}%
-        \MYSortIndex{environment}{Environments>\texttt{#2}}
+        \MYSortIndex{environment}{Environments:>\texttt{#2}}
       }
   }
 
 % \ics{sm}
-\DeclareDocumentCommand \ics {sm}
+\NewDocumentCommand \ics {sm}
   {
     \IfBooleanTF{#1}
       {
@@ -986,6 +991,7 @@ This text is in the outer environment (after nested).
 %   \envexaplain[start]{scontents}[stop]
 %   \end{syntax}
 % \end{function}
+%
 % \subsection*{Options for environment}
 %
 % The environment options can be configured globally using option
@@ -1186,45 +1192,43 @@ This text is in the outer environment (after nested).
 % on the contents stored in \mymarg{seq name}. If you pass without options run
 % §\getstored§ on all contents stored in \mymarg{seq name}.
 %
-% \subsection*{Options for command}
+% \subsubsection*{Options for command}
 % \label{sec:optcmdfor}
 %
 % \keyexamp{sep}{code}{empty}
-% Establishes the separation between each content stored in \mymarg{seq name}.
+% Establishes the separation between each content stored in \mymarg[type=tt]{seq name}.
 % For example, you can use §sep={\\[10pt]}§ for vertical separation of stored
 % contents.
 %
 % \keyexamp{step}{integer}{1}
 % Sets the increment (\mymeta{step}) applied to the value set by key §start§
-% for each element stored in the \mymarg{seq name}. The value must be a
+% for each element stored in the \mymarg[type=tt]{seq name}. The value must be a
 % \mymeta{positive integer}.
 %
 % \keyexamp{start}{integer}{1}
-% Sets the \mymeta{index} number of the \mymarg{seq name} from which execution
+% Sets the \mymeta{index} number of the \mymarg[type=tt]{seq name} from which execution
 % will start. The value must be a \mymeta{positive integer}.
 %
 % \keyexamp{stop}{integer}{total}
-% Sets the \mymeta{index} number of the \mymarg{seq name} from which execution
+% Sets the \mymeta{index} number of the \mymarg[type=tt]{seq name} from which execution
 % it will finish executing. The value must be a \mymeta{positive integer}.
 %
 % \keyexamp{before}{code}{empty}
-% Sets the \mymarg{code} that will be executed \mymeta{before} each content stored
-% in \mymarg{seq name}. The \mymarg{code} must be passed between braces.
-%
-% \medskip
+% Sets the \mymarg[type=tt]{code} that will be executed \mymeta{before} each content stored
+% in \mymarg[type=tt]{seq name}. The \mymarg[type=tt]{code} must be passed between braces.
 %
 % \keyexamp{after}{code}{empty}
-% Sets the \mymarg{code} that will be executed \mymeta{after} each content stored
-% in \mymarg{seq name}. The \mymarg{code} must be passed between braces.
+% Sets the \mymarg[type=tt]{code} that will be executed \mymeta{after} each content stored
+% in \mymarg[type=tt]{seq name}. The \mymarg[type=tt]{code} must be passed between braces.
 %
 % \newsavebox{\hashbox}
 % \begin{lrbox}{\hashbox}
-% \lstinline[language=scontents-doc,basicstyle=\ttfamily]+{#1}+
+% \lstinline[language=scontents-doc,basicstyle=\small\ttfamily]+{#1}+
 % \end{lrbox}
 %
 % \keyexamp{wrapper}{code{} \space\usebox{\hashbox} more code}{empty}
-% Wraps the content stored in \mymarg{seq name} referenced by §{#1}§.
-% The \mymarg{code} must be passed between braces. For example
+% Wraps the content stored in \mymarg[type=tt]{seq name} referenced by §{#1}§.
+% The \mymarg[type=tt]{code} must be passed between braces. For example
 % §\foreachsc[wrapper={\makebox[1em][l]{#1}}]{contents}§.
 %
 %
@@ -1235,16 +1239,52 @@ This text is in the outer environment (after nested).
 %
 % \begin{function}{\typestored}
 %   \begin{syntax}
-%      \cmdexamp{typestored}[index\textnormal{\textcolor{gray}{,}} width-tab \textnormal{\textcolor{gray}{=}} number]{seq name}
+%      \cmdexamp{typestored}[index\textnormal{\textcolor{gray}{,}} 1-end\textnormal{\textcolor{gray}{,}} width-tab \textnormal{\textcolor{gray}{=}} number]{seq name}
 %   \end{syntax}
 % The command \ics*{typestored} internally places the content stored in
-% the \mymarg{seq name} into the \myenv*{verbatimsc} environment. The \mymeta{index}
-% corresponds to the position in which the content is stored in the \mymarg{seq name}.
+% the \mymarg[type=tt]{seq name} into the \myenv*{verbatimsc} environment. The \mymeta{index}
+% corresponds to the position in which the content is stored in the \mymarg[type=tt]{seq name},
+% if \mymeta[type=tt]{1-end} is used \emph{\enquote{all}} content stored in \mymarg[type=tt]{seq name} will be printed.
 % \end{function}
 %
 % If the optional argument is not passed it defaults to the first element
-% stored in the \mymarg{seq name}. The key \mykey{width-tab} is available for
+% stored in the \mymarg[type=tt]{seq name}. The key \mykey{width-tab} is available for
 % this command.
+%
+%
+% \subsection{The command \cs{mergesc}}
+% \label{sec:mergesc}
+%
+% \vspace*{-10pt}
+%
+
+% \newsavebox{\argmergesc}
+% \begin{lrbox}{\argmergesc}
+% \small\mymarg[type=tt]{seq A}\myoarg[type=tt]{position}\textcolor{gray}{, }\mymarg[type=tt]{seq B}\myoarg[type=tt]{start \textcolor{gray}{-} stop}\textcolor{gray}{, }\mymarg[type=tt]{seq C}\myoarg[type=tt]{1-end}
+% \end{lrbox}
+%
+% \begin{function}{\mergesc}
+%   \begin{syntax}
+%      \cmdexamp{mergesc}[typestored \textnormal{\textcolor{lightgray}{\textbar}} meaningsc\textcolor{lightgray}{, }keys]{\usebox{\argmergesc}}
+%   \end{syntax}
+% The command \ics*{mergesc} internally assembles the content stored in
+% the \mymarg[type=tt]{seq A}§[1]§, \mymarg[type=tt]{seq B}§[2-5]§ and \mymarg[type=tt]{seq C}§[1-end]§ into a temporary internal
+% \mymeta[type=tt]{seq temp}.
+% \end{function}
+%
+% The use of the keys \mykey{typestored} or \mykey{menaingsc} are
+% \emph{\enquote{mandatory}} and disjoint from each other, the rest of the
+% accepted \mymeta{keys} are \mykey{print-cmd}, \mykey{write-out},
+% \mykey{width-tab} and \mykey{overwrite}.
+%
+% The use of the \mykey{write-out} key with this command follows the same
+% rules already described, the main advantage is that it allows to join
+% stored content \emph{without rewriting} the file over and over again,
+% by design \hologo{TeX} does not have an append mode for writing
+% files, this effectively allows you to write chunks of code and then
+% merge them into a single file.
+%
+% \newpage
 %
 % \subsection{The environment \env{verbatimsc}}
 % \label{sec:verbatimsc}
@@ -1912,10 +1952,10 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \begin{description}[font=\small\sffamily,wide=0pt,style=multiline,leftmargin=\descrwidth,nosep,noitemsep]
 % \item [\fileversion{} (ctan), \filedate]
 %    \begin{itemize}
+%        \item Add |mergesc| command.
 %        \item Fix internal code for |\typestored|.
 %        \item Replace |\cs_argument_spec:N| by |\cs_parameter_spec:N|.
-%        \item Removed |l3keys2e| package (obsolete in june 2022 \LaTeX{} release).
-%        \item The \LaTeX{} release is checked in place of |l3keys2e|.
+%        \item Detect |l3keys2e| package (obsolete in june 2022 \LaTeX{} release).
 %        \item Minor adjustments in the documentation.
 %    \end{itemize}
 % \item [v2.0 (ctan), 2022-04-04]
@@ -2008,11 +2048,11 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \begin{thebibliography}{9}
 % \bibitem{expl3} The \hologo{LaTeX} Project. \enquote{The \textsf{expl3}
 % package}. Available from
-% \textsc{ctan}, \url{https://www.ctan.org/pkg/expl3}, 2022.
+% \textsc{ctan}, \url{https://www.ctan.org/pkg/expl3}, 2023.
 %
 % \bibitem{xparse} The \hologo{LaTeX} Project. \enquote{The \textsf{xparse}
 % package}. Available from
-% \textsc{ctan}, \url{https://www.ctan.org/pkg/xparse}, 2022.
+% \textsc{ctan}, \url{https://www.ctan.org/pkg/xparse}, 2023.
 %
 % \bibitem{l3keys} The \hologo{LaTeX} Project. \enquote{The \textsf{l3keys2e}
 % package}. Available from
@@ -2063,10 +2103,10 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % Now we define some common macros to hold the package date and version:
 %    \begin{macrocode}
-%<loader>\def\ScontentsFileDate{2022-07-21}%
-%<core>\def\ScontentsCoreFileDate{2022-07-21}%
+%<loader>\def\ScontentsFileDate{2023-09-22}%
+%<core>\def\ScontentsCoreFileDate{2023-09-22}%
 %<*loader>
-\def\ScontentsFileVersion{2.1}%
+\def\ScontentsFileVersion{2.2}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
 %    \end{macrocode}
 %
