@@ -1,6 +1,8 @@
 # Required to build
 l3build
 latex-bin
+latex-tools-dev
+latex-base-dev
 luahbtex
 context
 tex
@@ -87,6 +89,7 @@ lastpage
 letltxmacro
 libertinus-fonts
 libertinus-otf
+libertine
 lineno
 listings
 lm
