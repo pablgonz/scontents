@@ -22,7 +22,7 @@
 -- General package identification
 module     = "scontents"
 pkgversion = "2.2"
-pkgdate    = "2023-09-22"
+pkgdate    = "2024-04-15"
 
 -- Configuration of files for build and installation
 maindir       = "."
@@ -340,16 +340,16 @@ if options["target"] == "testpkg" then
   -- Fourth
   local file = jobname(tmpdir.."/test-format.context.tex")
   print("Running fourth test on the file: "..file..".tex using [context]")
-  errorlevel = run(tmpdir, "context "..file..".tex > "..os_null)
+  errorlevel = run(tmpdir, "context --luatex "..file..".tex > "..os_null)
   if errorlevel ~= 0 then
     local f = assert(io.open(tmpdir.."/"..file..".log", "r"))
     err_log_file = f:read("*all")
     print(err_log_file)
     cp(file..".log", tmpdir, maindir)
-    error("** Error!!: context "..file..".tex")
+    error("** Error!!: context --luatex "..file..".tex")
     return errorlevel
   else
-    os_message("** Running: context "..file..".tex")
+    os_message("** Running: context --luatex "..file..".tex")
   end
   -- Copy generated .pdf files to maindir
   errorlevel = cp("*.pdf", tmpdir, maindir)

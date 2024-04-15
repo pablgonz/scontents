@@ -1,4 +1,4 @@
-name: Automated testing (TL 2020 - 2023)
+name: Automated testing (TL 2020 - 2024)
 
 on:
   push:
@@ -16,6 +16,7 @@ jobs:
           - 2021
           - 2022
           - 2023
+          - 2024
         command:
           - testpkg
           - examples
@@ -24,11 +25,12 @@ jobs:
           - { version: 2020, command: doc }
           - { version: 2021, command: doc }
           - { version: 2022, command: doc }
-          - { version: 2023, command: testpkg }
+          - { version: 2023, command: doc }
+          - { version: 2024, command: testpkg }
       fail-fast: false
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Run  github-actions-tune
         uses: abbbi/github-actions-tune@v1
@@ -58,7 +60,7 @@ jobs:
 
       # If fail some test, upload test and log file
       - name: Upload error files
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: github-error-files

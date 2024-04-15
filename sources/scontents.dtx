@@ -1,6 +1,6 @@
 % \iffalse meta-comment
 %
-% Copyright (C) 2019-2022 by Pablo González L <pablgonz@educarchile.cl>
+% Copyright (C) 2019-2024 by Pablo González L <pablgonz@educarchile.cl>
 %
 % This work may be distributed and/or modified under the conditions of the
 % LaTeX Project Public License, either version 1.3c of this license or (at
@@ -488,7 +488,7 @@
                     {.8}{{\textcolor{MediumOrchid}{.8}}}{2}
                     {.9}{{\textcolor{MediumOrchid}{.9}}}{2}
                     {=}{{\textcolor{gray}{=}}}{1},%
-}[keywords,tex,comments,strings]% end languaje
+}[keywords,tex,comments,strings]% end language
 
 % \begin{examplecode}[key=val]...\end{examplecode}
 \lstnewenvironment{examplecode}[1][]{%
@@ -555,7 +555,7 @@
 }
 \setfoot{\rlap{\hskip\dimexpr-\oddsidemargin-1in\relax%
          \parbox{1.93\paperwidth}{\hfil\thepage\,/\,\pageref{LastPage}}}}%
-        {\parbox{\textwidth}{\raggedright \textcolor{gray}{\raisebox{-1pt}{\textcopyright}{}2019--2022 by Pablo González}}}%
+        {\parbox{\textwidth}{\raggedright \textcolor{gray}{\raisebox{-1pt}{\textcopyright}{}2019--2024 by Pablo González}}}%
         {}%
 \sethead{\llap{\raisebox{0.55cm}{\parbox{\dimexpr\oddsidemargin+1in\relax}{\makebox[0pt][l]{\hspace{15pt}\pkglogo\space\fileversion}}}}}
         {\raisebox{0.55cm}{\parbox{\textwidth}{\hspace*{-\oddsidemargin}\centering\small\S.\thesection\space\sectiontitle}}}%
@@ -2103,8 +2103,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % Now we define some common macros to hold the package date and version:
 %    \begin{macrocode}
-%<loader>\def\ScontentsFileDate{2023-09-22}%
-%<core>\def\ScontentsCoreFileDate{2023-09-22}%
+%<loader>\def\ScontentsFileDate{2024-04-15}%
+%<core>\def\ScontentsCoreFileDate{2024-04-15}%
 %<*loader>
 \def\ScontentsFileVersion{2.2}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
@@ -2901,7 +2901,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % In order to be able to define environments that behave similarly to
 % \myenv{scontents}, we define a generic environment and make all other
-% environment as wappers around that one.
+% environment as wrappers around that one.
 %
 % \subsubsection{The command \cs{newenvsc}}
 %
@@ -2989,7 +2989,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %     \startscontents,
 %     \stopscontents,
 %   }
-%   Finaly defining the \myenv{scontents} environment should be easy :)
+%   Finally defining the \myenv{scontents} environment should be easy :)
 %    \begin{macrocode}
 %</core>
 %<loader>\newenvsc{scontents}
@@ -3046,7 +3046,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   The function \cs{@@_start_after_option:w} also checks for trailing
 %   tokens after the optional argument and issues an error if any.
 %
-%   In all cases, the function \cs{@@_check_line_process:xn} ckecks that
+%   In all cases, the function \cs{@@_check_line_process:xn} checks that
 %   everything past §\begin{scontents}§ is empty and then process
 %   the environment.
 %
@@ -3543,7 +3543,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 %
 %   The function \cs{@@_norm_arg:n} grabs a normal argument, adds it to
-%   the |seq| varaible and optionally prints it.
+%   the |seq| variable and optionally prints it.
 %
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_norm_arg:n #1
@@ -3574,7 +3574,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   }
 %
 %   The function \cs{@@_verb_arg_internal:n} replace all §\^^M§ by
-%   §\^^J§ then adds it to the |seq| varaible.
+%   §\^^J§ then adds it to the |seq| variable.
 %
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_verb_arg_internal:n #1
@@ -3758,7 +3758,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 %
 %   The \cs{@@_verb_print:N} macro is defined with active carriage return
-%   (\textsc{ascii} 13) characters to mimick an actual verbatim environment
+%   (\textsc{ascii} 13) characters to mimic an actual verbatim environment
 %   \enquote{on the loose}. The contents of the environment are placed in a
 %   §verbatimsc§ environment and rescanned using \cs{@@_rescan_tokens:x}.
 %
