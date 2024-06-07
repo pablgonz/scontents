@@ -41,7 +41,7 @@ Good bye
 \Scontents*[print-cmd=false,force-eol=true]{We know that we cannot place text (or anything) on the same line that 
 closes Verbatim (fancyvrb), it would be an Error.
 \begin{Verbatim*}
-Good bye again, whit command
+Good bye again, with command
 \end{Verbatim*}}ZZZZZ
 
 AAA\getstored[3]{contents}WWWW
@@ -64,7 +64,7 @@ better not to worry about it and add \% only when force-eol=false
 This text is found just before opening environment 
 \begin{scontents}[print-env=false]
 % this line ignore by \getstored
-Prove \verb*| verb inline whit bars | and environment \verb+Verbatim*+
+Prove \verb*| verb inline with bars | and environment \verb+Verbatim*+
 \begin{Verbatim}
      A verbatim  
        environment
@@ -84,7 +84,7 @@ XX\typestored[6]{contents}YY
 
 \Scontents*[store-cmd=nospace]{Write in one line \LaTeX: $E=mc^2$, no space after dot.}
 
-\Scontents[store-cmd=nospace]{Other whit in \{one\} no \}space\{ after dot.}
+\Scontents[store-cmd=nospace]{Other with in \{one\} no \}space\{ after dot.}
 
 XX\getstored[1]{nospace}YY\par
 XX\getstored[2]{nospace}YY\par
@@ -107,7 +107,7 @@ This is from the verbatim environment:
 \end{verbatim}
 
 SECOND\par
-% These outputs should look the same whit print-env=true
+% These outputs should look the same with print-env=true
 \begin{scontents}[store-env=newattempt,print-env=false]
 This is normal text.
 \verb|This is from the verb command.|
@@ -138,21 +138,21 @@ Test \verb+\Scontents[print-cmd=false]+\par
 
 \Scontents[print-cmd=false]{
 Using \texttt{\textbackslash Scontents} command, \par
-no environment verbatim suport,\par
+no environment verbatim support,\par
 but \Verb{fvextra inline yes} and \lstinline[basicstyle=\ttfamily]|lstinline yes|,
 save in seq \texttt{contents} with index $1$.}\par
 
 Test \verb+\Scontents[print-cmd=true]+\par
 
 \Scontents[print-cmd=true]{
-Using \texttt{\textbackslash Scontents} command, no environment verbatim suport,
+Using \texttt{\textbackslash Scontents} command, no environment verbatim support,
 but \Verb{fvextra inline yes} and \lstinline[basicstyle=\ttfamily]|lstinline yes|,
 save in seq \texttt{contents} with index $2$.}
 
 Test \verb+\Scontents[store-cmd=testcmd]+\par
 
 \Scontents[store-cmd=testcmd]{
-Using \texttt{\textbackslash Scontents} command, no environment verbatim suport,
+Using \texttt{\textbackslash Scontents} command, no environment verbatim support,
 but \Verb{fvextra inline yes} and \lstinline[basicstyle=\ttfamily]|lstinline yes|,
 save in seq \texttt{testcmd} with index 1.}
 
@@ -209,7 +209,7 @@ Test \verb+\Scontents*[print-cmd=false]+\par
 
 \Scontents*[print-cmd=false]{Using \texttt{\textbackslash Scontents*} command,
 
-with verbatim suport.
+with verbatim support.
 
 \begin{verbatim*}
       verbatim
@@ -219,7 +219,7 @@ with verbatim suport.
 \Verb{fvextra inline yes}, save in seq \texttt{testcmdvrb} with index 1.}
 
 Test \verb+\Scontents*[print-cmd=true]+\par
-\Scontents*[print-cmd=true]|Using \verb/\Scontents*[print-cmd=true]+...+/ command, with verbatim suport,
+\Scontents*[print-cmd=true]|Using \verb/\Scontents*[print-cmd=true]+...+/ command, with verbatim support,
 
 \begin{verbatim}
       more verbatim environment
@@ -229,7 +229,7 @@ And \Verb{fvextra inline yes}, save in seq \texttt{testcmdvrb} with index $2$.|
 
 Test \verb+\Scontents[store-cmd=othervrb]+\par
 \Scontents*[store-cmd=othervrb]{
-Using \texttt{\textbackslash Scontents*} command, whit verbatim suport,
+Using \texttt{\textbackslash Scontents*} command, with verbatim support,
 
 \begin{verbatim}
       other verbatim  environment
@@ -305,7 +305,7 @@ Test \verb+\typestored*[1]{othervrb}+:\par
 
 \section{Test \texttt{\textbackslash Scontents*} and \texttt{\textbackslash Scontents} back to default}
 
-\Scontents[store-cmd=contents]{Using \texttt{\textbackslash Scontents} command whit braces,
+\Scontents[store-cmd=contents]{Using \texttt{\textbackslash Scontents} command with braces,
 save in seq \texttt{contents} with index $3$.}
 \getstored[3]{contents}
 
@@ -344,7 +344,7 @@ Test \verb+scontents+ no \verb+[key=val]+\par
 \subsubsection{\Verb{\typestored[1]{testenv}}}
 \typestored[1]{testenv}
 
-\subsection{whit \texttt{[key=val]}}
+\subsection{with \texttt{[key=val]}}
 
 \subsubsection{\Verb{[write-env=\jobname.tsc]}}
 
@@ -458,7 +458,7 @@ We have coded this in \LaTeX: $E=mc^2$.\par
 \Verb{\typestored[1]{other}}\par
 \typestored[1]{other}
 
-\section{A simple aplication}
+\section{A simple application}
 \setupsc{ store-env=answers, store-cmd= answers }
 
 \newcounter{exeNr}

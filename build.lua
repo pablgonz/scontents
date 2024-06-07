@@ -282,7 +282,7 @@ if options["target"] == "testpkg" then
   else
     os_message("** Copying files from sources/test-pkg to ./"..tmpdir)
   end
-  -- Fisrt, no check error level :(
+  -- First, no check error level :(
   local file = jobname(tmpdir.."/test-pkg-current.tex")
   print("Running first test on the file: "..file..".tex using [pdflatex]")
   os_message("** Running: pdflatex -interaction=batchmode "..file..".tex")

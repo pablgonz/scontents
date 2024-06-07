@@ -1769,20 +1769,20 @@ breakaftersymbolpre={\,\tiny\ensuremath{\rfloor}}]}%
 \setlength{\parindent}{0pt}
 \pagestyle{empty}
 \begin{document}
-\section{Test \texttt{\textbackslash begin\{scontents\}} whit \texttt{fancyvrb}}
+\section{Test \texttt{\textbackslash begin\{scontents\}} with \texttt{fancyvrb}}
 Test \verb+{scontents}+ \par
 
 \begin{scontents}
 Using \verb+scontents+ env no \verb+[key=val]+, save in seq \verb+contents+
 with index 1.
 
-Prove new \Verb*{ fancyvrb whit braces } and environment \verb+Verbatim*+
+Prove new \Verb*{ fancyvrb with braces } and environment \verb+Verbatim*+
 \begin{verbatim}
  verbatim  environment
 \end{verbatim}
 \end{scontents}
 
-\section{Test \texttt{\textbackslash Scontents} whit \texttt{fancyvrb}}
+\section{Test \texttt{\textbackslash Scontents} with \texttt{fancyvrb}}
 \Scontents{ We have coded this in \LaTeX: $E=mc^2$.}
 
 \section{Test \texttt{\textbackslash getstored}}
@@ -1839,7 +1839,7 @@ Prove new \Verb*{ fancyvrb whit braces } and environment \verb+Verbatim*+
 \setlength{\parindent}{0pt}
 \pagestyle{empty}
 \begin{document}
-\section{Test \texttt{\textbackslash begin\{scontents\}} whit \texttt{listings}}
+\section{Test \texttt{\textbackslash begin\{scontents\}} with \texttt{listings}}
 Test \verb+{scontents}+ \par
 
 \begin{scontents}
@@ -1851,7 +1851,7 @@ Prove \lstinline[basicstyle=\ttfamily]| lstinline | and environment \verb+Verbat
 \end{verbatim}
 \end{scontents}
 
-\section{Test \texttt{\textbackslash Scontents*} whit \texttt{listings}}
+\section{Test \texttt{\textbackslash Scontents*} with \texttt{listings}}
 
 \Scontents*+ We have coded this in \lstinline[basicstyle=\ttfamily]|\LaTeX: $E=mc^2$|
 and more.+
@@ -1893,14 +1893,14 @@ and more.+
 \pagestyle{empty}
 \setlength{\parindent}{0pt}
 \begin{document}
-\section{Test \texttt{\textbackslash begin\{scontents\}} whit \texttt{minted}}
+\section{Test \texttt{\textbackslash begin\{scontents\}} with \texttt{minted}}
 Test \verb+{scontents}+ \par
 
 \begin{scontents}[overwrite,write-env=\jobname.tsc,force-eol=true]
 Using \verb+scontents+ env no \verb+[key=val]+, save in seq \verb+contents+
 with index 1.\par
 
-Prove new \Verb*{ new fvextra whit braces } and environment \verb+Verbatim*+
+Prove new \Verb*{ new fvextra with braces } and environment \verb+Verbatim*+
 \begin{Verbatim}[obeytabs, showtabs, tab=\rightarrowfill, tabcolor=red]
 No tab
 	One real tab
@@ -1912,7 +1912,7 @@ No tab
 Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 \VerbatimInput[obeytabs, showtabs, tab=\rightarrowfill, tabcolor=red]{\jobname.tsc}
 
-\section{Test \texttt{\textbackslash Scontents} whit \texttt{minted}}
+\section{Test \texttt{\textbackslash Scontents} with \texttt{minted}}
 
 \Scontents{ We have coded \par this in \LaTeX: $E=mc^2$.}
 
