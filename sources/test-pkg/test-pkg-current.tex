@@ -184,7 +184,7 @@ Soy un ^^J Soy un ^^M text.
 \end{verbatim}
 
 SECOND\par
-% These outputs should look the same whit print-env=true
+% These outputs should look the same with print-env=true
 \begin{scontents}[store-env=newattempt,print-env=true]
 This ^^J is normal ^^J text.
 \verb|This is from the verb command.|
@@ -222,21 +222,21 @@ Test \verb+\Scontents[print-cmd=false]+\par
 
 \Scontents[print-cmd=false]{
 Using \texttt{\textbackslash Scontents} command, \par
-no environment verbatim suport,\par
+no environment verbatim support,\par
 but \Verb{fvextra inline yes} and \lstinline[basicstyle=\ttfamily]|lstinline yes|,
 save in seq \texttt{contents} with index $1$.}\par
 
 Test \verb+\Scontents[print-cmd=true]+\par
 
 \Scontents[print-cmd=true]{
-Using \texttt{\textbackslash Scontents} command, no environment verbatim suport,
+Using \texttt{\textbackslash Scontents} command, no environment verbatim support,
 but \Verb{fvextra inline yes} and \lstinline[basicstyle=\ttfamily]|lstinline yes|,
 save in seq \texttt{contents} with index $2$.}
 
 Test \verb+\Scontents[store-cmd=testcmd]+\par
 
 \Scontents[store-cmd=testcmd]{
-Using \texttt{\textbackslash Scontents} command, no environment verbatim suport,
+Using \texttt{\textbackslash Scontents} command, no environment verbatim support,
 but \Verb{fvextra inline yes} and \lstinline[basicstyle=\ttfamily]|lstinline yes|,
 save in seq \texttt{testcmd} with index 1.}
 
@@ -293,7 +293,7 @@ Test \verb+\Scontents*[print-cmd=false]+\par
 
 \Scontents*[print-cmd=false]{Using \texttt{\textbackslash Scontents*} command,
 
-with verbatim suport.
+with verbatim support.
 
 \begin{verbatim*}
       verbatim
@@ -303,7 +303,7 @@ with verbatim suport.
 \Verb{fvextra inline yes}, save in seq \texttt{testcmdvrb} with index 1.}
 
 Test \verb+\Scontents*[print-cmd=true]+\par
-\Scontents*[print-cmd=true]|Using \verb/\Scontents*[print-cmd=true]+...+/ command, with verbatim suport,
+\Scontents*[print-cmd=true]|Using \verb/\Scontents*[print-cmd=true]+...+/ command, with verbatim support,
 
 \begin{verbatim}
       more verbatim environment
@@ -313,7 +313,7 @@ And \Verb{fvextra inline yes}, save in seq \texttt{testcmdvrb} with index $2$.|
 
 Test \verb+\Scontents[store-cmd=othervrb]+\par
 \Scontents*[store-cmd=othervrb]{
-Using \texttt{\textbackslash Scontents*} command, whit verbatim suport,
+Using \texttt{\textbackslash Scontents*} command, with verbatim support,
 
 \begin{verbatim}
       other verbatim  environment
@@ -389,7 +389,7 @@ Test \verb+\typestored[1]{othervrb}+:\par
 
 \section{Test \texttt{\textbackslash Scontents*} and \texttt{\textbackslash Scontents} back to default}
 
-\Scontents[store-cmd=contents]{Using \texttt{\textbackslash Scontents} command whit braces,
+\Scontents[store-cmd=contents]{Using \texttt{\textbackslash Scontents} command with braces,
 save in seq \texttt{contents} with index $3$.}
 \getstored[3]{contents}
 
@@ -421,7 +421,7 @@ Test \verb+scontents+ no \verb+[key=val]+\par
 Using \verb+scontents+ env, \verb+[force-eol]+, save in seq \verb+testenv+ index 1.\par
 We have coded this in \LaTeX: $E=mc^2$.
 
-Prove new \Verb*{ verbatim from fvextra whit braces } and environment \verb+Verbatim*+.
+Prove new \Verb*{ verbatim from fvextra with braces } and environment \verb+Verbatim*+.
 \begin{Verbatim*}
       (A) verbatim
           environment
@@ -440,7 +440,7 @@ XX\getstored[1]{testenv}YY
 \subsubsection{\Verb{\typestored[1]{testenv}}}
 \typestored[1]{testenv}
 
-\subsection{whit \texttt{[key=val]}}
+\subsection{with \texttt{[key=val]}}
 
 \subsubsection{\Verb{[write-env=\jobname.tsc]}}
 
@@ -554,7 +554,7 @@ We have coded this in \LaTeX: $E=mc^2$.\par
 \Verb{\typestored[1]{other}}\par
 \typestored[1]{other}
 
-\section{A simple aplication}
+\section{A simple application}
 \setupsc{ store-env=answers, store-cmd= answers }
 
 \newcounter{exeNr}
