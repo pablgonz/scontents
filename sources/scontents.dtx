@@ -32,7 +32,7 @@
 % so that entries written to both streams end up in the same file.
 \usepackage[english]{babel}
 \usepackage[top=0.5in,bottom=0.3in,left=2in,right=0.7in,footskip=0.2in,headheight=1cm,headsep=0.27cm]{geometry}
-\usepackage{libertine} % need by setup-texlive-action@v3
+\usepackage[llscaled=0.95]{libertine} % need by setup-texlive-action@v3
 \usepackage[osf,nomath,mono=false,ScaleSF=0.95,ScaleRM=0.95]{libertinus-otf}
 % Set Monospace font, fix 'quotes' in verbatim
 \usepackage{sourcecodepro}
@@ -1252,12 +1252,10 @@ This text is in the outer environment (after nested).
 % stored in the \mymarg[type=tt]{seq name}. The key \mykey{width-tab} is available for
 % this command.
 %
-%
 % \subsection{The command \cs{mergesc}}
 % \label{sec:mergesc}
 %
 % \vspace*{-10pt}
-%
 %
 % \newsavebox{\argmergesc}
 % \begin{lrbox}{\argmergesc}
@@ -1953,7 +1951,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \begin{description}[font=\small\sffamily,wide=0pt,style=multiline,leftmargin=\descrwidth,nosep,noitemsep]
 % \item [\fileversion{} (ctan), \filedate]
 %    \begin{itemize}
-%        \item Add |mergesc| command.
+%        \item Fix |\cleansc| command.
+%        \item Add |\mergesc| command.
 %        \item Fix internal code for |\typestored|.
 %        \item Replace |\cs_argument_spec:N| by |\cs_parameter_spec:N|.
 %        \item Detect |l3keys2e| package (obsolete in june 2022 \LaTeX{} release).
@@ -2104,8 +2103,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % Now we define some common macros to hold the package date and version:
 %    \begin{macrocode}
-%<loader>\def\ScontentsFileDate{2024-04-15}%
-%<core>\def\ScontentsCoreFileDate{2024-04-15}%
+%<loader>\def\ScontentsFileDate{2024-06-07}%
+%<core>\def\ScontentsCoreFileDate{2024-06-07}%
 %<*loader>
 \def\ScontentsFileVersion{2.1}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
@@ -4111,7 +4110,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %</core>
 %<*loader>
 \NewDocumentCommand \cleanseqsc { m }
-  { \seq_clear_new:c { g_@@_name_#1_seq } }
+  { \seq_gclear_new:c { g_@@_name_#1_seq } }
 %</loader>
 %<*core>
 %    \end{macrocode}

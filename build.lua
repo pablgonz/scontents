@@ -22,7 +22,7 @@
 -- General package identification
 module     = "scontents"
 pkgversion = "2.1"
-pkgdate    = "2024-04-15"
+pkgdate    = "2024-06-07"
 
 -- Configuration of files for build and installation
 maindir       = "."
@@ -55,7 +55,7 @@ tagfiles = {"sources/scontents.ins", "sources/scontents.dtx", "sources/CTANREADM
 local mydate = os.date("!%Y-%m-%d")
 
 function update_tag(file,content,tagname,tagdate)
-  if not tagname and tagdate == mydate then
+  if not tagname and tagdate == mydate or "" then
     tagname = pkgversion
     tagdate = pkgdate
     print("** "..file.." have been tagged with the version and date of build.lua")
