@@ -6,7 +6,7 @@
 %%
 %% scontents.dtx  (with options: `loader,latex')
 %% 
-%% Copyright (C) 2019-2022 by Pablo González L <pablgonz@educarchile.cl>
+%% Copyright (C) 2019-2024 by Pablo González L <pablgonz@educarchile.cl>
 %% 
 %% This work may be distributed and/or modified under the conditions of the
 %% LaTeX Project Public License, either version 1.3c of this license or (at
@@ -27,7 +27,7 @@
 %%                                 t-scontents.mkiv and
 %%                                 scontents-code.tex.
 %% 
-\def\ScontentsFileDate{2024-04-15}%
+\def\ScontentsFileDate{2024-06-07}%
 \def\ScontentsFileVersion{2.1}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
 \IfFormatAtLeastTF { 2022-06-01 }
@@ -122,7 +122,7 @@
 \NewExpandableDocumentCommand \countsc { m }
   { \seq_count:c { g__scontents_name_#1_seq } }
 \NewDocumentCommand \cleanseqsc { m }
-  { \seq_clear_new:c { g__scontents_name_#1_seq } }
+  { \seq_gclear_new:c { g__scontents_name_#1_seq } }
 \endinput
 %%
 %% End of file `scontents.sty'.

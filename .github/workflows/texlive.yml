@@ -23,10 +23,13 @@ jobs:
           - doc
         exclude:
           - { version: 2020, command: doc }
+          - { version: 2020, command: examples }
           - { version: 2021, command: doc }
+          - { version: 2021, command: examples }
           - { version: 2022, command: doc }
+          - { version: 2022, command: examples }
           - { version: 2023, command: doc }
-          - { version: 2024, command: testpkg }
+          - { version: 2023, command: examples }
       fail-fast: false
     steps:
       - name: Checkout
