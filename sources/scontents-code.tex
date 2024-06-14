@@ -27,7 +27,7 @@
 %%                                 t-scontents.mkiv and
 %%                                 scontents-code.tex.
 %% 
-\def\ScontentsCoreFileDate{2024-06-07}%
+\def\ScontentsCoreFileDate{2024-06-14}%
 \begingroup
   \catcode32=10
   \endlinechar=32
@@ -113,7 +113,7 @@
 \tl_new:N \l__scontents_foreach_before_tl
 \tl_new:N \l__scontents_foreach_after_tl
 \int_new:N \l__scontents_foreach_stop_int
-\int_new:N \l__scontents_seq_item_seq
+\seq_new:N \l__scontents_seq_item_seq
 \int_new:N \l__scontents_env_nesting_int
 \bool_new:N \l__scontents_writing_bool
 \bool_set_false:N \l__scontents_writing_bool
@@ -1108,6 +1108,10 @@
     It~received~an~illegal~token \tl_if_empty:nF {#3} { ~'#3' } .
     \\ \\
     LaTeX~will~ignore~'#2'.
+  }
+\msg_new:nnn { scontents } { older-version }
+  {
+    The~next~update~removes~compatibility~with~versions~prior~to~2024.
   }
 \endinput
 %%

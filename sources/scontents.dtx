@@ -379,6 +379,27 @@
         \MYSortIndex{#2}{\texttt{\textbackslash#2}}
       }
   }
+% \bomba
+\NewDocumentCommand \bomba { }
+  {
+    \par\hspace*{-0.5\marginparsep}%
+    \makebox[0pt][r]
+      {
+        \makebox[\marginparsep][r]
+          {
+            \footnotesize\textcolor{pkgcolor}{\faIcon{bomb}}
+          }
+      }
+    \hskip 0.5\marginparsep
+  }
+\NewDocumentEnvironment{important}{ s }
+  {
+    \sffamily
+    \bomba%
+    \IfBooleanTF{#1}
+      { \small }
+      { \color{OrangeRed}\Large }
+  }{}
 \ExplSyntaxOff
 
 % email https://tex.stackexchange.com/a/663
@@ -435,7 +456,7 @@
     keywords      = [3]{document,article,setlength,pagestyle,definecolor},%
 % Reserved words 4 (scontents pkg)
     keywordstyle  = [4]{\color{pkgcolor}},%
-    keywords      = [4]{scontents,Scontents,getstored,typestored,verbatimsc,%
+    keywords      = [4]{scontents,Scontents,getstored,typestored,verbatimsc, mergesc, %
                     endverbatimsc,countsc,meaningsc,foreachsc,macros,newenvsc,
                     endscontents,startscontents,stopscontents,scontents.tex},%
 % Reserved words 5 (in red)
@@ -634,6 +655,10 @@
 %
 % \tableofcontents
 %
+% \begin{important}
+% The next update removes compatibility with versions prior to 2024.
+% \end{important}
+%
 % \setlength{\parskip}{3pt}
 %
 % \section{Description of the package}
@@ -779,6 +804,10 @@
 % \iffalse
 %</example>
 % \fi
+%
+% \begin{important}*
+% \hologo{ConTeXt} users should use |-luatex|, the implementation does not support LuaMetaTeX.
+% \end{important}
 %
 % \subsection{The TAB character}
 % \label{sec:tabcharacter}
@@ -1933,6 +1962,90 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \textattachfile[color=linkcolor,print=false]{scexamp9.ltx}{\faFile*[regular]}.
 % \lstinputlisting[language=scontents-doc,numbers=left]{scexamp9.ltx}
 %
+% \subsection{The command \texttt{\textbackslash{}mergesc} in action}
+%
+% \iffalse
+%<*example>
+% \fi
+\begin{scontents}[write-out=scexamp10.ltx]
+% arara: pdflatex
+% arara: clean: { extensions: [ aux, log] }
+\documentclass{article}
+\usepackage{scontents}
+% Fix part of a MCE that should go before babel's loading
+\begin{scontents}[store-env=mce]
+\documentclass[french]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[a4paper]{geometry}
+\end{scontents}
+% Fix part of a MCE that should go after (>=) babel's loading
+\begin{scontents}[store-env=mce]
+\usepackage{babel}
+\begin{document}
+\end{scontents}
+% Fix part of a MCE that should go after its body
+\begin{scontents}[store-env=mce]
+\end{document}
+\end{scontents}
+\begin{document}
+\section{First annswer}
+% Variable part of a MCE that should added to the fixed preamble, before babel's loading
+\begin{scontents}[store-env=mce-1]
+\usepackage{amsmath}
+\end{scontents}
+% Variable part of a MCE being the code snippet
+\begin{scontents}[store-env=mce-1]
+\begin{align}
+  0 & \neq 1 \\
+  1 & \neq 0
+\end{align}
+\end{scontents}
+\begin{description}
+\item[Preamble's addition]\leavevmode
+  \typestored[1]{mce-1}
+\item[Code snippet]\leavevmode
+  \typestored[2]{mce-1}
+\item[MCE]\leavevmode
+  \mergesc[typestored, print-cmd=true]
+    {
+      {mce}[1], {mce-1}[1], {mce}[2], {mce-1}[2], {mce}[3]
+    }
+\end{description}
+\section{Second annswer}
+% Variable part of a MCE that should added to the fixed preamble, before babel's loading
+\begin{scontents}[store-env=mce-2]
+\usepackage{amsmath}
+\end{scontents}
+% Variable part of a MCE being the code snippet
+\begin{scontents}[store-env=mce-2]
+\begin{flalign}
+  0 & \neq 1 \\
+  1 & \neq 0
+\end{flalign}
+\end{scontents}
+
+\begin{description}
+\item[Preamble's addition]\leavevmode
+  \typestored[1]{mce-2}
+\item[Code snippet]\leavevmode
+  \typestored[2]{mce-2}
+\item[MCE]\leavevmode
+  \mergesc[typestored, print-cmd=true, write-out=mce.txt, overwrite=true]
+    {
+      {mce}[1], {mce-2}[1], {mce}[2], {mce-2}[2], {mce}[3]
+    }
+\end{description}
+\end{document}
+\end{scontents}
+% \iffalse
+%</example>
+% \fi
+% The command §\mergesc§ in action, adapted from Denis Bitouzé request at \url{https://github.com/pablgonz/scontents/issues/2}
+% \textattachfile[color=linkcolor,print=false]{scexamp9.ltx}{\faFile*[regular]}.
+% \lstinputlisting[language=scontents-doc,numbers=left]{scexamp10.ltx}
+%
 % \newpage
 %
 % \section{Change history}
@@ -2104,8 +2217,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % Now we define some common macros to hold the package date and version:
 %    \begin{macrocode}
-%<loader>\def\ScontentsFileDate{2024-06-07}%
-%<core>\def\ScontentsCoreFileDate{2024-06-07}%
+%<loader>\def\ScontentsFileDate{2024-06-14}%
+%<core>\def\ScontentsCoreFileDate{2024-06-14}%
 %<*loader>
 \def\ScontentsFileVersion{2.1}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
@@ -2120,6 +2233,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
   { }
   {
     \RequirePackage{l3keys2e}[2020/02/08]
+    \msg_warning:nn { scontents } { older-version }
   }
 \ProvidesExplPackage
   {scontents} {\ScontentsFileDate} {\ScontentsFileVersion} {\ScontentsFileDescription}
@@ -4235,6 +4349,10 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
     It~received~an~illegal~token \tl_if_empty:nF {#3} { ~'#3' } .
     \\ \\
     LaTeX~will~ignore~'#2'.
+  }
+\msg_new:nnn { scontents } { older-version }
+  {
+    The~next~update~removes~compatibility~with~versions~prior~to~2024.
   }
 %    \end{macrocode}
 %

@@ -676,4 +676,75 @@ START
   $\langle$environment contents$\rangle$
 \end{maybePrint}
 TEXT
+\subsection{mergesc}
+\setupsc{print-env=false}
+% Fix part of a MCE that should go before babel's loading
+\begin{scontents}[store-env=mce]
+\documentclass[french]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[a4paper]{geometry}
+\end{scontents}
+% Fix part of a MCE that should go after (>=) babel's loading
+\begin{scontents}[store-env=mce]
+\usepackage{babel}
+\begin{document}
+\end{scontents}
+% Fix part of a MCE that should go after its body
+\begin{scontents}[store-env=mce]
+\end{document}
+\end{scontents}
+%
+\section{First annswer}
+% Variable part of a MCE that should added to the fixed preamble, before babel's
+% loading
+\begin{scontents}[store-env=mce-1]
+\usepackage{amsmath}
+\end{scontents}
+% Variable part of a MCE being the code snippet
+\begin{scontents}[store-env=mce-1]
+\begin{align}
+  0 & \neq 1 \\
+  1 & \neq 0
+\end{align}
+\end{scontents}
+
+\begin{description}
+\item[Preamble's addition]\leavevmode
+  \typestored[1]{mce-1}
+\item[Code snippet]\leavevmode
+  \typestored[2]{mce-1}
+\item[MCE]\leavevmode
+  \mergesc[typestored, print-cmd=true]
+    {
+      {mce}[1], {mce-1}[1], {mce}[2], {mce-1}[2], {mce}[3]
+    }
+\end{description}
+
+\section{Second annswer}
+% Variable part of a MCE that should added to the fixed preamble, before babel's
+% loading
+\begin{scontents}[store-env=mce-2]
+\usepackage{amsmath}
+\end{scontents}
+% Variable part of a MCE being the code snippet
+\begin{scontents}[store-env=mce-2]
+\begin{flalign}
+  0 & \neq 1 \\
+  1 & \neq 0
+\end{flalign}
+\end{scontents}
+
+\begin{description}
+\item[Preamble's addition]\leavevmode
+  \typestored[1]{mce-2}
+\item[Code snippet]\leavevmode
+  \typestored[2]{mce-2}
+\item[MCE]\leavevmode
+  \mergesc[typestored, print-cmd=true, write-out=mce.txt, overwrite=true]
+    {
+      {mce}[1], {mce-2}[1], {mce}[2], {mce-2}[2], {mce}[3]
+    }
+\end{description}
 \end{document}

@@ -1,3 +1,7 @@
-Changes in v2.1 2024-06-07:
+Changes in v2.1 2024-06-14:
+- Fix `\cleansc` command.
+- Add `\mergesc` command.
+- Fix internal definition for `seq_var`.
 - Fix internal code for `\typestored`.
+- Replace `\cs_argument_spec:N` by `\cs_parameter_spec:N`.
 - Adapt detection of `l3keys2e` package (obsolete in june 2022 `LaTeX` release).

@@ -22,7 +22,7 @@
 -- General package identification
 module     = "scontents"
 pkgversion = "2.1"
-pkgdate    = "2024-06-07"
+pkgdate    = "2024-06-14"
 
 -- Configuration of files for build and installation
 maindir       = "."
@@ -391,6 +391,7 @@ if options["target"] == "examples" then
     "scexamp7",
     "scexamp8",
     "scexamp9",
+    "scexamp10",
   }
   -- Compiling sample files
   print("Compiling sample files in ./"..tmpdir.." using [arara]")
