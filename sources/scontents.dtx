@@ -2233,7 +2233,10 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
   { }
   {
     \RequirePackage{l3keys2e}[2020/02/08]
-    \msg_warning:nnn { scontents } { older-version }
+    \PackageWarning { scontents }
+      {
+        The~next~update~removes~compatibility~with~versions~prior~to~2024.
+      }
   }
 \ProvidesExplPackage
   {scontents} {\ScontentsFileDate} {\ScontentsFileVersion} {\ScontentsFileDescription}
