@@ -1953,6 +1953,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \begin{itemize}
 %        \item Fix |\cleansc| command.
 %        \item Add |\mergesc| command.
+%        \item Fix internal definition for seq var.
 %        \item Fix internal code for |\typestored|.
 %        \item Replace |\cs_argument_spec:N| by |\cs_parameter_spec:N|.
 %        \item Detect |l3keys2e| package (obsolete in june 2022 \LaTeX{} release).
@@ -2672,7 +2673,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % \subsection{Handling undefined keys}
 %
-% The \mymeta{keys} are stored in the token list variable \cs{l_keys_key_str},
+% The \mymeta{keys} are stored in the string variable \cs{l_keys_key_str},
 % and the value (if any) is passed as an argument to each \mymeta{function}.
 %
 % \subsubsection{Undefined keys for environment \env{scontents}}
