@@ -102,4 +102,4 @@ conditions of the [LaTeX Project Public License](https://www.latex-project.org/l
 
 ## Copyright
 
-Copyright 2019-2024 by Pablo González L.
+Copyright (C) 2019-2024 by Pablo González L.
