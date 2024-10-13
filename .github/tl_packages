@@ -100,7 +100,11 @@ mflogo
 mflogo-font
 microtype
 minted
-ms
+multitoc
+prelim2e
+ragged2e
+everyshi
+everysel
 pdfescape
 pdftexcmds
 pgf
