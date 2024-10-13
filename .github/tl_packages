@@ -101,7 +101,7 @@ mflogo
 mflogo-font
 microtype
 minted
-multitoc
+# multitoc
 prelim2e
 ragged2e
 everyshi
