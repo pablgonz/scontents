@@ -3,6 +3,7 @@ l3build
 latex-bin
 latex-tools-dev
 latex-base-dev
+luatexbase
 luahbtex
 context
 tex
