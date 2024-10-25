@@ -5,7 +5,7 @@
 
 ## Description
 
-This package allows to store `LaTeX` code, including _"verbatim"_, in <code>&lt;sequences&gt;</code>
+This package allows to store `LaTeX` code, including _"verbatim"_, in <code>&langle;sequences&rangle;</code>
 using the `l3seq` module of `expl3`. The <code>&lt;stored content&gt;</code> can be used
 as many times as desired in the document, additionally you can write to <code>&lt;external files&gt;</code>
 or show it in <code>&lt;verbatim style&gt;</code>.
