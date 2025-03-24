@@ -1,6 +1,6 @@
 % \iffalse meta-comment
 %
-% Copyright (C) 2019-2024 by Pablo González L <pablgonz@educarchile.cl>
+% Copyright (C) 2019-2025 by Pablo González L <pablgonz@educarchile.cl>
 %
 % This work may be distributed and/or modified under the conditions of the
 % LaTeX Project Public License, either version 1.3c of this license or (at
@@ -577,7 +577,7 @@
 }
 \setfoot{\rlap{\hskip\dimexpr-\oddsidemargin-1in\relax%
          \parbox{1.93\paperwidth}{\hfil\thepage\,/\,\pageref{LastPage}}}}%
-        {\parbox{\textwidth}{\raggedright \textcolor{gray}{\raisebox{-1pt}{\textcopyright}{}2019--2024 by Pablo González}}}%
+        {\parbox{\textwidth}{\raggedright \textcolor{gray}{\raisebox{-1pt}{\textcopyright}{}2019--2025 by Pablo González}}}%
         {}%
 \sethead{\llap{\raisebox{0.55cm}{\parbox{\dimexpr\oddsidemargin+1in\relax}{\makebox[0pt][l]{\hspace{15pt}\pkglogo\space\fileversion}}}}}
         {\raisebox{0.55cm}{\parbox{\textwidth}{\hspace*{-\oddsidemargin}\centering\small\S.\thesection\space\sectiontitle}}}%
@@ -632,7 +632,7 @@
 %    \filedate.}\\[25pt]
 %    \author{
 %    \large
-%    \raisebox{-1pt}{\textcopyright}{}2019--2024 by Pablo González\thanks{
+%    \raisebox{-1pt}{\textcopyright}{}2019--2025 by Pablo González\thanks{
 %    E-mail: \textcolor{OrangeRed}{\textsf{\guillemotleft}}\email{pablgonz@educarchile.cl}\textcolor{OrangeRed}{\textsf{\guillemotright}}.
 %       }%
 %    }
@@ -2217,10 +2217,10 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % Now we define some common macros to hold the package date and version:
 %    \begin{macrocode}
-%<loader>\def\ScontentsFileDate{2024-06-14}%
-%<core>\def\ScontentsCoreFileDate{2024-06-14}%
+%<loader>\def\ScontentsFileDate{2025-03-21}%
+%<core>\def\ScontentsCoreFileDate{2025-03-21}%
 %<*loader>
-\def\ScontentsFileVersion{2.1}%
+\def\ScontentsFileVersion{2.2}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
 %    \end{macrocode}
 %
@@ -2891,13 +2891,14 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
       { \seq_count:c { g_@@_name_\l_@@_cur_seq_name_str _seq } }
       { \msg_error:nnn { scontents } { type-key-unknown } }
   }
-\cs_generate_variant:Nn \@@_range_parser:nnnn { nnx }
-\cs_new_protected:Npn \@@_range_parser:nnnn #1 #2 #3
+\cs_new_protected:Npn \@@_range_parser:nnnn #1 #2 #3 #4
   {
     \exp_args:Nxx \@@_range_parser_aux:nnn
       { \str_if_eq:nnTF {#1} { end } {#3} { \exp_not:n {#1} } }
       { \str_if_eq:nnTF {#2} { end } {#3} { \exp_not:n {#2} } }
+      { #4 }
   }
+\cs_generate_variant:Nn \@@_range_parser:nnnn { nnxn }
 \cs_new_protected:Npn \@@_range_parser_aux:nnn #1 #2 #3
   {
     \@@_tl_if_head_is_q_mark:nTF {#2}

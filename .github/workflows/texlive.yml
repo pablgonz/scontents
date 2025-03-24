@@ -1,4 +1,4 @@
-name: Automated testing (TL 2020 - 2024)
+name: Automated testing (TL 2020 - 2025)
 
 on:
   push:
@@ -17,6 +17,7 @@ jobs:
           - 2022
           - 2023
           - 2024
+          - 2025
         command:
           - testpkg
           - examples
@@ -30,6 +31,8 @@ jobs:
           - { version: 2022, command: examples }
           - { version: 2023, command: doc }
           - { version: 2023, command: examples }
+          - { version: 2024, command: doc }
+          - { version: 2024, command: examples }
       fail-fast: false
     steps:
       - name: Checkout

@@ -1,4 +1,4 @@
-Changes in v2.1 2024-06-14:
+Changes in v2.2 2025-03-21:
 - Fix `\cleansc` command.
 - Add `\mergesc` command.
 - Fix internal definition for `seq_var`.

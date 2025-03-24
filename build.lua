@@ -21,8 +21,8 @@
 
 -- General package identification
 module     = "scontents"
-pkgversion = "2.1"
-pkgdate    = "2024-06-14"
+pkgversion = "2.2"
+pkgdate    = "2025-03-21"
 
 -- Configuration of files for build and installation
 maindir       = "."
@@ -410,7 +410,7 @@ if options["target"] == "examples" then
     end
   end
   -- Copy generated .pdf files to maindir
-  errorlevel = cp("*.pdf", tmpdir, maindir)
+  errorlevel = cp("scexamp*.pdf", tmpdir, maindir)
   if errorlevel ~= 0 then
     error("** Error!!: Can't copy generated pdf files to ./"..maindir)
     return errorlevel

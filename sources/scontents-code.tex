@@ -6,7 +6,7 @@
 %%
 %% scontents.dtx  (with options: `core')
 %% 
-%% Copyright (C) 2019-2024 by Pablo González L <pablgonz@educarchile.cl>
+%% Copyright (C) 2019-2025 by Pablo González L <pablgonz@educarchile.cl>
 %% 
 %% This work may be distributed and/or modified under the conditions of the
 %% LaTeX Project Public License, either version 1.3c of this license or (at
@@ -27,7 +27,7 @@
 %%                                 t-scontents.mkiv and
 %%                                 scontents-code.tex.
 %% 
-\def\ScontentsCoreFileDate{2024-06-14}%
+\def\ScontentsCoreFileDate{2025-03-21}%
 \begingroup
   \catcode32=10
   \endlinechar=32
@@ -280,13 +280,14 @@
       { \seq_count:c { g__scontents_name_\l__scontents_cur_seq_name_str _seq } }
       { \msg_error:nnn { scontents } { type-key-unknown } }
   }
-\cs_generate_variant:Nn \__scontents_range_parser:nnnn { nnx }
-\cs_new_protected:Npn \__scontents_range_parser:nnnn #1 #2 #3
+\cs_new_protected:Npn \__scontents_range_parser:nnnn #1 #2 #3 #4
   {
     \exp_args:Nxx \__scontents_range_parser_aux:nnn
       { \str_if_eq:nnTF {#1} { end } {#3} { \exp_not:n {#1} } }
       { \str_if_eq:nnTF {#2} { end } {#3} { \exp_not:n {#2} } }
+      { #4 }
   }
+\cs_generate_variant:Nn \__scontents_range_parser:nnnn { nnxn }
 \cs_new_protected:Npn \__scontents_range_parser_aux:nnn #1 #2 #3
   {
     \__scontents_tl_if_head_is_q_mark:nTF {#2}
