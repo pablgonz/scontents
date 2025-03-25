@@ -100,7 +100,7 @@ mflogo
 mflogo-font
 microtype
 minted
-ms
+# ms (not work in TL25)
 pdfescape
 pdftexcmds
 pgf
