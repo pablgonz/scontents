@@ -2408,7 +2408,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \end{macro}
 %
 % \begin{macro}{\l_@@_keys_tl}
-%   Stores unused keys to be frwarded to other commands.
+%   Stores unused \mymeta{keys} to be forwarded to other commands.
 %    \begin{macrocode}
 \tl_new:N \l_@@_keys_tl
 %    \end{macrocode}
@@ -3928,7 +3928,9 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % \subsection{The command \cs{mergesc}}
 %
-% \begin{macro}{\mergesc}
+% \begin{macro}{\mergesc,\@@_mergesc_output_cmd:nn,\@@_mergesc_internal:nn,
+%               \@@_mergesc_parse_list:n, \@@_remove_trailing_eol:N, \@@_remove_trailing_eol:w,
+%               \@@_parse_mergesc:nw, \@@_parse_mergesc_aux:nw, \@@_parse_mergesc_range:nw,}
 %   The §\mergesc§ command parses a list given as argument, and just assembles
 %   it as a temporary internal sequence, then passes it to the requested command.
 %    \begin{macrocode}
