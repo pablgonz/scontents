@@ -1,6 +1,6 @@
 ## scontents — Stores LaTeX contents in memory or files
 
-Release v2.2 \[2025-03-25\]
+Release v2.2 \[2025-03-26\]
 
 ## Description
 
@@ -68,4 +68,4 @@ conditions of the [LaTeX Project Public License](https://www.latex-project.org/l
 
 ## Author and copyright
 
-Copyright 2019-2023 by Pablo González L.
+Copyright 2019-2025 by Pablo González L.

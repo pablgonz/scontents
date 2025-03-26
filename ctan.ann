@@ -1,7 +1,4 @@
-Changes in v2.2 2025-03-25:
-- Fix `\cleansc` command.
-- Add `\mergesc` command.
-- Fix internal definition for `seq_var`.
-- Fix internal code for `\typestored`.
-- Replace `\cs_argument_spec:N` by `\cs_parameter_spec:N`.
-- Adapt detection of `l3keys2e` package (obsolete in june 2022 `LaTeX` release).
+Changes in v2.2 2025-03-26:
+– Fix internal definition for some functions.
+– Replace `\peek_charcode_ignore_spaces:NTF` by `\peek_charcode:NTF`.
+– Set correct code for `\obeyedline` (implement in june 2022 LaTeX release).

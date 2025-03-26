@@ -27,7 +27,7 @@
 %%                                 t-scontents.mkiv and
 %%                                 scontents-code.tex.
 %% 
-\def\ScontentsCoreFileDate{2025-03-21}%
+\def\ScontentsCoreFileDate{2025-03-26}%
 \begingroup
   \catcode32=10
   \endlinechar=32
@@ -692,6 +692,10 @@
 \cs_new_protected:Npn \__scontents_verb_arg_internal:n #1
   {
       \tl_set:Nn \l__scontents_temp_tl {#1}
+      \cs_if_exist:NT \obeyedline
+        {
+          \tl_replace_all:Nxx \l__scontents_temp_tl { \obeyedline } { \iow_char:N \^^M }
+        }
       \tl_replace_all:Nxx \l__scontents_temp_tl { \iow_char:N \^^M } { \iow_char:N \^^J }
       \__scontents_Scontents_finish:
   }
@@ -906,9 +910,12 @@
       }
 \cs_new_protected:Npn \__scontents_parse_mergesc:nw #1
   {
-    \peek_charcode_ignore_spaces:NTF [ % ]
-      { \__scontents_parse_mergesc_aux:nw {#1} }
-      { \__scontents_parse_mergesc_aux:nw {#1} [ 1-\seq_count:c { g__scontents_name_#1_seq } ] }
+    \peek_remove_spaces:n
+      {
+        \peek_charcode:NTF [ % ]
+          { \__scontents_parse_mergesc_aux:nw {#1} }
+          { \__scontents_parse_mergesc_aux:nw {#1} [ 1-\seq_count:c { g__scontents_name_#1_seq } ] }
+      }
   }
 \cs_new_protected:Npn \__scontents_parse_mergesc_aux:nw #1 [#2]
   {
