@@ -1,4 +1,2 @@
-Changes in v2.2 2025-03-26:
-– Fix internal definition for some functions.
-– Replace `\peek_charcode_ignore_spaces:NTF` by `\peek_charcode:NTF`.
-– Set correct code for `\obeyedline` (implement in june 2022 LaTeX release).
+Changes in v2.3 2025-04-21:
+– Safer code for replacement `\obeyedline`.

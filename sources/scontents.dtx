@@ -2064,6 +2064,10 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \begin{description}[font=\small\sffamily,wide=0pt,style=multiline,leftmargin=\descrwidth,nosep,noitemsep]
 % \item [\fileversion{} (ctan), \filedate]
 %    \begin{itemize}
+%        \item Safer code for replacement |\obeyedline|.
+%    \end{itemize}
+% \item [v2.2 (ctan), 2025-03-26]
+%    \begin{itemize}
 %        \item Fix internal definition for some functions.
 %        \item Replace |\peek_charcode_ignore_spaces:NTF| by |\peek_charcode:NTF|.
 %        \item Set correct code for |\obeyedline| implement in \LaTeX{} release 2024-06-01.
@@ -2223,10 +2227,10 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % Now we define some common macros to hold the package date and version:
 %    \begin{macrocode}
-%<loader>\def\ScontentsFileDate{2025-03-26}%
-%<core>\def\ScontentsCoreFileDate{2025-03-26}%
+%<loader>\def\ScontentsFileDate{2025-04-21}%
+%<core>\def\ScontentsCoreFileDate{2025-04-21}%
 %<*loader>
-\def\ScontentsFileVersion{2.2}%
+\def\ScontentsFileVersion{2.3}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
 %    \end{macrocode}
 %
@@ -3698,9 +3702,11 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %     \@@_file_write_cmd:VV,
 %   }
 %
-%   The function \cs{@@_verb_arg_internal:n} replace all §\^^M§ and 
+%   The function \cs{@@_verb_arg_internal:n} replace all §\^^M§ and
 %   §\obeyedline§ added by §+v§ argument added in \hologo{LaTeX} release 2024-06-01 by
-%   §\^^J§ then adds it to the |seq| variable.
+%   §\^^J§ then adds it to the |seq| variable. Here we will apply §\RenewDocumentCommand§
+%   since §\obeyedline§ can be modified by the user and if so the code
+%   would return a low-level error.
 %
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_verb_arg_internal:n #1
@@ -3708,6 +3714,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
       \tl_set:Nn \l_@@_temp_tl {#1}
       \cs_if_exist:NT \obeyedline
         {
+          \RenewDocumentCommand \obeyedline { } { \iow_char:N \^^M }
           \tl_replace_all:Nxx \l_@@_temp_tl { \obeyedline } { \iow_char:N \^^M }
         }
       \tl_replace_all:Nxx \l_@@_temp_tl { \iow_char:N \^^M } { \iow_char:N \^^J }
