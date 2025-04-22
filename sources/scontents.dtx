@@ -655,10 +655,6 @@
 %
 % \tableofcontents
 %
-% \begin{important}
-% The next update removes compatibility with versions prior to 2024.
-% \end{important}
-%
 % \setlength{\parskip}{3pt}
 %
 % \section{Description of the package}
@@ -717,7 +713,7 @@
 %
 % The The \mypkg*{scontents} package is written (mostly) using
 % \mypkg{expl3}, it requires an updated version of \LaTeX{} to work
-% (minimum version 2022-06-01). This package can be used with "plain",
+% (minimum required to \LaTeX{} release 2024-11-01). This package can be used with "plain",
 % "context", "xelatex", "lualatex", "pdflatex" and the classical workflow
 % §latex>dvips>ps2pdf§.
 %
@@ -2064,6 +2060,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \begin{description}[font=\small\sffamily,wide=0pt,style=multiline,leftmargin=\descrwidth,nosep,noitemsep]
 % \item [\fileversion{} (ctan), \filedate]
 %    \begin{itemize}
+%        \item Update minimum required to \LaTeX{} release 2024-11-01.
 %        \item Safer code for replacement |\obeyedline|.
 %    \end{itemize}
 % \item [v2.2 (ctan), 2025-03-26]
@@ -2227,27 +2224,22 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % Now we define some common macros to hold the package date and version:
 %    \begin{macrocode}
-%<loader>\def\ScontentsFileDate{2025-04-21}%
-%<core>\def\ScontentsCoreFileDate{2025-04-21}%
+%<loader>\def\ScontentsFileDate{2025-04-22}%
+%<core>\def\ScontentsCoreFileDate{2025-04-22}%
 %<*loader>
 \def\ScontentsFileVersion{2.3}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
 %    \end{macrocode}
 %
-% The \LaTeX{} loader is fairly simple: just load the dependencies, load the
-% core code, and then set interfaces up.
+% The \LaTeX{} loader is quite simple, we just need to make sure of the
+% minimum version for correct operation and then set interfaces up.
+% The choice of \LaTeX{} release 2024-11-01 is the latest available in
+% \TeX{} Live 2024 (frozen) and is necessary to be able to implement
+% the package's full compatibility with \texttt{tagged pdf}.
 %
 %    \begin{macrocode}
 %<*latex>
-\IfFormatAtLeastTF { 2022-06-01 }
-  { }
-  {
-    \RequirePackage{l3keys2e}[2020/02/08]
-    \PackageWarning { scontents }
-      {
-        The next update removes compatibility with versions prior to 2024.
-      }
-  }
+\NeedsTeXFormat{LaTeX2e}[2024-11-01]
 \ProvidesExplPackage
   {scontents} {\ScontentsFileDate} {\ScontentsFileVersion} {\ScontentsFileDescription}
 %</latex>
@@ -2478,16 +2470,11 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %<plain|context>  { verb-font .initial:n = \tt }
 %    \end{macrocode}
 %
-% In \LaTeX{} mode we load \mypkg{l3keys2e} process the \mymeta{keys}
-% as options passed on to the package, the package \pkg{l3keys2e} will
-% verify the \mymeta{keys} and will return an error when they are
+% In \LaTeX{} mode process the \mymeta{keys} as options passed on to the
+% package and will return an error when they are.
 %    \begin{macrocode}
 %<*latex>
-\IfFormatAtLeastTF { 2022-06-01 }
-  {
-    \ProcessKeyOptions [ scontents ]
-  }
-  { \ProcessKeysOptions { scontents } }
+\ProcessKeyOptions [ scontents ]
 %</latex>
 %<*core>
 %    \end{macrocode}

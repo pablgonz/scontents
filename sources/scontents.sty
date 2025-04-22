@@ -27,18 +27,10 @@
 %%                                 t-scontents.mkiv and
 %%                                 scontents-code.tex.
 %% 
-\def\ScontentsFileDate{2025-03-26}%
-\def\ScontentsFileVersion{2.2}%
+\def\ScontentsFileDate{2025-04-22}%
+\def\ScontentsFileVersion{2.3}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
-\IfFormatAtLeastTF { 2022-06-01 }
-  { }
-  {
-    \RequirePackage{l3keys2e}[2020/02/08]
-    \PackageWarning { scontents }
-      {
-        The next update removes compatibility with versions prior to 2024.
-      }
-  }
+\NeedsTeXFormat{LaTeX2e}[2024-11-01]
 \ProvidesExplPackage
   {scontents} {\ScontentsFileDate} {\ScontentsFileVersion} {\ScontentsFileDescription}
 \tl_new:N \g__scontents_end_verbatimsc_tl
@@ -63,11 +55,7 @@
   {#1} % LaTeX
 \keys_define:nn { scontents }
   { verb-font .initial:n = \ttfamily }
-\IfFormatAtLeastTF { 2022-06-01 }
-  {
-    \ProcessKeyOptions [ scontents ]
-  }
-  { \ProcessKeysOptions { scontents } }
+\ProcessKeyOptions [ scontents ]
 \NewDocumentCommand \newenvsc { m O{} }
   {
     \cs_if_exist:cTF { #1 }

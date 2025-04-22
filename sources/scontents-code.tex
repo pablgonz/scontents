@@ -27,7 +27,7 @@
 %%                                 t-scontents.mkiv and
 %%                                 scontents-code.tex.
 %% 
-\def\ScontentsCoreFileDate{2025-03-26}%
+\def\ScontentsCoreFileDate{2025-04-22}%
 \begingroup
   \catcode32=10
   \endlinechar=32
@@ -694,6 +694,7 @@
       \tl_set:Nn \l__scontents_temp_tl {#1}
       \cs_if_exist:NT \obeyedline
         {
+          \RenewDocumentCommand \obeyedline { } { \iow_char:N \^^M }
           \tl_replace_all:Nxx \l__scontents_temp_tl { \obeyedline } { \iow_char:N \^^M }
         }
       \tl_replace_all:Nxx \l__scontents_temp_tl { \iow_char:N \^^M } { \iow_char:N \^^J }
