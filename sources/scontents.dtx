@@ -458,7 +458,7 @@
     keywordstyle  = [4]{\color{pkgcolor}},%
     keywords      = [4]{scontents,Scontents,getstored,typestored,verbatimsc, mergesc, %
                     endverbatimsc,countsc,meaningsc,foreachsc,macros,newenvsc,
-                    endscontents,startscontents,stopscontents,scontents.tex},%
+                    endverbatim, endscontents,startscontents,stopscontents,scontents.tex},%
 % Reserved words 5 (in red)
     keywordstyle  = [5]{\color{red}},%
     keywords      = [5]{makeatletter,makeatother,let,verb,@undefined,makebox,def,%
@@ -3501,7 +3501,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
-% \subsection{The environment \env{verbatimsc}}
+% \subsection{Code for plain \TeX{} off \texttt{verbatimsc}}
 %
 % \begin{macro}[int]{\verbatimsc,\endverbatimsc,\@@_verbatimsc_aux:,
 %                    \@@_vobeyspaces:,\@@_xverb:,\@@_nolig_list:,\@@_xobeysp:}
@@ -3980,7 +3980,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
     \cs_new_protected:Npn \exp_not:N \@@_remove_trailing_eol:w #1
         \c_@@_hidden_space_str \s_@@_stop #2 \s_@@_mark #3
   }   {
-        \tl_set:Nx #3
+        \tl_set:Ne #3
           {
             \tl_if_empty:nTF {#2}
               { \exp_not:o { \@@_use_delimit_by_s_stop:nw #1 } }
@@ -4003,7 +4003,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
       { \@@_parse_mergesc_range:nw {#1} ##1 - \q_@@_mark - \s_@@_mark }
     \seq_map_inline:Nn \l_@@_seq_item_seq
       {
-        \seq_gput_right:cx { g_@@_name_sc!internal_seq }
+        \seq_gput_right:ce { g_@@_name_sc!internal_seq }
           { \seq_item:cn { g_@@_name_#1_seq } {##1} }
       }
     \@@_use_none_delimit_by_s_stop:w
@@ -4012,7 +4012,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
   {
     \cs_set_protected:Npn \@@_tmp:w ##1
       {
-        \msg_error:nnxxx { scontents } { index-out-of-range }
+        \msg_error:nneee { scontents } { index-out-of-range }
           {##1} {#1} { \seq_count:c { g_@@_name_#1_seq } }
       }
     \@@_range_parser:nnxn {#2} {#3}
@@ -4023,26 +4023,29 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{verbatimsc,\startverbatimsc,\stopverbatimsc}
-%   Finally the \hologo{LaTeX} and \hologo{ConTeXt} version of
-%   §verbatimsc§ environment is defined.
+% \subsection{The \TeX{}, \LaTeX{} and \hologo{ConTeXt} \env{verbatimsc}}\label{env:verbatimsc}
 %
-%   The macro §\endverbatim§ in the second argument of the §verbatimsc§
+% \begin{macro}{verbatimsc,\startverbatimsc,\stopverbatimsc}
+%   Finally the \hologo{TeX}, \hologo{LaTeX} and \hologo{ConTeXt} version of
+%   §verbatimsc§ environment is defined. The macro §\endverbatim§
+%   in the second argument of the §verbatimsc§
 %   environment is only needed for compatibility with the \pkg{verbatim}
 %   package.
 %
 %    \begin{macrocode}
 %<*loader>
 %<*!context>
-\use:x
+\use:e
   {
     \cs_new_protected:Npn \exp_not:N \@@_xverb:w
-      ##1 \g_@@_end_verbatimsc_tl
-%<latex>      { ##1 \exp_not:N \end{verbatimsc} }
-%<plain>      { ##1 \exp_not:N \endverbatimsc }
-%<context>      { ##1 \exp_not:N \stopverbatimsc }
+      #1 \g_@@_end_verbatimsc_tl
+%<latex>      { #1 \exp_not:N \end{verbatimsc} }
+%<plain>      { #1 \exp_not:N \endverbatimsc }
+%<context>      { #1 \exp_not:N \stopverbatimsc }
   }
 %</!context>
+%    \end{macrocode}
+%    \begin{macrocode}
 %<*latex>
 \NewDocumentEnvironment { verbatimsc } { }
   {
@@ -4082,7 +4085,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 \cs_new_protected:Npn \@@_do_noligs:N #1
   {
     \char_set_catcode_active:N #1
-    \cs_set:cpx { @@_active_char_ \token_to_str:N #1 : }
+    \cs_set:cpe { @@_active_char_ \token_to_str:N #1 : }
       {
         \mode_leave_vertical:
         \tex_kern:D \c_zero_dim
@@ -4100,7 +4103,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
   { T, F, TF }
   {
     \exp_after:wN \if_meaning:w
-      \exp_after:wN \q_@@_mark \@@_use_i_delimit_by_s_stop:nw #1 ? \s_@@_stop
+      \exp_after:wN
+        \q_@@_mark \@@_use_i_delimit_by_s_stop:nw #1 ? \s_@@_stop
       \prg_return_true:
     \else:
       \prg_return_false:
