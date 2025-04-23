@@ -351,6 +351,20 @@ if options["target"] == "testpkg" then
   else
     os_message("** Running: context --luatex "..file..".tex")
   end
+  -- Fifth (Tagged PDF)
+  local file = jobname(tmpdir.."/test-tagged-pdf.tex")
+  print("Running fifth test on the file: "..file..".tex using [lualatex]")
+  errorlevel = run(tmpdir, "lualatex "..file..".tex > "..os_null)
+  if errorlevel ~= 0 then
+    local f = assert(io.open(tmpdir.."/"..file..".log", "r"))
+    err_log_file = f:read("*all")
+    print(err_log_file)
+    cp(file..".log", tmpdir, maindir)
+    error("** Error!!: lualatex "..file..".tex")
+    return errorlevel
+  else
+    os_message("** Running: lualatex "..file..".tex")
+  end
   -- Copy generated .pdf files to maindir
   errorlevel = cp("*.pdf", tmpdir, maindir)
   if errorlevel ~= 0 then
@@ -392,6 +406,7 @@ if options["target"] == "examples" then
     "scexamp8",
     "scexamp9",
     "scexamp10",
+    "scexamp11",
   }
   -- Compiling sample files
   print("Compiling sample files in ./"..tmpdir.." using [arara]")

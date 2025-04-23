@@ -12,9 +12,7 @@ or show it in <code>&lt;verbatim style&gt;</code>.
 
 ## Requirements
 
-The package loads and depends on updated versions of:
-- [expl3](https://ctan.org/pkg/expl3)
-- [latex-base](https://www.ctan.org/pkg/latex-base)
+The package need a minimun `LaTeX` release 2024-11-01.
 
 ## Installation
 

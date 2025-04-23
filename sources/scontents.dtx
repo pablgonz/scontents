@@ -699,6 +699,12 @@
 % \item \href{https://tex.stackexchange.com/q/373647/7832}{Collect contents of an environment (that contains verbatim content)}
 % \end{enumerate}
 %
+% \begin{important}*
+% Starting with version 2.3 the \mypkg*{scontents} package is fully
+% compatible with \emph{tagged} \texttt{PDF} and will have \LaTeX{}
+% release 2024-11-01 (\TeX{} Live 2024) as a minimum requirement.
+% \end{important}
+%
 % \thispagestyle{plain}
 % \newpage
 % \pagestyle{myheader}
@@ -1323,7 +1329,8 @@ This text is in the outer environment (after nested).
 % One consideration to keep in mind is that this is a \enquote{\emph{representation}}
 % of the \mymeta{stored content} in a \enquote{\emph{verbatim}} environment.
 %
-% The \myenv*{verbatimsc} environment can be customized in the
+% The internal \myenv*{verbatimsc} environment is compatible with
+% \emph{tagged} \texttt{PDF} and can be customized in the
 % following ways after loading the \mypkg*{scontents} package:
 %
 % Using the package \mypkg{fancyvrb}:
@@ -1382,6 +1389,12 @@ This text is in the outer environment (after nested).
 % \iffalse
 %</example>
 % \fi
+%
+% \begin{important}*
+% At the moment, the \mypkg{fancyhdr}, \mypkg{listings}, and
+% \mypkg{minted} packages are not compatible with \emph{tagged}
+% \texttt{PDF}.
+% \end{important}
 %
 % \section{Other commands provided}
 %
@@ -2039,8 +2052,40 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %</example>
 % \fi
 % The command §\mergesc§ in action, adapted from Denis Bitouzé request at \url{https://github.com/pablgonz/scontents/issues/2}
-% \textattachfile[color=linkcolor,print=false]{scexamp9.ltx}{\faFile*[regular]}.
+% \textattachfile[color=linkcolor,print=false]{scexamp10.ltx}{\faFile*[regular]}.
 % \lstinputlisting[language=scontents-doc,numbers=left]{scexamp10.ltx}
+%
+% \subsection{The tagged PDF example}
+%
+% \iffalse
+%<*example>
+% \fi
+\begin{scontents}[write-out=scexamp11.ltx]
+% arara: lualatex
+% arara: clean: { extensions: [ aux, log] }
+\DocumentMetadata{lang = en-US, pdfversion = 2.0, pdfstandard = ua-2,testphase=latest}
+\documentclass{article}
+\usepackage{scontents,unicode-math,hyperref}
+\hypersetup{pdftitle = {Test scontents package},}
+\begin{document}
+% environment
+\begin{scontents}[print-env=true]
+    First code \verb|\foo|
+
+    And more code \verb|\baz|
+\end{scontents}
+
+% \typestored
+\typestored[1]{contents}
+\end{document}
+\end{scontents}
+% \iffalse
+%</example>
+% \fi
+%
+% A verification test for the §\typestored§ command and the §verbatimsc§ environment compatible with \emph{tagged} \texttt{PDF}
+% \textattachfile[color=linkcolor,print=false]{scexamp11.ltx}{\faFile*[regular]}.
+% \lstinputlisting[language=scontents-doc,numbers=left]{scexamp11.ltx}
 %
 % \newpage
 %
