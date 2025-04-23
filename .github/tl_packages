@@ -4,7 +4,7 @@ latex-bin
 latex-tools-dev
 latex-base-dev
 latex-lab-dev
-l3opacity
+l3experimental
 pdfmanagement-testphase
 latex-lab
 tagpdf
@@ -106,7 +106,6 @@ mflogo
 mflogo-font
 microtype
 minted
-# ms (not work in TL25)
 pdfescape
 pdftexcmds
 pgf
