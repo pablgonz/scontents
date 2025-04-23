@@ -2645,6 +2645,13 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
+% \begin{macro}[int]{\tl_if_empty:fTF}
+%   Some nonstandard kernel variant.
+%    \begin{macrocode}
+\prg_generate_conditional_variant:Nnn \tl_if_empty:n { f } { p, TF }
+%    \end{macrocode}
+% \end{macro}
+%
 % \subsection{Defining keys for the environment and commands}
 %
 % We add the \mymeta{keys} divided into subgroups to handle errors and
