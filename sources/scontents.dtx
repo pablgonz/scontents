@@ -2645,18 +2645,6 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}[int]{\tl_remove_once:NV,\tl_replace_all:Nxx,
-%     \tl_replace_all:Nxn,\tl_replace_all:Nnx,\tl_if_empty:fTF}
-%   Some nonstandard kernel variants.
-%
-%    \begin{macrocode}
-\cs_generate_variant:Nn \tl_remove_once:Nn { NV }
-\cs_generate_variant:Nn \tl_replace_all:Nnn { Nx, Nxx, Nnx }
-\cs_generate_variant:Nn \msg_error:nnnn { nnx }
-\prg_generate_conditional_variant:Nnn \tl_if_empty:n { f } { p, TF }
-%    \end{macrocode}
-% \end{macro}
-%
 % \subsection{Defining keys for the environment and commands}
 %
 % We add the \mymeta{keys} divided into subgroups to handle errors and

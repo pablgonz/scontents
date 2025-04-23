@@ -146,10 +146,6 @@
 \cs_generate_variant:Nn \__scontents_rescan_tokens:n { V, x }
 \cs_new:Npx \__scontents_tab: { \c_space_tl }
 \cs_new:Npn \__scontents_par: { ^^J ^^J }
-\cs_generate_variant:Nn \tl_remove_once:Nn { NV }
-\cs_generate_variant:Nn \tl_replace_all:Nnn { Nx, Nxx, Nnx }
-\cs_generate_variant:Nn \msg_error:nnnn { nnx }
-\prg_generate_conditional_variant:Nnn \tl_if_empty:n { f } { p, TF }
 \keys_define:nn { scontents / scontents }
   {
     write-env .code:n           = {
