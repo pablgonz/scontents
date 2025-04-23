@@ -3,6 +3,11 @@ l3build
 latex-bin
 latex-tools-dev
 latex-base-dev
+latex-lab-dev
+pdfmanagement-testphase
+latex-lab
+tagpdf
+luamml
 luahbtex
 context
 tex
