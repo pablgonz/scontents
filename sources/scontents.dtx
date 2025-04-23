@@ -2060,6 +2060,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \begin{description}[font=\small\sffamily,wide=0pt,style=multiline,leftmargin=\descrwidth,nosep,noitemsep]
 % \item [\fileversion{} (ctan), \filedate]
 %    \begin{itemize}
+%        \item Adapting the |verbatimsc| environment for \emph{tagged} \texttt{PDF}.
 %        \item Update minimum required to \LaTeX{} release 2024-11-01.
 %        \item Safer code for replacement |\obeyedline|.
 %    \end{itemize}
@@ -2224,8 +2225,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % Now we define some common macros to hold the package date and version:
 %    \begin{macrocode}
-%<loader>\def\ScontentsFileDate{2025-04-22}%
-%<core>\def\ScontentsCoreFileDate{2025-04-22}%
+%<loader>\def\ScontentsFileDate{2025-04-23}%
+%<core>\def\ScontentsCoreFileDate{2025-04-23}%
 %<*loader>
 \def\ScontentsFileVersion{2.3}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
@@ -2235,7 +2236,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % minimum version for correct operation and then set interfaces up.
 % The choice of \LaTeX{} release 2024-11-01 is the latest available in
 % \TeX{} Live 2024 (frozen) and is necessary to be able to implement
-% the package's full compatibility with \texttt{tagged pdf}.
+% the package's full compatibility with \emph{tagged} \texttt{PDF}.
 %
 %    \begin{macrocode}
 %<*latex>
@@ -2257,9 +2258,9 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %<context>\unprotect
 \input expl3-generic.tex
 \ExplSyntaxOn
-\tl_gset:cx { ver @ scontents . sty } { \ScontentsFileDate\space
+\tl_gset:ce { ver @ scontents . sty } { \ScontentsFileDate\space
   v\ScontentsFileVersion\space \ScontentsFileDescription }
-\iow_log:x { Package: ~ scontents ~ \use:c { ver @ scontents . sty } }
+\iow_log:e { Package: ~ scontents ~ \use:c { ver @ scontents . sty } }
 %</!latex>
 %    \end{macrocode}
 %
@@ -2310,7 +2311,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 %    \begin{macrocode}
 \tl_new:N \l_@@_env_name_tl
-\tl_const:Nx \c_@@_end_env_tl
+\tl_const:Ne \c_@@_end_env_tl
   {
     \c_backslash_str
 %<latex|plain>    end
@@ -2575,7 +2576,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   in |seq| when the key §force-eol§ is false.
 %
 %    \begin{macrocode}
-\str_const:Nx \c_@@_hidden_space_str
+\str_const:Ne \c_@@_hidden_space_str
   { \c_percent_str \c_circumflex_str \c_circumflex_str A scheol \c_percent_str }
 %    \end{macrocode}
 % \end{macro}
@@ -2640,7 +2641,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   Control sequences to replace tab (§^^I§) and form feed (§^^L§) characters.
 %
 %    \begin{macrocode}
-\cs_new:Npx \@@_tab: { \c_space_tl }
+\cs_new:Npe \@@_tab: { \c_space_tl }
 \cs_new:Npn \@@_par: { ^^J ^^J }
 %    \end{macrocode}
 % \end{macro}
@@ -2896,7 +2897,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
     \@@_tl_if_head_is_q_mark:nTF {#2}
       {
         \tl_if_empty:fTF { \int_to_roman:n { -0 #1 } }
-          { \seq_put_right:Nx \l_@@_seq_item_seq { \int_eval:n {#1} } }
+          { \seq_put_right:Ne \l_@@_seq_item_seq { \int_eval:n {#1} } }
           { #3 {#1} }
       }
       {
@@ -2985,7 +2986,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_lastfrom_seq:n #1
   {
-    \tl_gset:Nx \g_@@_temp_tl { \seq_item:cn { g_@@_name_#1_seq } {-1} }
+    \tl_gset:Ne \g_@@_temp_tl { \seq_item:cn { g_@@_name_#1_seq } {-1} }
     \group_insert_after:N \@@_rescan_tokens:V
     \group_insert_after:N \g_@@_temp_tl
     \group_insert_after:N \tl_gclear:N
@@ -3451,7 +3452,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 \cs_new_protected:Npn \@@_analyse_nesting_generic:nn #1 #2
   {
     \@@_define_generic_nesting_function:n {#1}
-    \use:x
+    \use:e
       {
         \exp_not:N \@@_analyse_nesting_generic:w #2
           \c_backslash_str #1 \tl_use:N \l_@@_env_name_tl
@@ -3492,7 +3493,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
     \bool_if:NT \l_@@_storing_bool
       {
         \bool_if:NF \l_@@_forced_eol_bool
-          { \tl_put_right:Nx #1 { \c_@@_hidden_space_str } }
+          { \tl_put_right:Ne #1 { \c_@@_hidden_space_str } }
         \@@_store_to_seq:NN #1 #2
         \bool_if:NT #3 { \@@_lastfrom_seq:V #2 }
       }
@@ -3697,9 +3698,9 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
       \cs_if_exist:NT \obeyedline
         {
           \RenewDocumentCommand \obeyedline { } { \iow_char:N \^^M }
-          \tl_replace_all:Nxx \l_@@_temp_tl { \obeyedline } { \iow_char:N \^^M }
+          \tl_replace_all:Nee \l_@@_temp_tl { \obeyedline } { \iow_char:N \^^M }
         }
-      \tl_replace_all:Nxx \l_@@_temp_tl { \iow_char:N \^^M } { \iow_char:N \^^J }
+      \tl_replace_all:Nee \l_@@_temp_tl { \iow_char:N \^^M } { \iow_char:N \^^J }
       \@@_Scontents_finish:
   }
 \cs_new_protected:Npn \@@_Scontents_finish:
@@ -3733,16 +3734,16 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
           {
             \bool_if:NTF \l_@@_overwrite_bool
               {
-                \msg_warning:nnx { scontents } { overwrite-file } {#1}
+                \msg_warning:nne { scontents } { overwrite-file } {#1}
                 \prg_return_true:
               }
               {
-                \msg_warning:nnx { scontents } { not-writing } {#1}
+                \msg_warning:nne { scontents } { not-writing } {#1}
                 \prg_return_false:
               }
           }
           {
-            \msg_warning:nnx { scontents } { writing-file } {#1}
+            \msg_warning:nne { scontents } { writing-file } {#1}
             \prg_return_true:
           }
       }
@@ -3774,6 +3775,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
     \@@_getfrom_seq:nn {#1} {#2}
         }
   }
+%</core>
 %    \end{macrocode}
 % \end{macro}
 %
@@ -3783,7 +3785,6 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   User command §\foreachsc§ to loop over \mymeta{stored content} in |seq|.
 %
 %    \begin{macrocode}
-%</core>
 %<*loader>
 \NewDocumentCommand \foreachsc { o m }
   { \@@_foreachsc_internal:nn {#1} {#2} }
@@ -3805,7 +3806,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
         { \l_@@_foreach_step_int }
         { \l_@@_foreach_stop_int }
         \@@_foreach_add_body:n
-      \tl_gset:Nx \g_@@_temp_tl
+      \tl_gset:Ne \g_@@_temp_tl
         {
           \exp_args:NNV \seq_use:Nn
             \l_@@_foreach_print_seq \l_@@_foreach_sep_tl
@@ -3817,7 +3818,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
   }
 \cs_new_protected:Npn \@@_foreach_add_body:n #1
   {
-    \seq_put_right:Nx \l_@@_foreach_print_seq
+    \seq_put_right:Ne \l_@@_foreach_print_seq
       {
         \bool_if:NT \l_@@_foreach_before_bool
           { \exp_not:V \l_@@_foreach_before_tl }
@@ -3829,6 +3830,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
           { \exp_not:V \l_@@_foreach_after_tl }
       }
   }
+%</core>
 %    \end{macrocode}
 % \end{macro}
 %
@@ -3840,7 +3842,6 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   to the log file, and then calls \cs{@@_verb_print:N}.
 %
 %    \begin{macrocode}
-%</core>
 %<*loader>
 \NewDocumentCommand \typestored { o m }
   { \@@_typestored_internal:nn {#1} {#2} }
@@ -3851,11 +3852,11 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
     \@@_bsphack:
     \group_begin:
       \seq_clear:N \l_@@_seq_item_seq
-      \str_set:Nx \l_@@_cur_seq_name_str {#2}
+      \str_set:Ne \l_@@_cur_seq_name_str {#2}
       \tl_if_novalue:nF {#1} { \keys_set:nn { scontents / typemeaning } {#1} }
       \seq_if_empty:NT \l_@@_seq_item_seq
         { \seq_set_from_clist:Nn \l_@@_seq_item_seq { 1 } }
-      \tl_set:Nx \l_@@_temp_tl
+      \tl_set:Ne \l_@@_temp_tl
         { \@@_getfrom_seq:Nn \l_@@_seq_item_seq {#2} }
       \@@_remove_trailing_eol:N \l_@@_temp_tl
       \tl_replace_all:Nxn \l_@@_temp_tl \c_@@_hidden_space_str { ^^J }
@@ -3868,7 +3869,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
             }
         }
       \@@_file_write_cmd:VV \l_@@_fname_out_tl \l_@@_temp_tl
-      \use:x
+      \use:e
         {
     \group_end:
     \bool_if:NF \l_@@_print_aux_bool { \@@_esphack: }
@@ -4025,13 +4026,9 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % \subsection{The \TeX{}, \LaTeX{} and \hologo{ConTeXt} \env{verbatimsc}}\label{env:verbatimsc}
 %
-% \begin{macro}{verbatimsc,\startverbatimsc,\stopverbatimsc}
+% \begin{macro}[int]{\endverbatimsc,\end{verbatimsc},\stopverbatimsc,\startverbatimsc,}
 %   Finally the \hologo{TeX}, \hologo{LaTeX} and \hologo{ConTeXt} version of
-%   §verbatimsc§ environment is defined. The macro §\endverbatim§
-%   in the second argument of the §verbatimsc§
-%   environment is only needed for compatibility with the \pkg{verbatim}
-%   package.
-%
+%   §verbatimsc§ environment is defined.
 %    \begin{macrocode}
 %<*loader>
 %<*!context>
@@ -4045,18 +4042,64 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
   }
 %</!context>
 %    \end{macrocode}
+%   In \hologo{ConTeXt} we use our own tool §\definetyping§.
+%    \begin{macrocode}
+%<context>\definetyping[verbatimsc]
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_declare_instance:,verbatimsc}
+%  To be compatible with \emph{tagged} \texttt{PDF} we must define the
+%  environment §verbatimsc§ in terms of the \texttt{xtemplate} module integrated
+%  into the \LaTeX{} kernel, this code is adapted directly from Mrs. Ulrike
+%  Fischer's answer to \href{https://tex.stackexchange.com/a/741178/7832}{New verbatim environment with block code (tagged-pdf)}.
 %    \begin{macrocode}
 %<*latex>
+\cs_new_protected:Nn \@@_declare_instance:
+  {
+    \DeclareInstance{blockenv}{verbatimsc}{display}
+      {
+        env-name       = verbatimsc,
+        tag-name       = verbatim,
+        tag-class      = ,
+        tagging-recipe = standard,
+        inner-level-counter = ,
+        level-increase = false,
+        setup-code     = ,
+        block-instance = displayblock,
+        inner-instance = ,
+        final-code     = \legacyverbatimsetup \tag_tool:n {paratag=codeline},
+        para-flattened = true
+      }
+  }
 \NewDocumentEnvironment { verbatimsc } { }
   {
-    \cs_set_eq:cN { @xverbatim } \@@_xverb:
-    \verbatim
+    \IfDocumentMetadataTF
+      {
+        \@@_declare_instance:
+        \UseInstance{blockenv}{verbatimsc}{}
+        \@setupverbinvisiblespace\frenchspacing\@vobeyspaces %% <--??
+        \@@_xverb:
+      }
+      {
+        \cs_set_eq:cN { @xverbatim } \@@_xverb:
+        \verbatim
+      }
   }
-  { \endverbatim }
+%    \end{macrocode}
+%   The macro §\endverbatim§ in the second argument of the §verbatimsc§
+%   environment is only needed for compatibility with the \pkg{verbatim}
+%   package.
+%    \begin{macrocode}
+  {
+    \IfDocumentMetadataTF
+      {
+        \endblockenv
+      }
+      { \endverbatim }
+  }
 %</latex>
-%<context>\definetyping[verbatimsc]
 %</loader>
-%<*core>
 %    \end{macrocode}
 % \end{macro}
 %
@@ -4068,6 +4111,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   the §width-tab§ key was set to.
 %
 %    \begin{macrocode}
+%<*core>
 \cs_new:Npn \@@_tabs_to_spaces:
   { \prg_replicate:nn { \l_@@_tab_width_int } { ~ } }
 %    \end{macrocode}
@@ -4153,6 +4197,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
       \@@_set_active_eq:NN \^^M \@@_ret:w
     }
 \group_end:
+%</core>
 %    \end{macrocode}
 % \end{macro}
 %
@@ -4164,12 +4209,9 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   A user-level wrapper for \cs{keys_set:nn}§{ scontents }§.
 %
 %    \begin{macrocode}
-%</core>
 %<*loader>
 \NewDocumentCommand \setupsc { +m }
   { \keys_set:nn { scontents } {#1} }
-%</loader>
-%<*core>
 %    \end{macrocode}
 % \end{macro}
 %
@@ -4179,8 +4221,6 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   User command §\meaningsc§ to see content stored in |seq|.
 %
 %    \begin{macrocode}
-%</core>
-%<*loader>
 \NewDocumentCommand \meaningsc { o m }
   { \@@_meaningsc_internal:nn {#1} {#2} }
 %</loader>
@@ -4210,6 +4250,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
       \cs_replacement_spec:N \l_@@_temp_tl
     }
 \group_end:
+%</core>
 %    \end{macrocode}
 % \end{macro}
 %
@@ -4219,12 +4260,9 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   User command §\countsc§ to count number of contents stored in |seq|.
 %
 %    \begin{macrocode}
-%</core>
 %<*loader>
 \NewExpandableDocumentCommand \countsc { m }
   { \seq_count:c { g_@@_name_#1_seq } }
-%</loader>
-%<*core>
 %    \end{macrocode}
 % \end{macro}
 %
@@ -4235,12 +4273,9 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   A user command §\cleanseqsc§ to clear (remove) a defined |seq|.
 %
 %    \begin{macrocode}
-%</core>
-%<*loader>
 \NewDocumentCommand \cleanseqsc { m }
   { \seq_gclear_new:c { g_@@_name_#1_seq } }
 %</loader>
-%<*core>
 %    \end{macrocode}
 % \end{macro}
 %
@@ -4249,6 +4284,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % Warning and error messages used throughout the package.
 %
 %    \begin{macrocode}
+%<*core>
 \msg_new:nnn { scontents } { junk-after-begin }
   {
     Junk~characters~#1~\msg_line_context: :

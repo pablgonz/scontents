@@ -27,14 +27,14 @@
 %%                                 t-scontents.mkiv and
 %%                                 scontents-code.tex.
 %% 
-\def\ScontentsFileDate{2025-04-22}%
+\def\ScontentsFileDate{2025-04-23}%
 \def\ScontentsFileVersion{2.3}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
 \input expl3-generic.tex
 \ExplSyntaxOn
-\tl_gset:cx { ver @ scontents . sty } { \ScontentsFileDate\space
+\tl_gset:ce { ver @ scontents . sty } { \ScontentsFileDate\space
   v\ScontentsFileVersion\space \ScontentsFileDescription }
-\iow_log:x { Package: ~ scontents ~ \use:c { ver @ scontents . sty } }
+\iow_log:e { Package: ~ scontents ~ \use:c { ver @ scontents . sty } }
 \msg_set:nnn { scontents } { already-loaded }
   { The~'scontents'~package~is~already~loaded.~Aborting~input~\msg_line_context:. }
 \cs_if_exist:NT \__scontents_rescan_tokens:n
@@ -50,7 +50,7 @@
   }
   { \endverbatimsc }
 \tl_new:N \l__scontents_env_name_tl
-\tl_const:Nx \c__scontents_end_env_tl
+\tl_const:Ne \c__scontents_end_env_tl
   {
     \c_backslash_str
     end
@@ -150,11 +150,11 @@
   { \__scontents_typestored_internal:nn {#1} {#2} }
 \NewDocumentCommand \mergesc { o m }
   { \__scontents_mergesc_internal:nn {#1} {#2} }
-\use:x
+\use:e
   {
     \cs_new_protected:Npn \exp_not:N \__scontents_xverb:w
-      ##1 \g__scontents_end_verbatimsc_tl
-      { ##1 \exp_not:N \endverbatimsc }
+      #1 \g__scontents_end_verbatimsc_tl
+      { #1 \exp_not:N \endverbatimsc }
   }
 \group_begin:
   \char_set_catcode_active:n { `\* }

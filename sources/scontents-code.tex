@@ -27,7 +27,7 @@
 %%                                 t-scontents.mkiv and
 %%                                 scontents-code.tex.
 %% 
-\def\ScontentsCoreFileDate{2025-04-22}%
+\def\ScontentsCoreFileDate{2025-04-23}%
 \begingroup
   \catcode32=10
   \endlinechar=32
@@ -130,7 +130,7 @@
 \bool_set_false:N \l__scontents_foreach_wrapper_bool
 \seq_new:N \l__scontents_foreach_print_seq
 \seq_new:c { g__scontents_name_sc!internal_seq }
-\str_const:Nx \c__scontents_hidden_space_str
+\str_const:Ne \c__scontents_hidden_space_str
   { \c_percent_str \c_circumflex_str \c_circumflex_str A scheol \c_percent_str }
 \quark_new:N \q__scontents_stop
 \quark_new:N \q__scontents_mark
@@ -144,8 +144,9 @@
 \skip_new:N \l__scontents_save_skip
 \cs_new_protected:Npn \__scontents_rescan_tokens:n #1 { \tex_scantokens:D {#1} }
 \cs_generate_variant:Nn \__scontents_rescan_tokens:n { V, x }
-\cs_new:Npx \__scontents_tab: { \c_space_tl }
+\cs_new:Npe \__scontents_tab: { \c_space_tl }
 \cs_new:Npn \__scontents_par: { ^^J ^^J }
+\prg_generate_conditional_variant:Nnn \tl_if_empty:n { f } { p, TF }
 \keys_define:nn { scontents / scontents }
   {
     write-env .code:n           = {
@@ -289,7 +290,7 @@
     \__scontents_tl_if_head_is_q_mark:nTF {#2}
       {
         \tl_if_empty:fTF { \int_to_roman:n { -0 #1 } }
-          { \seq_put_right:Nx \l__scontents_seq_item_seq { \int_eval:n {#1} } }
+          { \seq_put_right:Ne \l__scontents_seq_item_seq { \int_eval:n {#1} } }
           { #3 {#1} }
       }
       {
@@ -347,7 +348,7 @@
   }
 \cs_new_protected:Npn \__scontents_lastfrom_seq:n #1
   {
-    \tl_gset:Nx \g__scontents_temp_tl { \seq_item:cn { g__scontents_name_#1_seq } {-1} }
+    \tl_gset:Ne \g__scontents_temp_tl { \seq_item:cn { g__scontents_name_#1_seq } {-1} }
     \group_insert_after:N \__scontents_rescan_tokens:V
     \group_insert_after:N \g__scontents_temp_tl
     \group_insert_after:N \tl_gclear:N
@@ -612,7 +613,7 @@
 \cs_new_protected:Npn \__scontents_analyse_nesting_generic:nn #1 #2
   {
     \__scontents_define_generic_nesting_function:n {#1}
-    \use:x
+    \use:e
       {
         \exp_not:N \__scontents_analyse_nesting_generic:w #2
           \c_backslash_str #1 \tl_use:N \l__scontents_env_name_tl
@@ -633,7 +634,7 @@
     \bool_if:NT \l__scontents_storing_bool
       {
         \bool_if:NF \l__scontents_forced_eol_bool
-          { \tl_put_right:Nx #1 { \c__scontents_hidden_space_str } }
+          { \tl_put_right:Ne #1 { \c__scontents_hidden_space_str } }
         \__scontents_store_to_seq:NN #1 #2
         \bool_if:NT #3 { \__scontents_lastfrom_seq:V #2 }
       }
@@ -691,9 +692,9 @@
       \cs_if_exist:NT \obeyedline
         {
           \RenewDocumentCommand \obeyedline { } { \iow_char:N \^^M }
-          \tl_replace_all:Nxx \l__scontents_temp_tl { \obeyedline } { \iow_char:N \^^M }
+          \tl_replace_all:Nee \l__scontents_temp_tl { \obeyedline } { \iow_char:N \^^M }
         }
-      \tl_replace_all:Nxx \l__scontents_temp_tl { \iow_char:N \^^M } { \iow_char:N \^^J }
+      \tl_replace_all:Nee \l__scontents_temp_tl { \iow_char:N \^^M } { \iow_char:N \^^J }
       \__scontents_Scontents_finish:
   }
 \cs_new_protected:Npn \__scontents_Scontents_finish:
@@ -727,16 +728,16 @@
           {
             \bool_if:NTF \l__scontents_overwrite_bool
               {
-                \msg_warning:nnx { scontents } { overwrite-file } {#1}
+                \msg_warning:nne { scontents } { overwrite-file } {#1}
                 \prg_return_true:
               }
               {
-                \msg_warning:nnx { scontents } { not-writing } {#1}
+                \msg_warning:nne { scontents } { not-writing } {#1}
                 \prg_return_false:
               }
           }
           {
-            \msg_warning:nnx { scontents } { writing-file } {#1}
+            \msg_warning:nne { scontents } { writing-file } {#1}
             \prg_return_true:
           }
       }
@@ -768,7 +769,7 @@
         { \l__scontents_foreach_step_int }
         { \l__scontents_foreach_stop_int }
         \__scontents_foreach_add_body:n
-      \tl_gset:Nx \g__scontents_temp_tl
+      \tl_gset:Ne \g__scontents_temp_tl
         {
           \exp_args:NNV \seq_use:Nn
             \l__scontents_foreach_print_seq \l__scontents_foreach_sep_tl
@@ -780,7 +781,7 @@
   }
 \cs_new_protected:Npn \__scontents_foreach_add_body:n #1
   {
-    \seq_put_right:Nx \l__scontents_foreach_print_seq
+    \seq_put_right:Ne \l__scontents_foreach_print_seq
       {
         \bool_if:NT \l__scontents_foreach_before_bool
           { \exp_not:V \l__scontents_foreach_before_tl }
@@ -797,11 +798,11 @@
     \__scontents_bsphack:
     \group_begin:
       \seq_clear:N \l__scontents_seq_item_seq
-      \str_set:Nx \l__scontents_cur_seq_name_str {#2}
+      \str_set:Ne \l__scontents_cur_seq_name_str {#2}
       \tl_if_novalue:nF {#1} { \keys_set:nn { scontents / typemeaning } {#1} }
       \seq_if_empty:NT \l__scontents_seq_item_seq
         { \seq_set_from_clist:Nn \l__scontents_seq_item_seq { 1 } }
-      \tl_set:Nx \l__scontents_temp_tl
+      \tl_set:Ne \l__scontents_temp_tl
         { \__scontents_getfrom_seq:Nn \l__scontents_seq_item_seq {#2} }
       \__scontents_remove_trailing_eol:N \l__scontents_temp_tl
       \tl_replace_all:Nxn \l__scontents_temp_tl \c__scontents_hidden_space_str { ^^J }
@@ -814,7 +815,7 @@
             }
         }
       \__scontents_file_write_cmd:VV \l__scontents_fname_out_tl \l__scontents_temp_tl
-      \use:x
+      \use:e
         {
     \group_end:
     \bool_if:NF \l__scontents_print_aux_bool { \__scontents_esphack: }
@@ -898,7 +899,7 @@
     \cs_new_protected:Npn \exp_not:N \__scontents_remove_trailing_eol:w #1
         \c__scontents_hidden_space_str \s__scontents_stop #2 \s__scontents_mark #3
   }   {
-        \tl_set:Nx #3
+        \tl_set:Ne #3
           {
             \tl_if_empty:nTF {#2}
               { \exp_not:o { \__scontents_use_delimit_by_s_stop:nw #1 } }
@@ -921,7 +922,7 @@
       { \__scontents_parse_mergesc_range:nw {#1} ##1 - \q__scontents_mark - \s__scontents_mark }
     \seq_map_inline:Nn \l__scontents_seq_item_seq
       {
-        \seq_gput_right:cx { g__scontents_name_sc!internal_seq }
+        \seq_gput_right:ce { g__scontents_name_sc!internal_seq }
           { \seq_item:cn { g__scontents_name_#1_seq } {##1} }
       }
     \__scontents_use_none_delimit_by_s_stop:w
@@ -930,7 +931,7 @@
   {
     \cs_set_protected:Npn \__scontents_tmp:w ##1
       {
-        \msg_error:nnxxx { scontents } { index-out-of-range }
+        \msg_error:nneee { scontents } { index-out-of-range }
           {##1} {#1} { \seq_count:c { g__scontents_name_#1_seq } }
       }
     \__scontents_range_parser:nnxn {#2} {#3}
@@ -942,7 +943,7 @@
 \cs_new_protected:Npn \__scontents_do_noligs:N #1
   {
     \char_set_catcode_active:N #1
-    \cs_set:cpx { __scontents_active_char_ \token_to_str:N #1 : }
+    \cs_set:cpe { __scontents_active_char_ \token_to_str:N #1 : }
       {
         \mode_leave_vertical:
         \tex_kern:D \c_zero_dim
@@ -954,7 +955,8 @@
   { T, F, TF }
   {
     \exp_after:wN \if_meaning:w
-      \exp_after:wN \q__scontents_mark \__scontents_use_i_delimit_by_s_stop:nw #1 ? \s__scontents_stop
+      \exp_after:wN
+        \q__scontents_mark \__scontents_use_i_delimit_by_s_stop:nw #1 ? \s__scontents_stop
       \prg_return_true:
     \else:
       \prg_return_false:

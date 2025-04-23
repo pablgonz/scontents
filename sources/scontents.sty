@@ -27,7 +27,7 @@
 %%                                 t-scontents.mkiv and
 %%                                 scontents-code.tex.
 %% 
-\def\ScontentsFileDate{2025-04-22}%
+\def\ScontentsFileDate{2025-04-23}%
 \def\ScontentsFileVersion{2.3}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
 \NeedsTeXFormat{LaTeX2e}[2024-11-01]
@@ -42,7 +42,7 @@
   }
   { \end{verbatimsc} }
 \tl_new:N \l__scontents_env_name_tl
-\tl_const:Nx \c__scontents_end_env_tl
+\tl_const:Ne \c__scontents_end_env_tl
   {
     \c_backslash_str
     end
@@ -91,18 +91,50 @@
   { \__scontents_typestored_internal:nn {#1} {#2} }
 \NewDocumentCommand \mergesc { o m }
   { \__scontents_mergesc_internal:nn {#1} {#2} }
-\use:x
+\use:e
   {
     \cs_new_protected:Npn \exp_not:N \__scontents_xverb:w
-      ##1 \g__scontents_end_verbatimsc_tl
-      { ##1 \exp_not:N \end{verbatimsc} }
+      #1 \g__scontents_end_verbatimsc_tl
+      { #1 \exp_not:N \end{verbatimsc} }
+  }
+\cs_new_protected:Nn \__scontents_declare_instance:
+  {
+    \DeclareInstance{blockenv}{verbatimsc}{display}
+      {
+        env-name       = verbatimsc,
+        tag-name       = verbatim,
+        tag-class      = ,
+        tagging-recipe = standard,
+        inner-level-counter = ,
+        level-increase = false,
+        setup-code     = ,
+        block-instance = displayblock,
+        inner-instance = ,
+        final-code     = \legacyverbatimsetup \tag_tool:n {paratag=codeline},
+        para-flattened = true
+      }
   }
 \NewDocumentEnvironment { verbatimsc } { }
   {
-    \cs_set_eq:cN { @xverbatim } \__scontents_xverb:
-    \verbatim
+    \IfDocumentMetadataTF
+      {
+        \__scontents_declare_instance:
+        \UseInstance{blockenv}{verbatimsc}{}
+        \@setupverbinvisiblespace\frenchspacing\@vobeyspaces %% <--??
+        \__scontents_xverb:
+      }
+      {
+        \cs_set_eq:cN { @xverbatim } \__scontents_xverb:
+        \verbatim
+      }
   }
-  { \endverbatim }
+  {
+    \IfDocumentMetadataTF
+      {
+        \endblockenv
+      }
+      { \endverbatim }
+  }
 \group_begin:
   \cs_new_protected:Npn \__scontents_plain_disable_outer_par:
     { }

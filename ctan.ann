@@ -1,3 +1,4 @@
-Changes in v2.3 2025-04-22:
+Changes in v2.3 2025-04-23:
+- Adapting the `verbatimsc` environment for _tagged_ PDF.
 - Update minimum required to LaTeX release 2024-11-01.
 – Safer code for replacement `\obeyedline`.

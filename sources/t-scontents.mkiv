@@ -37,20 +37,20 @@
 %D         title=\CONTEXT\ User Module,
 %D      subtitle=Storing Contents,
 %D        author=Pablo González,
-%D          date=2025-04-22,
+%D          date=2025-04-23,
 %D     copyright=Pablo González,
 %D         email=pablgonz@educarchile.cl,
 %D       license=LPPL]
-\def\ScontentsFileDate{2025-04-22}%
+\def\ScontentsFileDate{2025-04-23}%
 \def\ScontentsFileVersion{2.3}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
 \writestatus{loading}{User Module scontents v\ScontentsFileVersion}
 \unprotect
 \input expl3-generic.tex
 \ExplSyntaxOn
-\tl_gset:cx { ver @ scontents . sty } { \ScontentsFileDate\space
+\tl_gset:ce { ver @ scontents . sty } { \ScontentsFileDate\space
   v\ScontentsFileVersion\space \ScontentsFileDescription }
-\iow_log:x { Package: ~ scontents ~ \use:c { ver @ scontents . sty } }
+\iow_log:e { Package: ~ scontents ~ \use:c { ver @ scontents . sty } }
 \tl_new:N \g__scontents_end_verbatimsc_tl
 \tl_gset_rescan:Nnn \g__scontents_end_verbatimsc_tl
   {
@@ -58,7 +58,7 @@
   }
   { \stopverbatimsc }
 \tl_new:N \l__scontents_env_name_tl
-\tl_const:Nx \c__scontents_end_env_tl
+\tl_const:Ne \c__scontents_end_env_tl
   {
     \c_backslash_str
     stop
