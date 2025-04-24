@@ -27,7 +27,7 @@
 %%                                 t-scontents.mkiv and
 %%                                 scontents-code.tex.
 %% 
-\def\ScontentsCoreFileDate{2025-04-23}%
+\def\ScontentsCoreFileDate{2025-04-24}%
 \begingroup
   \catcode32=10
   \endlinechar=32
@@ -143,7 +143,7 @@
 \int_new:N \l__scontents_save_sf_int
 \skip_new:N \l__scontents_save_skip
 \cs_new_protected:Npn \__scontents_rescan_tokens:n #1 { \tex_scantokens:D {#1} }
-\cs_generate_variant:Nn \__scontents_rescan_tokens:n { V, x }
+\cs_generate_variant:Nn \__scontents_rescan_tokens:n { V, e }
 \cs_new:Npe \__scontents_tab: { \c_space_tl }
 \cs_new:Npn \__scontents_par: { ^^J ^^J }
 \prg_generate_conditional_variant:Nnn \tl_if_empty:n { f } { p, TF }
@@ -273,18 +273,18 @@
   }
 \cs_new_protected:Npn \__scontents_parse_type_meaning_range:w #1 - #2 - #3 \s__scontents_mark
   {
-    \__scontents_range_parser:nnxn {#1} {#2}
+    \__scontents_range_parser:nnen {#1} {#2}
       { \seq_count:c { g__scontents_name_\l__scontents_cur_seq_name_str _seq } }
       { \msg_error:nnn { scontents } { type-key-unknown } }
   }
 \cs_new_protected:Npn \__scontents_range_parser:nnnn #1 #2 #3 #4
   {
-    \exp_args:Nxx \__scontents_range_parser_aux:nnn
+    \exp_args:Nee \__scontents_range_parser_aux:nnn
       { \str_if_eq:nnTF {#1} { end } {#3} { \exp_not:n {#1} } }
       { \str_if_eq:nnTF {#2} { end } {#3} { \exp_not:n {#2} } }
       { #4 }
   }
-\cs_generate_variant:Nn \__scontents_range_parser:nnnn { nnxn }
+\cs_generate_variant:Nn \__scontents_range_parser:nnnn { nnen }
 \cs_new_protected:Npn \__scontents_range_parser_aux:nnn #1 #2 #3
   {
     \__scontents_tl_if_head_is_q_mark:nTF {#2}
@@ -301,7 +301,7 @@
             \int_compare:nNnTF {#2} > {#1}
               { \int_step_inline:nnnn {#1} { 1 } {#2} }
               { \int_step_inline:nnnn {#1} { -1 } {#2} }
-                { \seq_put_right:Nn \l__scontents_seq_item_seq {##1} }
+              { \seq_put_right:Nn \l__scontents_seq_item_seq {##1} }
           }
           { #3 { #1-#2 } }
       }
@@ -314,7 +314,7 @@
       { \seq_new:c { g__scontents_name_#1_seq } }
     \seq_gput_right:cn { g__scontents_name_#1_seq } {#2}
   }
-\cs_generate_variant:Nn \__scontents_append_contents:nn { Vx }
+\cs_generate_variant:Nn \__scontents_append_contents:nn { Ve }
 \cs_new:Npn \__scontents_getfrom_seq:Nn #1#2
   {
     \seq_if_exist:cTF { g__scontents_name_#2_seq }
@@ -358,7 +358,7 @@
 \cs_new_protected:Npn \__scontents_store_to_seq:NN #1#2
   {
     \tl_log:N #1
-    \__scontents_append_contents:Vx #2 { \exp_not:V #1 }
+    \__scontents_append_contents:Ve #2 { \exp_not:V #1 }
   }
 \cs_new_protected:Npn \__scontents_env_setting:nn #1 #2
   {
@@ -419,7 +419,7 @@
     {
       \tl_if_blank:nF {#2}
         {
-          \msg_error:nnxn { scontents } { junk-after-begin }
+          \msg_error:nnen { scontents } { junk-after-begin }
             { after~\c_backslash_str begin { \l__scontents_env_name_tl } #1 } {#2}
         }
       \__scontents_make_control_chars_active:
@@ -432,7 +432,7 @@
         { \l__scontents_storing_bool }
         { \tl_if_empty_p:N \l__scontents_macro_tmp_tl }
         {
-          \msg_warning:nnx { scontents } { empty-environment } { \l__scontents_env_name_tl }
+          \msg_warning:nne { scontents } { empty-environment } { \l__scontents_env_name_tl }
         }
     }
   \cs_new_protected:Npn \__scontents_file_tl_write_start:n #1
@@ -447,7 +447,7 @@
         \tl_clear:N \l__scontents_every_line_env_tl
         \seq_map_function:NN \l_char_special_seq \char_set_catcode_other:N
         \int_step_function:nnnN { 128 } { 1 } { 255 } \char_set_catcode_letter:n
-        \cs_set_protected:Npx \__scontents_ret:w ##1 ^^M
+        \cs_set_protected:Npe \__scontents_ret:w ##1 ^^M
           {
             \exp_not:N \__scontents_verb_processor_iterate:w
             ##1 \c__scontents_end_env_tl
@@ -459,12 +459,12 @@
     }
   \cs_new:Npn \__scontents_setup_verb_processor:
     {
-      \use:x
+      \use:e
         {
           \cs_set:Npn \exp_not:N \__scontents_verb_processor_iterate:w
-            ####1 \c__scontents_end_env_tl
-            ####2 \c__scontents_end_env_tl
-            ####3 \exp_not:N \q__scontents_stop
+            ##1 \c__scontents_end_env_tl
+            ##2 \c__scontents_end_env_tl
+            ##3 \exp_not:N \q__scontents_stop
         }   { \__scontents_verb_processor_iterate:nnn {##1} {##2} {##3} }
     }
   \cs_new:Npn \__scontents_verb_processor_iterate:nnn #1 #2 #3
@@ -520,7 +520,7 @@
     {
       \bool_if:NT \l__scontents_writable_bool
         { \iow_close:N \l__scontents_file_iow }
-      \use:x
+      \use:e
         {
           \group_end:
           \bool_if:NT \l__scontents_storing_bool
@@ -578,10 +578,10 @@
       { \prg_return_false: }
   }
 \cs_new:Npn \__scontents_use_none_delimit_by_q_stop:w #1 \q__scontents_stop { }
-\use:x
+\use:e
   {
-    \cs_new_protected:Npn \exp_not:N \__scontents_analyse_nesting_latex:w ##1
-      \c_backslash_str begin \c_left_brace_str ##2 \c_right_brace_str
+    \cs_new_protected:Npn \exp_not:N \__scontents_analyse_nesting_latex:w #1
+      \c_backslash_str begin \c_left_brace_str #2 \c_right_brace_str
   }   {
         \__scontents_tl_if_head_is_q_mark:nTF {#2}
           { \__scontents_use_none_delimit_by_q_stop:w }
@@ -591,7 +591,7 @@
             \__scontents_analyse_nesting_latex:w
           }
       }
-\cs_new_protected:Npx \__scontents_analyse_nesting_latex:n #1
+\cs_new_protected:Npe \__scontents_analyse_nesting_latex:n #1
   {
     \__scontents_analyse_nesting_latex:w #1
       \c_backslash_str begin
@@ -622,11 +622,11 @@
   }
 \cs_new_protected:Npn \__scontents_define_generic_nesting_function:n #1
   {
-    \use:x
+    \use:e
       {
-        \cs_set_protected:Npn \exp_not:N \__scontents_analyse_nesting_generic:w ####1
+        \cs_set_protected:Npn \exp_not:N \__scontents_analyse_nesting_generic:w ##1
           \c_backslash_str #1 \tl_use:N \l__scontents_env_name_tl
-            ####2 \exp_not:N \q__scontents_stop
+            ##2 \exp_not:N \q__scontents_stop
       }   { \__scontents_analyse_nesting_generic_process:nn {##1} {##2} }
   }
 \cs_new_protected:Npn \__scontents_finish_storing:NNN #1 #2 #3
@@ -704,7 +704,7 @@
         \l__scontents_temp_tl
         \l__scontents_name_seq_cmd_tl
         \l__scontents_print_cmd_bool
-      \use:x
+      \use:e
         {
     \group_end:
     \bool_if:NF \l__scontents_print_cmd_bool { \__scontents_esphack: }
@@ -747,7 +747,7 @@
   {
     \group_begin:
       \int_set:Nn \tex_newlinechar:D { `\^^J }
-      \__scontents_rescan_tokens:x
+      \__scontents_rescan_tokens:e
         {
     \endgroup % This assumes \catcode`\\=0... Things might go off otherwise.
     \__scontents_getfrom_seq:nn {#1} {#2}
@@ -805,7 +805,7 @@
       \tl_set:Ne \l__scontents_temp_tl
         { \__scontents_getfrom_seq:Nn \l__scontents_seq_item_seq {#2} }
       \__scontents_remove_trailing_eol:N \l__scontents_temp_tl
-      \tl_replace_all:Nxn \l__scontents_temp_tl \c__scontents_hidden_space_str { ^^J }
+      \tl_replace_all:Nen \l__scontents_temp_tl { \c__scontents_hidden_space_str } { ^^J }
       \tl_log:N \l__scontents_temp_tl
       \tl_if_empty:NF \l__scontents_temp_tl
         {
@@ -831,7 +831,7 @@
       \cs_set_eq:NN ^^M \scan_stop:
       \cs_set_eq:cN { do@noligs } \__scontents_do_noligs:N
       \int_set:Nn \tex_newlinechar:D { `\^^J }
-      \__scontents_rescan_tokens:x
+      \__scontents_rescan_tokens:e
         {
           \__scontents_format_case:nnn
             { \exp_not:N \begin{verbatimsc} } % LaTeX
@@ -858,9 +858,9 @@
         { \cs_set_eq:NN \__scontents_mergesc_output_cmd:nn \__scontents_meaningsc_internal:nn }
   }
 \cs_new_protected:Npn \__scontents_mergesc_output_cmd:nn #1 #2
-  { \msg_error:nn { scontents } { mergesc-missing-cmd } }
-\msg_new:nnn { scontents } { mergesc-missing-cmd }
-  { Missing~output~command~for~\iow_char:N\\mergesc~\msg_line_context:. }
+  {
+    \msg_error:nn { scontents } { mergesc-missing-cmd }
+  }
 \cs_new_protected:Npn \__scontents_mergesc_internal:nn #1 #2
   {
     \group_begin:
@@ -878,7 +878,7 @@
          }
       \seq_gclear:c { g__scontents_name_sc!internal_seq }
       \__scontents_mergesc_parse_list:n {#2}
-      \exp_args:Nx \__scontents_mergesc_output_cmd:nn
+      \exp_args:Ne \__scontents_mergesc_output_cmd:nn
         { 1-end, \exp_not:V \l__scontents_keys_tl } { sc!internal }
     \group_end:
   }
@@ -934,7 +934,7 @@
         \msg_error:nneee { scontents } { index-out-of-range }
           {##1} {#1} { \seq_count:c { g__scontents_name_#1_seq } }
       }
-    \__scontents_range_parser:nnxn {#2} {#3}
+    \__scontents_range_parser:nnen {#2} {#3}
       { \seq_count:c { g__scontents_name_#1_seq } }
       { \__scontents_tmp:w }
   }
@@ -981,7 +981,7 @@
   {
     \group_begin:
       \seq_clear:N \l__scontents_seq_item_seq
-      \str_set:Nx \l__scontents_cur_seq_name_str {#2}
+      \str_set:Ne \l__scontents_cur_seq_name_str {#2}
       \tl_if_novalue:nF {#1} { \keys_set:nn { scontents / typemeaning } {#1} }
       \seq_if_empty:NT \l__scontents_seq_item_seq
         { \seq_set_from_clist:Nn \l__scontents_seq_item_seq { 1 } }
@@ -992,13 +992,13 @@
   \char_set_catcode_active:N \^^I
   \cs_new_protected:Npn \__scontents_meaningsc:n #1
     {
-      \tl_set:Nx \l__scontents_temp_tl
+      \tl_set:Ne \l__scontents_temp_tl
         { \__scontents_getfrom_seq:Nn \l__scontents_seq_item_seq {#1} }
-      \tl_replace_all:Nxn \l__scontents_temp_tl { \iow_char:N \^^J } { ~ }
-      \tl_replace_all:Nxn \l__scontents_temp_tl \c__scontents_hidden_space_str { ~ }
+      \tl_replace_all:Nen \l__scontents_temp_tl { \iow_char:N \^^J } { ~ }
+      \tl_replace_all:Nen \l__scontents_temp_tl { \c__scontents_hidden_space_str } { ~ }
       \tl_log:N \l__scontents_temp_tl
       \tl_use:N \l__scontents_verb_font_tl
-      \tl_replace_all:Nnx \l__scontents_temp_tl { ^^I } { \__scontents_tabs_to_spaces: }
+      \tl_replace_all:Nne \l__scontents_temp_tl { ^^I } { \__scontents_tabs_to_spaces: }
       \cs_replacement_spec:N \l__scontents_temp_tl
     }
 \group_end:
@@ -1031,6 +1031,8 @@
   { Multiple~\c_backslash_str begin{ \l__scontents_env_name_tl }~\msg_line_context:.}
 \msg_new:nnn { scontents } { undefined-storage }
   { Storage~named~'#1'~is~not~defined. }
+\msg_new:nnn { scontents } { mergesc-missing-cmd }
+  { Missing~output~command~for~\iow_char:N\\mergesc~\msg_line_context:. }
 \msg_new:nnn { scontents } { index-out-of-range }
   {
     \int_compare:nNnTF {#1} = { 0 }

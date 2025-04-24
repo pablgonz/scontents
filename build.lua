@@ -21,8 +21,8 @@
 
 -- General package identification
 module     = "scontents"
-pkgversion = "2.3"
-pkgdate    = "2025-04-23"
+pkgversion = "2.4"
+pkgdate    = "2025-04-24"
 
 -- Configuration of files for build and installation
 maindir       = "."
@@ -354,7 +354,7 @@ if options["target"] == "testpkg" then
   -- Fifth (Tagged PDF)
   local file = jobname(tmpdir.."/test-tagged-pdf.tex")
   print("Running fifth test on the file: "..file..".tex using [lualatex]")
-  errorlevel = run(tmpdir, "lualatex "..file..".tex > "..os_null)
+  errorlevel = run(tmpdir, "lualatex "..file..".tex")
   if errorlevel ~= 0 then
     local f = assert(io.open(tmpdir.."/"..file..".log", "r"))
     err_log_file = f:read("*all")

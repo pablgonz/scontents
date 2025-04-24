@@ -921,23 +921,23 @@
 % \setlength{\tabcolsep}{0.25em}
 % \begin{center}
 % \small
-% \begin{tabular}{cccccccc}
+% \begin{tabular}{ccccccccc}
 % \toprule
-% \texttt{key} &package &\ics*{setupsc} &\myenv*{scontents} &\ics*{Scontents} &\ics*{Scontents*} &\ics*{typestored} &\ics*{meaningsc}\\
+% \texttt{key} &package &\ics*{setupsc} &\myenv*{scontents} &\ics*{Scontents} &\ics*{Scontents*} &\ics*{typestored} &\ics*{meaningsc} &\ics*{mergesc}\\
 % \midrule
-%  \mykey{store-env} & \cmark  & \cmark  &  \cmark  & \xmark  & \xmark  & \xmark  & \xmark \\
-%  \mykey{store-cmd} & \cmark  & \cmark  &  \xmark  & \cmark  & \cmark  & \xmark  & \xmark \\
-%  \mykey{print-env} & \cmark  & \cmark  &  \cmark  & \xmark  & \xmark  & \xmark  & \xmark \\
-%  \mykey{print-cmd} & \cmark  & \cmark  &  \xmark  & \cmark  & \cmark  & \xmark  & \xmark \\
-%  \mykey{print-all} & \cmark  & \cmark  &  \xmark  & \xmark  & \xmark  & \xmark  & \xmark \\
-%  \mykey{store-all} & \cmark  & \cmark  &  \xmark  & \xmark  & \xmark  & \xmark  & \xmark \\
-%  \mykey{write-env} & \xmark  & \xmark  &  \cmark  & \xmark  & \xmark  & \xmark  & \xmark \\
-%  \mykey{write-cmd} & \xmark  & \xmark  &  \xmark  & \xmark  & \cmark  & \xmark  & \xmark \\
-%  \mykey{write-out} & \xmark  & \xmark  &  \cmark  & \xmark  & \cmark  & \xmark  & \xmark \\
-%  \mykey{overwrite} & \cmark  & \cmark  &  \cmark  & \xmark  & \cmark  & \xmark  & \xmark \\
-%  \mykey{width-tab} & \cmark  & \cmark  &  \xmark  & \xmark  & \xmark  & \cmark  & \cmark \\
-%  \mykey{force-eol} & \cmark  & \cmark  &  \cmark  & \cmark  & \cmark  & \xmark  & \xmark \\
-%  \mykey{verb-font} & \cmark  & \cmark  &  \xmark  & \xmark  & \xmark  & \xmark  & \xmark \\
+%  \mykey{store-env} & \cmark  & \cmark  &  \cmark  & \xmark  & \xmark  & \xmark  & \xmark & \xmark \\
+%  \mykey{store-cmd} & \cmark  & \cmark  &  \xmark  & \cmark  & \cmark  & \xmark  & \xmark & \xmark \\
+%  \mykey{print-env} & \cmark  & \cmark  &  \cmark  & \xmark  & \xmark  & \xmark  & \xmark & \xmark \\
+%  \mykey{print-cmd} & \cmark  & \cmark  &  \xmark  & \cmark  & \cmark  & \xmark  & \xmark & \cmark \\
+%  \mykey{print-all} & \cmark  & \cmark  &  \xmark  & \xmark  & \xmark  & \xmark  & \xmark & \xmark \\
+%  \mykey{store-all} & \cmark  & \cmark  &  \xmark  & \xmark  & \xmark  & \xmark  & \xmark & \xmark \\
+%  \mykey{write-env} & \xmark  & \xmark  &  \cmark  & \xmark  & \xmark  & \xmark  & \xmark & \xmark \\
+%  \mykey{write-cmd} & \xmark  & \xmark  &  \xmark  & \xmark  & \cmark  & \xmark  & \xmark & \xmark \\
+%  \mykey{write-out} & \xmark  & \xmark  &  \cmark  & \xmark  & \cmark  & \xmark  & \xmark & \cmark \\
+%  \mykey{overwrite} & \cmark  & \cmark  &  \cmark  & \xmark  & \cmark  & \xmark  & \xmark & \cmark \\
+%  \mykey{width-tab} & \cmark  & \cmark  &  \xmark  & \xmark  & \xmark  & \cmark  & \cmark & \cmark \\
+%  \mykey{force-eol} & \cmark  & \cmark  &  \cmark  & \cmark  & \cmark  & \xmark  & \xmark & \xmark \\
+%  \mykey{verb-font} & \cmark  & \cmark  &  \xmark  & \xmark  & \xmark  & \xmark  & \xmark & \xmark \\
 % \bottomrule
 % \end{tabular}
 % \end{center}
@@ -2105,6 +2105,11 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \begin{description}[font=\small\sffamily,wide=0pt,style=multiline,leftmargin=\descrwidth,nosep,noitemsep]
 % \item [\fileversion{} (ctan), \filedate]
 %    \begin{itemize}
+%        \item Optimization of expansion code from |x| to |e|.
+%        \item Minor adjustments in documentation.
+%    \end{itemize}
+% \item [v2.3 (ctan), 2025-04-23]
+%    \begin{itemize}
 %        \item Adapting the |verbatimsc| environment for \emph{tagged} \texttt{PDF}.
 %        \item Update minimum required to \LaTeX{} release 2024-11-01.
 %        \item Safer code for replacement |\obeyedline|.
@@ -2215,15 +2220,19 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \begin{thebibliography}{9}
 % \bibitem{expl3} The \hologo{LaTeX} Project. \enquote{The \textsf{expl3}
 % package}. Available from
-% \textsc{ctan}, \url{https://www.ctan.org/pkg/expl3}, 2023.
+% \textsc{ctan}, \url{https://www.ctan.org/pkg/expl3}, 2025.
 %
-% \bibitem{xparse} The \hologo{LaTeX} Project. \enquote{The \textsf{xparse}
-% package}. Available from
-% \textsc{ctan}, \url{https://www.ctan.org/pkg/xparse}, 2023.
+% \bibitem{inter3} The \hologo{LaTeX} Project. \enquote{The \hologo{LaTeX}3
+% Interfaces}. Available from
+% \textsc{ctan}, \url{https://www.ctan.org/pkg/l3kernel}, 2025.
 %
-% \bibitem{l3keys} The \hologo{LaTeX} Project. \enquote{The \textsf{l3keys2e}
-% package}. Available from
-% \textsc{ctan}, \url{https://www.ctan.org/pkg/l3keys2e}, 2022.
+% \bibitem{latex2e} The \hologo{LaTeX} Project. \enquote{The \hologo{LaTeX2e}
+% sources}. Available from
+% \textsc{ctan}, \url{https://ctan.org/tex-archive/macros/latex/base}, 2025.
+%
+% \bibitem{userguide} The \hologo{LaTeX} Project. \enquote{\hologo{LaTeX} for authors
+% current version}. Available from
+% \textsc{ctan}, \url{https://ctan.org/pkg/latex-base}, 2025.
 %
 % \bibitem{keyval} \textsc{Wright, Joseph}. \enquote{Programming
 % \textsf{key–value} in \textsf{expl3}}. Available from
@@ -2270,10 +2279,10 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % Now we define some common macros to hold the package date and version:
 %    \begin{macrocode}
-%<loader>\def\ScontentsFileDate{2025-04-23}%
-%<core>\def\ScontentsCoreFileDate{2025-04-23}%
+%<loader>\def\ScontentsFileDate{2025-04-24}%
+%<core>\def\ScontentsCoreFileDate{2025-04-24}%
 %<*loader>
-\def\ScontentsFileVersion{2.3}%
+\def\ScontentsFileVersion{2.4}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
 %    \end{macrocode}
 %
@@ -2614,7 +2623,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \end{macro}
 %
 % \begin{macro}{\c_@@_hidden_space_str}
-%   \cs{c_@@_hidden_space_str} is a constant \emph{string} to used to hide
+%   The variable \cs{c_@@_hidden_space_str} is a constant \emph{string} to used to hide
 %   the \mymeta{forced space} added by \hologo{TeX} when recording content
 %   in a macro. This \emph{string} contains the \emph{reserved phrase}
 %   ``§%§§^^Ascheol%§'' which is added to the end of the argument stored
@@ -2626,30 +2635,23 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\q_@@_stop,\q_@@_mark}
-%   Some quarks used along the code as macro delimiters.
+% \begin{macro}{\q_@@_stop,\q_@@_mark,\s_@@_stop,\s_@@_mark}
+%   Some quarks and scan's used along the code as macro delimiters.
 %
 %    \begin{macrocode}
 \quark_new:N \q_@@_stop
 \quark_new:N \q_@@_mark
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}{\s_@@_stop,\s_@@_mark}
-%    \begin{macrocode}
 \scan_new:N \s_@@_stop
 \scan_new:N \s_@@_mark
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\l_@@_cur_seq_name_str}
+% \begin{macro}{\l_@@_cur_seq_name_str, \@@_use_delimit_by_s_stop:nw,
+%               \@@_use_i_delimit_by_s_stop:nw, \@@_use_none_delimit_by_s_stop:w,}
+%   Internal variables used by §\typestored§ and §\mergesc§.
+%
 %    \begin{macrocode}
 \str_new:N \l_@@_cur_seq_name_str
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}{\@@_use_i_delimit_by_s_stop:nw,\@@_use_none_delimit_by_s_stop:w}
-%    \begin{macrocode}
 \cs_new:Npn \@@_use_delimit_by_s_stop:nw #1 \s_@@_stop {#1}
 \cs_new:Npn \@@_use_i_delimit_by_s_stop:nw #1 #2 \s_@@_stop {#1}
 \cs_new:Npn \@@_use_none_delimit_by_s_stop:w #1 \s_@@_stop { }
@@ -2665,7 +2667,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\@@_rescan_tokens:n,\@@_rescan_tokens:x,\@@_rescan_tokens:V}
+% \begin{macro}{\@@_rescan_tokens:n,\@@_rescan_tokens:V,\@@_rescan_tokens:e}
 %   The function \cs{tl_rescan:nn} provided by \pkg{expl3} doesn't fit
 %   the needs of this package because it does not allow catcode changes
 %   inside the argument, so verbatim commands used inside one of
@@ -2678,7 +2680,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_rescan_tokens:n #1 { \tex_scantokens:D {#1} }
-\cs_generate_variant:Nn \@@_rescan_tokens:n { V, x }
+\cs_generate_variant:Nn \@@_rescan_tokens:n { V, e }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -2925,18 +2927,18 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
   }
 \cs_new_protected:Npn \@@_parse_type_meaning_range:w #1 - #2 - #3 \s_@@_mark
   {
-    \@@_range_parser:nnxn {#1} {#2}
+    \@@_range_parser:nnen {#1} {#2}
       { \seq_count:c { g_@@_name_\l_@@_cur_seq_name_str _seq } }
       { \msg_error:nnn { scontents } { type-key-unknown } }
   }
 \cs_new_protected:Npn \@@_range_parser:nnnn #1 #2 #3 #4
   {
-    \exp_args:Nxx \@@_range_parser_aux:nnn
+    \exp_args:Nee \@@_range_parser_aux:nnn
       { \str_if_eq:nnTF {#1} { end } {#3} { \exp_not:n {#1} } }
       { \str_if_eq:nnTF {#2} { end } {#3} { \exp_not:n {#2} } }
       { #4 }
   }
-\cs_generate_variant:Nn \@@_range_parser:nnnn { nnxn }
+\cs_generate_variant:Nn \@@_range_parser:nnnn { nnen }
 \cs_new_protected:Npn \@@_range_parser_aux:nnn #1 #2 #3
   {
     \@@_tl_if_head_is_q_mark:nTF {#2}
@@ -2953,7 +2955,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
             \int_compare:nNnTF {#2} > {#1}
               { \int_step_inline:nnnn {#1} { 1 } {#2} }
               { \int_step_inline:nnnn {#1} { -1 } {#2} }
-                { \seq_put_right:Nn \l_@@_seq_item_seq {##1} }
+              { \seq_put_right:Nn \l_@@_seq_item_seq {##1} }
           }
           { #3 { #1-#2 } }
       }
@@ -2966,7 +2968,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   The storage of the package is done using |seq| variables.  Here we
 %   set up the macros that will manage the variables.
 %
-% \begin{macro}{\@@_append_contents:nn,\@@_append_contents:Vx}
+% \begin{macro}{\@@_append_contents:nn,\@@_append_contents:Ve}
 %   The function \cs{@@_append_contents:nn} creates a |seq| variable if
 %   one didn't exist and appends the contents in the argument to the
 %   right of the sequence.
@@ -2980,7 +2982,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
       { \seq_new:c { g_@@_name_#1_seq } }
     \seq_gput_right:cn { g_@@_name_#1_seq } {#2}
   }
-\cs_generate_variant:Nn \@@_append_contents:nn { Vx }
+\cs_generate_variant:Nn \@@_append_contents:nn { Ve }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -3049,7 +3051,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 \cs_new_protected:Npn \@@_store_to_seq:NN #1#2
   {
     \tl_log:N #1
-    \@@_append_contents:Vx #2 { \exp_not:V #1 }
+    \@@_append_contents:Ve #2 { \exp_not:V #1 }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -3239,7 +3241,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
     {
       \tl_if_blank:nF {#2}
         {
-          \msg_error:nnxn { scontents } { junk-after-begin }
+          \msg_error:nnen { scontents } { junk-after-begin }
             { after~\c_backslash_str begin { \l_@@_env_name_tl } #1 } {#2}
         }
       \@@_make_control_chars_active:
@@ -3252,7 +3254,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
         { \l_@@_storing_bool }
         { \tl_if_empty_p:N \l_@@_macro_tmp_tl }
         {
-          \msg_warning:nnx { scontents } { empty-environment } { \l_@@_env_name_tl }
+          \msg_warning:nne { scontents } { empty-environment } { \l_@@_env_name_tl }
         }
     }
 %    \end{macrocode}
@@ -3293,7 +3295,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
         \tl_clear:N \l_@@_every_line_env_tl
         \seq_map_function:NN \l_char_special_seq \char_set_catcode_other:N
         \int_step_function:nnnN { 128 } { 1 } { 255 } \char_set_catcode_letter:n
-        \cs_set_protected:Npx \@@_ret:w ##1 ^^M
+        \cs_set_protected:Npe \@@_ret:w ##1 ^^M
           {
             \exp_not:N \@@_verb_processor_iterate:w
             ##1 \c_@@_end_env_tl
@@ -3305,12 +3307,12 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
     }
   \cs_new:Npn \@@_setup_verb_processor:
     {
-      \use:x
+      \use:e
         {
           \cs_set:Npn \exp_not:N \@@_verb_processor_iterate:w
-            ####1 \c_@@_end_env_tl
-            ####2 \c_@@_end_env_tl
-            ####3 \exp_not:N \q_@@_stop
+            ##1 \c_@@_end_env_tl
+            ##2 \c_@@_end_env_tl
+            ##3 \exp_not:N \q_@@_stop
         }   { \@@_verb_processor_iterate:nnn {##1} {##2} {##3} }
     }
   \cs_new:Npn \@@_verb_processor_iterate:nnn #1 #2 #3
@@ -3366,7 +3368,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
     {
       \bool_if:NT \l_@@_writable_bool
         { \iow_close:N \l_@@_file_iow }
-      \use:x
+      \use:e
         {
           \group_end:
           \bool_if:NT \l_@@_storing_bool
@@ -3456,10 +3458,10 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   string contains §\begin{scontents}§ is straightforward. Since no §}§ can
 %   appear inside §<env>§, then just a macro delimited by §}§ is enough.
 %    \begin{macrocode}
-\use:x
+\use:e
   {
-    \cs_new_protected:Npn \exp_not:N \@@_analyse_nesting_latex:w ##1
-      \c_backslash_str begin \c_left_brace_str ##2 \c_right_brace_str
+    \cs_new_protected:Npn \exp_not:N \@@_analyse_nesting_latex:w #1
+      \c_backslash_str begin \c_left_brace_str #2 \c_right_brace_str
   }   {
         \@@_tl_if_head_is_q_mark:nTF {#2}
           { \@@_use_none_delimit_by_q_stop:w }
@@ -3469,7 +3471,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
             \@@_analyse_nesting_latex:w
           }
       }
-\cs_new_protected:Npx \@@_analyse_nesting_latex:n #1
+\cs_new_protected:Npe \@@_analyse_nesting_latex:n #1
   {
     \@@_analyse_nesting_latex:w #1
       \c_backslash_str begin
@@ -3506,11 +3508,11 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
   }
 \cs_new_protected:Npn \@@_define_generic_nesting_function:n #1
   {
-    \use:x
+    \use:e
       {
-        \cs_set_protected:Npn \exp_not:N \@@_analyse_nesting_generic:w ####1
+        \cs_set_protected:Npn \exp_not:N \@@_analyse_nesting_generic:w ##1
           \c_backslash_str #1 \tl_use:N \l_@@_env_name_tl
-            ####2 \exp_not:N \q_@@_stop
+            ##2 \exp_not:N \q_@@_stop
       }   { \@@_analyse_nesting_generic_process:nn {##1} {##2} }
   }
 %</core>
@@ -3755,7 +3757,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
         \l_@@_temp_tl
         \l_@@_name_seq_cmd_tl
         \l_@@_print_cmd_bool
-      \use:x
+      \use:e
         {
     \group_end:
     \bool_if:NF \l_@@_print_cmd_bool { \@@_esphack: }
@@ -3814,7 +3816,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
   {
     \group_begin:
       \int_set:Nn \tex_newlinechar:D { `\^^J }
-      \@@_rescan_tokens:x
+      \@@_rescan_tokens:e
         {
     \endgroup % This assumes \catcode`\\=0... Things might go off otherwise.
     \@@_getfrom_seq:nn {#1} {#2}
@@ -3904,7 +3906,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
       \tl_set:Ne \l_@@_temp_tl
         { \@@_getfrom_seq:Nn \l_@@_seq_item_seq {#2} }
       \@@_remove_trailing_eol:N \l_@@_temp_tl
-      \tl_replace_all:Nxn \l_@@_temp_tl \c_@@_hidden_space_str { ^^J }
+      \tl_replace_all:Nen \l_@@_temp_tl { \c_@@_hidden_space_str } { ^^J }
       \tl_log:N \l_@@_temp_tl
       \tl_if_empty:NF \l_@@_temp_tl
         {
@@ -3925,7 +3927,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   The \cs{@@_verb_print:N} macro is defined with active carriage return
 %   (\textsc{ascii} 13) characters to mimic an actual verbatim environment
 %   \enquote{on the loose}. The contents of the environment are placed in a
-%   §verbatimsc§ environment and rescanned using \cs{@@_rescan_tokens:x}.
+%   §verbatimsc§ environment and rescanned using \cs{@@_rescan_tokens:e}.
 %
 %    \begin{macrocode}
 \group_begin:
@@ -3938,7 +3940,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
       \cs_set_eq:NN ^^M \scan_stop:
       \cs_set_eq:cN { do@noligs } \@@_do_noligs:N
       \int_set:Nn \tex_newlinechar:D { `\^^J }
-      \@@_rescan_tokens:x
+      \@@_rescan_tokens:e
         {
           \@@_format_case:nnn
             { \exp_not:N \begin{verbatimsc} } % LaTeX
@@ -3982,9 +3984,9 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
         { \cs_set_eq:NN \@@_mergesc_output_cmd:nn \@@_meaningsc_internal:nn }
   }
 \cs_new_protected:Npn \@@_mergesc_output_cmd:nn #1 #2
-  { \msg_error:nn { scontents } { mergesc-missing-cmd } }
-\msg_new:nnn { scontents } { mergesc-missing-cmd }
-  { Missing~output~command~for~\iow_char:N\\mergesc~\msg_line_context:. }
+  {
+    \msg_error:nn { scontents } { mergesc-missing-cmd }
+  }
 \cs_new_protected:Npn \@@_mergesc_internal:nn #1 #2
   {
     \group_begin:
@@ -4002,7 +4004,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
          }
       \seq_gclear:c { g_@@_name_sc!internal_seq }
       \@@_mergesc_parse_list:n {#2}
-      \exp_args:Nx \@@_mergesc_output_cmd:nn
+      \exp_args:Ne \@@_mergesc_output_cmd:nn
         { 1-end, \exp_not:V \l_@@_keys_tl } { sc!internal }
     \group_end:
   }
@@ -4061,7 +4063,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
         \msg_error:nneee { scontents } { index-out-of-range }
           {##1} {#1} { \seq_count:c { g_@@_name_#1_seq } }
       }
-    \@@_range_parser:nnxn {#2} {#3}
+    \@@_range_parser:nnen {#2} {#3}
       { \seq_count:c { g_@@_name_#1_seq } }
       { \@@_tmp:w }
   }
@@ -4274,7 +4276,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
   {
     \group_begin:
       \seq_clear:N \l_@@_seq_item_seq
-      \str_set:Nx \l_@@_cur_seq_name_str {#2}
+      \str_set:Ne \l_@@_cur_seq_name_str {#2}
       \tl_if_novalue:nF {#1} { \keys_set:nn { scontents / typemeaning } {#1} }
       \seq_if_empty:NT \l_@@_seq_item_seq
         { \seq_set_from_clist:Nn \l_@@_seq_item_seq { 1 } }
@@ -4285,13 +4287,13 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
   \char_set_catcode_active:N \^^I
   \cs_new_protected:Npn \@@_meaningsc:n #1
     {
-      \tl_set:Nx \l_@@_temp_tl
+      \tl_set:Ne \l_@@_temp_tl
         { \@@_getfrom_seq:Nn \l_@@_seq_item_seq {#1} }
-      \tl_replace_all:Nxn \l_@@_temp_tl { \iow_char:N \^^J } { ~ }
-      \tl_replace_all:Nxn \l_@@_temp_tl \c_@@_hidden_space_str { ~ }
+      \tl_replace_all:Nen \l_@@_temp_tl { \iow_char:N \^^J } { ~ }
+      \tl_replace_all:Nen \l_@@_temp_tl { \c_@@_hidden_space_str } { ~ }
       \tl_log:N \l_@@_temp_tl
       \tl_use:N \l_@@_verb_font_tl
-      \tl_replace_all:Nnx \l_@@_temp_tl { ^^I } { \@@_tabs_to_spaces: }
+      \tl_replace_all:Nne \l_@@_temp_tl { ^^I } { \@@_tabs_to_spaces: }
       \cs_replacement_spec:N \l_@@_temp_tl
     }
 \group_end:
@@ -4359,6 +4361,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
   { Multiple~\c_backslash_str begin{ \l_@@_env_name_tl }~\msg_line_context:.}
 \msg_new:nnn { scontents } { undefined-storage }
   { Storage~named~'#1'~is~not~defined. }
+\msg_new:nnn { scontents } { mergesc-missing-cmd }
+  { Missing~output~command~for~\iow_char:N\\mergesc~\msg_line_context:. }
 \msg_new:nnn { scontents } { index-out-of-range }
   {
     \int_compare:nNnTF {#1} = { 0 }
