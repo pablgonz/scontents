@@ -5,10 +5,10 @@
 
 ## Description
 
-This package allows to store `LaTeX` code, including _"verbatim"_, in <code>&lt;sequences&gt;</code>
-using the `l3seq` module of `expl3`. The <code>&lt;stored content&gt;</code> can be used
-as many times as desired in the document, additionally you can write to <code>&lt;external files&gt;</code>
-or show it in <code>&lt;verbatim style&gt;</code>.
+This package allows to store LaTeX contents, including _verbatim_, in <code>&langle;sequences&rangle;</code>
+using the `l3seq` module of `expl3`. The <code>&langle;stored content&rangle;</code> can be used
+as many times as desired in the document, additionally you can write to <code>&langle;external files&rangle;</code>
+or show it in <code>&langle;verbatim style&rangle;</code>. This package is fully compatible with _tagged_ PDF.
 
 ## Requirements
 
@@ -16,7 +16,7 @@ The package need a minimun `LaTeX` release 2024-11-01.
 
 ## Installation
 
-The package `scontents` is present in `TeX Live` and `MiKTeX`, use the
+The package <code>&langle;scontents&rangle;</code> is present in `TeX Live` and `MiKTeX`, use the
 package manager to install.
 
 For manual installation, download [scontents.zip](http://mirrors.ctan.org/macros/latex/contrib/scontents.zip) and unzip it,
@@ -43,7 +43,7 @@ then run `mktexlsr`. To produce the documentation with source code run `luatex s
 
 ## Examples
 
-The file <code>&lt;scontents.pdf&gt;</code> contains attached examples, which can be extracted
+The file <code>&langle;scontents.pdf&rangle;</code> contains attached examples, which can be extracted
 from the PDF viewer or from the command line by running:
 
 ```
@@ -95,7 +95,8 @@ conditions of the [LaTeX Project Public License](https://www.latex-project.org/l
         ├── test-format.plain.tex
         ├── test-nospace.tex
         ├── test-pkg-current.tex
-        └── test-pkg-other.tex
+        ├── test-pkg-other.tex
+        └── test-tagged-pdf.tex
 ```
 
 ## Copyright

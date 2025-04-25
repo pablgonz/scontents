@@ -3195,7 +3195,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \label{the:environment:itself}
 %
 % \begin{macro}{\@@_start_environment:w,\@@_start_after_option:w,
-%               \@@_check_line_process:xn,\@@_stop_environment:}
+%               \@@_check_line_process:en,\@@_stop_environment:}
 %   Here we make §^^I§, §^^L§ and §^^M§ active characters so that the end of
 %   line can be \enquote{seen} to be used as a delimiter, and \hologo{TeX} doesn't try to
 %   eliminate space-like characters.
@@ -3208,11 +3208,11 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   The function \cs{@@_start_after_option:w} also checks for trailing
 %   tokens after the optional argument and issues an error if any.
 %
-%   In all cases, the function \cs{@@_check_line_process:xn} checks that
+%   In all cases, the function \cs{@@_check_line_process:en} checks that
 %   everything past §\begin{scontents}§ is empty and then process
 %   the environment.
 %
-%   The function \cs{@@_check_line_process:xn} calls the function
+%   The function \cs{@@_check_line_process:en} calls the function
 %   \cs{@@_file_tl_write_start:V} which will then read the contents
 %   of the environment and optionally store them in a token list or write to
 %   an external file.
@@ -3234,13 +3234,13 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
         {
           \str_if_eq:eeTF { \tl_head:n {#1} } { [ }
             { \@@_grab_optional:w #1 ^^M }
-            { \@@_check_line_process:xn { } {#1} }
+            { \@@_check_line_process:en { } {#1} }
         }
-        { \@@_check_line_process:xn { } {#1} }
+        { \@@_check_line_process:en { } {#1} }
     }
   \cs_new_protected:Npn \@@_start_after_option:w #1 ^^M
-    { \@@_check_line_process:xn { [...] } {#1} }
-  \cs_new_protected:Npn \@@_check_line_process:xn #1 #2
+    { \@@_check_line_process:en { [...] } {#1} }
+  \cs_new_protected:Npn \@@_check_line_process:en #1 #2
     {
       \tl_if_blank:nF {#2}
         {
