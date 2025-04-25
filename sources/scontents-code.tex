@@ -409,13 +409,13 @@
         {
           \str_if_eq:eeTF { \tl_head:n {#1} } { [ }
             { \__scontents_grab_optional:w #1 ^^M }
-            { \__scontents_check_line_process:xn { } {#1} }
+            { \__scontents_check_line_process:en { } {#1} }
         }
-        { \__scontents_check_line_process:xn { } {#1} }
+        { \__scontents_check_line_process:en { } {#1} }
     }
   \cs_new_protected:Npn \__scontents_start_after_option:w #1 ^^M
-    { \__scontents_check_line_process:xn { [...] } {#1} }
-  \cs_new_protected:Npn \__scontents_check_line_process:xn #1 #2
+    { \__scontents_check_line_process:en { [...] } {#1} }
+  \cs_new_protected:Npn \__scontents_check_line_process:en #1 #2
     {
       \tl_if_blank:nF {#2}
         {

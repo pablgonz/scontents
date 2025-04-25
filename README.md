@@ -12,7 +12,7 @@ or show it in <code>&langle;verbatim style&rangle;</code>. This package is fully
 
 ## Requirements
 
-The package need a minimun `LaTeX` release 2024-11-01.
+The minimum required is `LaTeX` release 2024-11-01.
 
 ## Installation
 
@@ -72,7 +72,7 @@ that the files created have the correct version and date, you should run
 
 ## License
 
-The scontents package may be modified and distributed under the terms and
+The package <code>&langle;scontents&rangle;</code> may be modified and distributed under the terms and
 conditions of the [LaTeX Project Public License](https://www.latex-project.org/lppl/), version 1.3c or greater.
 
 ## Content of the repository

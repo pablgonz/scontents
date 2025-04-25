@@ -11,7 +11,7 @@ or show it in <code>&langle;verbatim style&rangle;</code>. This package is fully
 
 ## Requirements
 
-The package need a minimun LaTeX release 2024-11-01.
+The minimum required is LaTeX release 2024-11-01.
 
 ## Installation
 
@@ -54,7 +54,7 @@ and then you can use the excellent `arara` tool to compile them.
 
 ## License
 
-The scontents package may be modified and distributed under the terms and
+The package <code>&langle;scontents&rangle;</code> may be modified and distributed under the terms and
 conditions of the [LaTeX Project Public License](https://www.latex-project.org/lppl/), version 1.3c or greater.
 
 ## Contents
