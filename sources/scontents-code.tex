@@ -27,7 +27,7 @@
 %%                                 t-scontents.mkiv and
 %%                                 scontents-code.tex.
 %% 
-\def\ScontentsCoreFileDate{2025-04-24}%
+\def\ScontentsCoreFileDate{2025-04-25}%
 \begingroup
   \catcode32=10
   \endlinechar=32
@@ -484,7 +484,7 @@
             {
               \tl_if_blank:nF {#1}
                 { \__scontents_verb_processor_output:n {#1} }
-              \cs_set_protected:Npx \__scontents_ret:w
+              \cs_set_protected:Npe \__scontents_ret:w
                 {
                   \__scontents_env_end_function:
                   \bool_lazy_or:nnF
@@ -889,7 +889,7 @@
     \__scontents_remove_trailing_eol:N \l__scontents_temp_tl
     \seq_gput_right:cV { g__scontents_name_sc!internal_seq } \l__scontents_temp_tl
   }
-\cs_new_protected:Npx \__scontents_remove_trailing_eol:N #1
+\cs_new_protected:Npe \__scontents_remove_trailing_eol:N #1
   {
     \exp_not:N \exp_after:wN \exp_not:N \__scontents_remove_trailing_eol:w
       #1 \s__scontents_stop \c__scontents_hidden_space_str \s__scontents_stop \s__scontents_mark #1

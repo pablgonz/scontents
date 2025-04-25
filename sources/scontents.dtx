@@ -202,7 +202,7 @@
     type .choice:,
     type / tt .code:n = \tl_set:Nn \l_userdoc_meta_font_tl { \ttfamily },
     type / rm .code:n = \tl_set:Nn \l_userdoc_meta_font_tl { \rmfamily },
-    type .initial:n   = rm,
+    type .initial:n   = tt,
     cf .tl_set:N      = \l_userdoc_meta_color_tl,
     cf .initial:n     = optcolor,
     ac .tl_set:N      = \l_userdoc_meta_anglecolor_tl,
@@ -717,8 +717,7 @@
 % (\url{https://www.latex-project.org/lppl.txt}). The software has the status
 % \enquote{maintained}.
 %
-% The The \mypkg*{scontents} package is written (mostly) using
-% \mypkg{expl3}, it requires an updated version of \LaTeX{} to work
+% The package \mypkg*{scontents} requires an updated version of \LaTeX{} to work
 % (minimum required to \LaTeX{} release 2024-11-01). This package can be used with "plain",
 % "context", "xelatex", "lualatex", "pdflatex" and the classical workflow
 % §latex>dvips>ps2pdf§.
@@ -1123,18 +1122,18 @@ This text is in the outer environment (after nested).
 %   \end{syntax}
 % \end{function}
 %
-% The \ics*{Scontents} command reads the \mymarg{argument} in standard
+% The \ics*{Scontents} command reads the \mymarg[type=tt]{argument} in standard
 % mode. It is not possible to pass environments such as \emph{verbatim},
 % but it is possible to use the implementation of \ics{Verb} provided by
 % the \mypkg{fvextra} package for contents on one line and \ics{lstinline}
 % from \mypkg{listings} package, but it is preferable to use the starred (§*§)
 % version.
 %
-% The \ics*{Scontents*} command reads the \mymarg{argument} under \emph{verbatim}
+% The \ics*{Scontents*} command reads the \mymarg[type=tt]{argument} under \emph{verbatim}
 % category code regimen. If its first delimiter is a brace, it will be
-% assumed that the \mymarg{argument} is nested into braces. Otherwise it
-% will be assumed that the ending of that \mymeta{argument} is delimited by that
-% first delimiter \mymeta[cf=MediumOrchid]{del} like command \ics{verb}.
+% assumed that the \mymarg[type=tt]{argument} is nested into braces. Otherwise it
+% will be assumed that the ending of that \mymarg[type=tt]{argument} is delimited by that
+% first delimiter \mymeta[type=tt,cf=MediumOrchid]{del} like command \ics{verb}.
 %
 % Blank lines are preserved, escaped braces \enquote{\texttt{\textcolor{gray}{\textbackslash\hspace{-1pt}\{}}} and
 % \enquote{\texttt{\textcolor{gray}{\textbackslash\}}}} must also be
@@ -1144,7 +1143,7 @@ This text is in the outer environment (after nested).
 % must not be separated by horizontal spaces between them and the command.
 %
 % Both versions can be used anywhere in the document and cannot be used
-% as an \mymeta{argument} for other command.
+% as an \mymarg[type=tt]{argument} for other command.
 %
 % \subsection*{Options for command}
 % \label{sec:optcmdsc}
@@ -1169,7 +1168,7 @@ This text is in the outer environment (after nested).
 %
 % \keyexamp{write-cmd}{file.ext}{not used}
 % Sets the name of the \mymeta{external file} in which the \mymeta{contents} of
-% the \mymarg{argument} will be written. The \mymeta{file.ext} will be created
+% the \mymarg[type=tt]{argument} will be written. The \mymeta{file.ext} will be created
 % in the working directory, relative or absolute paths are not supported. If \mymeta{file.ext}
 % does not exist, it will be created or overwritten if the \mykey{overwrite} key is used.
 %
@@ -1183,7 +1182,7 @@ This text is in the outer environment (after nested).
 %
 % \keyexamp{write-out}{file.ext}{not used}
 % Sets the name of the \mymeta{external file} in which the \mymeta{contents} of
-% the \mymarg{argument} will be written. The \mymeta{file.ext} will be created
+% the \mymarg[type=tt]{argument} will be written. The \mymeta{file.ext} will be created
 % in the working directory, relative or absolute paths are not supported. If \mymeta{file.ext}
 % does not exist, it will be created or overwritten if the \mykey{overwrite} key is used.
 %
@@ -1206,11 +1205,11 @@ This text is in the outer environment (after nested).
 %   \end{syntax}
 % \end{function}
 %
-% The command \ics*{getstored} gets the content stored in \mymarg{seq name}
+% The command \ics*{getstored} gets the content stored in \mymarg[type=tt]{seq name}
 % according to the \mymeta{index} in which it was stored. The command is
-% robust and can be used as an \mymeta{argument} for another command. If
-% the optional argument is not passed, the default value is the \enquote{last
-% element} stored in \mymarg{seq name}.
+% robust and can be used as an \mymarg[type=tt]{argument} for another command. If
+% the \emph{optional argument} is not passed, the default value is the \enquote{last
+% element} stored in \mymarg[type=tt]{seq name}.
 %
 % \subsection{The command \cs{foreachsc}}
 % \label{sec:foreachsc}
@@ -2282,8 +2281,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % Now we define some common macros to hold the package date and version:
 %    \begin{macrocode}
-%<loader>\def\ScontentsFileDate{2025-04-24}%
-%<core>\def\ScontentsCoreFileDate{2025-04-24}%
+%<loader>\def\ScontentsFileDate{2025-04-25}%
+%<core>\def\ScontentsCoreFileDate{2025-04-25}%
 %<*loader>
 \def\ScontentsFileVersion{2.4}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
@@ -3335,7 +3334,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
             {
               \tl_if_blank:nF {#1}
                 { \@@_verb_processor_output:n {#1} }
-              \cs_set_protected:Npx \@@_ret:w
+              \cs_set_protected:Npe \@@_ret:w
                 {
                   \@@_env_end_function:
                   \bool_lazy_or:nnF
@@ -4021,7 +4020,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
     \@@_remove_trailing_eol:N \l_@@_temp_tl
     \seq_gput_right:cV { g_@@_name_sc!internal_seq } \l_@@_temp_tl
   }
-\cs_new_protected:Npx \@@_remove_trailing_eol:N #1
+\cs_new_protected:Npe \@@_remove_trailing_eol:N #1
   {
     \exp_not:N \exp_after:wN \exp_not:N \@@_remove_trailing_eol:w
       #1 \s_@@_stop \c_@@_hidden_space_str \s_@@_stop \s_@@_mark #1
