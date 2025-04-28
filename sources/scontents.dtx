@@ -271,7 +271,7 @@
      \raggedright\ttfamily\small
      \textcolor{gray}{\textbackslash begin\{\textcolor{pkgcolor}{{#1}}\}\myoarg
      [type=tt,sbc=gray,ac=lightgray,cf=optcolor]{keyval ~ list}}\par%
-     \hspace{0.5cm}\mymeta[type=tt,ac=lightgray,cf=gray]{env ~ contents}\par%
+     \hspace{0.5cm}\mymeta[type=tt,ac=lightgray,cf=gray]{body ~ env}\par%
      \textcolor{gray}{\textbackslash end\{{\textcolor{pkgcolor}{{#1}}}\}}\par
     \end{minipage}%
    \end{lrbox}%
@@ -284,7 +284,7 @@
      \raggedright\ttfamily\small
      \textcolor{pkgcolor}{{\textbackslash#1#2}}\myoarg
      [type=tt,sbc=gray,ac=lightgray,cf=optcolor]{keyval ~ list}\par%
-     \hspace{0.5cm}\mymeta[type=tt,ac=lightgray,cf=gray]{env ~ contents}\par%
+     \hspace{0.5cm}\mymeta[type=tt,ac=lightgray,cf=gray]{body ~ env}\par%
      \textcolor{pkgcolor}{{\textbackslash #3#2}}\par
     \end{minipage}%
    \end{lrbox}%
@@ -394,11 +394,10 @@
   }
 \NewDocumentEnvironment{important}{ s }
   {
-    \sffamily
-    \bomba%
+    \small\sffamily
     \IfBooleanTF{#1}
-      { \small }
-      { \color{OrangeRed}\Large }
+      { \bomba }
+      { \color{OrangeRed} }
   }{}
 \ExplSyntaxOff
 
@@ -451,7 +450,7 @@
     keywords      = [2]{usepackage,section,documentclass,input,usemodule,
                     subsection,ExplSyntaxOff,ExplSyntaxOn,RequirePackage,
                     ProvidesExplPackage,obeyedline,lstinline,Verb,macro,
-                    makebox,verb,},%
+                    makebox,verb,detokenize,meaning,},%
 % Other words 3
     keywordstyle  = [3]{\color{optcolor!85}},%
     keywords      = [3]{document,article,setlength,pagestyle,definecolor,myenvstore},%
@@ -829,7 +828,7 @@
 %
 % In a standard \hologo{LaTeX} document, the character \texttt{TAB} `\LKeyTab'
 % are treated as explicit spaces (in most contexts) and is the behavior when
-% \mymeta{stored contents}, but when \mymeta{writing files} these are preserved.
+% \mymeta{stored content}, but when \mymeta{writing files} these are preserved.
 %
 % With a \hologo{TeX} Live distribution, the \texttt{TAB} character is \enquote{\emph{printable}}
 % for "latex", "pdflatex" and "lualatex", but if you use "xelatex" you
@@ -963,9 +962,10 @@
 %   \envexamp{scontents}
 %   \end{syntax}
 %
-% The \myenv*{scontents} environment allows you to \mymeta{store
-% content} and \mymeta{write content}, including \emph{verbatim}
-% material. After the package has been loaded, the environment can be
+% The \myenv*{scontents} environment processes \mymarg{body env} and
+% \emph{\enquote{stores}} it in a \mymeta{sequence} or \emph{\enquote{writes}}
+% it to an \mymeta{external file} if desired, including \emph{verbatim
+% material}. After the package has been loaded, the environment can be
 % used both in the preamble and in the body of the document.
 %
 % For the correct operation §\begin{scontents}§ and §\end{scontents}§ must
@@ -1036,44 +1036,45 @@ This text is in the outer environment (after nested).
 % The key \mykey{force-eol} is available for this environment.
 %
 % \keyexamp{store-env}{seq name}{contents}
-% Sets the name of the \mymeta{sequence} in which the contents will be
-% stored. If the sequence does not exist, it will be created globally.
+% Sets the \emph{name} of the \emph{sequence} in which the \mymarg{body env} will be
+% stored. If the \emph{sequence} does not exist, it will be created globally.
 %
 % \medskip
 %
 % \keyexamp{print-env}{true \textnormal{\textcolor{lightgray}{\textbar}} false}{false}
 % Sets if the \mymeta{stored content} is displayed or not at the time of
-% running the environment. The content is extracted from the \mymeta{sequence}
-% in which it is stored.
+% running the environment. The \mymeta{stored content} is extracted from
+% the \emph{sequence} \mymarg{seq name} set by the key \mykey{store-env}
+% at the time it is executed.
 %
 % \medskip
 %
 % \keyexamp{write-env}{file.ext}{not used}
-% Sets the name of the \mymeta{external file} in which the \mymeta{contents} of
-% the environment will be written.  The \mymeta{file.ext} will be created
-% in the working directory, relative or absolute paths are not supported. If \mymeta{file.ext}
-% does not exist, it will be created or overwritten if the \mykey{overwrite} key is used.
-%
-% The character \texttt{TAB} will be written in \mymeta{file.ext} and the \mymeta{contents}
-% will be stored in the \mymeta{sequence} established at that time. \hologo{XeLaTeX} users
-% using character \texttt{TAB} must add \texttt{\textcolor{optcolor}{-8bit}}
-% at the command line, otherwise you will get \hologo{TeX} character \texttt{TAB} `§^^I§'
-% in \mymeta{file.ext}.
+% Sets the \emph{name} of the \mymeta{external file} in which the \mymarg{body env} of
+% the environment will be written. The \mymeta{file.ext} will be created
+% in the working directory and the \mymarg{body env} will be \emph{stored}
+% in the \emph{sequence} set by the key \mykey{store-env}
+% at the time it is executed. If \mymeta{file.ext} does not exist, it will
+% be created or overwritten if the \mykey{overwrite} key is used.
 %
 % \medskip
 %
 % \keyexamp{write-out}{file.ext}{not used}
-% Sets the name of the \mymeta{external file} in which the \mymeta{contents} of
+% Sets the \emph{name} of the \mymeta{external file} in which the \mymarg{body env} of
 % the environment will be written. The \mymeta{file.ext} will be created
-% in the working directory, relative or absolute paths are not supported. If \mymeta{file.ext}
-% does not exist, it will be created or overwritten if the \mykey{overwrite} key is used.
+% in the working directory and the \mymarg{body env} will NOT be \emph{stored}
+% in the \emph{sequence} set by the key \mykey{store-env}
+% at the time it is executed. If \mymeta{file.ext} does not exist, it will
+% be created or overwritten if the \mykey{overwrite} key is used.
 %
-% The character \texttt{TAB} will be written in \mymeta{file.ext} and the \mymeta{contents}
-% will \textbf{NOT} be stored in any \mymeta{sequence} established at that time. \hologo{XeLaTeX} users
+% \begin{important}*
+% In the keys \mykey{write-env} and \mykey{write-out} the character
+% \texttt{TAB} will be written in \mymeta{file.ext},
+% relative or absolute paths are not supported. \hologo{XeLaTeX} users
 % using character \texttt{TAB} must add \texttt{\textcolor{optcolor}{-8bit}}
-% at the command line, otherwise you will get \hologo{TeX} character \texttt{TAB} `§^^I§'
-% in \mymeta{file.ext}.
-%
+% at the command line, otherwise you will get \hologo{TeX} character
+% \texttt{TAB} `§^^I§' in \mymeta{file.ext}.
+% \end{important}
 %
 % \subsection{The command \cs{newenvsc}}
 % \label{sec:newenvsc}
@@ -1109,8 +1110,8 @@ This text is in the outer environment (after nested).
 % \fi
 %
 % created the environment §myenvstore§ that \mymeta{stored content} in
-% the sequence §myseq§ and will NOT display the content when the environment
-% it is executed.
+% the \emph{sequence} §myseq§ and will NOT display the \mymeta{stored content}
+% when the environment it is executed.
 %
 % \subsection{The command \cs{Scontents}}
 % \label{sec:Scontents}
@@ -1126,15 +1127,19 @@ This text is in the outer environment (after nested).
 % \end{function}
 %
 % The \ics*{Scontents} command reads the \mymarg{argument} in standard
-% mode. It is not possible to pass \emph{verbatim things},
-% but it is possible to use the implementation of §\Verb§ delimited by \emph{braces}
+% mode and \emph{\enquote{stores}} it in the \emph{sequence} set
+% by the key \mykey{store-cmd} at the time it is executed. It is not
+% possible to pass \emph{verbatim things}, but it is possible to use
+% the implementation of §\Verb§ delimited by \emph{braces}
 % `\texttt{\textcolor{MediumOrchid}{\{}} \texttt{\textcolor{MediumOrchid}{\}}}'
 % provided by the \mypkg{fvextra}\cite{fvextra} package for \emph{verbatim one line}
 % and §\lstinline§ from \mypkg{listings}\cite{listings} package, but it
 % is preferable to use the \emph{starred argument} `§*§'.
 %
 % The \ics*{Scontents*} command reads the \mymarg{argument} under \emph{verbatim catcode}
-% regimen. If its \emph{\enquote{first}} delimiter is a \emph{brace} `\texttt{\textcolor{MediumOrchid}{\{}}', it will be
+% regimen and \emph{\enquote{stores}} it in the \emph{sequence} set
+% by the key \mykey{store-cmd} at the time it is executed. If its \emph{\enquote{first}}
+% delimiter is a \emph{brace} `\texttt{\textcolor{MediumOrchid}{\{}}', it will be
 % assumed that the \mymarg{argument} is nested into \emph{braces}. Otherwise it
 % will be assumed that \mymarg{argument} is delimited by that
 % first delimiter \mymeta[cf=MediumOrchid]{del} like command §\verb§.
@@ -1154,44 +1159,45 @@ This text is in the outer environment (after nested).
 % or the \ics*{setupsc} command and locally using \myoarg{key \textnormal{\textcolor{gray}{=}} val}.
 %
 % \keyexamp{store-cmd}{seq name}{contents}
-% Sets the name of the \mymeta{sequence} in which the contents will be stored.
-% If the sequence does not exist, it will be created globally.
+% Sets the \emph{name} of the \emph{sequence} in which the \mymarg{argument}
+% is stored. If the \emph{sequence} does not exist, it will be created globally.
 %
 % \medskip
 %
 % \keyexamp{print-cmd}{true \textnormal{\textcolor{lightgray}{\textbar}} false}{false}
 % Sets if the \mymeta{stored content} is displayed or not at the time of
-% running the command. The content is extracted from the \mymeta{sequence}
-% in which it is stored.
+% running the command. The \mymeta{stored content} is extracted from the \emph{sequence}
+% \mymarg{seq name} set by the key \mykey{store-cmd} at the time it is executed.
 %
 % \keyexamp{write-cmd}{file.ext}{not used}
-% Sets the name of the \mymeta{external file} in which the \mymeta{contents} of
-% the \mymarg{argument} will be written. The \mymeta{file.ext} will be created
-% in the working directory, relative or absolute paths are not supported. If \mymeta{file.ext}
+% Sets the \emph{name} of the \mymeta{external file} in which the \mymarg{argument}
+% will be written. The \mymeta{file.ext} will be created in the working directory,
+% relative or absolute paths are not supported. If \mymeta{file.ext}
 % does not exist, it will be created or overwritten if the \mykey{overwrite} key is used.
 %
-% The character \texttt{TAB} will be written in \mymeta{file.ext} and the \mymeta{contents}
-% will be stored in the \mymeta{sequence} established at that time. \hologo{XeLaTeX} users
-% using character \texttt{TAB} must add \texttt{\textcolor{optcolor}{-8bit}}
+% The character \texttt{TAB} will be written in \mymeta{file.ext} and the \mymarg{argument}
+% will be stored in the \emph{sequence} \mymarg{seq name} set by the key \mykey{store-cmd}
+% at the time it is executed. \hologo{XeLaTeX} users using character \texttt{TAB}
+% must add \texttt{\textcolor{optcolor}{-8bit}}
 % at the command line, otherwise you will get \hologo{TeX} character \texttt{TAB} `§^^I§'
 % in \mymeta{file.ext}.
 %
 % \keyexamp{write-out}{file.ext}{not used}
-% Sets the name of the \mymeta{external file} in which the \mymeta{contents} of
-% the \mymarg{argument} will be written. The \mymeta{file.ext} will be created
+% Sets the name of the \mymeta{external file} in which the \mymarg{argument}
+% will be written. The \mymeta{file.ext} will be created
 % in the working directory, relative or absolute paths are not supported. If \mymeta{file.ext}
 % does not exist, it will be created or overwritten if the \mykey{overwrite} key is used.
 %
-% The character \texttt{TAB} will be written in \mymeta{file.ext} and the \mymeta{contents}
-% will NOT be stored in any \mymeta{sequence} established at that time. \hologo{XeLaTeX} users
+% The character \texttt{TAB} will be written in \mymeta{file.ext} and the \mymarg{argument}
+% will NOT be stored in any \emph{sequence} established at that time. \hologo{XeLaTeX} users
 % using character \texttt{TAB} must add \texttt{\textcolor{optcolor}{-8bit}}
 % at the command line, otherwise you will get \hologo{TeX} character \texttt{TAB} `§^^I§'
 % in \mymeta{file.ext}.
 %
 % \begin{important}*
-% The §force-eol§, §write-env§, §write-out§ and §overwrite§ keys re available
+% The §force-eol§, §write-cmd§, §write-out§ and §overwrite§ \mymeta{keys} are available
 % and behave similarly to when running the \myenv*{scontents} environment but differ
-% if run with the \ics*{Scontens} without the \emph{starred argument} ‘§*§’, in
+% if run with the \ics*{Scontents} without the \emph{starred argument} ‘§*§’, in
 % practical terms the file \mymeta{file.ext} will be written using §\detokenize§
 % and not in \emph{verbatim mode}.
 % \end{important}
@@ -1207,13 +1213,15 @@ This text is in the outer environment (after nested).
 %   \end{syntax}
 % \end{function}
 %
-% The command \ics*{getstored} retrieves the \mymeta{stored contents} in
-% \mymarg{seq name} according to \mymeta{index} which corresponds
-% to the \emph{position} where the \mymeta{contents} were stored in the
-% \emph{sequence} \mymarg{seq name}. The command is robust and can be used
-% as an \mymarg{argument} for another command. If the \emph{optional argument}
-% is not passed, the default value is the \emph{\enquote{last stored contents}}
-% in \mymarg{seq name}.
+% The \ics*{getstored} command retrieves the \mymeta{stored content}
+% according to the \emph{integer value} set in \mymeta{index} which
+% corresponds to the \emph{position} of the \mymeta{stored content}
+% in the \emph{sequence} \mymarg{seq name}.
+%
+% The command is robust and can be used as an \mymarg{argument} for
+% another command. If the \emph{optional argument} is not passed,
+% the default value is the \emph{\enquote{last}} \mymeta{stored content}
+% in the \emph{sequence} \mymarg{seq name}.
 %
 % \subsection{The command \cs{foreachsc}} \label{sec:foreachsc}
 %
@@ -1226,37 +1234,42 @@ This text is in the outer environment (after nested).
 % \end{function}
 %
 % The command \ics*{foreachsc} goes through and executes the command §\getstored§
-% on the \mymeta{stored contents} in \mymarg{seq name}. If you pass without options run
-% §\getstored§ on all \mymeta{stored contents} in \mymarg{seq name}.
+% on the \mymeta{stored content} in the \emph{sequence} \mymarg{seq name}. If the
+% \emph{optional argument} is not passed run §\getstored§ on all \mymeta{stored content}
+% in the \emph{sequence} \mymarg{seq name}.
 %
 % \subsubsection*{Options for command}
 % \label{sec:optcmdfor}
 %
 % \keyexamp{sep}{code}{empty}
-% Establishes the separation between each content stored in \mymarg{seq name}.
-% For example, you can use §sep={\\[10pt]}§ for vertical separation of stored
-% contents.
+% Establishes the \emph{separation} between each \mymeta{stored content} in the \emph{sequence} \mymarg{seq name}.
+% For example, you can use §sep={\\[10pt]}§ for vertical separation of
+% \mymeta{stored contents}.
 %
 % \keyexamp{step}{integer}{1}
-% Sets the increment (\mymeta{step}) applied to the value set by key §start§
-% for each element stored in the \mymarg{seq name}. The value must be a
-% \mymeta{positive integer}.
+% Sets the \emph{increment} (\mymeta{step}) applied to the value set by key §start§
+% for each \mymeta{stored content} in the \emph{sequence} \mymarg{seq name}.
+% The value must be a \mymeta{positive integer}.
 %
 % \keyexamp{start}{integer}{1}
-% Sets the \mymeta{index} number of the \mymarg{seq name} from which execution
-% will start. The value must be a \mymeta{positive integer}.
+% Set the \emph{position} of the \mymeta{stored content} within the
+% \emph{sequence} \mymarg{seq name} from which to \emph{start} executing.
+% The value must be a \mymeta{positive integer}.
 %
 % \keyexamp{stop}{integer}{total}
-% Sets the \mymeta{index} number of the \mymarg{seq name} from which execution
-% it will finish executing. The value must be a \mymeta{positive integer}.
+% Set the \emph{position} of the \mymeta{stored content} within the
+% \emph{sequence} \mymarg{seq name} at which execution ends. The value
+% must be a \mymeta{positive integer}.
 %
 % \keyexamp{before}{code}{empty}
-% Sets the \mymarg{code} that will be executed \mymeta{before} each content stored
-% in \mymarg{seq name}. The \mymarg{code} must be passed between braces.
+% Sets the \mymarg{code} that will be executed \emph{before} each \mymeta{stored content}
+% within the \emph{sequence} \mymarg{seq name}. The \mymarg{code} must
+% be passed \emph{between braces} `\texttt{\textcolor{MediumOrchid}{\{}} \texttt{\textcolor{MediumOrchid}{\}}}'.
 %
 % \keyexamp{after}{code}{empty}
-% Sets the \mymarg{code} that will be executed \mymeta{after} each content stored
-% in \mymarg{seq name}. The \mymarg{code} must be passed between braces.
+% Sets the \mymarg{code} that will be executed \emph{after} each \mymeta{stored content}
+% within the \emph{sequence} \mymarg{seq name}. The \mymarg{code} must
+% be passed \emph{between braces} `\texttt{\textcolor{MediumOrchid}{\{}} \texttt{\textcolor{MediumOrchid}{\}}}'.
 %
 % \newsavebox{\hashbox}
 % \begin{lrbox}{\hashbox}
@@ -1264,10 +1277,10 @@ This text is in the outer environment (after nested).
 % \end{lrbox}
 %
 % \keyexamp{wrapper}{code{} \space\usebox{\hashbox} more code}{empty}
-% Wraps the content stored in \mymarg{seq name} referenced by §{#1}§.
-% The \mymarg{code} must be passed between braces. For example
-% §\foreachsc[wrapper={\makebox[1em][l]{#1}}]{contents}§.
-%
+% Wraps the \mymeta{stored content} within the \emph{sequence} \mymarg{seq name}
+% referenced by §{#1}§. The \mymarg{code} must be passed \emph{between braces}
+% `\texttt{\textcolor{MediumOrchid}{\{}} \texttt{\textcolor{MediumOrchid}{\}}}'.
+% For example §\foreachsc[wrapper={\makebox[1em][l]{#1}}]{contents}§.
 %
 % \subsection{The command \cs{typestored}}
 % \label{sec:typestored}
@@ -1278,15 +1291,17 @@ This text is in the outer environment (after nested).
 %   \begin{syntax}
 %      \cmdexamp{typestored}[index\textnormal{\textcolor{gray}{,}} 1-end\textnormal{\textcolor{gray}{,}} width-tab \textnormal{\textcolor{gray}{=}} number]{seq name}
 %   \end{syntax}
-% The command \ics*{typestored} internally places the content stored in
-% the \mymarg{seq name} into the \myenv*{verbatimsc} environment. The \mymeta{index}
-% corresponds to the position in which the content is stored in the \mymarg{seq name},
-% if \mymeta{1-end} is used \emph{\enquote{all}} content stored in \mymarg{seq name} will be printed.
+% The command \ics*{typestored} internally places the \mymeta{stored content} in
+% the \emph{sequence} \mymarg{seq name} into the \myenv*{verbatimsc} environment.
+% The \emph{integer value}  set at \mymeta{index} corresponds to the \emph{position}
+% of the \mymeta{stored content} in the \emph{sequence} \mymarg{seq name},
+% if \mymeta{1-end} is used \emph{\enquote{all}} \mymeta{stored content}
+% in the \emph{sequence} \mymarg{seq name} will be printed.
 % \end{function}
 %
-% If the optional argument is not passed it defaults to the first element
-% stored in the \mymarg{seq name}. The key \mykey{width-tab} is available for
-% this command.
+% If the \emph{optional argument} is not passed it defaults to the first \mymeta{stored content}
+% in the \emph{sequence} \mymarg{seq name}. The key \mykey{width-tab}
+% is available for this command.
 %
 % \subsection{The command \cs{mergesc}}
 % \label{sec:mergesc}
@@ -1302,9 +1317,11 @@ This text is in the outer environment (after nested).
 %   \begin{syntax}
 %      \cmdexamp{mergesc}[typestored \textnormal{\textcolor{lightgray}{\textbar}} meaningsc\textcolor{lightgray}{, }keys]{\usebox{\argmergesc}}
 %   \end{syntax}
-% The command \ics*{mergesc} internally assembles the content stored in
-% the \mymarg{seq A}§[1]§, \mymarg{seq B}§[2-5]§ and \mymarg{seq C}§[1-end]§ into a temporary internal
-% \mymeta{seq temp}.
+% The command \ics*{mergesc} internally assembles the \mymeta{stored content}
+% in the \emph{sequences} \mymarg{seq A}§[1]§, \mymarg{seq B}§[2-5]§ and
+% \mymarg{seq C}§[1-end]§ into a temporary internal \emph{sequence} \mymarg{seq temp}
+% and then executes §\typestored§ if the \mykey{typestored} key is active
+% or §\meaningsc§ if the \mykey{meaningsc} key is active.
 % \end{function}
 %
 % The use of the keys \mykey{typestored} or \mykey{meaningsc} are
@@ -1319,7 +1336,7 @@ This text is in the outer environment (after nested).
 % files, this effectively allows you to write chunks of code and then
 % merge them into a single file.
 %
-% \newpage
+%^^A \newpage
 %
 % \subsection{The environment \env{verbatimsc}}
 % \label{sec:verbatimsc}
@@ -1328,7 +1345,7 @@ This text is in the outer environment (after nested).
 %
 % \begin{function}{verbatimsc}
 % The internal environment used by \ics*{typestored} and \ics*{mergesc} to
-% display the \mymeta{stored contents} in \emph{verbatim style}.
+% display the \mymeta{stored content} in \emph{verbatim style}.
 % One consideration to keep in mind is that this is a \enquote{\emph{representation}}
 % of the \mymeta{stored content} in a \enquote{\emph{verbatim}} environment.
 % \end{function}
@@ -1411,14 +1428,17 @@ This text is in the outer environment (after nested).
 %   \begin{syntax}
 %      \cmdexamp{meaningsc}[index\textnormal{\textcolor{gray}{,}} width-tab \textnormal{\textcolor{gray}{=}} number]{seq name}
 %   \end{syntax}
-% The command \ics*{meaningsc} executes \ics{meaning} on the content stored
-% in \mymarg{seq name}. The \mymeta{index} corresponds to the position
-% in which the content is stored in the \mymarg{seq name}.
+% The command \ics*{meaningsc} executes §\meaning§ on the \mymeta{stored content}
+% in the \emph{sequence} \mymarg{seq name}.
+%
+% The \mymeta{index} corresponds to the \emph{position} in which
+% \mymeta{stored content} is located in the \emph{sequence} \mymarg{seq
+% name}.
 % \end{function}
 %
 % If the optional argument is not passed it defaults to the first element
-% stored in the \mymarg{seq name}. The key \mykey{width-tab} is available for
-% this command.
+% stored in the \emph{sequence} \mymarg{seq name}. The key \mykey{width-tab}
+% is available for this command.
 %
 % \subsection{The command \cs{countsc}}
 % \label{sec:countsc}
@@ -1429,7 +1449,8 @@ This text is in the outer environment (after nested).
 %   \begin{syntax}
 %      \cmdexamp{countsc}{seq name}
 %   \end{syntax}
-% The command \ics*{countsc} count a number of contents stored in \mymarg{seq name}.
+% The command \ics*{countsc} count a number of \mymeta{stored content} in the
+% \emph{sequence} \mymarg{seq name}.
 % \end{function}
 %
 % \subsection{The command \cs{cleanseqsc}}
@@ -1441,7 +1462,8 @@ This text is in the outer environment (after nested).
 %   \begin{syntax}
 %      \cmdexamp{cleanseqsc}{seq name}
 %   \end{syntax}
-% The command \ics*{cleanseqsc} remove all contents stored in \mymarg{seq name}.
+% The command \ics*{cleanseqsc} remove all \mymeta{stored content} in the
+% \emph{sequence} \mymarg{seq name}.
 % \end{function}
 %
 % \section[The \textnormal{\texttt{scontents}} package in action]{The \mypkg*{scontents} package in action}
@@ -2562,7 +2584,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % \begin{macro}{\l_@@_fname_out_tl,\l_@@_every_line_env_tl,\l_@@_file_iow}
 %   The token list \cs{l_@@_fname_out_tl} is used for store the name of
-%   the \meta{output file}, when there's one. Its value is set by the
+%   the \mymeta{output file}, when there's one. Its value is set by the
 %   keys §write-env§, §write-out§ and §write-cmd§.
 %
 %   The token list \cs{l_@@_every_line_env_tl} holds the contents of an
@@ -3189,8 +3211,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   is defined using \mypkg{xparse} to exploit its delimited argument
 %   processor.
 %
-%   The function is called from a context where §^^M§ is active, so
-%   \cs{@@_normalise_line_ends:N} is used to replace active §^^M§
+%   The function is called from a context where `§^^M§' is active, so
+%   \cs{@@_normalise_line_ends:N} is used to replace active `§^^M§'
 %   characters by spaces.
 %    \begin{macrocode}
 %</core>
@@ -3217,7 +3239,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % \begin{macro}{\@@_start_environment:w,\@@_start_after_option:w,
 %               \@@_check_line_process:en,\@@_stop_environment:}
-%   Here we make §^^I§, §^^L§ and §^^M§ active characters so that the end of
+%   Here we make `§^^I§', `§^^L§' and `§^^M§' active characters so that the end of
 %   line can be \enquote{seen} to be used as a delimiter, and \hologo{TeX} doesn't try to
 %   eliminate space-like characters.
 %
@@ -3296,14 +3318,14 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   }
 %   This is the main macro to collect the contents of a verbatim environment.
 %   The macro starts a group, opens the \mymeta{output file}, if necessary,
-%   sets verbatim catcodes, and then issues §^^M§ (set equal to \cs{@@_ret:w})
+%   sets verbatim catcodes, and then issues `§^^M§' (set equal to \cs{@@_ret:w})
 %   to read the environment line by line until reaching its end. The output
-%   token list will be appended with an active §^^J§ character and the line
+%   token list will be appended with an active `§^^J§' character and the line
 %   just read, and this line is written to the output file, if any. At the end
 %   of the environment the \mymeta{output file} is closed (if it was open),
 %   and the output token list is smuggled out of the verbatim group. A leading
-%   §^^J§ is removed from the token list using \cs{@@_remove_leading_nl:n}
-%  (which expects an active §^^J§ token at the head of the token list; a low
+%   `§^^J§' is removed from the token list using \cs{@@_remove_leading_nl:n}
+%  (which expects an active `§^^J§' token at the head of the token list; a low
 %  level \hologo{TeX} error is raised otherwise).
 %
 %    \begin{macrocode}
