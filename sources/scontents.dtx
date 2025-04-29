@@ -447,17 +447,18 @@
     keywords      = [1]{begin,end,Verbatim,env,myseq,false},%
 % Other words 2 (LaTeX)
     keywordstyle  = [2]{\color{blue!75}},%
-    keywords      = [2]{usepackage,section,documentclass,input,usemodule,
-                    subsection,ExplSyntaxOff,ExplSyntaxOn,RequirePackage,
-                    ProvidesExplPackage,obeyedline,lstinline,Verb,macro,
-                    makebox,verb,detokenize,meaning,RenewDocumentCommand,},%
+    keywords      = [2]{usepackage,section,documentclass,input,usemodule,%
+                    subsection,ExplSyntaxOff,ExplSyntaxOn,RequirePackage,%
+                    ProvidesExplPackage,obeyedline,lstinline,Verb,macro,%
+                    makebox,verb,detokenize,meaning,RenewDocumentCommand,%
+                    definetyping,},%
 % Other words 3
     keywordstyle  = [3]{\color{optcolor!85}},%
     keywords      = [3]{document,article,setlength,pagestyle,definecolor,myenvstore},%
 % Reserved words 4 (scontents pkg)
     keywordstyle  = [4]{\color{pkgcolor}},%
     keywords      = [4]{scontents,Scontents,getstored,typestored,verbatimsc, mergesc, %
-                    endverbatimsc,countsc,meaningsc,foreachsc,newenvsc, %
+                    endverbatimsc,countsc,meaningsc,foreachsc,newenvsc, setupsc, cleanseqsc,%
                     endverbatim, endscontents,startscontents,stopscontents,scontents.tex},%
 % Reserved words 5 (in red)
     keywordstyle  = [5]{\color{red}},%
@@ -2278,6 +2279,18 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % current version}. Available from
 % \textsc{ctan}, \url{https://ctan.org/pkg/latex-base}, 2025.
 %
+% \bibitem{tagpdf} \textsc{Fischer, Ulrike}. \enquote{\textsf{tagpdf} – \hologo{LaTeX}
+% kernel code for PDF tagging}. Available from
+% \textsc{ctan}, \url{https://www.ctan.org/pkg/tagpdf}, 2025.
+%
+% \bibitem{latexlab} The \hologo{LaTeX} Project. \enquote{\textsf{latex-lab} – \hologo{LaTeX}
+% laboratory}. Available from
+% \textsc{ctan}, \url{https://www.ctan.org/pkg/latex-lab}, 2025.
+%
+% \bibitem{verbatim} The \hologo{LaTeX} Project. \enquote{\textsf{verbatim} – Reimplementation
+% of and extensions to \hologo{LaTeX} \textsf{verbatim}}. Available from
+% \textsc{ctan}, \url{https://www.ctan.org/pkg/verbatim}, 2023.
+%
 % \bibitem{keyval} \textsc{Wright, Joseph}. \enquote{Programming
 % \textsf{key–value} in \textsf{expl3}}. Available from
 % \textsc{TUGboat},
@@ -2387,7 +2400,6 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %               \l_@@_env_name_tl,\@@_format_case:nnn}
 %   A global token list \cs{g_@@_end_verbatimsc_tl} match when ending
 %   §verbatimsc§ environment.
-%
 %    \begin{macrocode}
 %<*loader>
 \tl_new:N \g_@@_end_verbatimsc_tl
@@ -2407,7 +2419,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   defined by §\newenvsc§, \cs{l_@@_env_name_tl} storing the name
 %   of environments defined by §\newenvsc§.
 %    \begin{macrocode}
-\tl_new:N \l_@@_env_name_tl
+\tl_new:N    \l_@@_env_name_tl
 \tl_const:Ne \c_@@_end_env_tl
   {
     \c_backslash_str
@@ -2491,10 +2503,10 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   generic temporary vars.
 %    \begin{macrocode}
 %<*core>
-\tl_new:N \l_@@_macro_tmp_tl
-\tl_new:N \l_@@_temp_tl
-\tl_new:N \g_@@_temp_tl
-\int_new:N \l_@@_tmpa_int
+\tl_new:N   \l_@@_macro_tmp_tl
+\tl_new:N   \l_@@_temp_tl
+\tl_new:N   \g_@@_temp_tl
+\int_new:N  \l_@@_tmpa_int
 \bool_new:N \l_@@_temp_bool
 %    \end{macrocode}
 % \end{macro}
@@ -2510,8 +2522,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \subsection{Compatibility layer with \hologo{plainTeX} and \hologo{ConTeXt}}
 %
 % When loading the package outside of \LaTeX{} we can't usually use
-% \mypkg{xparse} now \mypkg{ltcmd} is part of the \LaTeX{} kernel. However
-% since the old \mypkg{xparse} provide \pkg{xparse-generic.tex}
+% \mypkg{xparse} now \mypkg{ltcmd}\cite{latex2e} is part of the \LaTeX{}
+% kernel. However since the old \mypkg{xparse} provide \pkg{xparse-generic.tex}
 % is loadable in any format.
 %
 %    \begin{macrocode}
@@ -2615,19 +2627,20 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\l_@@_env_nesting_int,\l_@@_foreach_stop_int}
+% \begin{macro}{\l_@@_env_nesting_int,\l_@@_env_nesting_int,
+%               \l_@@_foreach_stop_int,}
 %   The seq var \cs{l_@@_seq_item_seq} save the \mymeta{indexes} in the
 %   \emph{sequence} of the items requested to §\typestored§, §\mergesc§
 %   or §\meaningsc§.
 %   The int var \cs{l_@@_env_nesting_int} save the current \emph{nesting level}
 %   of the \myenv*{scontents} environment.
-%   The int var \cs{l_@@_foreach_stop_int} will save the value at which the §\foreachsc§
-%   loop will stop.
+%   The int var \cs{l_@@_foreach_stop_int} will save the value at which
+%   the §\foreachsc§ loop will stop.
 %
 %    \begin{macrocode}
 \seq_new:N \l_@@_seq_item_seq
-\int_new:N \l_@@_foreach_stop_int
 \int_new:N \l_@@_env_nesting_int
+\int_new:N \l_@@_foreach_stop_int
 %    \end{macrocode}
 % \end{macro}
 %
@@ -2787,7 +2800,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
     force-eol .default:n        = true,
     overwrite .meta:nn          = { scontents } { overwrite = #1 },
     overwrite .default:n        = true,
-    unknown   .code:n           = { \@@_parse_environment_keys:n {#1} }
+    unknown   .code:n           = { \@@_parse_environment_keys:n {#1} },
   }
 %    \end{macrocode}
 % \end{macro}
@@ -2819,7 +2832,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
     force-eol .default:n        = true,
     overwrite .meta:nn          = { scontents } { overwrite = #1 },
     overwrite .default:n        = true,
-    unknown   .code:n           = { \@@_parse_command_keys:n {#1} }
+    unknown   .code:n           = { \@@_parse_command_keys:n {#1} },
   }
 %    \end{macrocode}
 % \end{macro}
@@ -2848,7 +2861,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
     stop    .code:n           = {
                                   \bool_set_true:N \l_@@_foreach_stop_bool
                                   \int_set:Nn \l_@@_foreach_stop_int {#1}
-                                 },
+                                },
     stop    .value_required:n = true,
     step    .int_set:N        = \l_@@_foreach_step_int,
     step    .value_required:n = true,
@@ -2860,9 +2873,9 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
                                 },
     wrapper .value_required:n = true,
     sep     .tl_set:N         = \l_@@_foreach_sep_tl,
-    sep     .initial:n        = {},
+    sep     .initial:n        = { },
     sep     .value_required:n = true,
-    unknown .code:n           = { \@@_parse_foreach_keys:n {#1} }
+    unknown .code:n           = { \@@_parse_foreach_keys:n {#1} },
   }
 %    \end{macrocode}
 % \end{macro}
@@ -2883,6 +2896,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
                              \bool_set_true:N  \l_@@_writing_bool
                              \tl_set:Nn \l_@@_fname_out_tl {#1}
                            },
+    write-out .value_required:n = true,
     overwrite .meta:nn   = { scontents } { overwrite = #1 },
     overwrite .default:n = true,
     unknown   .code:n    = { \@@_parse_type_meaning_key:n {#1} }
@@ -2971,14 +2985,14 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   also contains the number of the item to retrieve from the stored sequence.
 %   To avoid the awkward §\typestored[]§\myoarg{options}§{...}§ syntax, we'll make the
 %   commands have a single \emph{optional argument} which is processed by
-%   \mypkg{l3keys}, and the \emph{unknown} \mymeta{keys} are brought here to
+%   \mypkg{l3keys}\cite{inter3}, and the \emph{unknown} \mymeta{keys} are brought here to
 %   \cs{@@_parse_typemeaning_key:n} to process.
 %
 %   First we check if the \mymeta{key} is an integer using \cs{int_to_roman:n}.
 %   If it is, we check that the value passed to the key is blank
 %   (otherwise something odd as §1=1§ might have been used). If everything
-%   is correct, then set the value of the integer which holds the \mymeta{index}.
-%   Otherwise raise an error about an \emph{unknown} option.
+%   is correct, then set the value of the integer which holds the \mymeta{index},
+%   otherwise raise an error about an \emph{unknown} option.
 %
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_parse_type_meaning_key:n #1
@@ -3615,78 +3629,6 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
-% \subsection{Code for plain \TeX{} off \texttt{verbatimsc}}
-%
-% \begin{macro}[int]{\verbatimsc,\endverbatimsc,\@@_verbatimsc_aux:,
-%                    \@@_vobeyspaces:,\@@_xverb:,\@@_nolig_list:,\@@_xobeysp:}
-%   In \hologo{plainTeX} we emulate \LaTeX's \myenv{verbatim} environment.
-%    \begin{macrocode}
-%<*plain>
-\cs_new_protected:Npn \verbatimsc
-  {
-    \group_begin:
-      \@@_verbatimsc_aux: \frenchspacing \@@_vobeyspaces:
-      \@@_xverb:
-  }
-\cs_new_protected:Npn \endverbatimsc
-  { \group_end: }
-\cs_new_protected:Npn \@@_verbatimsc_aux:
-  {
-    \skip_vertical:N \parskip
-    \dim_zero:N \parindent
-    \skip_set:Nn \parfillskip { 0pt plus 1fil }
-    \skip_set:Nn \parskip { 0pt plus0pt minus0pt }
-    \tex_par:D
-    \bool_set_false:N \l_@@_temp_bool
-    \cs_set:Npn \par
-      {
-        \bool_if:NTF \l_@@_temp_bool
-          {
-            \mode_leave_vertical:
-            \null
-            \tex_par:D
-            \penalty \interlinepenalty
-          }
-          {
-            \bool_set_true:N \l_@@_temp_bool
-            \mode_if_horizontal:T
-              { \tex_par:D \penalty \interlinepenalty }
-          }
-      }
-    \cs_set_eq:NN \do \char_set_catcode_other:N
-    \dospecials \obeylines
-    \tl_use:N \l_@@_verb_font_tl
-    \cs_set_eq:NN \do \@@_do_noligs:N
-    \@@_nolig_list:
-    \tex_everypar:D \exp_after:wN
-      { \tex_the:D \tex_everypar:D \tex_unpenalty:D }
-  }
-\cs_new_protected:Npn \@@_nolig_list:
-  { \do\`\do\<\do\>\do\,\do\'\do\- }
-\cs_new_protected:Npn \@@_vobeyspaces:
-  { \@@_set_active_eq:NN \  \@@_xobeysp: }
-\cs_new_protected:Npn \@@_xobeysp:
-  { \mode_leave_vertical: \nobreak \ }
-%</plain>
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}[int]{\dospecials}
-%   \LaTeX's requires §\dospecials§. In case it doesn't
-%   exist (at the time \mypkg*{scontents} is loaded) we define §\dospecials§
-%   to use the \cs{l_char_special_seq}.
-%    \begin{macrocode}
-%<*!latex>
-\cs_if_exist:NF \dospecials
-  {
-    \cs_new:Npn \dospecials
-      { \seq_map_function:NN \l_char_special_seq \do }
-  }
-%</!latex>
-%    \end{macrocode}
-% \end{macro}
-%
-%
 % \subsection{The command \cs{Scontents}}
 %
 % User command to \mymeta{stored content}, adapted from code by Ulrich
@@ -3744,9 +3686,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   }
 %   The §\Scontents§ command starts by parsing an optional argument to
 %   the function \cs{@@_Scontents_internal:nn} then delegates to
-%   \cs{@@_verb_arg:w} or \cs{@@_norm_arg:n} depending whether a star
-%   (§*§) argument is present.
-%
+%   \cs{@@_verb_arg:w} or \cs{@@_norm_arg:n} depending whether a \emph{starred
+%   argument} `§*§' is present.
 %    \begin{macrocode}
 %<*loader>
 \NewDocumentCommand \Scontents { !s !O{} }
@@ -3765,10 +3706,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
         { \@@_norm_arg:n }
   }
 %    \end{macrocode}
-%
-%   The function \cs{@@_norm_arg:n} grabs a normal argument, adds it to
+%   The function \cs{@@_norm_arg:n} grabs a standard \mymarg{argument}, adds it to
 %   the |seq| variable and optionally prints it.
-%
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_norm_arg:n #1
   {
@@ -3777,10 +3716,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
   }
 %</core>
 %    \end{macrocode}
-%
-%   The function \cs{@@_verb_arg:w} grabs a verbatim argument using
-%   \pkg{xparse}'s |+v| argument parser.
-%
+%   The function \cs{@@_verb_arg:w} grabs a \emph{verbatim} \mymarg{argument}
+%   using \mypkg{ltcmd} |+v| argument parser.
 %    \begin{macrocode}
 %<*loader>
 \NewDocumentCommand \@@_verb_arg:w { +v }
@@ -3795,7 +3732,6 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %     \@@_file_write_cmd:nn,
 %     \@@_file_write_cmd:VV,
 %   }
-%
 %   The function \cs{@@_verb_arg_internal:n} replace all `§^^M§' and
 %   §\obeyedline§ added by §+v§ argument added in \hologo{LaTeX} release 2024-06-01 by
 %   `§^^J§' then adds it to the |seq| variable. Here we will apply §\RenewDocumentCommand§
@@ -3946,6 +3882,252 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
+% \subsection{The environment \env{verbatimsc}}\label{env:verbatimsc}
+%
+% \subsubsection{Code for plain \TeX{} off \texttt{verbatimsc}}
+%
+% \begin{macro}[int]{\verbatimsc,\endverbatimsc,\@@_verbatimsc_aux:,
+%                    \@@_vobeyspaces:,\@@_xverb:,\@@_nolig_list:,\@@_xobeysp:}
+%   In \hologo{plainTeX} we emulate \LaTeX's \myenv{verbatim} environment.
+%    \begin{macrocode}
+%<*plain>
+\cs_new_protected:Npn \verbatimsc
+  {
+    \group_begin:
+      \@@_verbatimsc_aux: \frenchspacing \@@_vobeyspaces:
+      \@@_xverb:
+  }
+\cs_new_protected:Npn \endverbatimsc
+  { \group_end: }
+\cs_new_protected:Npn \@@_verbatimsc_aux:
+  {
+    \skip_vertical:N \parskip
+    \dim_zero:N \parindent
+    \skip_set:Nn \parfillskip { 0pt plus 1fil }
+    \skip_set:Nn \parskip { 0pt plus0pt minus0pt }
+    \tex_par:D
+    \bool_set_false:N \l_@@_temp_bool
+    \cs_set:Npn \par
+      {
+        \bool_if:NTF \l_@@_temp_bool
+          {
+            \mode_leave_vertical:
+            \null
+            \tex_par:D
+            \penalty \interlinepenalty
+          }
+          {
+            \bool_set_true:N \l_@@_temp_bool
+            \mode_if_horizontal:T
+              { \tex_par:D \penalty \interlinepenalty }
+          }
+      }
+    \cs_set_eq:NN \do \char_set_catcode_other:N
+    \dospecials \obeylines
+    \tl_use:N \l_@@_verb_font_tl
+    \cs_set_eq:NN \do \@@_do_noligs:N
+    \@@_nolig_list:
+    \tex_everypar:D \exp_after:wN
+      { \tex_the:D \tex_everypar:D \tex_unpenalty:D }
+  }
+\cs_new_protected:Npn \@@_nolig_list:
+  { \do\`\do\<\do\>\do\,\do\'\do\- }
+\cs_new_protected:Npn \@@_vobeyspaces:
+  { \@@_set_active_eq:NN \  \@@_xobeysp: }
+\cs_new_protected:Npn \@@_xobeysp:
+  { \mode_leave_vertical: \nobreak \ }
+%</plain>
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[int]{\dospecials}
+%   \LaTeX's requires §\dospecials§. In case it doesn't
+%   exist (at the time \mypkg*{scontents} is loaded) we define §\dospecials§
+%   to use the \cs{l_char_special_seq}.
+%    \begin{macrocode}
+%<*!latex>
+\cs_if_exist:NF \dospecials
+  {
+    \cs_new:Npn \dospecials
+      { \seq_map_function:NN \l_char_special_seq \do }
+  }
+%</!latex>
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[int]{\endverbatimsc,\end{verbatimsc},\stopverbatimsc,\startverbatimsc,}
+%   Finally the \hologo{TeX}, \hologo{LaTeX} and \hologo{ConTeXt} version of
+%   §\end{verbatimsc}§ environment is defined.
+%    \begin{macrocode}
+%<*loader>
+%<*!context>
+\use:e
+  {
+    \cs_new_protected:Npn \exp_not:N \@@_xverb:w
+      #1 \g_@@_end_verbatimsc_tl
+%<latex>      { #1 \exp_not:N \end{verbatimsc} }
+%<plain>      { #1 \exp_not:N \endverbatimsc }
+%<context>      { #1 \exp_not:N \stopverbatimsc }
+  }
+%</!context>
+%    \end{macrocode}
+%   In \hologo{ConTeXt} we use our own tool §\definetyping§.
+%    \begin{macrocode}
+%<context>\definetyping[verbatimsc]
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_declare_instance:,verbatimsc}
+%  To be compatible with \emph{tagged} \texttt{PDF} we must define the
+%  environment §verbatimsc§ in terms of the \mypkg{xtemplate}\cite{latex2e}
+%  module integrated into the \LaTeX{} kernel and the new \texttt{blocks-code}
+%  from \mypkg{latex-lab}\cite{latexlab}. This code is adapted directly
+%  from Mrs. Ulrike Fischer's answer to \href{https://tex.stackexchange.com/a/741178/7832}{New verbatim environment with block code (tagged-pdf)}.
+%    \begin{macrocode}
+%<*latex>
+\cs_new_protected:Nn \@@_declare_instance:
+  {
+    \DeclareInstance{blockenv}{verbatimsc}{display}
+      {
+        env-name       = verbatimsc,
+        tag-name       = verbatim,
+        tag-class      = ,
+        tagging-recipe = standard,
+        inner-level-counter = ,
+        level-increase = false,
+        setup-code     = ,
+        block-instance = displayblock,
+        inner-instance = ,
+        final-code     = \legacyverbatimsetup \tag_tool:n {paratag=codeline},
+        para-flattened = true
+      }
+  }
+\NewDocumentEnvironment { verbatimsc } { }
+  {
+    \IfDocumentMetadataTF
+      {
+        \@@_declare_instance:
+        \UseInstance{blockenv}{verbatimsc}{}
+        \@setupverbinvisiblespace\frenchspacing\@vobeyspaces
+        \@@_xverb:
+      }
+      {
+        \cs_set_eq:cN { @xverbatim } \@@_xverb:
+        \verbatim
+      }
+  }
+%    \end{macrocode}
+%   The macro §\endverbatim§ in the second argument of the §verbatimsc§
+%   environment is only needed for compatibility with the \mypkg{verbatim}\cite{verbatim}
+%   package.
+%    \begin{macrocode}
+  {
+    \IfDocumentMetadataTF
+      {
+        \endblockenv
+      }
+      { \endverbatim }
+  }
+%</latex>
+%</loader>
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsubsection{Some auxiliaries functions}
+%
+% \begin{macro}{\@@_tabs_to_spaces:}
+%   In a \emph{verbatim} context the \texttt{TAB} character is made active
+%   and set equal to \cs{@@_tabs_to_spaces:}, to produce as many spaces as
+%   the §width-tab§ key was set to.
+%    \begin{macrocode}
+%<*core>
+\cs_new:Npn \@@_tabs_to_spaces:
+  { \prg_replicate:nn { \l_@@_tab_width_int } { ~ } }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_do_noligs:N}
+%   The function \cs{@@_do_noligs:N} is an alternative definition for \LaTeXe's
+%   §\do@noligs§ which makes sure to not consume following space
+%   tokens. The \LaTeXe{} version ends with §\char`#1§, which
+%   leaves \TeX{} still looking for an \mymeta{optional~space}.
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_do_noligs:N #1
+  {
+    \char_set_catcode_active:N #1
+    \cs_set:cpe { @@_active_char_ \token_to_str:N #1 : }
+      {
+        \mode_leave_vertical:
+        \tex_kern:D \c_zero_dim
+        \tex_char:D `\exp_not:N #1
+      }
+    \char_set_active_eq:Nc #1 { @@_active_char_ \token_to_str:N #1 : }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[TF]{\@@_tl_if_head_is_q_mark:n}
+%   The conditional function \cs{@@_tl_if_head_is_q_mark:n} tests
+%   if the head of the token list is \cs{q_@@_mark}.
+%    \begin{macrocode}
+\prg_new_protected_conditional:Npnn \@@_tl_if_head_is_q_mark:n #1
+  { T, F, TF }
+  {
+    \exp_after:wN \if_meaning:w
+      \exp_after:wN
+        \q_@@_mark \@@_use_i_delimit_by_s_stop:nw #1 ? \s_@@_stop
+      \prg_return_true:
+    \else:
+      \prg_return_false:
+    \fi:
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{
+%     \@@_set_active_eq:NN, \@@_make_control_chars_active:,
+%     \@@_plain_disable_outer_par:}
+%   Shortcut definitions for common catcode changes.
+%   The `§^^L§' needs a special treatment in non-\LaTeX{} mode
+%   because in \hologo{plainTeX} it is an §\outer§ token.
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_set_active_eq:NN #1
+  {
+    \char_set_catcode_active:N #1
+    \char_set_active_eq:NN #1
+  }
+%</core>
+%<*loader>
+\group_begin:
+%<plain>  \char_set_catcode_active:n { `\* }
+  \cs_new_protected:Npn \@@_plain_disable_outer_par:
+%<*plain>
+    {
+      \group_begin:
+        \char_set_lccode:nn { `\* } { `\^^L }
+        \tex_lowercase:D { \group_end:
+        \tex_let:D * \scan_stop:
+      }
+    }
+%</plain>
+%<latex|context>    { }
+\group_end:
+%</loader>
+%<*core>
+\group_begin:
+  \char_set_catcode_active:N \*
+  \cs_new_protected:Npn \@@_make_control_chars_active:
+    {
+      \@@_plain_disable_outer_par:
+      \@@_set_active_eq:NN \^^I \@@_tab:
+      \@@_set_active_eq:NN \^^L \@@_par:
+      \@@_set_active_eq:NN \^^M \@@_ret:w
+    }
+\group_end:
+%</core>
+%    \end{macrocode}
+% \end{macro}
+%
 % \subsection{The command \cs{typestored}}
 %
 % \begin{macro}{\typestored,\@@_typestored_internal:nn,\@@_verb_print:N,
@@ -3988,12 +4170,10 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
         }
   }
 %    \end{macrocode}
-%
 %   The \cs{@@_verb_print:N} macro is defined with active carriage return
-%   (\textsc{ascii} 13) characters to mimic an actual verbatim environment
+%   (\textsc{ascii} 13) characters to \emph{mimic} an actual §verbatim§ environment
 %   \enquote{on the loose}. The contents of the environment are placed in a
 %   §verbatimsc§ environment and rescanned using \cs{@@_rescan_tokens:e}.
-%
 %    \begin{macrocode}
 \group_begin:
   \char_set_catcode_active:N \^^M
@@ -4028,6 +4208,46 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
+% \subsection{The command \cs{meaningsc}}
+%
+% \begin{macro}{\meaningsc,\@@_meaningsc_internal:nn,\@@_meaningsc:n}
+%   User command §\meaningsc§ to see content stored in |seq|.
+%
+%    \begin{macrocode}
+%<*loader>
+\NewDocumentCommand \meaningsc { o m }
+  { \@@_meaningsc_internal:nn {#1} {#2} }
+%</loader>
+%<*core>
+\cs_new_protected:Npn \@@_meaningsc_internal:nn #1 #2
+  {
+    \group_begin:
+      \seq_clear:N \l_@@_seq_item_seq
+      \str_set:Ne \l_@@_cur_seq_name_str {#2}
+      \tl_if_novalue:nF {#1} { \keys_set:nn { scontents / typemeaning } {#1} }
+      \seq_if_empty:NT \l_@@_seq_item_seq
+        { \seq_set_from_clist:Nn \l_@@_seq_item_seq { 1 } }
+      \@@_meaningsc:n {#2}
+    \group_end:
+  }
+\group_begin:
+  \char_set_catcode_active:N \^^I
+  \cs_new_protected:Npn \@@_meaningsc:n #1
+    {
+      \tl_set:Ne \l_@@_temp_tl
+        { \@@_getfrom_seq:Nn \l_@@_seq_item_seq {#1} }
+      \tl_replace_all:Nen \l_@@_temp_tl { \iow_char:N \^^J } { ~ }
+      \tl_replace_all:Nen \l_@@_temp_tl { \c_@@_hidden_space_str } { ~ }
+      \tl_log:N \l_@@_temp_tl
+      \tl_use:N \l_@@_verb_font_tl
+      \tl_replace_all:Nne \l_@@_temp_tl { ^^I } { \@@_tabs_to_spaces: }
+      \cs_replacement_spec:N \l_@@_temp_tl
+    }
+\group_end:
+%</core>
+%    \end{macrocode}
+% \end{macro}
+%
 % \subsection{The command \cs{mergesc}}
 %
 % \begin{macro}{\mergesc,\@@_mergesc_output_cmd:nn,\@@_mergesc_internal:nn,
@@ -4038,15 +4258,24 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \begin{macrocode}
 %<*loader>
 \NewDocumentCommand \mergesc { o m }
-  { \@@_mergesc_internal:nn {#1} {#2} }
+  {
+    \@@_mergesc_internal:nn {#1} {#2}
+  }
 %</loader>
+%    \end{macrocode}
+%   Now we will define only two keys \mykey{typestored} and \mykey{meaningsc}.
+%    \begin{macrocode}
 %<*core>
 \keys_define:nn { scontents / mergesc }
   {
-    , typestored .code:n =
-        { \cs_set_eq:NN \@@_mergesc_output_cmd:nn \@@_typestored_internal:nn }
-    , meaningsc .code:n =
-        { \cs_set_eq:NN \@@_mergesc_output_cmd:nn \@@_meaningsc_internal:nn }
+    typestored .code:n =
+      {
+        \cs_set_eq:NN \@@_mergesc_output_cmd:nn \@@_typestored_internal:nn
+      },
+    meaningsc .code:n =
+      {
+        \cs_set_eq:NN \@@_mergesc_output_cmd:nn \@@_meaningsc_internal:nn
+      },
   }
 \cs_new_protected:Npn \@@_mergesc_output_cmd:nn #1 #2
   {
@@ -4066,7 +4295,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
               print-cmd .default:n = true,
             }
           \keys_set_known:nnN { scontents / mergesc } {#1} \l_@@_keys_tl
-         }
+        }
       \seq_gclear:c { g_@@_name_sc!internal_seq }
       \@@_mergesc_parse_list:n {#2}
       \exp_args:Ne \@@_mergesc_output_cmd:nn
@@ -4136,189 +4365,10 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
-% \subsection{The \TeX{}, \LaTeX{} and \hologo{ConTeXt} \env{verbatimsc}}\label{env:verbatimsc}
-%
-% \begin{macro}[int]{\endverbatimsc,\end{verbatimsc},\stopverbatimsc,\startverbatimsc,}
-%   Finally the \hologo{TeX}, \hologo{LaTeX} and \hologo{ConTeXt} version of
-%   §verbatimsc§ environment is defined.
-%    \begin{macrocode}
-%<*loader>
-%<*!context>
-\use:e
-  {
-    \cs_new_protected:Npn \exp_not:N \@@_xverb:w
-      #1 \g_@@_end_verbatimsc_tl
-%<latex>      { #1 \exp_not:N \end{verbatimsc} }
-%<plain>      { #1 \exp_not:N \endverbatimsc }
-%<context>      { #1 \exp_not:N \stopverbatimsc }
-  }
-%</!context>
-%    \end{macrocode}
-%   In \hologo{ConTeXt} we use our own tool §\definetyping§.
-%    \begin{macrocode}
-%<context>\definetyping[verbatimsc]
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}{\@@_declare_instance:,verbatimsc}
-%  To be compatible with \emph{tagged} \texttt{PDF} we must define the
-%  environment §verbatimsc§ in terms of the \texttt{xtemplate} module integrated
-%  into the \LaTeX{} kernel, this code is adapted directly from Mrs. Ulrike
-%  Fischer's answer to \href{https://tex.stackexchange.com/a/741178/7832}{New verbatim environment with block code (tagged-pdf)}.
-%    \begin{macrocode}
-%<*latex>
-\cs_new_protected:Nn \@@_declare_instance:
-  {
-    \DeclareInstance{blockenv}{verbatimsc}{display}
-      {
-        env-name       = verbatimsc,
-        tag-name       = verbatim,
-        tag-class      = ,
-        tagging-recipe = standard,
-        inner-level-counter = ,
-        level-increase = false,
-        setup-code     = ,
-        block-instance = displayblock,
-        inner-instance = ,
-        final-code     = \legacyverbatimsetup \tag_tool:n {paratag=codeline},
-        para-flattened = true
-      }
-  }
-\NewDocumentEnvironment { verbatimsc } { }
-  {
-    \IfDocumentMetadataTF
-      {
-        \@@_declare_instance:
-        \UseInstance{blockenv}{verbatimsc}{}
-        \@setupverbinvisiblespace\frenchspacing\@vobeyspaces %% <--??
-        \@@_xverb:
-      }
-      {
-        \cs_set_eq:cN { @xverbatim } \@@_xverb:
-        \verbatim
-      }
-  }
-%    \end{macrocode}
-%   The macro §\endverbatim§ in the second argument of the §verbatimsc§
-%   environment is only needed for compatibility with the \pkg{verbatim}
-%   package.
-%    \begin{macrocode}
-  {
-    \IfDocumentMetadataTF
-      {
-        \endblockenv
-      }
-      { \endverbatim }
-  }
-%</latex>
-%</loader>
-%    \end{macrocode}
-% \end{macro}
-%
-% \subsubsection{Some auxiliaries functions}
-%
-% \begin{macro}{\@@_tabs_to_spaces:}
-%   In a verbatim context the |TAB| character is made active and set
-%   equal to \cs{@@_tabs_to_spaces:}, to produce as many spaces as
-%   the §width-tab§ key was set to.
-%
-%    \begin{macrocode}
-%<*core>
-\cs_new:Npn \@@_tabs_to_spaces:
-  { \prg_replicate:nn { \l_@@_tab_width_int } { ~ } }
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}{\@@_do_noligs:N}
-%   \cs{@@_do_noligs:N} is an alternative definition for \LaTeXe's
-%   §\do@noligs§ which makes sure to not consume following space
-%   tokens. The \LaTeXe{} version ends with §\char`#1§, which
-%   leaves \TeX{} still looking for an \mymeta{optional~space}.
-%^^A   This version uses \cs{char_generate:nn} to ensure that doesn't
-%^^A   happen.
-%^^A   Maintain documentation at this point.
-%    \begin{macrocode}
-\cs_new_protected:Npn \@@_do_noligs:N #1
-  {
-    \char_set_catcode_active:N #1
-    \cs_set:cpe { @@_active_char_ \token_to_str:N #1 : }
-      {
-        \mode_leave_vertical:
-        \tex_kern:D \c_zero_dim
-        \tex_char:D `\exp_not:N #1
-      }
-    \char_set_active_eq:Nc #1 { @@_active_char_ \token_to_str:N #1 : }
-  }
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}[TF]{\@@_tl_if_head_is_q_mark:n}
-%   Tests if the head of the token list is \cs{q_@@_mark}.
-%    \begin{macrocode}
-\prg_new_protected_conditional:Npnn \@@_tl_if_head_is_q_mark:n #1
-  { T, F, TF }
-  {
-    \exp_after:wN \if_meaning:w
-      \exp_after:wN
-        \q_@@_mark \@@_use_i_delimit_by_s_stop:nw #1 ? \s_@@_stop
-      \prg_return_true:
-    \else:
-      \prg_return_false:
-    \fi:
-  }
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}{
-%     \@@_set_active_eq:NN, \@@_make_control_chars_active:,
-%     \@@_plain_disable_outer_par:}
-%   Shortcut definitions for common catcode changes.
-%   The §^^L§ needs a special treatment in non-\LaTeX{} mode
-%   because in Plain\,\TeX{} it is an §\outer§ token.
-%    \begin{macrocode}
-\cs_new_protected:Npn \@@_set_active_eq:NN #1
-  {
-    \char_set_catcode_active:N #1
-    \char_set_active_eq:NN #1
-  }
-%</core>
-%<*loader>
-\group_begin:
-%<plain>  \char_set_catcode_active:n { `\* }
-  \cs_new_protected:Npn \@@_plain_disable_outer_par:
-%<*plain>
-    {
-      \group_begin:
-        \char_set_lccode:nn { `\* } { `\^^L }
-        \tex_lowercase:D { \group_end:
-        \tex_let:D * \scan_stop:
-      }
-    }
-%</plain>
-%<latex|context>    { }
-\group_end:
-%</loader>
-%<*core>
-\group_begin:
-  \char_set_catcode_active:N \*
-  \cs_new_protected:Npn \@@_make_control_chars_active:
-    {
-      \@@_plain_disable_outer_par:
-      \@@_set_active_eq:NN \^^I \@@_tab:
-      \@@_set_active_eq:NN \^^L \@@_par:
-      \@@_set_active_eq:NN \^^M \@@_ret:w
-    }
-\group_end:
-%</core>
-%    \end{macrocode}
-% \end{macro}
-%
 % \subsection{The command \cs{setupsc}}
 %
-% User command §\setupsc§ to setup module.
-%
 % \begin{macro}{\setupsc}
-%   A user-level wrapper for \cs{keys_set:nn}§{ scontents }§.
+%   User command §\setupsc§ to setup module for \cs{keys_set:nn}§{ scontents }§.
 %    \begin{macrocode}
 %<*loader>
 \NewDocumentCommand \setupsc { +m }
@@ -4327,51 +4377,10 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
-% \subsection{The command \cs{meaningsc}}
-%
-% \begin{macro}{\meaningsc,\@@_meaningsc_internal:nn,\@@_meaningsc:n}
-%   User command §\meaningsc§ to see content stored in |seq|.
-%
-%    \begin{macrocode}
-%<*loader>
-\NewDocumentCommand \meaningsc { o m }
-  { \@@_meaningsc_internal:nn {#1} {#2} }
-%</loader>
-%<*core>
-\cs_new_protected:Npn \@@_meaningsc_internal:nn #1 #2
-  {
-    \group_begin:
-      \seq_clear:N \l_@@_seq_item_seq
-      \str_set:Ne \l_@@_cur_seq_name_str {#2}
-      \tl_if_novalue:nF {#1} { \keys_set:nn { scontents / typemeaning } {#1} }
-      \seq_if_empty:NT \l_@@_seq_item_seq
-        { \seq_set_from_clist:Nn \l_@@_seq_item_seq { 1 } }
-      \@@_meaningsc:n {#2}
-    \group_end:
-  }
-\group_begin:
-  \char_set_catcode_active:N \^^I
-  \cs_new_protected:Npn \@@_meaningsc:n #1
-    {
-      \tl_set:Ne \l_@@_temp_tl
-        { \@@_getfrom_seq:Nn \l_@@_seq_item_seq {#1} }
-      \tl_replace_all:Nen \l_@@_temp_tl { \iow_char:N \^^J } { ~ }
-      \tl_replace_all:Nen \l_@@_temp_tl { \c_@@_hidden_space_str } { ~ }
-      \tl_log:N \l_@@_temp_tl
-      \tl_use:N \l_@@_verb_font_tl
-      \tl_replace_all:Nne \l_@@_temp_tl { ^^I } { \@@_tabs_to_spaces: }
-      \cs_replacement_spec:N \l_@@_temp_tl
-    }
-\group_end:
-%</core>
-%    \end{macrocode}
-% \end{macro}
-%
 % \subsection{The command \cs{countsc}}
 %
 % \begin{macro}{\countsc}
 %   User command §\countsc§ to count number of contents stored in |seq|.
-%
 %    \begin{macrocode}
 %<*loader>
 \NewExpandableDocumentCommand \countsc { m }
@@ -4382,10 +4391,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % \subsection{The command \cs{cleanseqsc}}
 %
-%
 % \begin{macro}{\cleanseqsc}
 %   A user command §\cleanseqsc§ to clear (remove) a defined |seq|.
-%
 %    \begin{macrocode}
 %<*loader>
 \NewDocumentCommand \cleanseqsc { m }

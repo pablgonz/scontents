@@ -41,7 +41,7 @@
     \char_set_catcode_other:N \}
   }
   { \end{verbatimsc} }
-\tl_new:N \l__scontents_env_name_tl
+\tl_new:N    \l__scontents_env_name_tl
 \tl_const:Ne \c__scontents_end_env_tl
   {
     \c_backslash_str
@@ -87,10 +87,6 @@
   { \__scontents_getstored_internal:nn {#1} {#2} }
 \NewDocumentCommand \foreachsc { o m }
   { \__scontents_foreachsc_internal:nn {#1} {#2} }
-\NewDocumentCommand \typestored { o m }
-  { \__scontents_typestored_internal:nn {#1} {#2} }
-\NewDocumentCommand \mergesc { o m }
-  { \__scontents_mergesc_internal:nn {#1} {#2} }
 \use:e
   {
     \cs_new_protected:Npn \exp_not:N \__scontents_xverb:w
@@ -120,7 +116,7 @@
       {
         \__scontents_declare_instance:
         \UseInstance{blockenv}{verbatimsc}{}
-        \@setupverbinvisiblespace\frenchspacing\@vobeyspaces %% <--??
+        \@setupverbinvisiblespace\frenchspacing\@vobeyspaces
         \__scontents_xverb:
       }
       {
@@ -139,10 +135,16 @@
   \cs_new_protected:Npn \__scontents_plain_disable_outer_par:
     { }
 \group_end:
-\NewDocumentCommand \setupsc { +m }
-  { \keys_set:nn { scontents } {#1} }
+\NewDocumentCommand \typestored { o m }
+  { \__scontents_typestored_internal:nn {#1} {#2} }
 \NewDocumentCommand \meaningsc { o m }
   { \__scontents_meaningsc_internal:nn {#1} {#2} }
+\NewDocumentCommand \mergesc { o m }
+  {
+    \__scontents_mergesc_internal:nn {#1} {#2}
+  }
+\NewDocumentCommand \setupsc { +m }
+  { \keys_set:nn { scontents } {#1} }
 \NewExpandableDocumentCommand \countsc { m }
   { \seq_count:c { g__scontents_name_#1_seq } }
 \NewDocumentCommand \cleanseqsc { m }
