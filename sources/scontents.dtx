@@ -450,7 +450,7 @@
     keywords      = [2]{usepackage,section,documentclass,input,usemodule,
                     subsection,ExplSyntaxOff,ExplSyntaxOn,RequirePackage,
                     ProvidesExplPackage,obeyedline,lstinline,Verb,macro,
-                    makebox,verb,detokenize,meaning,},%
+                    makebox,verb,detokenize,meaning,RenewDocumentCommand,},%
 % Other words 3
     keywordstyle  = [3]{\color{optcolor!85}},%
     keywords      = [3]{document,article,setlength,pagestyle,definecolor,myenvstore},%
@@ -461,7 +461,7 @@
                     endverbatim, endscontents,startscontents,stopscontents,scontents.tex},%
 % Reserved words 5 (in red)
     keywordstyle  = [5]{\color{red}},%
-    keywords      = [5]{makeatletter, makeatother, let, @undefined, def,%
+    keywords      = [5]{makeatletter, makeatother, let, @undefined, def,@bsphack, @esphack,%
                     par,item,parindent,@ifpackagelater,ver@xparse.sty, MakeFile, %
                     ver@scontents.sty,dospecials,do@noligs,char,outer,jobname,inner},%
 % Reserved words 6 (optcolor)
@@ -663,7 +663,7 @@
 % The \mypkg*{scontents} package allows to \mymeta{store contents} in \mymeta{sequences}
 % or \mymeta{external files}. In some ways it is similar to the \mypkg{filecontentsdef}
 % package, with the difference in which the \mymeta{content} is stored. The idea behind
-% this package is to get an approach to \hologo{ConTeXt} \enquote{\emph{buffers}} by
+% this package is to get an approach to \hologo{ConTeXt} \emph{\enquote{buffers}} by
 % making use \mymeta{sequences}.
 % \end{scontents}
 %
@@ -869,9 +869,9 @@
 % \end{function}
 %
 % \keyexamp{verb-font}{font family}{\textnormal{\ttfamily\textbackslash{}ttfamily}}
-% Sets the \mymeta{font family} used to display the \mymeta{stored content} for the
-% \ics*{typestored} and \ics*{meaningsc} commands. This key is only available
-% as a package option or using \ics*{setupsc}.
+% Sets the \mymeta{font family} used to display the \mymeta{stored content} for
+% \ics*{typestored}, \ics*{mergesc} and \ics*{meaningsc} commands. This key
+% is only available as a package option or using \ics*{setupsc}.
 %
 % \medskip
 %
@@ -896,9 +896,9 @@
 % only available as a package option or using \ics*{setupsc}.
 %
 % \keyexamp{force-eol}{true \textnormal{\textcolor{lightgray}{\textbar}} false}{false}
-% Sets if the end of line for the \mymeta{stored content} is hidden or not.
-% This key is necessary only if the last line is the closing of some
-% environment defined by the \mypkg{fancyvrb} package as §\end{Verbatim}§
+% Sets if the \emph{last end of line} for the \mymeta{stored content} is hidden or not.
+% This key is necessary only if the \emph{last line} is the closing of some
+% environment defined by the \mypkg{fancyvrb}\cite{fancyvrb} package as §\end{Verbatim}§
 % or another environment that does not support a comments `\texttt{\textcolor{gray}{\%}}'
 % after closing §\end{<env>}%§. This key is available for the \myenv*{scontents}
 % environment and the \ics*{Scontents*} command.
@@ -1110,7 +1110,7 @@ This text is in the outer environment (after nested).
 % \fi
 %
 % created the environment §myenvstore§ that \mymeta{stored content} in
-% the \emph{sequence} §myseq§ and will NOT display the \mymeta{stored content}
+% the \emph{sequence} \mymarg{myseq} and will NOT display the \mymeta{stored content}
 % when the environment it is executed.
 %
 % \subsection{The command \cs{Scontents}}
@@ -1169,37 +1169,32 @@ This text is in the outer environment (after nested).
 % running the command. The \mymeta{stored content} is extracted from the \emph{sequence}
 % \mymarg{seq name} set by the key \mykey{store-cmd} at the time it is executed.
 %
+% \subsection*{Options only for starred version}
+%
+% The \mykey{force-eol} and \mykey{overwrite} keys is available for this \emph{starred version}.
+%
 % \keyexamp{write-cmd}{file.ext}{not used}
 % Sets the \emph{name} of the \mymeta{external file} in which the \mymarg{argument}
-% will be written. The \mymeta{file.ext} will be created in the working directory,
-% relative or absolute paths are not supported. If \mymeta{file.ext}
-% does not exist, it will be created or overwritten if the \mykey{overwrite} key is used.
-%
-% The character \texttt{TAB} will be written in \mymeta{file.ext} and the \mymarg{argument}
-% will be stored in the \emph{sequence} \mymarg{seq name} set by the key \mykey{store-cmd}
-% at the time it is executed. \hologo{XeLaTeX} users using character \texttt{TAB}
-% must add \texttt{\textcolor{optcolor}{-8bit}}
-% at the command line, otherwise you will get \hologo{TeX} character \texttt{TAB} `§^^I§'
-% in \mymeta{file.ext}.
+% will be written. The \mymeta{file.ext} will be created in the working
+% directory and the \mymarg{argument} will be \emph{stored}
+% in the \emph{sequence} set by the key \mykey{store-cmd}
+% at the time it is executed. If \mymeta{file.ext} does not exist, it will
+% be created or overwritten if the \mykey{overwrite} key is used.
 %
 % \keyexamp{write-out}{file.ext}{not used}
-% Sets the name of the \mymeta{external file} in which the \mymarg{argument}
-% will be written. The \mymeta{file.ext} will be created
-% in the working directory, relative or absolute paths are not supported. If \mymeta{file.ext}
-% does not exist, it will be created or overwritten if the \mykey{overwrite} key is used.
-%
-% The character \texttt{TAB} will be written in \mymeta{file.ext} and the \mymarg{argument}
-% will NOT be stored in any \emph{sequence} established at that time. \hologo{XeLaTeX} users
-% using character \texttt{TAB} must add \texttt{\textcolor{optcolor}{-8bit}}
-% at the command line, otherwise you will get \hologo{TeX} character \texttt{TAB} `§^^I§'
-% in \mymeta{file.ext}.
+% Sets the \emph{name} of the \mymeta{external file} in which the \mymarg{argument}
+% will be written. The \mymeta{file.ext} will be created in the working
+% directory and the \mymarg{argument} will NOT be \emph{stored}
+% in any \emph{sequence} set by the key \mykey{store-cmd}
+% at the time it is executed. If \mymeta{file.ext} does not exist, it will
+% be created or overwritten if the \mykey{overwrite} key is used.
 %
 % \begin{important}*
-% The §force-eol§, §write-cmd§, §write-out§ and §overwrite§ \mymeta{keys} are available
-% and behave similarly to when running the \myenv*{scontents} environment but differ
-% if run with the \ics*{Scontents} without the \emph{starred argument} ‘§*§’, in
-% practical terms the file \mymeta{file.ext} will be written using §\detokenize§
-% and not in \emph{verbatim mode}.
+% In the keys \mykey{write-cmd} and \mykey{write-out} the character
+% \texttt{TAB} will be written in \mymeta{file.ext}, relative or absolute
+% paths are not supported. \hologo{XeLaTeX} users using character \texttt{TAB}
+% must add \texttt{\textcolor{optcolor}{-8bit}} at the command line, otherwise
+% you will get \hologo{TeX} character \texttt{TAB} `§^^I§' in \mymeta{file.ext}.
 % \end{important}
 %
 % \subsection{The command \cs{getstored}}
@@ -1242,7 +1237,8 @@ This text is in the outer environment (after nested).
 % \label{sec:optcmdfor}
 %
 % \keyexamp{sep}{code}{empty}
-% Establishes the \emph{separation} between each \mymeta{stored content} in the \emph{sequence} \mymarg{seq name}.
+% Establishes the \emph{separation} between each \mymeta{stored content}
+% in the \emph{sequence} \mymarg{seq name}.
 % For example, you can use §sep={\\[10pt]}§ for vertical separation of
 % \mymeta{stored contents}.
 %
@@ -1299,9 +1295,9 @@ This text is in the outer environment (after nested).
 % in the \emph{sequence} \mymarg{seq name} will be printed.
 % \end{function}
 %
-% If the \emph{optional argument} is not passed it defaults to the first \mymeta{stored content}
-% in the \emph{sequence} \mymarg{seq name}. The key \mykey{width-tab}
-% is available for this command.
+% If the \emph{optional argument} is not passed it defaults to the first
+% \mymeta{stored content} in the \emph{sequence} \mymarg{seq name}. The
+% key \mykey{width-tab} is available for this command.
 %
 % \subsection{The command \cs{mergesc}}
 % \label{sec:mergesc}
@@ -1429,16 +1425,14 @@ This text is in the outer environment (after nested).
 %      \cmdexamp{meaningsc}[index\textnormal{\textcolor{gray}{,}} width-tab \textnormal{\textcolor{gray}{=}} number]{seq name}
 %   \end{syntax}
 % The command \ics*{meaningsc} executes §\meaning§ on the \mymeta{stored content}
+% in the \emph{sequence} \mymarg{seq name}. The \emph{integer value} set
+% at \mymeta{index} corresponds to the \emph{position} of the \mymeta{stored content}
 % in the \emph{sequence} \mymarg{seq name}.
-%
-% The \mymeta{index} corresponds to the \emph{position} in which
-% \mymeta{stored content} is located in the \emph{sequence} \mymarg{seq
-% name}.
 % \end{function}
 %
-% If the optional argument is not passed it defaults to the first element
-% stored in the \emph{sequence} \mymarg{seq name}. The key \mykey{width-tab}
-% is available for this command.
+% If the \emph{optional argument} is not passed it defaults to the first
+% \mymeta{stored content} in the \emph{sequence} \mymarg{seq name}. The
+% key \mykey{width-tab} is available for this command.
 %
 % \subsection{The command \cs{countsc}}
 % \label{sec:countsc}
@@ -1515,7 +1509,7 @@ to \mymeta{external files} or show it in \mymeta{verbatim style}.
 The \mypkg*{scontents} package allows to \mymeta{store contents} in \mymeta{sequences}
 or \mymeta{external files}. In some ways it is similar to the \mypkg{filecontentsdef}
 package, with the difference in which the \mymeta{content} is stored. The idea behind
-this package is to get an approach to \hologo{ConTeXt} \enquote{\emph{buffers}} by
+this package is to get an approach to \hologo{ConTeXt} \emph{\enquote{buffers}} by
 making use \mymeta{sequences}.
 \end{scontents}
 \end{examplecode}
@@ -2252,6 +2246,10 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \textsf{filecontentsdef} package}. Available from
 % \textsc{ctan}, \url{https://ctan.org/pkg/filecontentsdef}, 2019.
 %
+% \bibitem{xsim} \textsc{Niederberger, Clemens}. \enquote{\textsf{xsim} – eXercise
+% Sheets IMproved}. Available from
+% \textsc{ctan}, \url{https://www.ctan.org/pkg/xsim}, 2023.
+%
 % \bibitem{fancyvrb} \textsc{Van Zandt, Timothy}. \enquote{The \textsf{fancyvrb}
 % package - Fancy Verbatims in \hologo{LaTeX}}. Available from
 % \textsc{ctan}, \url{https://www.ctan.org/pkg/fancyvrb}, 2024.
@@ -2325,8 +2323,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % Now we define some common macros to hold the package date and version:
 %    \begin{macrocode}
-%<loader>\def\ScontentsFileDate{2025-04-27}%
-%<core>\def\ScontentsCoreFileDate{2025-04-27}%
+%<loader>\def\ScontentsFileDate{2025-04-29}%
+%<core>\def\ScontentsCoreFileDate{2025-04-29}%
 %<*loader>
 \def\ScontentsFileVersion{2.4}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
@@ -2350,7 +2348,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % (probably because I don't know how to make a proper \hologo{ConTeXt}
 % module :-). We define a \LaTeX{}-style §\ver@scontents.sty§ macro with
 % version info (just in case) and add §\ExplSyntaxOn§ to be able to load
-% \pkg{xparse} later.
+% \file{xparse-generic} later.
 %
 %    \begin{macrocode}
 %<*!latex>
@@ -2377,6 +2375,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
     \file_input_stop:
   }
 %</plain>
+%</loader>
 %    \end{macrocode}
 %
 % \subsection{Definition of variables by format}
@@ -2384,11 +2383,13 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % We define and set variables that must be handled separately in order
 % to work properly with \hologo{plainTeX}, \hologo{ConTeXt} and \LaTeX.
 %
-% \begin{macro}{\g_@@_end_verbatimsc_tl}
+% \begin{macro}{\g_@@_end_verbatimsc_tl, \c_@@_end_env_tl,
+%               \l_@@_env_name_tl,\@@_format_case:nnn}
 %   A global token list \cs{g_@@_end_verbatimsc_tl} match when ending
-%   \env{verbatimsc} environment.
+%   §verbatimsc§ environment.
 %
 %    \begin{macrocode}
+%<*loader>
 \tl_new:N \g_@@_end_verbatimsc_tl
 \tl_gset_rescan:Nnn \g_@@_end_verbatimsc_tl
   {
@@ -2402,13 +2403,9 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %<plain>  { \endverbatimsc }
 %<context>  { \stopverbatimsc }
 %    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}{\c_@@_end_env_tl,\l_@@_env_name_tl}
 %   A token list \cs{c_@@_end_env_tl} match when ending environments
-%   defined by \cs{newenvsc}, \cs{l_@@_env_name_tl} storing the name
-%   of environments defined by \cs{newenvsc}.
-%
+%   defined by §\newenvsc§, \cs{l_@@_env_name_tl} storing the name
+%   of environments defined by §\newenvsc§.
 %    \begin{macrocode}
 \tl_new:N \l_@@_env_name_tl
 \tl_const:Ne \c_@@_end_env_tl
@@ -2421,27 +2418,23 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %<latex>    \c_right_brace_str
   }
 %    \end{macrocode}
-% \end{macro}
-%
-% Now we load the core \mypkg*{scontents} code:
+%   Now we load the core \mypkg*{scontents} code:
 %    \begin{macrocode}
 \file_input:n { scontents-code.tex }
 %    \end{macrocode}
-%
-% \begin{macro}{\@@_format_case:nnn}
 %   Sometimes we need to detect the format from within a macro:
 %    \begin{macrocode}
 \cs_new:Npn \@@_format_case:nnn #1 #2 #3
 %<latex>  {#1} % LaTeX
 %<plain>  {#2} % Plain/Generic
 %<context>  {#3} % ConTeXt
+%</loader>
 %    \end{macrocode}
 % \end{macro}
 %
 % Checking that the package was loaded with the proper loader code. This code
 % was copied from \texttt{expl3-code.tex}.
 %    \begin{macrocode}
-%</loader>
 %<*core>
 \begingroup
   \catcode32=10
@@ -2485,6 +2478,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
     \fi
   \fi
 \next
+%</core>
 %    \end{macrocode}
 %
 % \subsection{Definition of temporary variables}
@@ -2496,6 +2490,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   \cs{g_@@_temp_tl}, \cs{l_@@_tmpa_int} and \cs{l_@@_temp_bool} are
 %   generic temporary vars.
 %    \begin{macrocode}
+%<*core>
 \tl_new:N \l_@@_macro_tmp_tl
 \tl_new:N \l_@@_temp_tl
 \tl_new:N \g_@@_temp_tl
@@ -2508,33 +2503,35 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   Stores unused \mymeta{keys} to be forwarded to other commands.
 %    \begin{macrocode}
 \tl_new:N \l_@@_keys_tl
+%</core>
 %    \end{macrocode}
 % \end{macro}
 %
 % \subsection{Compatibility layer with \hologo{plainTeX} and \hologo{ConTeXt}}
 %
 % When loading the package outside of \LaTeX{} we can't usually use
-% \pkg{xparse}. However since \pkg{xparse} now \pkg{ltcmd} is part of
-% the \LaTeX{} kernel is loadable in any format.
+% \mypkg{xparse} now \mypkg{ltcmd} is part of the \LaTeX{} kernel. However
+% since the old \mypkg{xparse} provide \pkg{xparse-generic.tex}
+% is loadable in any format.
 %
 %    \begin{macrocode}
-%</core>
 %<*loader&!latex>
 \int_set:Nn \l_@@_tmpa_int { \char_value_catcode:n { `\@ } }
 \char_set_catcode_letter:N \@
 \file_input:n { xparse-generic.tex }
 \char_set_catcode:nn { `\@ } { \l_@@_tmpa_int }
 %</loader&!latex>
-%<*core>
 %    \end{macrocode}
 %
 % \subsection{Definition of keys for the package}
 %
-% We create some common \mymeta{keys} that will be used by the options
-% passed to the package as well as by the environments and commands
-% defined.
-%
+% \begin{macro}[int]{store-env, store-cmd,verb-font,print-env,print-cmd,
+%                    force-eol, overwrite, width-tab, print-all, store-all}
+%   We create some common \mymeta{keys} that will be used by the options
+%   passed to the package as well as by the environments and commands
+%   defined.
 %    \begin{macrocode}
+%<*core>
 \keys_define:nn { scontents }
   {
     store-env .tl_set:N         = \l_@@_name_seq_env_tl,
@@ -2566,19 +2563,21 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
     store-all .value_required:n = true
   }
 %</core>
+%    \end{macrocode}
+%   Set default value for \mykey{verb-font} key.
+%    \begin{macrocode}
 %<loader>\keys_define:nn { scontents }
 %<latex>  { verb-font .initial:n = \ttfamily }
 %<plain|context>  { verb-font .initial:n = \tt }
 %    \end{macrocode}
-%
 % In \LaTeX{} mode process the \mymeta{keys} as options passed on to the
 % package and will return an error when they are.
 %    \begin{macrocode}
 %<*latex>
 \ProcessKeyOptions [ scontents ]
 %</latex>
-%<*core>
 %    \end{macrocode}
+% \end{macro}
 %
 % \subsection{Internal variables and utility functions}
 %
@@ -2587,15 +2586,15 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   the \mymeta{output file}, when there's one. Its value is set by the
 %   keys §write-env§, §write-out§ and §write-cmd§.
 %
-%   The token list \cs{l_@@_every_line_env_tl} holds the contents of an
-%   environment, \env{scontents} by default, as it's being read.
-%   \cs{l_@@_file_iow} is an output stream for saving the contents of an
-%   environment (or command) to a file.
-%
+%   The token list \cs{l_@@_every_line_env_tl} holds the \mymarg{body env} of an
+%   environment, \myenv*{scontents} by default, as it's being read.
+%   \cs{l_@@_file_iow} is an output stream for saving the \mymarg{body env} of an
+%   environment or \mymarg{argument} for command to a \mymeta{output file}.
 %   This variables is used by the function \cs{@@_file_tl_write_start:n}
 %   (see \ref{the:environment:itself}).
 %
 %    \begin{macrocode}
+%<*core>
 \tl_new:N \l_@@_fname_out_tl
 \tl_new:N \l_@@_every_line_env_tl
 \iow_new:N \l_@@_file_iow
@@ -2603,9 +2602,10 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \end{macro}
 %
 % \begin{macro}{\l_@@_foreach_name_seq_tl,\l_@@_foreach_before_tl,\l_@@_foreach_after_tl}
-%   \cs{l_@@_foreach_name_seq_tl} is the name assigned to the sequence on
-%   which the loop will be made, \cs{l_@@_foreach_before_tl} and \cs{l_@@_foreach_after_tl}
-%   are token lists in which the assigned material will be placed before
+%   The token list \cs{l_@@_foreach_name_seq_tl} save the \emph{name}
+%   assigned to the \emph{sequence} on which the loop will be made, the vars
+%   \cs{l_@@_foreach_before_tl} and \cs{l_@@_foreach_after_tl} are token
+%   lists in which the assigned material will be placed before
 %   and after the execution of the §\foreachsc§ loop.
 %
 %    \begin{macrocode}
@@ -2616,15 +2616,17 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \end{macro}
 %
 % \begin{macro}{\l_@@_env_nesting_int,\l_@@_foreach_stop_int}
-%   \cs{l_@@_seq_item_seq} stores the indexes in the sequence of the items
-%   requested to §\typestored§ or §\meaningsc§. \cs{l_@@_env_nesting_int}
-%   stores the current nesting level of the \env{scontents} environment.
-%   \cs{l_@@_foreach_stop_int} will save the value at which the §\foreachsc§
+%   The seq var \cs{l_@@_seq_item_seq} save the \mymeta{indexes} in the
+%   \emph{sequence} of the items requested to §\typestored§, §\mergesc§
+%   or §\meaningsc§.
+%   The int var \cs{l_@@_env_nesting_int} save the current \emph{nesting level}
+%   of the \myenv*{scontents} environment.
+%   The int var \cs{l_@@_foreach_stop_int} will save the value at which the §\foreachsc§
 %   loop will stop.
 %
 %    \begin{macrocode}
-\int_new:N \l_@@_foreach_stop_int
 \seq_new:N \l_@@_seq_item_seq
+\int_new:N \l_@@_foreach_stop_int
 \int_new:N \l_@@_env_nesting_int
 %    \end{macrocode}
 % \end{macro}
@@ -2659,8 +2661,9 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\l_@@_foreach_print_seq}
-%   The \cs{l_@@_foreach_print_seq} is the sequence used by §\foreachsc§.
+% \begin{macro}{\l_@@_foreach_print_seq, \g_@@_name_sc!internal_seq}
+%   The seq var \cs{l_@@_foreach_print_seq} is the sequence used by §\foreachsc§
+%   and the seq var \cs{g_@@_name_sc!internal_seq} is the sequence used by §\mergesc§.
 %
 %    \begin{macrocode}
 \seq_new:N \l_@@_foreach_print_seq
@@ -2672,7 +2675,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   The variable \cs{c_@@_hidden_space_str} is a constant \emph{string} to used to hide
 %   the \mymeta{forced space} added by \hologo{TeX} when recording content
 %   in a macro. This \emph{string} contains the \emph{reserved phrase}
-%   ``§%§§^^Ascheol%§'' which is added to the end of the argument stored
+%   `§%§§^^Ascheol%§' which is added to the end of the \mymarg{argument} stored
 %   in |seq| when the key §force-eol§ is false.
 %
 %    \begin{macrocode}
@@ -2687,20 +2690,25 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \begin{macrocode}
 \quark_new:N \q_@@_stop
 \quark_new:N \q_@@_mark
-\scan_new:N \s_@@_stop
-\scan_new:N \s_@@_mark
+\scan_new:N  \s_@@_stop
+\scan_new:N  \s_@@_mark
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\l_@@_cur_seq_name_str, \@@_use_delimit_by_s_stop:nw,
-%               \@@_use_i_delimit_by_s_stop:nw, \@@_use_none_delimit_by_s_stop:w,}
+% \begin{macro}{\l_@@_print_aux_bool,
+%               \l_@@_cur_seq_name_str,
+%               \@@_use_delimit_by_s_stop:nw,
+%               \@@_use_i_delimit_by_s_stop:nw,
+%               \@@_use_none_delimit_by_s_stop:w,}
 %   Internal variables used by §\typestored§ and §\mergesc§.
 %
 %    \begin{macrocode}
-\str_new:N \l_@@_cur_seq_name_str
-\cs_new:Npn \@@_use_delimit_by_s_stop:nw #1 \s_@@_stop {#1}
-\cs_new:Npn \@@_use_i_delimit_by_s_stop:nw #1 #2 \s_@@_stop {#1}
-\cs_new:Npn \@@_use_none_delimit_by_s_stop:w #1 \s_@@_stop { }
+\bool_new:N      \l_@@_print_aux_bool
+\bool_set_true:N \l_@@_print_aux_bool
+\str_new:N       \l_@@_cur_seq_name_str
+\cs_new:Npn      \@@_use_delimit_by_s_stop:nw #1 \s_@@_stop {#1}
+\cs_new:Npn      \@@_use_i_delimit_by_s_stop:nw #1 #2 \s_@@_stop {#1}
+\cs_new:Npn      \@@_use_none_delimit_by_s_stop:w #1 \s_@@_stop { }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -2708,7 +2716,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   Internal variables used by functions \cs{@@_bsphack:} and \cs{@@_esphack:}.
 %
 %    \begin{macrocode}
-\int_new:N \l_@@_save_sf_int
+\int_new:N  \l_@@_save_sf_int
 \skip_new:N \l_@@_save_skip
 %    \end{macrocode}
 % \end{macro}
@@ -2731,7 +2739,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \end{macro}
 %
 % \begin{macro}{\@@_tab:,\@@_par:}
-%   Control sequences to replace tab (§^^I§) and form feed (§^^L§) characters.
+%   Control sequences to replace tab `§^^I§' and form feed `§^^L§' characters.
 %
 %    \begin{macrocode}
 \cs_new:Npe \@@_tab: { \c_space_tl }
@@ -2743,6 +2751,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   Some nonstandard kernel variant.
 %    \begin{macrocode}
 \prg_generate_conditional_variant:Nnn \tl_if_empty:n { f } { p, TF }
+%</core>
 %    \end{macrocode}
 % \end{macro}
 %
@@ -2753,9 +2762,11 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % \subsubsection{Keys for environment \env{scontents}}
 %
-% We define a set of \mymeta{keys} for environment §scontents§.
-%
+% \begin{macro}[int]{write-env,write-out,print-env,store-env,force-eol,
+%                    overwrite,unknown,}
+%    We define a set of \mymeta{keys} for environment §scontents§.
 %    \begin{macrocode}
+%<*core>
 \keys_define:nn { scontents / scontents }
   {
     write-env .code:n           = {
@@ -2779,12 +2790,14 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
     unknown   .code:n           = { \@@_parse_environment_keys:n {#1} }
   }
 %    \end{macrocode}
+% \end{macro}
 %
 % \subsubsection{Keys for command \cs{Scontents}}
 %
-% We define a set of \mymeta{keys} for commands §\Scontents§ and
-% §\Scontents*§.
-%
+% \begin{macro}[int]{write-cmd,write-out,print-cmd,store-cmd,force-eol,
+%                    overwrite,unknown,}
+%    We define a set of \mymeta{keys} for commands §\Scontents§ and
+%    §\Scontents*§.
 %    \begin{macrocode}
 \keys_define:nn { scontents / Scontents }
   {
@@ -2809,11 +2822,13 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
     unknown   .code:n           = { \@@_parse_command_keys:n {#1} }
   }
 %    \end{macrocode}
+% \end{macro}
 %
 % \subsubsection{Keys for command \cs{foreachsc}}
 %
-% We define a set of \mymeta{keys} for command §\foreachsc§.
-%
+% \begin{macro}[int]{before, after, start, stop, step, wrapper, sep,
+%                    unknown,}
+%    We define a set of \mymeta{keys} for command §\foreachsc§.
 %    \begin{macrocode}
 \keys_define:nn { scontents / foreachsc }
   {
@@ -2850,16 +2865,16 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
     unknown .code:n           = { \@@_parse_foreach_keys:n {#1} }
   }
 %    \end{macrocode}
+% \end{macro}
 %
 % \subsubsection{Key for commands \cs{typestored} and \cs{meaningsc}}
 %
-% We define a \mymeta{key} for command §\typestored§ and §\meaningsc§.
-% Both commands accept the same type of optional arguments, just define
-% a common \mymeta{key}.
+% \begin{macro}[int]{width-tab, write-out, overwrite, unknown,}
+%   We define a \mymeta{keys} for command §\typestored§ and §\meaningsc§.
+%   Both commands accept the same type of \emph{optional arguments}, just define
+%   a common \mymeta{key}.
 %
 %    \begin{macrocode}
-\bool_new:N \l_@@_print_aux_bool
-\bool_set_true:N  \l_@@_print_aux_bool
 \keys_define:nn { scontents / typemeaning }
   {
     width-tab .meta:nn   = { scontents } { width-tab = #1 },
@@ -2872,14 +2887,16 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
     overwrite .default:n = true,
     unknown   .code:n    = { \@@_parse_type_meaning_key:n {#1} }
   }
+%</core>
 %    \end{macrocode}
+% \end{macro}
 %
-% \subsection{Handling undefined keys}
+% \subsection{Handling unknown keys}
 %
-% The \mymeta{keys} are stored in the string variable \cs{l_keys_key_str},
+% The \mymeta{keys} are save in the string variable \cs{l_keys_key_str}
 % and the value (if any) is passed as an argument to each \mymeta{function}.
 %
-% \subsubsection{Undefined keys for environment \env{scontents}}
+% \subsubsection{Handling unknown keys for environment \env{scontents}}
 %
 % \begin{macro}{\@@_parse_environment_keys:n,
 %               \@@_parse_environment_keys:nn}
@@ -2889,6 +2906,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   if the \mymeta{key} is \emph{unknown} we return an error message.
 %
 %    \begin{macrocode}
+%<*core>
 \cs_new_protected:Npn \@@_parse_environment_keys:n #1
   { \exp_args:NV \@@_parse_environment_keys:nn \l_keys_key_str {#1} }
 \cs_new_protected:Npn \@@_parse_environment_keys:nn #1#2
@@ -2900,12 +2918,12 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
-% \subsubsection{Undefined keys for \cs{Scontents} and \cs{Scontents*}}
+% \subsubsection{Handling unknown keys for \cs{Scontents} and \cs{Scontents*}}
 %
 % \begin{macro}{\@@_parse_command_keys:n,
 %               \@@_parse_command_keys:nn}
 %
-%   We check the \meta{keys} passed to commands §\Scontents§ or
+%   We check the \mymeta{keys} passed to commands §\Scontents§ or
 %   §\Scontents*§ and process it with \cs{@@_parse_command_keys:n}
 %   if the \mymeta{key} is \emph{unknown} we return an error message.
 %
@@ -2921,12 +2939,12 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
-% \subsubsection{Undefined keys for \cs{foreachsc}}
+% \subsubsection{Handling unknown keys for \cs{foreachsc}}
 %
 % \begin{macro}{\@@_parse_foreach_keys:n,
 %               \@@_parse_foreach_keys:nn}
 %
-%   We check the \meta{keys} passed to command §\foreachsc§ and process
+%   We check the \mymeta{keys} passed to command §\foreachsc§ and process
 %   it with \cs{@@_parse_foreach_keys:n}, if the \mymeta{key} is
 %   \emph{unknown} we return an error message.
 %
@@ -2942,18 +2960,18 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
-% \subsubsection{Undefined keys for \cs{typestored} and \cs{meaningsc}}
+% \subsubsection{Handling unknown keys for \cs{typestored} and \cs{meaningsc}}
 %
-% \begin{macro}{\@@_parse_type_meaning_key:n,
-%               \@@_parse_type_meaning_key:nn}
-%
-%   The commands §\typestored§ and §\meaningsc§ accept an optional
-%   argument for setting the §width-tab§ to print the stored
-%   contents. However their optional argument also contains the number
-%   of the item to retrieve from the stored sequence. To avoid the
-%   awkward §\typestored[]§\myoarg{options}§{...}§ syntax, we'll make the
-%   commands have a single optional argument which is processed by
-%   \pkg{l3keys}, and the unknown keys are brought here to
+% \begin{macro}{\@@_parse_type_meaning_key:n, \@@_parse_type_meaning_key:nn,
+%               \@@_parse_type_meaning_range:w, \@@_range_parser:nnnn,
+%               \@@_range_parser:nnen, \@@_range_parser_aux:nnn,}
+%   The commands §\typestored§ and §\meaningsc§ accept an \emph{optional
+%   argument} for setting the §width-tab§ to print the \mymeta{stored
+%   contents} in \emph{verbatim style}. However their \emph{optional argument}
+%   also contains the number of the item to retrieve from the stored sequence.
+%   To avoid the awkward §\typestored[]§\myoarg{options}§{...}§ syntax, we'll make the
+%   commands have a single \emph{optional argument} which is processed by
+%   \mypkg{l3keys}, and the \emph{unknown} \mymeta{keys} are brought here to
 %   \cs{@@_parse_typemeaning_key:n} to process.
 %
 %   First we check if the \mymeta{key} is an integer using \cs{int_to_roman:n}.
@@ -3006,20 +3024,23 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
           { #3 { #1-#2 } }
       }
   }
+%</core>
 %    \end{macrocode}
 % \end{macro}
 %
 % \subsection{Programming of the sequences}
 %
-%   The storage of the package is done using |seq| variables.  Here we
-%   set up the macros that will manage the variables.
+% The \emph{storage system} of the package \mypkg*{scontents} is done
+% using |seq| variables. Here we set up the macros that will manage
+% the variables.
 %
 % \begin{macro}{\@@_append_contents:nn,\@@_append_contents:Ve}
-%   The function \cs{@@_append_contents:nn} creates a |seq| variable if
-%   one didn't exist and appends the contents in the argument to the
-%   right of the sequence.
-%
+%   The function \cs{@@_append_contents:nn} creates a \emph{sequence}
+%   \mymarg{seq name} pass to §#1§ if one didn't exist and appends the
+%   \mymarg{body env} for environments or \mymarg{argument} for commands
+%   to the right of the \emph{sequence} \mymarg{seq name} pass to §#2§.
 %    \begin{macrocode}
+%<*core>
 \cs_new_protected:Npn \@@_append_contents:nn #1#2
   {
     \tl_if_blank:nT {#1}
@@ -3033,9 +3054,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \end{macro}
 %
 % \begin{macro}{\@@_getfrom_seq:nn,\@@_getfrom_seq:Nn,\@@_getfrom_seq:nnn}
-%   The function \cs{@@_getfrom_seq:nn} retrieves the saved item from the
-%   sequence.
-%
+%   The function \cs{@@_getfrom_seq:nn} retrieves the \mymeta{stored content}
+%   pass to §#1§ from the \emph{sequence} \mymarg{seq name} pass to §#2§.
 %    \begin{macrocode}
 \cs_new:Npn \@@_getfrom_seq:Nn #1#2
   {
@@ -3072,10 +3092,10 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \end{macro}
 %
 % \begin{macro}{\@@_lastfrom_seq:n,\@@_lastfrom_seq:V}
-%   The function \cs{@@_lastfrom_seq:n} retrieves the last saved item from the
-%   sequence when \cs{l_@@_print_env_bool} or \cs{l_@@_print_cmd_bool}
-%   is true.
-%
+%   The function \cs{@@_lastfrom_seq:n} save the last \mymeta{stored content}
+%   from the \emph{sequence} pass to §#1§ in \cs{g_@@_temp_tl}
+%   then rescan with the function \cs{@@_rescan_tokens:V} when the keys §print-env§
+%   or §print-cmd§ are active.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_lastfrom_seq:n #1
   {
@@ -3099,27 +3119,26 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
     \tl_log:N #1
     \@@_append_contents:Ve #2 { \exp_not:V #1 }
   }
+%</core>
 %    \end{macrocode}
 % \end{macro}
 %
-% \subsection{The command \cs{newenvsc} and environment \env{scontents}}
+% \subsection{The command \cs{newenvsc}}
 %
 % In order to be able to define environments that behave similarly to
-% \myenv{scontents}, we define a generic environment and make all other
+% \myenv*{scontents}, we define a generic environment and make all other
 % environment as wrappers around that one.
 %
-% \subsubsection{The command \cs{newenvsc}}
-%
-% \begin{macro}{\newenvsc,\@@_env_setting:nn,\@@_env_define:nnn}
+% \begin{macro}{\newenvsc,\@@_env_setting:nn,\@@_env_define:nnn,
+%              \@@_env_generic_begin:,\@@_env_generic_end:,}
 %   The internal function \cs{@@_env_setting:nn} defines two
 %   functions \cs[no-index]{@@_\#1_env_begin:} and
 %   \cs[no-index]{@@_\#1_env_end:}, which set the current environment's
 %   name in §#1§ and \cs{l_@@_env_name_tl} and default properties in §#2§
 %   then call \cs{@@_setup_verb_processor:}, the generic
 %   \cs{@@_env_generic_begin:} and \cs{@@_env_generic_end:}.
-%
-%   Finally the function \cs{@@_env_define:nnn} will create the environments.
 %    \begin{macrocode}
+%<*core>
 \cs_new_protected:Npn \@@_env_setting:nn #1 #2
   {
     \cs_new_protected:cpn { @@_#1_env_begin: }
@@ -3131,12 +3150,18 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
       }
     \cs_new_protected:cpn { @@_#1_env_end: }
       { \@@_env_generic_end: }
+%    \end{macrocode}
+%   Finally the function \cs{@@_env_define:nnn} will create the environments.
+%    \begin{macrocode}
     \exp_args:Nooo % http://nooooooooooooooo.com :) jeje
     \@@_env_define:nnn { \tl_to_str:n {#1} }
       { \cs:w @@_#1_env_begin: \cs_end: }
       { \cs:w @@_#1_env_end: \cs_end: }
   }
 %</core>
+%    \end{macrocode}
+%   Now we just need to define the command for the user.
+%    \begin{macrocode}
 %<*loader>
 \NewDocumentCommand \newenvsc { m O{} }
   {
@@ -3160,17 +3185,11 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
       }
   }
 %</loader>
-%<*core>
 %    \end{macrocode}
-% \end{macro}
-%
-% \subsubsection{Generic definition of the environment}
-%
-% \begin{macro}{\@@_env_generic_begin:,\@@_env_generic_end:}
-%
-%   Now we define the generic environment functions
-%   \cs{@@_env_generic_begin:} and \cs{@@_env_generic_end:}.
+%   Now we define the generic environment functions \cs{@@_env_generic_begin:}
+%   and \cs{@@_env_generic_end:}.
 %    \begin{macrocode}
+%<*core>
 \cs_new_protected:Npn \@@_env_generic_begin:
   {
     \char_set_catcode_active:N \^^M
@@ -3182,10 +3201,11 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
     \@@_finish_storing:NNN \l_@@_macro_tmp_tl
     \l_@@_name_seq_env_tl \l_@@_print_env_bool
   }
+%</core>
 %    \end{macrocode}
 % \end{macro}
 %
-% \subsubsection{Definition of the environment \env{scontents}}
+% \subsection{The environment \env{scontents}}
 %
 % \begin{macro}{
 %     scontents,
@@ -3194,32 +3214,32 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %     \startscontents,
 %     \stopscontents,
 %   }
-%   Finally defining the \myenv{scontents} environment should be easy :)
+%   Finally defining the \myenv*{scontents} environment should be easy :)
 %    \begin{macrocode}
-%</core>
-%<loader>\newenvsc{scontents}
-%<*core>
+%<*loader>
+\newenvsc{scontents}
+%</loader>
 %    \end{macrocode}
 % \end{macro}
 %
-% \subsubsection{key val for environment}
+% \subsubsection{The \texttt{key = val} for \env{scontents} environment}
 %
 % \begin{macro}{\@@_grab_optional:n,\@@_grab_optional:w}
 %   The macro \cs{@@_grab_optional:w} is called from the
-%   \env{scontents} environment with the tokens following the
-%   §\begin{scontents}§ when the next character is a §[§. This function
-%   is defined using \mypkg{xparse} to exploit its delimited argument
+%   \myenv*{scontents} environment with the tokens following the
+%   §\begin{scontents}§ when the next character is a `§[§'. This function
+%   is defined using \mypkg{ltcmd} to exploit its delimited argument
 %   processor.
-%
-%   The function is called from a context where `§^^M§' is active, so
-%   \cs{@@_normalise_line_ends:N} is used to replace active `§^^M§'
-%   characters by spaces.
 %    \begin{macrocode}
-%</core>
 %<*loader>
 \NewDocumentCommand \@@_grab_optional:w { r[] }
   { \@@_grab_optional:n {#1} }
 %</loader>
+%    \end{macrocode}
+%   The function is called from a context where `§^^M§' is active, so
+%   \cs{@@_normalise_line_ends:N} is used to replace active `§^^M§'
+%   characters by spaces.
+%    \begin{macrocode}
 %<*core>
 \cs_new_protected:Npn \@@_grab_optional:n #1
   {
@@ -3231,11 +3251,11 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
       }
     \@@_start_after_option:w
   }
+%</core>
 %    \end{macrocode}
 % \end{macro}
 %
-% \subsubsection{The environment itself}
-% \label{the:environment:itself}
+% \subsubsection{Saving the body of \env{scontents} environment}\label{the:environment:itself}
 %
 % \begin{macro}{\@@_start_environment:w,\@@_start_after_option:w,
 %               \@@_check_line_process:en,\@@_stop_environment:}
@@ -3244,13 +3264,12 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   eliminate space-like characters.
 %
 %   First we check if the immediate next token after §\begin{scontents}§
-%   is a §[§. If it is, then \cs{@@_grab_optional:w} is called
+%   is a `§[§'. If it is, then \cs{@@_grab_optional:w} is called
 %   to do the heavy lifting. \cs{@@_grab_optional:w} processes the optional
 %   argument and calls \cs{@@_start_after_option:w}.
 %
 %   The function \cs{@@_start_after_option:w} also checks for trailing
 %   tokens after the optional argument and issues an error if any.
-%
 %   In all cases, the function \cs{@@_check_line_process:en} checks that
 %   everything past §\begin{scontents}§ is empty and then process
 %   the environment.
@@ -3262,9 +3281,10 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 %   When that's done, the function \cs{@@_file_write_stop:N} does the
 %   cleanup. This part of the code is inspired and adapted from the code of
-%   the package \pkg{xsimverb} by Clemens Niederberger.
+%   the package \mypkg{xsim}\cite{xsim} by Clemens Niederberger.
 %
 %    \begin{macrocode}
+%<*core>
 \group_begin:
   \char_set_catcode_active:N \^^I
   \char_set_catcode_active:N \^^L
@@ -3316,18 +3336,18 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %     \@@_remove_leading_nl:n,
 %     \@@_remove_leading_nl:w,
 %   }
-%   This is the main macro to collect the contents of a verbatim environment.
-%   The macro starts a group, opens the \mymeta{output file}, if necessary,
-%   sets verbatim catcodes, and then issues `§^^M§' (set equal to \cs{@@_ret:w})
-%   to read the environment line by line until reaching its end. The output
-%   token list will be appended with an active `§^^J§' character and the line
-%   just read, and this line is written to the output file, if any. At the end
-%   of the environment the \mymeta{output file} is closed (if it was open),
-%   and the output token list is smuggled out of the verbatim group. A leading
-%   `§^^J§' is removed from the token list using \cs{@@_remove_leading_nl:n}
-%  (which expects an active `§^^J§' token at the head of the token list; a low
-%  level \hologo{TeX} error is raised otherwise).
-%
+%   This is the main macro to collect the \mymarg{body env} of a verbatim
+%   environment. The macro starts a group, opens the \mymeta{output file},
+%   if necessary, sets \emph{verbatim catcodes}, and then issues `§^^M§'
+%   (set equal to \cs{@@_ret:w}) to read \mymarg{body env} of the environment
+%   line by line until reaching its end. The output token list will be appended
+%   with an active `§^^J§' character and the line just read, and this line is
+%   written to the \mymeta{output file}, if any. At the end of the environment
+%   the \mymeta{output file} is closed (if it was open), and the output token
+%   list is smuggled out of the verbatim group. A leading `§^^J§' is removed
+%   from the token list using \cs{@@_remove_leading_nl:n}, which expects an
+%   active `§^^J§' token at the head of the token list; a low level \hologo{TeX}
+%   error is raised otherwise.
 %    \begin{macrocode}
   \cs_new_protected:Npn \@@_file_tl_write_start:n #1
     {
@@ -3372,7 +3392,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
           \@@_if_nested:TF
             {
               \@@_nesting_decr:
-              \@@_verb_processor_output:x
+              \@@_verb_processor_output:e
                 { \exp_not:n {#1} \c_@@_end_env_tl \exp_not:n {#2} }
             }
             {
@@ -3444,7 +3464,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\@@_verb_processor_output:n,\@@_verb_processor_output:x}
+% \begin{macro}{\@@_verb_processor_output:n,\@@_verb_processor_output:e}
 %   The function \cs{@@_verb_processor_output:n} does the output of
 %   each line read, to a token list and to a file, depending on the
 %   booleans \cs{l_@@_writing_bool} and \cs{l_@@_storing_bool}.
@@ -3457,7 +3477,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
         { \tl_put_right:Nn \l_@@_every_line_env_tl { ^^J #1 } }
     }
 \group_end:
-\cs_generate_variant:Nn \@@_verb_processor_output:n { x }
+\cs_generate_variant:Nn \@@_verb_processor_output:n { e }
 \cs_generate_variant:Nn \@@_file_tl_write_start:n { V }
 %    \end{macrocode}
 % \end{macro}
@@ -3469,13 +3489,10 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %     \@@_use_none_delimit_by_q_stop:w,
 %   }
 % \begin{macro}[TF]{\@@_if_nested:}
-%   \cs{@@_analyse_nesting:n} scans nested §\begin{scontents}§
+%   The function \cs{@@_analyse_nesting:n} scans nested §\begin{scontents}§
 %   and steps a \cs{l_@@_env_nesting_int} counter. The \cs{@@_if_nested:}
-%   conditional tests if we're in a nested environment, and
-%   \cs{@@_nesting_decr:} reduces the nesting level, if an §\end{scontents}§
-%   is found.
-%
-%   Multiple §\end{scontents}§ in the same line are not supported\dots
+%   conditional tests if we're in a nested environment, and \cs{@@_nesting_decr:}
+%   reduces the nesting level, if an §\end{scontents}§ is found.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_analyse_nesting:n #1
   {
@@ -3500,9 +3517,13 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 \cs_new:Npn \@@_use_none_delimit_by_q_stop:w #1 \q_@@_stop { }
 %    \end{macrocode}
 %
+% \begin{important}*
+%   Multiple §\end{scontents}§ in the same line are NOT supported\dots
+% \end{important}
+%
 %   In \LaTeX{}, environments start with §\begin{<env>}§, so checking if a
 %   string contains §\begin{scontents}§ is straightforward. Since no §}§ can
-%   appear inside §<env>§, then just a macro delimited by §}§ is enough.
+%   appear inside §<env>§, then just a macro delimited by `§}§` is enough.
 %    \begin{macrocode}
 \use:e
   {
@@ -3525,7 +3546,6 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
     \exp_not:N \q_@@_stop
   }
 %    \end{macrocode}
-%
 %   In other formats, however, we don't have an \enquote{end anchor} to delimit the
 %   environment name, so a delimited macro won't help. We have to search for
 %   the entire environment command (usually §\scontents§ and §\startscontents§).
@@ -3562,6 +3582,10 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
       }   { \@@_analyse_nesting_generic_process:nn {##1} {##2} }
   }
 %</core>
+%    \end{macrocode}
+%   Now we just need to call the \cs{@@_analyse_nesting_format:n}
+%   function to analyze the nesting.
+%    \begin{macrocode}
 %<*loader>
 %<latex>\cs_new_eq:NN \@@_analyse_nesting_format:n
 %<latex>  \@@_analyse_nesting_latex:n
@@ -3569,18 +3593,14 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %<plain>  { \@@_analyse_nesting_generic:nn { } }
 %<context>  { \@@_analyse_nesting_generic:nn { start } }
 %</loader>
-%<*core>
 %    \end{macrocode}
 % \end{macro}
 % \end{macro}
 %
-% \subsubsection{Recording of the content in the sequence}
-%
 % \begin{macro}{\@@_finish_storing:NNN}
-%   Finishes the environment by optionally calling \cs{@@_store_to_seq:}
-%   and then clearing the temporary token list.
-%
+%   Finishes the environment calling \cs{@@_finish_storing:NNN}.
 %    \begin{macrocode}
+%<*core>
 \cs_new_protected:Npn \@@_finish_storing:NNN #1 #2 #3
   {
     \bool_if:NT \l_@@_storing_bool
@@ -3599,8 +3619,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % \begin{macro}[int]{\verbatimsc,\endverbatimsc,\@@_verbatimsc_aux:,
 %                    \@@_vobeyspaces:,\@@_xverb:,\@@_nolig_list:,\@@_xobeysp:}
-%   In \hologo{plainTeX} we emulate \LaTeX's \env{verbatim} environment.
-%
+%   In \hologo{plainTeX} we emulate \LaTeX's \myenv{verbatim} environment.
 %    \begin{macrocode}
 %<*plain>
 \cs_new_protected:Npn \verbatimsc
@@ -3653,8 +3672,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \end{macro}
 %
 % \begin{macro}[int]{\dospecials}
-%   \pkg{xparse} also requires \LaTeX's §\dospecials§. In case it doesn't
-%   exist (at the time \pkg{scontents} is loaded) we define §\dospecials§
+%   \LaTeX's requires §\dospecials§. In case it doesn't
+%   exist (at the time \mypkg*{scontents} is loaded) we define §\dospecials§
 %   to use the \cs{l_char_special_seq}.
 %    \begin{macrocode}
 %<*!latex>
@@ -3673,13 +3692,13 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % User command to \mymeta{stored content}, adapted from code by Ulrich
 % Diez in \href{https://tex.stackexchange.com/a/472044/7832}{Stringify
 % input - \textbackslash string on token list}
-% and code by user siracusa in
+% and code by user \texttt{@siracusa} in
 % \href{https://tex.stackexchange.com/a/500281/7832}{Convert a macro from
 % Latex2e to expl3}
 %
 % \begin{macro}{\@@_bsphack:,\@@_esphack:}
 %    We emulate §\@bsphack§ and §\@esphack§ for \hologo{plainTeX}.
-%    This is necessary to prevent unwanted spaces when the §print-cmd§
+%    This is necessary to prevent \emph{unwanted spaces} when the §print-cmd§
 %    key is false.
 %    \begin{macrocode}
 %<*core>
@@ -3756,18 +3775,17 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
       \tl_set:Nn \l_@@_temp_tl {#1}
       \@@_Scontents_finish:
   }
+%</core>
 %    \end{macrocode}
 %
 %   The function \cs{@@_verb_arg:w} grabs a verbatim argument using
 %   \pkg{xparse}'s |+v| argument parser.
 %
 %    \begin{macrocode}
-%</core>
 %<*loader>
 \NewDocumentCommand \@@_verb_arg:w { +v }
   { \@@_verb_arg_internal:n {#1} }
 %</loader>
-%<*core>
 %    \end{macrocode}
 % \end{macro}
 %
@@ -3778,13 +3796,14 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %     \@@_file_write_cmd:VV,
 %   }
 %
-%   The function \cs{@@_verb_arg_internal:n} replace all §\^^M§ and
+%   The function \cs{@@_verb_arg_internal:n} replace all `§^^M§' and
 %   §\obeyedline§ added by §+v§ argument added in \hologo{LaTeX} release 2024-06-01 by
-%   §\^^J§ then adds it to the |seq| variable. Here we will apply §\RenewDocumentCommand§
+%   `§^^J§' then adds it to the |seq| variable. Here we will apply §\RenewDocumentCommand§
 %   since §\obeyedline§ can be modified by the user and if so the code
 %   would return a low-level error.
 %
 %    \begin{macrocode}
+%<*core>
 \cs_new_protected:Npn \@@_verb_arg_internal:n #1
   {
       \tl_set:Nn \l_@@_temp_tl {#1}
@@ -3842,6 +3861,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
       }
       { \prg_return_false: }
   }
+%</core>
 %    \end{macrocode}
 % \end{macro}
 %
@@ -3852,7 +3872,6 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   (robust).
 %
 %    \begin{macrocode}
-%</core>
 %<*loader>
 \NewDocumentCommand \getstored { O{-1} m }
   { \@@_getstored_internal:nn {#1} {#2} }
@@ -4300,11 +4319,11 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % \begin{macro}{\setupsc}
 %   A user-level wrapper for \cs{keys_set:nn}§{ scontents }§.
-%
 %    \begin{macrocode}
 %<*loader>
 \NewDocumentCommand \setupsc { +m }
   { \keys_set:nn { scontents } {#1} }
+%</loader>
 %    \end{macrocode}
 % \end{macro}
 %
@@ -4314,6 +4333,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   User command §\meaningsc§ to see content stored in |seq|.
 %
 %    \begin{macrocode}
+%<*loader>
 \NewDocumentCommand \meaningsc { o m }
   { \@@_meaningsc_internal:nn {#1} {#2} }
 %</loader>
@@ -4356,6 +4376,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %<*loader>
 \NewExpandableDocumentCommand \countsc { m }
   { \seq_count:c { g_@@_name_#1_seq } }
+%</loader>
 %    \end{macrocode}
 % \end{macro}
 %
@@ -4366,6 +4387,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   A user command §\cleanseqsc§ to clear (remove) a defined |seq|.
 %
 %    \begin{macrocode}
+%<*loader>
 \NewDocumentCommand \cleanseqsc { m }
   { \seq_gclear_new:c { g_@@_name_#1_seq } }
 %</loader>

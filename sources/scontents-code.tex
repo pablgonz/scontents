@@ -27,7 +27,7 @@
 %%                                 t-scontents.mkiv and
 %%                                 scontents-code.tex.
 %% 
-\def\ScontentsCoreFileDate{2025-04-27}%
+\def\ScontentsCoreFileDate{2025-04-29}%
 \begingroup
   \catcode32=10
   \endlinechar=32
@@ -112,8 +112,8 @@
 \tl_new:N \l__scontents_foreach_name_seq_tl
 \tl_new:N \l__scontents_foreach_before_tl
 \tl_new:N \l__scontents_foreach_after_tl
-\int_new:N \l__scontents_foreach_stop_int
 \seq_new:N \l__scontents_seq_item_seq
+\int_new:N \l__scontents_foreach_stop_int
 \int_new:N \l__scontents_env_nesting_int
 \bool_new:N \l__scontents_writing_bool
 \bool_set_false:N \l__scontents_writing_bool
@@ -134,13 +134,15 @@
   { \c_percent_str \c_circumflex_str \c_circumflex_str A scheol \c_percent_str }
 \quark_new:N \q__scontents_stop
 \quark_new:N \q__scontents_mark
-\scan_new:N \s__scontents_stop
-\scan_new:N \s__scontents_mark
-\str_new:N \l__scontents_cur_seq_name_str
-\cs_new:Npn \__scontents_use_delimit_by_s_stop:nw #1 \s__scontents_stop {#1}
-\cs_new:Npn \__scontents_use_i_delimit_by_s_stop:nw #1 #2 \s__scontents_stop {#1}
-\cs_new:Npn \__scontents_use_none_delimit_by_s_stop:w #1 \s__scontents_stop { }
-\int_new:N \l__scontents_save_sf_int
+\scan_new:N  \s__scontents_stop
+\scan_new:N  \s__scontents_mark
+\bool_new:N      \l__scontents_print_aux_bool
+\bool_set_true:N \l__scontents_print_aux_bool
+\str_new:N       \l__scontents_cur_seq_name_str
+\cs_new:Npn      \__scontents_use_delimit_by_s_stop:nw #1 \s__scontents_stop {#1}
+\cs_new:Npn      \__scontents_use_i_delimit_by_s_stop:nw #1 #2 \s__scontents_stop {#1}
+\cs_new:Npn      \__scontents_use_none_delimit_by_s_stop:w #1 \s__scontents_stop { }
+\int_new:N  \l__scontents_save_sf_int
 \skip_new:N \l__scontents_save_skip
 \cs_new_protected:Npn \__scontents_rescan_tokens:n #1 { \tex_scantokens:D {#1} }
 \cs_generate_variant:Nn \__scontents_rescan_tokens:n { V, e }
@@ -225,8 +227,6 @@
     sep     .value_required:n = true,
     unknown .code:n           = { \__scontents_parse_foreach_keys:n {#1} }
   }
-\bool_new:N \l__scontents_print_aux_bool
-\bool_set_true:N  \l__scontents_print_aux_bool
 \keys_define:nn { scontents / typemeaning }
   {
     width-tab .meta:nn   = { scontents } { width-tab = #1 },
@@ -478,7 +478,7 @@
           \__scontents_if_nested:TF
             {
               \__scontents_nesting_decr:
-              \__scontents_verb_processor_output:x
+              \__scontents_verb_processor_output:e
                 { \exp_not:n {#1} \c__scontents_end_env_tl \exp_not:n {#2} }
             }
             {
@@ -555,7 +555,7 @@
         { \tl_put_right:Nn \l__scontents_every_line_env_tl { ^^J #1 } }
     }
 \group_end:
-\cs_generate_variant:Nn \__scontents_verb_processor_output:n { x }
+\cs_generate_variant:Nn \__scontents_verb_processor_output:n { e }
 \cs_generate_variant:Nn \__scontents_file_tl_write_start:n { V }
 \cs_new_protected:Npn \__scontents_analyse_nesting:n #1
   {
