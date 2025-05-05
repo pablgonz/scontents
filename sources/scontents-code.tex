@@ -27,7 +27,7 @@
 %%                                 t-scontents.mkiv and
 %%                                 scontents-code.tex.
 %% 
-\def\ScontentsCoreFileDate{2025-04-29}%
+\def\ScontentsCoreFileDate{2025-05-05}%
 \begingroup
   \catcode32=10
   \endlinechar=32
@@ -75,7 +75,7 @@
 \tl_new:N   \g__scontents_temp_tl
 \int_new:N  \l__scontents_tmpa_int
 \bool_new:N \l__scontents_temp_bool
-\tl_new:N \l__scontents_keys_tl
+\tl_new:N \l__scontents_mergesc_keys_tl
 \keys_define:nn { scontents }
   {
     store-env .tl_set:N         = \l__scontents_name_seq_env_tl,
@@ -136,8 +136,8 @@
 \quark_new:N \q__scontents_mark
 \scan_new:N  \s__scontents_stop
 \scan_new:N  \s__scontents_mark
-\bool_new:N      \l__scontents_print_aux_bool
-\bool_set_true:N \l__scontents_print_aux_bool
+\bool_new:N      \l__scontents_print_mergesc_bool
+\bool_set_true:N \l__scontents_print_mergesc_bool
 \str_new:N       \l__scontents_cur_seq_name_str
 \cs_new:Npn      \__scontents_use_delimit_by_s_stop:nw #1 \s__scontents_stop {#1}
 \cs_new:Npn      \__scontents_use_i_delimit_by_s_stop:nw #1 #2 \s__scontents_stop {#1}
@@ -229,16 +229,19 @@
   }
 \keys_define:nn { scontents / typemeaning }
   {
-    width-tab .meta:nn   = { scontents } { width-tab = #1 },
-    write-out .code:n    = {
-                             \bool_set_false:N \l__scontents_storing_bool
-                             \bool_set_true:N  \l__scontents_writing_bool
-                             \tl_set:Nn \l__scontents_fname_out_tl {#1}
-                           },
+    width-tab .meta:nn    = { scontents } { width-tab = #1 },
+    write-out .code:n     = {
+                              \bool_set_false:N \l__scontents_storing_bool
+                              \bool_set_true:N  \l__scontents_writing_bool
+                              \tl_set:Nn \l__scontents_fname_out_tl {#1}
+                            },
     write-out .value_required:n = true,
-    overwrite .meta:nn   = { scontents } { overwrite = #1 },
-    overwrite .default:n = true,
-    unknown   .code:n    = { \__scontents_parse_type_meaning_key:n {#1} }
+    overwrite .meta:nn    = { scontents } { overwrite = #1 },
+    overwrite .default:n  = true,
+    print-cmd .bool_set:N = \l__scontents_print_mergesc_bool,
+    print-cmd .initial:n  = true,
+    print-cmd .default:n  = true,
+    unknown   .code:n     = { \__scontents_parse_type_meaning_key:n {#1} },
   }
 \cs_new_protected:Npn \__scontents_parse_environment_keys:n #1
   { \exp_args:NV \__scontents_parse_environment_keys:nn \l_keys_key_str {#1} }
@@ -388,7 +391,7 @@
     \__scontents_finish_storing:NNN \l__scontents_macro_tmp_tl
     \l__scontents_name_seq_env_tl \l__scontents_print_env_bool
   }
-\cs_new_protected:Npn \__scontents_grab_optional:n #1
+\cs_new_protected:Npn \__scontents_grab_opt_arg:n #1
   {
     \tl_if_novalue:nF {#1}
       {
@@ -409,7 +412,7 @@
       \tl_if_head_is_N_type:nTF {#1}
         {
           \str_if_eq:eeTF { \tl_head:n {#1} } { [ }
-            { \__scontents_grab_optional:w #1 ^^M }
+            { \__scontents_grab_opt_arg:w #1 ^^M }
             { \__scontents_check_line_process:en { } {#1} }
         }
         { \__scontents_check_line_process:en { } {#1} }
@@ -739,7 +742,7 @@
       }
       { \prg_return_false: }
   }
-\cs_new_protected:Npn \__scontents_getstored_internal:nn #1 #2
+\cs_new_protected:Npn \__scontents_getstored:nn #1 #2
   {
     \group_begin:
       \int_set:Nn \tex_newlinechar:D { `\^^J }
@@ -749,7 +752,7 @@
     \__scontents_getfrom_seq:nn {#1} {#2}
         }
   }
-\cs_new_protected:Npn \__scontents_foreachsc_internal:nn #1 #2
+\cs_new_protected:Npn \__scontents_foreachsc:nn #1 #2
   {
     \group_begin:
       \tl_if_novalue:nF {#1} { \keys_set:nn { scontents / foreachsc } {#1} }
@@ -833,7 +836,7 @@
       \__scontents_set_active_eq:NN \^^M \__scontents_ret:w
     }
 \group_end:
-\cs_new_protected:Npn \__scontents_typestored_internal:nn #1 #2
+\cs_new_protected:Npn \__scontents_typestored:nn #1 #2
   {
     \__scontents_bsphack:
     \group_begin:
@@ -849,21 +852,21 @@
       \tl_log:N \l__scontents_temp_tl
       \tl_if_empty:NF \l__scontents_temp_tl
         {
-          \bool_if:NT \l__scontents_print_aux_bool
+          \bool_if:NT \l__scontents_print_mergesc_bool
             {
-              \__scontents_verb_print:N \l__scontents_temp_tl
+              \__scontents_typestored:N \l__scontents_temp_tl
             }
         }
       \__scontents_file_write_cmd:VV \l__scontents_fname_out_tl \l__scontents_temp_tl
       \use:e
         {
     \group_end:
-    \bool_if:NF \l__scontents_print_aux_bool { \__scontents_esphack: }
+    \bool_if:NF \l__scontents_print_mergesc_bool { \__scontents_esphack: }
         }
   }
 \group_begin:
   \char_set_catcode_active:N \^^M
-  \cs_new_protected:Npn \__scontents_verb_print:N #1
+  \cs_new_protected:Npn \__scontents_typestored:N #1
     {
       \tl_if_blank:VT #1
         { \msg_error:nnn { scontents } { empty-variable } {#1} }
@@ -890,8 +893,9 @@
     \char_set_active_eq:nN { 9 } \__scontents_tabs_to_spaces:
     \__scontents_xverb:w
   }
-\cs_new_protected:Npn \__scontents_meaningsc_internal:nn #1 #2
+\cs_new_protected:Npn \__scontents_meaningsc:nn #1 #2
   {
+    \__scontents_bsphack:
     \group_begin:
       \seq_clear:N \l__scontents_seq_item_seq
       \str_set:Ne \l__scontents_cur_seq_name_str {#2}
@@ -899,7 +903,11 @@
       \seq_if_empty:NT \l__scontents_seq_item_seq
         { \seq_set_from_clist:Nn \l__scontents_seq_item_seq { 1 } }
       \__scontents_meaningsc:n {#2}
+      \use:e
+        {
     \group_end:
+    \bool_if:NF \l__scontents_print_mergesc_bool { \__scontents_esphack: }
+        }
   }
 \group_begin:
   \char_set_catcode_active:N \^^I
@@ -912,43 +920,43 @@
       \tl_log:N \l__scontents_temp_tl
       \tl_use:N \l__scontents_verb_font_tl
       \tl_replace_all:Nne \l__scontents_temp_tl { ^^I } { \__scontents_tabs_to_spaces: }
-      \cs_replacement_spec:N \l__scontents_temp_tl
+      \tl_if_empty:NF \l__scontents_temp_tl
+        {
+          \bool_if:NT \l__scontents_print_mergesc_bool
+            {
+              \cs_replacement_spec:N \l__scontents_temp_tl
+            }
+        }
+      \__scontents_file_write_cmd:VV \l__scontents_fname_out_tl \l__scontents_temp_tl
     }
 \group_end:
 \keys_define:nn { scontents / mergesc }
   {
     typestored .code:n =
       {
-        \cs_set_eq:NN \__scontents_mergesc_output_cmd:nn \__scontents_typestored_internal:nn
+        \cs_set_eq:NN \__scontents_mergesc_set_cmd:nn \__scontents_typestored:nn
       },
-    meaningsc .code:n =
+    meaningsc  .code:n =
       {
-        \cs_set_eq:NN \__scontents_mergesc_output_cmd:nn \__scontents_meaningsc_internal:nn
+        \cs_set_eq:NN \__scontents_mergesc_set_cmd:nn \__scontents_meaningsc:nn
       },
   }
-\cs_new_protected:Npn \__scontents_mergesc_output_cmd:nn #1 #2
+\cs_new_protected:Npn \__scontents_mergesc_set_cmd:nn #1 #2
   {
     \msg_error:nn { scontents } { mergesc-missing-cmd }
   }
-\cs_new_protected:Npn \__scontents_mergesc_internal:nn #1 #2
+\cs_new_protected:Npn \__scontents_mergesc_code:nn #1 #2
   {
     \group_begin:
-      \tl_clear:N \l__scontents_keys_tl
+      \tl_clear:N \l__scontents_mergesc_keys_tl
       \tl_if_novalue:nF {#1}
         {
-          % Add print-cmd here :D
-          \keys_define:nn { scontents / typemeaning }
-            {
-              print-cmd .bool_set:N = \l__scontents_print_aux_bool,
-              print-cmd .initial:n = false,
-              print-cmd .default:n = true,
-            }
-          \keys_set_known:nnN { scontents / mergesc } {#1} \l__scontents_keys_tl
+          \keys_set_known:nnN { scontents / mergesc } {#1} \l__scontents_mergesc_keys_tl
         }
       \seq_gclear:c { g__scontents_name_sc!internal_seq }
       \__scontents_mergesc_parse_list:n {#2}
-      \exp_args:Ne \__scontents_mergesc_output_cmd:nn
-        { 1-end, \exp_not:V \l__scontents_keys_tl } { sc!internal }
+      \exp_args:Ne \__scontents_mergesc_set_cmd:nn
+        { 1-end, \exp_not:V \l__scontents_mergesc_keys_tl } { sc!internal }
     \group_end:
   }
 \cs_new_protected:Npn \__scontents_mergesc_parse_list:n #1
@@ -1123,6 +1131,6 @@
     \\ \\
     LaTeX~will~ignore~'#2'.
   }
-\endinput
+%% 
 %%
 %% End of file `scontents-code.tex'.

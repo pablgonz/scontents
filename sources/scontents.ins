@@ -25,6 +25,9 @@ and the derived files           scontents.sty,
                                 scontents-code.tex.
 
 \endpreamble
+% Stop docstrip adding \endinput (from l3doc.dtx)
+\postamble
+\endpostamble
 %
 \catcode`\@=11
 \let\org@ds@heading\ds@heading
@@ -37,7 +40,7 @@ and the derived files           scontents.sty,
         title=\string\CONTEXT\ User Module,
      subtitle=Storing Contents,
        author=Pablo González,
-         date=2025-04-29,
+         date=2025-05-05,
     copyright=Pablo González,
         email=pablgonz@educarchile.cl,
       license=LPPL]

@@ -37,11 +37,11 @@
 %D         title=\CONTEXT\ User Module,
 %D      subtitle=Storing Contents,
 %D        author=Pablo González,
-%D          date=2025-04-29,
+%D          date=2025-05-05,
 %D     copyright=Pablo González,
 %D         email=pablgonz@educarchile.cl,
 %D       license=LPPL]
-\def\ScontentsFileDate{2025-04-29}%
+\def\ScontentsFileDate{2025-05-05}%
 \def\ScontentsFileVersion{2.4}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
 \writestatus{loading}{User Module scontents v\ScontentsFileVersion}
@@ -51,6 +51,18 @@
 \tl_gset:ce { ver @ scontents . sty } { \ScontentsFileDate\space
   v\ScontentsFileVersion\space \ScontentsFileDescription }
 \iow_log:e { Package: ~ scontents ~ \use:c { ver @ scontents . sty } }
+\msg_set:nnn { scontents } { expl-too-old }
+  {
+    Please~install~an~up~to~date~TeX~distribution~
+    or~update~using~your~TeX~package~manager~or~from~CTAN. \\
+    See~documentation.~Loading~scontents~will~abort!
+  }
+\cs_if_exist:NF \int_step_tokens:nn
+  {
+    \msg_fatal:nn { scontents } { expl-too-old }
+    \ExplSyntaxOff
+    \file_input_stop:
+  }
 \tl_new:N \g__scontents_end_verbatimsc_tl
 \tl_gset_rescan:Nnn \g__scontents_end_verbatimsc_tl
   {
@@ -93,8 +105,8 @@
       }
   }
 \newenvsc{scontents}
-\NewDocumentCommand \__scontents_grab_optional:w { r[] }
-  { \__scontents_grab_optional:n {#1} }
+\NewDocumentCommand \__scontents_grab_opt_arg:w { r[] }
+  { \__scontents_grab_opt_arg:n {#1} }
 \cs_new_protected:Npn \__scontents_analyse_nesting_format:n
   { \__scontents_analyse_nesting_generic:nn { start } }
 \NewDocumentCommand \Scontents { !s !O{} }
@@ -102,9 +114,9 @@
 \NewDocumentCommand \__scontents_verb_arg:w { +v }
   { \__scontents_verb_arg_internal:n {#1} }
 \NewDocumentCommand \getstored { O{-1} m }
-  { \__scontents_getstored_internal:nn {#1} {#2} }
+  { \__scontents_getstored:nn {#1} {#2} }
 \NewDocumentCommand \foreachsc { o m }
-  { \__scontents_foreachsc_internal:nn {#1} {#2} }
+  { \__scontents_foreachsc:nn {#1} {#2} }
 \cs_if_exist:NF \dospecials
   {
     \cs_new:Npn \dospecials
@@ -116,12 +128,16 @@
     { }
 \group_end:
 \NewDocumentCommand \typestored { o m }
-  { \__scontents_typestored_internal:nn {#1} {#2} }
+  {
+    \__scontents_typestored:nn {#1} {#2}
+  }
 \NewDocumentCommand \meaningsc { o m }
-  { \__scontents_meaningsc_internal:nn {#1} {#2} }
+  {
+    \__scontents_meaningsc:nn {#1} {#2}
+  }
 \NewDocumentCommand \mergesc { o m }
   {
-    \__scontents_mergesc_internal:nn {#1} {#2}
+    \__scontents_mergesc_code:nn {#1} {#2}
   }
 \NewDocumentCommand \setupsc { +m }
   { \keys_set:nn { scontents } {#1} }
@@ -131,5 +147,6 @@
   { \seq_gclear_new:c { g__scontents_name_#1_seq } }
 \ExplSyntaxOff
 \endinput
+%% 
 %%
 %% End of file `t-scontents.mkiv'.
