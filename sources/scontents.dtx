@@ -283,7 +283,7 @@
     \begin{minipage}[t]{\marginparwidth}%
      \raggedright\ttfamily\small
      \textcolor{pkgcolor}{{\textbackslash#1#2}}\myoarg
-     [type=tt,sbc=gray,ac=lightgray,cf=optcolor]{keyval ~ list}\par%
+     [type=tt,sbc=gray,ac=lightgray,cf=optcolor]{key \textnormal{\textcolor{gray}{=}} val}\par%
      \hspace{0.5cm}\mymeta[type=tt,ac=lightgray,cf=gray]{body ~ env}\par%
      \textcolor{pkgcolor}{{\textbackslash #3#2}}\par
     \end{minipage}%
@@ -444,8 +444,8 @@
     commentstyle  = \ttfamily\small\color{lightgray},%
 % Important words 1
     keywordstyle  = [1]{\color{gray}},%
-    keywords      = [1]{begin,end,Verbatim,env,myseq,false,ExplSyntaxOff,ExplSyntaxOn,%
-                        NTF, N,x,e,nn,D},%
+    keywords      = [1]{begin,end,env,myseq,false,ExplSyntaxOff,ExplSyntaxOn,%
+                        NTF, N,x,e,n,nn,nnn,D,DocumentMetadata,IfDocumentMetadataTF,},%
 % Other words 2 (LaTeX)
     keywordstyle  = [2]{\color{blue!75}},%
     keywords      = [2]{usepackage,section,documentclass,input,usemodule,%
@@ -455,7 +455,8 @@
                     definetyping,lstset,small,ttfamily,tiny,color,%
                     peek_charcode_ignore_spaces,cs_argument_spec,cs_parameter_spec,%
                     regex_replace_all,tl_replace_all,tex_scantokens,tex_endinput,%
-                    file_input_stop,peek_charcode,cs_undefine,tl_rescan},%
+                    file_input_stop,peek_charcode,cs_undefine,tl_rescan,int_to_roman,%
+                    int_step_tokens,},%
 % Other words 3
     keywordstyle  = [3]{\color{optcolor!85}},%
     keywords      = [3]{document,article,setlength,pagestyle,definecolor,myenvstore},%
@@ -474,7 +475,7 @@
     keywords      = [6]{store-cmd,store-env,print-env,print-cmd,write-env,verb-font,%
                     start,stopt,wrapper,sep,step,before,after,write-out,write-cmd,%
                     overwrite,width-tab,force-eol,inner,outer,I,J,M,L,Ascheol,store-all,
-                    1-end,},%
+                    1-end,Verbatim,lang,pdfversion,pdfstandard,testphase,tagging,},%
 % Reserved words 7 (OrangeRed)
     keywordstyle  = [7]{\color{OrangeRed}},%
     keywords      = [7]{DefineVerbatimEnvironment,lstnewenvironment,newminted,%
@@ -801,8 +802,9 @@
 %
 % \begin{important}*
 % The package options are not available for \hologo{plainTeX} and
-% \hologo{ConTeXt} (see \S\ref{sec:confopt}). \hologo{ConTeXt} users
-% should use |-luatex|, the implementation does not support LuaMetaTeX.
+% \hologo{ConTeXt} and must be passed using §\setupsc§ (see \S\ref{sec:confopt}).
+% \hologo{ConTeXt} users should use |-luatex|, the implementation does
+% not support LuaMetaTeX.
 % \end{important}
 %
 % \subsection{The TAB character}
@@ -849,7 +851,7 @@
 %
 % \begin{function}{\setupsc}
 %   \begin{syntax}
-%       \cmdexamp{setupsc}{keyval list}
+%     \cmdexamp{setupsc}{key \textnormal{\textcolor{gray}{=}} val}
 %   \end{syntax}
 %
 % The command \ics*{setupsc} sets the \mymeta{keys} in a global way,
@@ -923,13 +925,13 @@
 %  \mykey{store-env}  & \cmark  & \cmark  &  \cmark  & \xmark  & \xmark  & \xmark  & \xmark & \xmark \\
 %  \mykey{store-cmd}  & \cmark  & \cmark  &  \xmark  & \cmark  & \cmark  & \xmark  & \xmark & \xmark \\
 %  \mykey{print-env}  & \cmark  & \cmark  &  \cmark  & \xmark  & \xmark  & \xmark  & \xmark & \xmark \\
-%  \mykey{print-cmd}  & \cmark  & \cmark  &  \xmark  & \cmark  & \cmark  & \xmark  & \xmark & \cmark \\
+%  \mykey{print-cmd}  & \cmark  & \cmark  &  \xmark  & \cmark  & \cmark  & \cmark  & \cmark & \cmark \\
 %  \mykey{print-all}  & \cmark  & \cmark  &  \xmark  & \xmark  & \xmark  & \xmark  & \xmark & \xmark \\
 %  \mykey{store-all}  & \cmark  & \cmark  &  \xmark  & \xmark  & \xmark  & \xmark  & \xmark & \xmark \\
 %  \mykey{write-env}  & \xmark  & \xmark  &  \cmark  & \xmark  & \xmark  & \xmark  & \xmark & \xmark \\
 %  \mykey{write-cmd}  & \xmark  & \xmark  &  \xmark  & \xmark  & \cmark  & \xmark  & \xmark & \xmark \\
-%  \mykey{write-out}  & \xmark  & \xmark  &  \cmark  & \xmark  & \cmark  & \xmark  & \xmark & \cmark \\
-%  \mykey{overwrite}  & \cmark  & \cmark  &  \cmark  & \xmark  & \cmark  & \xmark  & \xmark & \cmark \\
+%  \mykey{write-out}  & \xmark  & \xmark  &  \cmark  & \xmark  & \cmark  & \cmark  & \cmark & \cmark \\
+%  \mykey{overwrite}  & \cmark  & \cmark  &  \cmark  & \xmark  & \cmark  & \cmark  & \cmark & \cmark \\
 %  \mykey{width-tab}  & \cmark  & \cmark  &  \xmark  & \xmark  & \xmark  & \cmark  & \cmark & \cmark \\
 %  \mykey{force-eol}  & \cmark  & \cmark  &  \cmark  & \cmark  & \cmark  & \xmark  & \xmark & \xmark \\
 %  \mykey{verb-font}  & \cmark  & \cmark  &  \xmark  & \xmark  & \xmark  & \xmark  & \xmark & \xmark \\
@@ -945,7 +947,7 @@
 % The user interface consists in \myenv*{scontents} environment, \ics*{Scontents}
 % and \ics*{Scontents*} commands to \mymeta{stored content}, \ics*{getstored}
 % command to get the \mymeta{stored content}, \ics*{typestored} and \ics*{mergesc} commands to print
-% \emph{verbatim} \mymeta{stored content} along with other utilities described
+% \emph{verbatim style} the \mymeta{stored content} along with other utilities described
 % in this documentation.
 %
 % \subsection{The environment \texttt{scontents}}
@@ -971,8 +973,8 @@
 % \end{function}
 %
 % Comments `\texttt{\textcolor{gray}{\%}}' or \emph{\enquote{any character}} after
-% §\begin{scontents}§ or \myoarg{keyval list} on the same line are not
-% supported, the package will return an \enquote{error} message if this happens.
+% §\begin{scontents}§ or \myoarg{key \textnormal{\textcolor{gray}{=}} val} on
+% the same line are not supported, the package will return an \enquote{error} message if this happens.
 % In a similar way comments `\texttt{\textcolor{gray}{\%}}' or \emph{\enquote{any character}}
 % after §\end{scontents}§ on the same line the package will return a \enquote{warning} message.
 %
@@ -1127,7 +1129,7 @@ This text is in the outer environment (after nested).
 % by the key \mykey{store-cmd} at the time it is executed. It is not
 % possible to pass \emph{verbatim things}, but it is possible to use
 % the implementation of §\Verb§ delimited by \emph{braces}
-% `\texttt{\textcolor{MediumOrchid}{\{}} \texttt{\textcolor{MediumOrchid}{\}}}'
+% `\texttt{\textcolor{gray}{\{}} \texttt{\textcolor{gray}{\}}}'
 % provided by the \mypkg{fvextra}\cite{fvextra} package for \emph{verbatim one line}
 % and §\lstinline§ from \mypkg{listings}\cite{listings} package, but it
 % is preferable to use the \emph{starred argument} `§*§'.
@@ -1135,12 +1137,12 @@ This text is in the outer environment (after nested).
 % The \ics*{Scontents*} command reads the \mymarg{argument} under \emph{verbatim catcode}
 % regimen and \emph{\enquote{stores}} it in the \emph{sequence} set
 % by the key \mykey{store-cmd} at the time it is executed. If its \emph{\enquote{first}}
-% delimiter is a \emph{brace} `\texttt{\textcolor{MediumOrchid}{\{}}', it will be
+% delimiter is a \emph{brace} `\texttt{\textcolor{gray}{\{}}', it will be
 % assumed that the \mymarg{argument} is nested into \emph{braces}. Otherwise it
 % will be assumed that \mymarg{argument} is delimited by that
 % first delimiter \mymeta[cf=MediumOrchid]{del} like command §\verb§.
-% Blank lines are preserved, escaped braces `\texttt{\textcolor{MediumOrchid}{\textbackslash\{}}' and
-% `\texttt{\textcolor{MediumOrchid}{\textbackslash\}}}' must also be
+% Blank lines are preserved, escaped braces `\texttt{\textcolor{gray}{\textbackslash\{}}' and
+% `\texttt{\textcolor{gray}{\textbackslash\}}}' must also be
 % balanced if the \mymarg{argument} is used with \emph{braces} and character \texttt{TAB} typed
 % from the keyboard are converted into spaces.
 %
@@ -1371,17 +1373,14 @@ This text is in the outer environment (after nested).
 % \vspace*{-10pt}
 %
 % \begin{function}{verbatimsc}
-% The internal environment used by \ics*{typestored} and \ics*{mergesc} to
+% The environment used by \ics*{typestored} and \ics*{mergesc} to
 % display the \mymeta{stored content} in \emph{verbatim style}.
-% One consideration to keep in mind is that this is a \enquote{\emph{representation}}
-% of the \mymeta{stored content} in a \enquote{\emph{verbatim}} environment.
+% The environment is compatible with \emph{tagged} \texttt{PDF} and can
+% be customized in the following ways after loading the \mypkg*{scontents}
+% package:
 % \end{function}
 %
-% The internal \myenv*{verbatimsc} environment is compatible with
-% \emph{tagged} \texttt{PDF} and can be customized in the
-% following ways after loading the \mypkg*{scontents} package:
-%
-% Using the package \mypkg{fancyvrb}\cite{fancyvrb}:
+% Using the packages \mypkg{fvextra}\cite{fvextra} or \mypkg{fancyvrb}\cite{fancyvrb}:
 % \iffalse
 %<*example>
 % \fi
@@ -1439,9 +1438,9 @@ This text is in the outer environment (after nested).
 % \fi
 %
 % \begin{important}*
-% At the moment, the \mypkg{fancyvrb}\cite{fancyvrb}, \mypkg{listings}\cite{listings}, and
-% \mypkg{minted}\cite{minted} packages are not compatible with \emph{tagged}
-% \texttt{PDF}.
+% At the moment, the \mypkg{fvextra}\cite{fvextra},\mypkg{fancyvrb}\cite{fancyvrb},
+% \mypkg{listings}\cite{listings} and \mypkg{minted}\cite{minted} packages
+% are not compatible with \emph{tagged} \texttt{PDF}.
 % \end{important}
 %
 % \section{Other commands provided}
@@ -2096,7 +2095,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 \begin{scontents}[write-out=scexamp11.ltx]
 % arara: lualatex
 % arara: clean: { extensions: [ aux, log] }
-\DocumentMetadata{lang = en-US, pdfversion = 2.0, pdfstandard = ua-2,testphase=latest}
+\DocumentMetadata{tagging=on, lang=en-US, pdfversion=2.0, pdfstandard=ua-2, testphase=latest}
 \documentclass{article}
 \usepackage{scontents,unicode-math,hyperref}
 \hypersetup{pdftitle = {Test scontents package},}
@@ -2142,7 +2141,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %        \item Optimization of expansion code from §x§ to §e§.
 %        \item Restructuring code for documentation and implementation.
 %        \item Add new keys for §\typestored§ and §\meaningsc§.
-%        \item Check the version of |expl3| in \hologo{plainTeX} and \hologo{ConTeXt}.
+%        \item Check the version of \mypkg{expl3} in \hologo{plainTeX} and \hologo{ConTeXt}.
 %    \end{itemize}
 % \item [v2.3 (ctan), 2025-04-23]
 %    \begin{itemize}
@@ -2163,12 +2162,12 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %        \item Fix internal definition for seq var.
 %        \item Fix internal code for §\typestored§.
 %        \item Replace §\cs_argument_spec:N§ by §\cs_parameter_spec:N§.
-%        \item Detect |l3keys2e| package (obsolete in june 2022 \LaTeX{} release).
+%        \item Detect \mypkg{l3keys2e} package (obsolete in june 2022 \LaTeX{} release).
 %        \item Minor adjustments in the documentation.
 %    \end{itemize}
 % \item [v2.0 (ctan), 2022-04-04]
 %    \begin{itemize}
-%        \item Adapting the §verbatimsc§ environment (compatibility |verbatim| package).
+%        \item Adapting the §verbatimsc§ environment (compatibility \mypkg{verbatim} package).
 %        \item Removed compatibility layer for older \hologo{LaTeX} releases.
 %        \item Fix loader in \hologo{plainTeX} and \hologo{ConTeXt}.
 %        \item Minor adjustments in the documentation.
@@ -2204,16 +2203,16 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \begin{itemize}
 %        \item Add support for \hologo{plainTeX} and \hologo{ConTeXt}.
 %        \item Split internal code for optimization.
-%        \item Add support for vertical spaces in |key=val|.
+%        \item Add support for vertical spaces in \myoarg{key \textnormal{\textcolor{gray}{=}} val}.
 %        \item Add §\foreachsc§ command.
-%        \item Check if |verbatim| package is loaded.
+%        \item Check if \mypkg{verbatim} package is loaded.
 %    \end{itemize}
 % \item [v1.4 (ctan), 2019-10-03]
 %    \begin{itemize}
 %        \item Add §store-all§ key.
 %        \item Messages and keys were separated.
 %        \item Restructuring of documentation.
-%        \item Now the version of |expl3| is checked instead of |xparse|.
+%        \item Now the version of \mypkg{expl3} is checked instead of \mypkg{xparse}.
 %        \item The internal behavior of §force-eol§ has been modified.
 %    \end{itemize}
 % \item [v1.3 (ctan), 2019-09-24]
@@ -2223,7 +2222,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %        \item The extra space has been removed when you run §\getstored§.
 %        \item Internal code has been rewritten more efficiently.
 %        \item Remove \emph{starred argument} `§*§' for §\typestored§.
-%        \item Remove §filecontentsdef§ dependency.
+%        \item Remove \mypkg{filecontentsdef} dependency.
 %        \item Changing §\regex_replace_all:§ for §\tl_replace_all:§.
 %    \end{itemize}
 % \item [v1.2 (ctan), 2019-08-28]
@@ -2401,7 +2400,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 \iow_log:e { Package: ~ scontents ~ \use:c { ver @ scontents . sty } }
 %    \end{macrocode}
 % For \hologo{plainTeX} and \hologo{ConTeXt} we must check the minimum
-% requirement of \mypkg{expl3}, in this case \cs{int_step_tokens:nn} which
+% requirement, in this case §\int_step_tokens:nn§ which
 % was added in release 2025-01-14 of \mypkg{expl3} included in
 % \hologo{TeX} Live 2024 (frozen).
 %    \begin{macrocode}
@@ -2445,7 +2444,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \begin{macro}{\g_@@_end_verbatimsc_tl, \c_@@_end_env_tl,
 %               \l_@@_env_name_tl,\@@_format_case:nnn}
 %   A global token list \cs{g_@@_end_verbatimsc_tl} match when ending
-%   §verbatimsc§ environment (\S\ref{env:verbatimsc}).
+%   §verbatimsc§ (\S\ref{env:verbatimsc}).
 %    \begin{macrocode}
 %<*loader>
 \tl_new:N \g_@@_end_verbatimsc_tl
@@ -2576,7 +2575,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % is loadable in any format.
 % \begin{important}*
 % The file \texttt{TDS:/tex/latex/l3packages/xparse/xparse-generic.tex}
-% is always available and frozen since 2021-01-20.
+% is always available and frozen since 2021.
 % \end{important}
 %    \begin{macrocode}
 %<*loader&!latex>
@@ -2760,25 +2759,22 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\l_@@_print_mergesc_bool,
-%               \l_@@_cur_seq_name_str,
+% \begin{macro}{\l_@@_cur_seq_name_str,
 %               \@@_use_delimit_by_s_stop:nw,
 %               \@@_use_i_delimit_by_s_stop:nw,
 %               \@@_use_none_delimit_by_s_stop:w,}
-%   Internal variables used by §\typestored§ and §\mergesc§.
+%   Internal variables used by §\mergesc§ (\S\ref{cmd:mergesc}).
 %
 %    \begin{macrocode}
-\bool_new:N      \l_@@_print_mergesc_bool
-\bool_set_true:N \l_@@_print_mergesc_bool
-\str_new:N       \l_@@_cur_seq_name_str
-\cs_new:Npn      \@@_use_delimit_by_s_stop:nw #1 \s_@@_stop {#1}
-\cs_new:Npn      \@@_use_i_delimit_by_s_stop:nw #1 #2 \s_@@_stop {#1}
-\cs_new:Npn      \@@_use_none_delimit_by_s_stop:w #1 \s_@@_stop { }
+\str_new:N  \l_@@_cur_seq_name_str
+\cs_new:Npn \@@_use_delimit_by_s_stop:nw #1 \s_@@_stop {#1}
+\cs_new:Npn \@@_use_i_delimit_by_s_stop:nw #1 #2 \s_@@_stop {#1}
+\cs_new:Npn \@@_use_none_delimit_by_s_stop:w #1 \s_@@_stop { }
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{\l_@@_save_sf_int,\l_@@_save_skip}
-%   Internal variables used by functions \cs{@@_bsphack:} and \cs{@@_esphack:}.
+%   Internal variables used by functions \cs{@@_bsphack:} and \cs{@@_esphack:} (\S\ref{func:sphack}).
 %
 %    \begin{macrocode}
 \int_new:N  \l_@@_save_sf_int
@@ -2789,11 +2785,10 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \begin{macro}{\@@_rescan_tokens:n,\@@_rescan_tokens:V,\@@_rescan_tokens:e}
 %   The function §\tl_rescan:nn§ provided by \mypkg{expl3} doesn't fit
 %   the needs of this package because it does not allow \emph{catcode changes}
-%   inside the argument, so verbatim commands/environments used inside
-%   one of \mypkg*{scontents}'s commands/environments will not work. Here we
-%   create a private copy of §\tex_scantokens:D§ which will serve our
-%   purposes. See the answer by Ulrich Diez in
-%   \href{https://tex.stackexchange.com/a/577183/7832}{How do use
+%   inside the argument, so verbatim used inside one of \mypkg*{scontents}'s
+%   commands/environments will not work. Here we create a private copy
+%   of §\tex_scantokens:D§ which will serve our purposes. See the answer
+%   by Ulrich Diez in \href{https://tex.stackexchange.com/a/577183/7832}{How do use
 %   \{<setup>\} in \textbackslash tl_set_rescan:Nnn to replace
 %   \textbackslash scantokens?}
 %
@@ -2941,7 +2936,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   a common \mymeta{keys}.
 %   Here we will implement the §write-out§, §overwrite§ and §print-cmd§
 %   keys which are necessary in the implementation of the §\mergesc§
-%   command (\S\ref{cmd:mergesc}) but are not documented for the user.
+%   command (\S\ref{cmd:mergesc}).
 %    \begin{macrocode}
 \keys_define:nn { scontents / typemeaning }
   {
@@ -3046,8 +3041,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   \mypkg{l3keys}\cite{inter3}, and the \emph{unknown} \mymeta{keys} are brought here to
 %   \cs{@@_parse_typemeaning_key:n} to process.
 %
-%   First we check if the \mymeta{key} is an integer using \cs{int_to_roman:n}.
-%   If it is, we check that the value passed to the key is blank
+%   First we check if the \mymeta{key} is an integer using §\int_to_roman:n§.
+%   If it is, we check that the value passed to the \mymeta{key} is blank
 %   (otherwise something odd as §1=1§ might have been used). If everything
 %   is correct, then set the value of the integer which holds the \mymeta{index},
 %   otherwise raise an error about an \emph{unknown} option.
@@ -3687,7 +3682,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
-% \subsection{The internal \cs{@bsphack} and \cs{@esphack}}
+% \subsection{The internal \cs{@bsphack} and \cs{@esphack}}\label{func:sphack}
 %
 % \begin{macro}{\@@_bsphack:,\@@_esphack:}
 %    We emulate §\@bsphack§ and §\@esphack§ for \hologo{plainTeX}.
@@ -4188,13 +4183,12 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
-% \subsection{The command \cs{typestored}}
+% \subsection{The command \cs{typestored}}\label{cmd:typestored}
 %
 % \begin{macro}{\typestored,\@@_typestored:nn,\@@_typestored:N,
 %               \@@_xverb:w}
 %   The §\typestored§ commands fetches a buffer from memory, prints it
 %   to the log file, and then calls \cs{@@_typestored:N}.
-%
 %    \begin{macrocode}
 %<*loader>
 \NewDocumentCommand \typestored { o m }
@@ -4270,11 +4264,10 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
-% \subsection{The command \cs{meaningsc}}
+% \subsection{The command \cs{meaningsc}}\label{cmd:meaningsc}
 %
 % \begin{macro}{\meaningsc,\@@_meaningsc:nn,\@@_meaningsc:n}
 %   User command §\meaningsc§ to see content stored in |seq|.
-%
 %    \begin{macrocode}
 %<*loader>
 \NewDocumentCommand \meaningsc { o m }
@@ -4330,9 +4323,9 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % and just assembles it as a temporary \emph{internal sequence}, then
 % passes it to the §\typestored§ or §\meaningsc§ command.
 %
-% \begin{macro}[int]{typestored, meaningsc, \@@_mergesc_set_cmd:nn,}
-%   First we will add the §typestored§ and §meaningsc§ keys as
-%   mandatory, returning an error through the \cs{@@_mergesc_set_cmd:nn}
+% \begin{macro}[int]{typestored, meaningsc, \@@_mergesc_cmd:nn,}
+%   First we will add the \mykey{typestored} and \mykey{meaningsc} keys as
+%   mandatory, returning an error through the \cs{@@_mergesc_cmd:nn}
 %   function.
 %    \begin{macrocode}
 %<*core>
@@ -4340,14 +4333,14 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
   {
     typestored .code:n =
       {
-        \cs_set_eq:NN \@@_mergesc_set_cmd:nn \@@_typestored:nn
+        \cs_set_eq:NN \@@_mergesc_cmd:nn \@@_typestored:nn
       },
     meaningsc  .code:n =
       {
-        \cs_set_eq:NN \@@_mergesc_set_cmd:nn \@@_meaningsc:nn
+        \cs_set_eq:NN \@@_mergesc_cmd:nn \@@_meaningsc:nn
       },
   }
-\cs_new_protected:Npn \@@_mergesc_set_cmd:nn #1 #2
+\cs_new_protected:Npn \@@_mergesc_cmd:nn #1 #2
   {
     \msg_error:nn { scontents } { mergesc-missing-cmd }
   }
@@ -4367,11 +4360,6 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
     \@@_mergesc_code:nn {#1} {#2}
   }
 %</loader>
-%    \end{macrocode}
-%   First we will add the §typestored§ and §meaningsc§ keys as
-%   mandatory, returning an error through the \cs{@@_mergesc_set_cmd:nn}
-%   function.
-%    \begin{macrocode}
 %<*core>
 \cs_new_protected:Npn \@@_mergesc_code:nn #1 #2
   {
@@ -4383,12 +4371,11 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
         }
       \seq_gclear:c { g_@@_name_sc!internal_seq }
       \@@_mergesc_parse_list:n {#2}
-      \exp_args:Ne \@@_mergesc_set_cmd:nn
+      \exp_args:Ne \@@_mergesc_cmd:nn
         { 1-end, \exp_not:V \l_@@_mergesc_keys_tl } { sc!internal }
     \group_end:
   }
 %    \end{macrocode}
-%
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_mergesc_parse_list:n #1
   {
@@ -4618,7 +4605,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %</core>
 %<plain|context>\ExplSyntaxOff
 %<plain|context>\endinput
-%<latex>\file_input_stop:
+%<latex|core>\file_input_stop:
 %    \end{macrocode}
 %
 % \Finale

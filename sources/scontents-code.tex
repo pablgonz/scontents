@@ -136,12 +136,10 @@
 \quark_new:N \q__scontents_mark
 \scan_new:N  \s__scontents_stop
 \scan_new:N  \s__scontents_mark
-\bool_new:N      \l__scontents_print_mergesc_bool
-\bool_set_true:N \l__scontents_print_mergesc_bool
-\str_new:N       \l__scontents_cur_seq_name_str
-\cs_new:Npn      \__scontents_use_delimit_by_s_stop:nw #1 \s__scontents_stop {#1}
-\cs_new:Npn      \__scontents_use_i_delimit_by_s_stop:nw #1 #2 \s__scontents_stop {#1}
-\cs_new:Npn      \__scontents_use_none_delimit_by_s_stop:w #1 \s__scontents_stop { }
+\str_new:N  \l__scontents_cur_seq_name_str
+\cs_new:Npn \__scontents_use_delimit_by_s_stop:nw #1 \s__scontents_stop {#1}
+\cs_new:Npn \__scontents_use_i_delimit_by_s_stop:nw #1 #2 \s__scontents_stop {#1}
+\cs_new:Npn \__scontents_use_none_delimit_by_s_stop:w #1 \s__scontents_stop { }
 \int_new:N  \l__scontents_save_sf_int
 \skip_new:N \l__scontents_save_skip
 \cs_new_protected:Npn \__scontents_rescan_tokens:n #1 { \tex_scantokens:D {#1} }
@@ -934,14 +932,14 @@
   {
     typestored .code:n =
       {
-        \cs_set_eq:NN \__scontents_mergesc_set_cmd:nn \__scontents_typestored:nn
+        \cs_set_eq:NN \__scontents_mergesc_cmd:nn \__scontents_typestored:nn
       },
     meaningsc  .code:n =
       {
-        \cs_set_eq:NN \__scontents_mergesc_set_cmd:nn \__scontents_meaningsc:nn
+        \cs_set_eq:NN \__scontents_mergesc_cmd:nn \__scontents_meaningsc:nn
       },
   }
-\cs_new_protected:Npn \__scontents_mergesc_set_cmd:nn #1 #2
+\cs_new_protected:Npn \__scontents_mergesc_cmd:nn #1 #2
   {
     \msg_error:nn { scontents } { mergesc-missing-cmd }
   }
@@ -955,7 +953,7 @@
         }
       \seq_gclear:c { g__scontents_name_sc!internal_seq }
       \__scontents_mergesc_parse_list:n {#2}
-      \exp_args:Ne \__scontents_mergesc_set_cmd:nn
+      \exp_args:Ne \__scontents_mergesc_cmd:nn
         { 1-end, \exp_not:V \l__scontents_mergesc_keys_tl } { sc!internal }
     \group_end:
   }
@@ -1131,6 +1129,7 @@
     \\ \\
     LaTeX~will~ignore~'#2'.
   }
+\file_input_stop:
 %% 
 %%
 %% End of file `scontents-code.tex'.
