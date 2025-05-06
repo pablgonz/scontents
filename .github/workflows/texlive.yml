@@ -20,6 +20,7 @@ jobs:
           - doc
         exclude:
           - { version: 2024, command: doc }
+          - { version: 2024, command: examples }
       fail-fast: false
     steps:
       - name: Checkout
