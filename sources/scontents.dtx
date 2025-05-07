@@ -270,7 +270,7 @@
     \begin{minipage}[t]{\marginparwidth}%
      \raggedright\ttfamily\small
      \textcolor{gray}{\textbackslash begin\{\textcolor{pkgcolor}{{#1}}\}\myoarg
-     [type=tt,sbc=gray,ac=lightgray,cf=optcolor]{keyval ~ list}}\par%
+     [type=tt,sbc=gray,ac=lightgray,cf=optcolor]{key \textnormal{\textcolor{gray}{=}} val}}\par%
      \hspace{0.5cm}\mymeta[type=tt,ac=lightgray,cf=gray]{body ~ env}\par%
      \textcolor{gray}{\textbackslash end\{{\textcolor{pkgcolor}{{#1}}}\}}\par
     \end{minipage}%
@@ -456,7 +456,7 @@
                     peek_charcode_ignore_spaces,cs_argument_spec,cs_parameter_spec,%
                     regex_replace_all,tl_replace_all,tex_scantokens,tex_endinput,%
                     file_input_stop,peek_charcode,cs_undefine,tl_rescan,int_to_roman,%
-                    int_step_tokens,},%
+                    int_step_tokens,keys_set},%
 % Other words 3
     keywordstyle  = [3]{\color{optcolor!85}},%
     keywords      = [3]{document,article,setlength,pagestyle,definecolor,myenvstore},%
@@ -967,16 +967,16 @@
 % used both in the preamble and in the body of the document.
 %
 % For the correct operation §\begin{scontents}§ and §\end{scontents}§ must
-% be in different lines, all \mymeta{keys} must be passed separated by
+% be in \emph{different lines}, all \mymeta{keys} must be passed separated by
 % commas and \emph{without separation} `\verb*+ +' of the start of the
 % environment.
 % \end{function}
 %
-% Comments `\texttt{\textcolor{gray}{\%}}' or \emph{\enquote{any character}} after
+% Comments `\texttt{\textcolor{gray}{\%}}' or \emph{any character} after
 % §\begin{scontents}§ or \myoarg{key \textnormal{\textcolor{gray}{=}} val} on
-% the same line are not supported, the package will return an \enquote{error} message if this happens.
-% In a similar way comments `\texttt{\textcolor{gray}{\%}}' or \emph{\enquote{any character}}
-% after §\end{scontents}§ on the same line the package will return a \enquote{warning} message.
+% the \emph{same line} are NOT supported, the package will return an \enquote{error} message if this happens.
+% In a similar way comments `\texttt{\textcolor{gray}{\%}}' or \emph{any character}
+% after §\end{scontents}§ on the \emph{same line} the package will return a \enquote{warning} message.
 %
 % The environment can be \emph{\enquote{nested}} if it is properly balanced and
 % does not appear \emph{\enquote{literally}} in commented lines or in some \emph{verbatim}
@@ -998,12 +998,16 @@ This text is in the outer environment (after nested).
 %</example>
 % \fi
 %
-% Of course, the \mymeta{stored content} in the inner sequence is \emph{only available}
-% after \mymeta{stored content} in the outer sequence one has been retrieved,
-% either by using the key \mykey{print-env} or \ics*{getstored} command.
+% Of course, the \mymeta{stored content} in the \emph{sequence} \mymarg{inner}
+% is \emph{only available} after \mymeta{stored content} in the \emph{sequence}
+% \mymarg{outer}  one has been retrieved, either by using the key \mykey{print-env}
+% or \ics*{getstored} command.
 %
-% It is advisable to \mymeta{stored content} within sequences with different names,
-% so as not to get lost in the order in which \mymeta{content} is stored.
+% \begin{important}*
+% It is advisable to \mymeta{stored content} within \emph{sequences} with
+% different names, so as not to get lost in the order (position) in which
+% they are stored.
+% \end{important}
 %
 % \subsection*{Notes for \hologo{plainTeX} and \hologo{ConTeXt} users}
 %
@@ -2363,8 +2367,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % Now we define some common macros to hold the package date and version:
 %    \begin{macrocode}
-%<loader>\def\ScontentsFileDate{2025-05-05}%
-%<core>\def\ScontentsCoreFileDate{2025-05-05}%
+%<loader>\def\ScontentsFileDate{2025-05-07}%
+%<core>\def\ScontentsCoreFileDate{2025-05-07}%
 %<*loader>
 \def\ScontentsFileVersion{2.4}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
@@ -2436,13 +2440,35 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %</loader>
 %    \end{macrocode}
 %
-% \subsection{Definition of variables by format}
+% \subsubsection{Compatibility with \hologo{plainTeX} and \hologo{ConTeXt}}\label{comp:layer}
+%
+% \begin{macro}{\l_@@_char_value_int}
+%   When loading the package outside of \LaTeX{} we can't usually use
+%   \mypkg{xparse}\cite{xparse} now \mypkg{ltcmd}\cite{latex2e} part of
+%   the \LaTeX{} kernel. However since the old \mypkg{xparse}\cite{xparse}
+%   provide \texttt{xparse-generic.tex} is loadable in any format.
+%    \begin{macrocode}
+%<*loader&!latex>
+\int_new:N  \l_@@_char_value_int
+\int_set:Nn \l_@@_char_value_int { \char_value_catcode:n { `\@ } }
+\char_set_catcode_letter:N \@
+\file_input:n { xparse-generic.tex }
+\char_set_catcode:nn { `\@ } { \l_@@_char_value_int }
+%</loader&!latex>
+%    \end{macrocode}
+% \begin{important}*
+% The file \texttt{TDS:/tex/latex/l3packages/xparse/xparse-generic.tex}
+% is always available and frozen since 2021.
+% \end{important}
+% \end{macro}
+%
+% \subsubsection{Definition of variables by format}
 %
 % We define and set variables that must be handled separately in order
 % to work properly with \hologo{plainTeX}, \hologo{ConTeXt} and \LaTeX.
 %
 % \begin{macro}{\g_@@_end_verbatimsc_tl, \c_@@_end_env_tl,
-%               \l_@@_env_name_tl,\@@_format_case:nnn}
+%               \l_@@_env_name_tl,}
 %   A global token list \cs{g_@@_end_verbatimsc_tl} match when ending
 %   §verbatimsc§ (\S\ref{env:verbatimsc}).
 %    \begin{macrocode}
@@ -2474,11 +2500,18 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
       \exp_not:N \l_@@_env_name_tl
 %<latex>    \c_right_brace_str
   }
+%</loader>
 %    \end{macrocode}
-%   Now we load the core \mypkg*{scontents} code:
+% \end{macro}
+%
+% \subsubsection{Loading the package core}
+%
+% Now we load the core \mypkg*{scontents} code:
 %    \begin{macrocode}
+%<*loader>
 \file_input:n { scontents-code.tex }
 %    \end{macrocode}
+% \begin{macro}{\@@_format_case:nnn}
 %   Sometimes we need to detect the format from within a macro:
 %    \begin{macrocode}
 \cs_new:Npn \@@_format_case:nnn #1 #2 #3
@@ -2489,7 +2522,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
-% \subsection{Checking proper loader for package}
+% \subsubsection{Checking proper loader}
 %
 % Checking that the package was loaded with the proper loader code. This code
 % was copied from \texttt{expl3-code.tex}.
@@ -2537,54 +2570,283 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
     \fi
   \fi
 \next
-%</core>
 %    \end{macrocode}
 %
-% \subsection{Definition of temporary variables}
+% \subsection{Internal variables and utility functions}
 %
-% \begin{macro}{\l_@@_macro_tmp_tl,\l_@@_temp_tl,\g_@@_temp_tl,\l_@@_tmpa_int,
-%               \l_@@_temp_bool}
-%   The token list \cs{l_@@_macro_tmp_tl} is a temporary token list to
-%   hold the contents of the macro/environment. \cs{l_@@_temp_tl},
-%   \cs{g_@@_temp_tl}, \cs{l_@@_tmpa_int} and \cs{l_@@_temp_bool} are
-%   generic temporary vars.
-%    \begin{macrocode}
-%<*core>
-\tl_new:N   \l_@@_macro_tmp_tl
-\tl_new:N   \l_@@_temp_tl
-\tl_new:N   \g_@@_temp_tl
-\int_new:N  \l_@@_tmpa_int
-\bool_new:N \l_@@_temp_bool
-%    \end{macrocode}
-% \end{macro}
+% \subsubsection{Internal variables}
 %
-% \begin{macro}{\l_@@_mergesc_keys_tl}
-%   The token list \cs{l_@@_mergesc_keys_tl} to save the \mymeta{keys}
-%   passed to the §\mergesc§ command
-%    \begin{macrocode}
-\tl_new:N \l_@@_mergesc_keys_tl
-%</core>
-%    \end{macrocode}
-% \end{macro}
+% \begin{macro}{\l_@@_save_every_body_lines_tl, \l_@@_processed_body_lines_tl,
+%               \l_@@_environment_keys_tl, \l_@@_nesting_env_int,
+%               \l_@@_nesting_aux_int,}
+%   The token list \cs{l_@@_save_every_body_lines_tl} holds the
+%   \mymarg{body env} of an environment, §scontents§ by default, as it's
+%   being read, the token list \cs{l_@@_processed_body_lines_tl} saves
+%   all sanitized lines saved in \cs{l_@@_save_every_body_lines_tl}.
 %
-% \subsection{Compatibility layer with \hologo{plainTeX} and \hologo{ConTeXt}}\label{comp:layer}
-%
-% When loading the package outside of \LaTeX{} we can't usually use
-% \mypkg{xparse}\cite{xparse} now \mypkg{ltcmd}\cite{latex2e} is part of the \LaTeX{}
-% kernel. However since the old \mypkg{xparse}\cite{xparse} provide \texttt{xparse-generic.tex}
-% is loadable in any format.
+%   The token list \cs{l_@@_environment_keys_tl} saves the \mymeta{keys}
+%   passed to the \emph{optional argument} after they are sanitized and
+%   the integer variables \cs{l_@@_nesting_env_int} together with
+%   \cs{l_@@_nesting_aux_int} are used to analyze the nesting of the
+%   environment.
 % \begin{important}*
-% The file \texttt{TDS:/tex/latex/l3packages/xparse/xparse-generic.tex}
-% is always available and frozen since 2021.
+%   All of these variables are used in the implementation of §\newenvsc§
+%   (\S\ref{cmd:newenvsc}) and the §scontents§ (\S\ref{env:scontents}).
 % \end{important}
 %    \begin{macrocode}
-%<*loader&!latex>
-\int_set:Nn \l_@@_tmpa_int { \char_value_catcode:n { `\@ } }
-\char_set_catcode_letter:N \@
-\file_input:n { xparse-generic.tex }
-\char_set_catcode:nn { `\@ } { \l_@@_tmpa_int }
-%</loader&!latex>
+\tl_new:N  \l_@@_save_every_body_lines_tl
+\tl_new:N  \l_@@_processed_body_lines_tl
+\tl_new:N  \l_@@_environment_keys_tl
+\int_new:N \l_@@_nesting_env_int
+\int_new:N \l_@@_nesting_aux_int
 %    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\l_@@_Scontents_arg_tl, \l_@@_foreachsc_arg_tl,
+%               \l_@@_typestored_arg_tl, \l_@@_meaningsc_arg_tl,
+%               \l_@@_mergesc_arg_tl, \l_@@_mergesc_keys_tl,
+%               \l_@@_cur_seq_name_str, }
+%   The token lists \cs{l_@@_Scontents_arg_tl}, \cs{l_@@_foreachsc_arg_tl},
+%   \cs{l_@@_typestored_arg_tl} and \cs{l_@@_meaningsc_arg_tl} save the
+%   \mymarg{argument} passed to the §\Scontents§ (\S\ref{cmd:Scontents}),
+%   §\foreachsc§ (\S\ref{cmd:foreachsc}), §\typestored§ (\S\ref{cmd:typestored})
+%   and §\meaningsc§ (\S\ref{cmd:meaningsc}) commands.
+%
+%   The token list \cs{l_@@_mergesc_arg_tl} save the \mymarg{argument}
+%   and the token list \cs{l_@@_mergesc_keys_tl} save the \mymeta{keys}
+%   passed to the §\mergesc§ (\S\ref{cmd:mergesc}) command.
+%    \begin{macrocode}
+\tl_new:N  \l_@@_Scontents_arg_tl
+\tl_new:N  \l_@@_foreachsc_arg_tl
+\tl_new:N  \l_@@_typestored_arg_tl
+\tl_new:N  \l_@@_meaningsc_arg_tl
+\tl_new:N  \l_@@_mergesc_arg_tl
+\tl_new:N  \l_@@_mergesc_keys_tl
+\str_new:N \l_@@_cur_seq_name_str
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\l_@@_file_name_tl, \l_@@_file_write_iow,
+%               \l_@@_writing_bool, l_@@_storing_bool,
+%               \l_@@_writable_bool,}
+%   The token list \cs{l_@@_file_name_tl} is used for store the name of
+%   the \mymeta{output file}, when there's one. Its value is set by the
+%   keys §write-env§, §write-out§ and §write-cmd§ (\S\ref{keys:all}).
+%
+%   The variable \cs{l_@@_file_write_iow} is an \emph{output stream} for
+%   write the \mymarg{body env} of an environment or \mymarg{argument}
+%   for command to a \mymeta{output file} when the keys §write-env§,
+%   §write-out§ or §write-cmd§ are active.
+%
+%   The boolean variables \cs{l_@@_writing_bool} and \cs{l_@@_storing_bool}
+%   (true by default) set by the §write-out§, §write-env§ and §write-cmd§ keys determine
+%   whether the content is stored and written or just written to a \mymeta{output file}.
+%
+%   The boolean variable \cs{l_@@_writable_bool} keeps track of whether
+%   we should write to a file, it is in write-only or in mode overwrite
+%   when the key §overwrite§ is used.
+%   \begin{important}*
+%   This variable is used by the function \cs{@@_file_if_writable:nTF}
+%   (see \ref{the:environment:itself}).
+%   \end{important}
+%
+%    \begin{macrocode}
+\tl_new:N   \l_@@_file_name_tl
+\iow_new:N  \l_@@_file_write_iow
+\bool_new:N \l_@@_writing_bool
+\bool_new:N \l_@@_storing_bool
+\bool_set_true:N \l_@@_storing_bool
+\bool_new:N \l_@@_writable_bool
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\l_@@_foreach_print_seq, \g_@@_foreach_exec_tl,
+%               \l_@@_foreach_before_tl, \l_@@_foreach_before_bool,
+%               \l_@@_foreach_after_tl, \l_@@_foreach_after_bool,
+%               \l_@@_foreach_stop_int, \l_@@_foreach_before_bool,
+%               \l_@@_foreach_wrapper_bool}
+%   Internal variables used by \mymeta{keys} (\S\ref{keys:foreachsc})
+%   and implementation of §\foreachsc§ command (\S\ref{cmd:foreachsc}).
+%    \begin{macrocode}
+\seq_new:N  \l_@@_foreach_print_seq
+\tl_new:N   \g_@@_foreach_exec_tl
+\tl_new:N   \l_@@_foreach_before_tl
+\bool_new:N \l_@@_foreach_before_bool
+\tl_new:N   \l_@@_foreach_after_tl
+\bool_new:N \l_@@_foreach_after_bool
+\int_new:N  \l_@@_foreach_stop_int
+\bool_new:N \l_@@_foreach_stop_bool
+\bool_new:N \l_@@_foreach_wrapper_bool
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\l_@@_seq_item_seq, \g_@@_name_sc!internal_seq,}
+%   The sequence variable \cs{l_@@_seq_item_seq} save the \mymeta{indexes} in the
+%   \emph{sequence} of the items requested to §\typestored§, §\mergesc§
+%   or §\meaningsc§ and the sequence \cs{g_@@_name_sc!internal_seq} assemble this.
+%    \begin{macrocode}
+\seq_new:N \l_@@_seq_item_seq
+\seq_new:c { g_@@_name_sc!internal_seq }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\g_@@_last_stored_tl}
+%   The token list \cs{g_@@_last_stored_tl} used by the function
+%   \cs{@@_lastfrom_seq:n} (\S\ref{impl:seq:funct}) to execute the
+%   last \mymeta{stored content} outside the group.
+%    \begin{macrocode}
+\tl_new:N \g_@@_last_stored_tl
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\c_@@_hidden_space_str}
+%   The variable \cs{c_@@_hidden_space_str} is a constant \emph{string}
+%   to used to hide the \mymeta{forced space} added by \hologo{TeX} when
+%   recording content in a macro. This \emph{string} contains the \emph{reserved phrase}
+%   `§%§§^^Ascheol%§' which is added to the end of the \mymarg{argument} stored
+%   in \emph{sequence} when the key §force-eol§ is false.
+%    \begin{macrocode}
+\str_const:Ne \c_@@_hidden_space_str
+  { \c_percent_str \c_circumflex_str \c_circumflex_str A scheol \c_percent_str }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\l_@@_save_sf_int,\l_@@_save_skip}
+%   Internal variables used by functions \cs{@@_bsphack:} and
+%   \cs{@@_esphack:} (\S\ref{func:sphack}).
+%    \begin{macrocode}
+\int_new:N  \l_@@_save_sf_int
+\skip_new:N \l_@@_save_skip
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\q_@@_stop,\q_@@_mark,\s_@@_stop,\s_@@_mark}
+%   Some quarks and scan's used along the code as macro delimiters.
+%    \begin{macrocode}
+\quark_new:N \q_@@_stop
+\quark_new:N \q_@@_mark
+\scan_new:N  \s_@@_stop
+\scan_new:N  \s_@@_mark
+%</core>
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\l_@@_plain_bool}
+%   The boolean variable \cs{l_@@_plain_bool} used in the \hologo{plainTeX}
+%   implementation of the §verbatimsc§ environment (\S\ref{env:verbatimsc}).
+%    \begin{macrocode}
+%<*plain>
+\bool_new:N \l_@@_plain_bool
+%</plain>
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsubsection{Utility functions}
+%
+% \begin{macro}[int]{\tl_if_empty:fTF}
+%   Some nonstandard kernel variant.
+%    \begin{macrocode}
+%<*core>
+\prg_generate_conditional_variant:Nnn \tl_if_empty:n { f } { p, TF }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_use_delimit_by_s_stop:nw,
+%               \@@_use_i_delimit_by_s_stop:nw,
+%               \@@_use_none_delimit_by_s_stop:w,}
+%   Some functions used by §\mergesc§ (\S\ref{cmd:mergesc}).
+%    \begin{macrocode}
+\cs_new:Npn \@@_use_delimit_by_s_stop:nw #1 \s_@@_stop {#1}
+\cs_new:Npn \@@_use_i_delimit_by_s_stop:nw #1 #2 \s_@@_stop {#1}
+\cs_new:Npn \@@_use_none_delimit_by_s_stop:w #1 \s_@@_stop { }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_rescan_tokens:n,\@@_rescan_tokens:V,\@@_rescan_tokens:e}
+%   The function §\tl_rescan:nn§ provided by \mypkg{expl3} doesn't fit
+%   the needs of this package because it does not allow \emph{catcode changes}
+%   inside the argument, so verbatim used inside one of \mypkg*{scontents}'s
+%   commands/environments will not work. Here we create a private copy
+%   of §\tex_scantokens:D§ which will serve our purposes. See the answer
+%   by Ulrich Diez in \href{https://tex.stackexchange.com/a/577183/7832}{How do use
+%   \{<setup>\} in \textbackslash tl_set_rescan:Nnn to replace
+%   \textbackslash scantokens?}
+%
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_rescan_tokens:n #1 { \tex_scantokens:D {#1} }
+\cs_generate_variant:Nn \@@_rescan_tokens:n { V, e }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_tab:,\@@_par:}
+%   Control sequences to replace tab `§^^I§' and form feed `§^^L§'
+%   characters.
+%    \begin{macrocode}
+\cs_new:Npe \@@_tab: { \c_space_tl }
+\cs_new:Npn \@@_par: { ^^J ^^J }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_file_if_writable:n, \@@_file_if_writable:nT,
+%               \@@_file_if_writable:nF, \@@_file_if_writable:nTF,}
+% TODOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+%    \begin{macrocode}
+\prg_new_protected_conditional:Npnn \@@_file_if_writable:n #1 { T, F, TF }
+  {
+    \bool_if:NTF \l_@@_writing_bool
+      {
+        \file_if_exist:nTF {#1}
+          {
+            \bool_if:NTF \l_@@_overwrite_bool
+              {
+                \msg_warning:nne { scontents } { overwrite-file } {#1}
+                \prg_return_true:
+              }
+              {
+                \msg_warning:nne { scontents } { not-writing } {#1}
+                \prg_return_false:
+              }
+          }
+          {
+            \msg_warning:nne { scontents } { writing-file } {#1}
+            \prg_return_true:
+          }
+      }
+      { \prg_return_false: }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_file_write_cmd:nn, \@@_file_write_cmd:VV,
+%               \@@_Scontents_finish:}
+% TODOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_file_write_cmd:nn #1#2
+  {
+    \@@_file_if_writable:nT {#1}
+      {
+        \iow_open:Nn \l_@@_file_write_iow {#1}
+        \iow_now:Nn  \l_@@_file_write_iow {#2}
+        \iow_close:N \l_@@_file_write_iow
+      }
+  }
+\cs_generate_variant:Nn \@@_file_write_cmd:nn { VV }
+\cs_new_protected:Npn \@@_Scontents_finish:
+  {
+      \@@_file_write_cmd:VV \l_@@_file_name_tl \l_@@_Scontents_arg_tl
+      \@@_finish_storing:NNN
+        \l_@@_Scontents_arg_tl
+        \l_@@_name_seq_cmd_tl
+        \l_@@_print_cmd_bool
+      \use:e
+        {
+    \group_end:
+    \bool_if:NF \l_@@_print_cmd_bool { \@@_esphack: }
+        }
+  }
+%</core>
+%    \end{macrocode}
+% \end{macro}
 %
 % \subsection{Definition of keys for the package}
 %
@@ -2620,9 +2882,9 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
     width-tab .int_set:N        = \l_@@_tab_width_int,
     width-tab .initial:n        = 1,
     width-tab .value_required:n = true,
-    print-all .meta:n           = { print-env = #1 , print-cmd = #1 },
+    print-all .meta:n           = { print-env = #1, print-cmd = #1 },
     print-all .default:n        = true,
-    store-all .meta:n           = { store-env = #1 , store-cmd = #1 },
+    store-all .meta:n           = { store-env = #1, store-cmd = #1 },
     store-all .value_required:n = true
   }
 %</core>
@@ -2642,180 +2904,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
-% \subsection{Internal variables and utility functions}
-%
-% \begin{macro}{\l_@@_fname_out_tl,\l_@@_every_line_env_tl,\l_@@_file_iow}
-%   The token list \cs{l_@@_fname_out_tl} is used for store the name of
-%   the \mymeta{output file}, when there's one. Its value is set by the
-%   keys §write-env§, §write-out§ and §write-cmd§.
-%
-%   The token list \cs{l_@@_every_line_env_tl} holds the \mymarg{body env} of an
-%   environment, §scontents§ by default, as it's being read.
-%   \cs{l_@@_file_iow} is an output stream for saving the \mymarg{body env} of an
-%   environment or \mymarg{argument} for command to a \mymeta{output file}.
-%   This variables is used by the function \cs{@@_file_tl_write_start:n}
-%   (see \ref{the:environment:itself}).
-%
-%    \begin{macrocode}
-%<*core>
-\tl_new:N \l_@@_fname_out_tl
-\tl_new:N \l_@@_every_line_env_tl
-\iow_new:N \l_@@_file_iow
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}{\l_@@_foreach_name_seq_tl,\l_@@_foreach_before_tl,\l_@@_foreach_after_tl}
-%   The token list \cs{l_@@_foreach_name_seq_tl} save the \emph{name}
-%   assigned to the \emph{sequence} on which the loop will be made, the vars
-%   \cs{l_@@_foreach_before_tl} and \cs{l_@@_foreach_after_tl} are token
-%   lists in which the assigned material will be placed before
-%   and after the execution of the §\foreachsc§ loop.
-%
-%    \begin{macrocode}
-\tl_new:N \l_@@_foreach_name_seq_tl
-\tl_new:N \l_@@_foreach_before_tl
-\tl_new:N \l_@@_foreach_after_tl
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}{\l_@@_seq_item_seq,\l_@@_env_nesting_int,
-%               \l_@@_foreach_stop_int,}
-%   The seq var \cs{l_@@_seq_item_seq} save the \mymeta{indexes} in the
-%   \emph{sequence} of the items requested to §\typestored§, §\mergesc§
-%   or §\meaningsc§.
-%   The int var \cs{l_@@_env_nesting_int} save the current \emph{nesting level}
-%   of the §scontents§ environment.
-%   The int var \cs{l_@@_foreach_stop_int} will save the value at which
-%   the §\foreachsc§ loop will stop.
-%
-%    \begin{macrocode}
-\seq_new:N \l_@@_seq_item_seq
-\int_new:N \l_@@_env_nesting_int
-\int_new:N \l_@@_foreach_stop_int
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}{\l_@@_writing_bool,\l_@@_storing_bool,\l_@@_writable_bool}
-%   The boolean \cs{l_@@_writing_bool} keeps track of whether we should write
-%   to a file, and \cs{l_@@_storing_bool} determines whether it is in write-only
-%   mode when the key §write-out§ is used.
-%
-%    \begin{macrocode}
-\bool_new:N \l_@@_writing_bool
-\bool_set_false:N \l_@@_writing_bool
-\bool_new:N \l_@@_storing_bool
-\bool_set_true:N  \l_@@_storing_bool
-\bool_new:N \l_@@_writable_bool
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}{\l_@@_foreach_before_bool,\l_@@_foreach_after_bool,
-%               \l_@@_foreach_stop_bool,\l_@@_foreach_wrapper_bool}
-%   Boolean variables used by the §\foreachsc§ loop.
-%
-%    \begin{macrocode}
-\bool_new:N \l_@@_foreach_before_bool
-\bool_set_false:N \l_@@_foreach_before_bool
-\bool_new:N \l_@@_foreach_after_bool
-\bool_set_false:N \l_@@_foreach_after_bool
-\bool_new:N \l_@@_foreach_stop_bool
-\bool_set_false:N \l_@@_foreach_stop_bool
-\bool_new:N \l_@@_foreach_wrapper_bool
-\bool_set_false:N \l_@@_foreach_wrapper_bool
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}{\l_@@_foreach_print_seq, \g_@@_name_sc!internal_seq}
-%   The seq var \cs{l_@@_foreach_print_seq} is the sequence used by §\foreachsc§
-%   and the seq var \cs{g_@@_name_sc!internal_seq} is the sequence used by §\mergesc§.
-%
-%    \begin{macrocode}
-\seq_new:N \l_@@_foreach_print_seq
-\seq_new:c { g_@@_name_sc!internal_seq }
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}{\c_@@_hidden_space_str}
-%   The variable \cs{c_@@_hidden_space_str} is a constant \emph{string} to used to hide
-%   the \mymeta{forced space} added by \hologo{TeX} when recording content
-%   in a macro. This \emph{string} contains the \emph{reserved phrase}
-%   `§%§§^^Ascheol%§' which is added to the end of the \mymarg{argument} stored
-%   in |seq| when the key §force-eol§ is false.
-%
-%    \begin{macrocode}
-\str_const:Ne \c_@@_hidden_space_str
-  { \c_percent_str \c_circumflex_str \c_circumflex_str A scheol \c_percent_str }
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}{\q_@@_stop,\q_@@_mark,\s_@@_stop,\s_@@_mark}
-%   Some quarks and scan's used along the code as macro delimiters.
-%
-%    \begin{macrocode}
-\quark_new:N \q_@@_stop
-\quark_new:N \q_@@_mark
-\scan_new:N  \s_@@_stop
-\scan_new:N  \s_@@_mark
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}{\l_@@_cur_seq_name_str,
-%               \@@_use_delimit_by_s_stop:nw,
-%               \@@_use_i_delimit_by_s_stop:nw,
-%               \@@_use_none_delimit_by_s_stop:w,}
-%   Internal variables used by §\mergesc§ (\S\ref{cmd:mergesc}).
-%
-%    \begin{macrocode}
-\str_new:N  \l_@@_cur_seq_name_str
-\cs_new:Npn \@@_use_delimit_by_s_stop:nw #1 \s_@@_stop {#1}
-\cs_new:Npn \@@_use_i_delimit_by_s_stop:nw #1 #2 \s_@@_stop {#1}
-\cs_new:Npn \@@_use_none_delimit_by_s_stop:w #1 \s_@@_stop { }
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}{\l_@@_save_sf_int,\l_@@_save_skip}
-%   Internal variables used by functions \cs{@@_bsphack:} and \cs{@@_esphack:} (\S\ref{func:sphack}).
-%
-%    \begin{macrocode}
-\int_new:N  \l_@@_save_sf_int
-\skip_new:N \l_@@_save_skip
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}{\@@_rescan_tokens:n,\@@_rescan_tokens:V,\@@_rescan_tokens:e}
-%   The function §\tl_rescan:nn§ provided by \mypkg{expl3} doesn't fit
-%   the needs of this package because it does not allow \emph{catcode changes}
-%   inside the argument, so verbatim used inside one of \mypkg*{scontents}'s
-%   commands/environments will not work. Here we create a private copy
-%   of §\tex_scantokens:D§ which will serve our purposes. See the answer
-%   by Ulrich Diez in \href{https://tex.stackexchange.com/a/577183/7832}{How do use
-%   \{<setup>\} in \textbackslash tl_set_rescan:Nnn to replace
-%   \textbackslash scantokens?}
-%
-%    \begin{macrocode}
-\cs_new_protected:Npn \@@_rescan_tokens:n #1 { \tex_scantokens:D {#1} }
-\cs_generate_variant:Nn \@@_rescan_tokens:n { V, e }
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}{\@@_tab:,\@@_par:}
-%   Control sequences to replace tab `§^^I§' and form feed `§^^L§' characters.
-%
-%    \begin{macrocode}
-\cs_new:Npe \@@_tab: { \c_space_tl }
-\cs_new:Npn \@@_par: { ^^J ^^J }
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}[int]{\tl_if_empty:fTF}
-%   Some nonstandard kernel variant.
-%    \begin{macrocode}
-\prg_generate_conditional_variant:Nnn \tl_if_empty:n { f } { p, TF }
-%</core>
-%    \end{macrocode}
-% \end{macro}
-%
-% \subsection{Defining keys for the environment and commands}
+% \subsection{Defining keys for the environment and commands}\label{keys:all}
 %
 % We add the \mymeta{keys} divided into subgroups to handle errors and
 % \emph{unknown} \mymeta{keys} separately with the exception of those
@@ -2831,13 +2920,14 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 \keys_define:nn { scontents / scontents }
   {
     write-env .code:n           = {
+                                    \bool_set_true:N \l_@@_storing_bool
                                     \bool_set_true:N \l_@@_writing_bool
-                                    \tl_set:Nn \l_@@_fname_out_tl {#1}
+                                    \tl_set:Nn \l_@@_file_name_tl {#1}
                                   },
     write-out .code:n           = {
                                     \bool_set_false:N \l_@@_storing_bool
                                     \bool_set_true:N  \l_@@_writing_bool
-                                    \tl_set:Nn \l_@@_fname_out_tl {#1}
+                                    \tl_set:Nn \l_@@_file_name_tl {#1}
                                   },
     write-env .value_required:n = true,
     write-out .value_required:n = true,
@@ -2863,13 +2953,14 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 \keys_define:nn { scontents / Scontents }
   {
     write-cmd .code:n           = {
+                                    \bool_set_true:N \l_@@_storing_bool
                                     \bool_set_true:N \l_@@_writing_bool
-                                    \tl_set:Nn \l_@@_fname_out_tl {#1}
+                                    \tl_set:Nn \l_@@_file_name_tl {#1}
                                   },
     write-out .code:n           = {
                                     \bool_set_false:N \l_@@_storing_bool
                                     \bool_set_true:N  \l_@@_writing_bool
-                                    \tl_set:Nn \l_@@_fname_out_tl {#1}
+                                    \tl_set:Nn \l_@@_file_name_tl {#1}
                                   },
     write-cmd .value_required:n = true,
     write-out .value_required:n = true,
@@ -2885,7 +2976,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
-% \subsubsection{Keys for command \cs{foreachsc}}
+% \subsubsection{Keys for command \cs{foreachsc}}\label{keys:foreachsc}
 %
 % \begin{macro}[int]{before, after, start, stop, step, wrapper, sep,
 %                    unknown,}
@@ -2944,7 +3035,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
     write-out .code:n     = {
                               \bool_set_false:N \l_@@_storing_bool
                               \bool_set_true:N  \l_@@_writing_bool
-                              \tl_set:Nn \l_@@_fname_out_tl {#1}
+                              \tl_set:Nn \l_@@_file_name_tl {#1}
                             },
     write-out .value_required:n = true,
     overwrite .meta:nn    = { scontents } { overwrite = #1 },
@@ -3095,7 +3186,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
-% \subsection{Programming of the sequences}
+% \subsection{Programming of the sequences}\label{impl:seq:funct}
 %
 % The \emph{storage system} of the package \mypkg*{scontents} is done
 % using |seq| variables. Here we set up the macros that will manage
@@ -3160,17 +3251,20 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % \begin{macro}{\@@_lastfrom_seq:n,\@@_lastfrom_seq:V}
 %   The function \cs{@@_lastfrom_seq:n} save the last \mymeta{stored content}
-%   from the \emph{sequence} pass to §#1§ in \cs{g_@@_temp_tl}
+%   from the \emph{sequence} pass to §#1§ in \cs{g_@@_last_tl}
 %   then rescan with the function \cs{@@_rescan_tokens:V} when the keys §print-env§
 %   or §print-cmd§ are active.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_lastfrom_seq:n #1
   {
-    \tl_gset:Ne \g_@@_temp_tl { \seq_item:cn { g_@@_name_#1_seq } {-1} }
+    \tl_gset:Ne \g_@@_last_stored_tl
+      {
+        \seq_item:cn { g_@@_name_#1_seq } { -1 }
+      }
     \group_insert_after:N \@@_rescan_tokens:V
-    \group_insert_after:N \g_@@_temp_tl
+    \group_insert_after:N \g_@@_last_stored_tl
     \group_insert_after:N \tl_gclear:N
-    \group_insert_after:N \g_@@_temp_tl
+    \group_insert_after:N \g_@@_last_stored_tl
   }
 \cs_generate_variant:Nn \@@_lastfrom_seq:n { V }
 %    \end{macrocode}
@@ -3185,6 +3279,24 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
   {
     \tl_log:N #1
     \@@_append_contents:Ve #2 { \exp_not:V #1 }
+  }
+%</core>
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_finish_storing:NNN}
+%   TODOOOOOOOOOOOOOOOOOO Finishes the environment calling \cs{@@_finish_storing:NNN}.
+%    \begin{macrocode}
+%<*core>
+\cs_new_protected:Npn \@@_finish_storing:NNN #1 #2 #3
+  {
+    \bool_if:NT \l_@@_storing_bool
+      {
+        \bool_if:NF \l_@@_forced_eol_bool
+          { \tl_put_right:Ne #1 { \c_@@_hidden_space_str } }
+        \@@_store_to_seq:NN #1 #2
+        \bool_if:NT #3 { \@@_lastfrom_seq:V #2 }
+      }
   }
 %</core>
 %    \end{macrocode}
@@ -3265,14 +3377,16 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 \cs_new_protected:Npn \@@_env_generic_end:
   {
     \@@_stop_environment:
-    \@@_finish_storing:NNN \l_@@_macro_tmp_tl
-    \l_@@_name_seq_env_tl \l_@@_print_env_bool
+    \@@_finish_storing:NNN
+      \l_@@_processed_body_lines_tl
+      \l_@@_name_seq_env_tl
+      \l_@@_print_env_bool
   }
 %</core>
 %    \end{macrocode}
 % \end{macro}
 %
-% \subsection{The environment \env{scontents}}
+% \subsection{The environment \env{scontents}}\label{env:scontents}
 %
 % \begin{macro}{
 %     scontents,
@@ -3300,7 +3414,9 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \begin{macrocode}
 %<*loader>
 \NewDocumentCommand \@@_grab_opt_arg:w { r[] }
-  { \@@_grab_opt_arg:n {#1} }
+  {
+    \@@_grab_opt_arg:n {#1}
+  }
 %</loader>
 %    \end{macrocode}
 %   The function is called from a context where `§^^M§' is active, so
@@ -3312,9 +3428,9 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
   {
     \tl_if_novalue:nF {#1}
       {
-        \tl_set:Nn \l_@@_temp_tl {#1}
-        \@@_normalise_line_ends:N \l_@@_temp_tl
-        \keys_set:nV { scontents / scontents } \l_@@_temp_tl
+        \tl_set:Nn \l_@@_environment_keys_tl {#1}
+        \@@_normalise_line_ends:N \l_@@_environment_keys_tl
+        \keys_set:nV { scontents / scontents } \l_@@_environment_keys_tl
       }
     \@@_start_after_option:w
   }
@@ -3378,14 +3494,14 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
             { after~\c_backslash_str begin { \l_@@_env_name_tl } #1 } {#2}
         }
       \@@_make_control_chars_active:
-      \@@_file_tl_write_start:V \l_@@_fname_out_tl
+      \@@_file_tl_write_start:V \l_@@_file_name_tl
     }
   \cs_new_protected:Npn \@@_stop_environment:
     {
-      \@@_file_write_stop:N \l_@@_macro_tmp_tl
+      \@@_file_write_stop:N \l_@@_processed_body_lines_tl
       \bool_lazy_and:nnT
         { \l_@@_storing_bool }
-        { \tl_if_empty_p:N \l_@@_macro_tmp_tl }
+        { \tl_if_empty_p:N \l_@@_processed_body_lines_tl }
         {
           \msg_warning:nne { scontents } { empty-environment } { \l_@@_env_name_tl }
         }
@@ -3422,10 +3538,10 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
         \@@_file_if_writable:nTF {#1}
           {
             \bool_set_true:N \l_@@_writable_bool
-            \iow_open:Nn \l_@@_file_iow {#1}
+            \iow_open:Nn \l_@@_file_write_iow {#1}
           }
           { \bool_set_false:N \l_@@_writable_bool }
-        \tl_clear:N \l_@@_every_line_env_tl
+        \tl_clear:N \l_@@_save_every_body_lines_tl
         \seq_map_function:NN \l_char_special_seq \char_set_catcode_other:N
         \int_step_function:nnnN { 128 } { 1 } { 255 } \char_set_catcode_letter:n
         \cs_set_protected:Npe \@@_ret:w ##1 ^^M
@@ -3500,14 +3616,14 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
   \cs_new_protected:Npn \@@_file_write_stop:N #1
     {
       \bool_if:NT \l_@@_writable_bool
-        { \iow_close:N \l_@@_file_iow }
+        { \iow_close:N \l_@@_file_write_iow }
       \use:e
         {
           \group_end:
           \bool_if:NT \l_@@_storing_bool
             {
               \tl_set:Nn \exp_not:N #1
-                { \exp_args:NV \@@_remove_leading_nl:n \l_@@_every_line_env_tl }
+                { \exp_args:NV \@@_remove_leading_nl:n \l_@@_save_every_body_lines_tl }
             }
         }
     }
@@ -3539,9 +3655,9 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
   \cs_new_protected:Npn \@@_verb_processor_output:n #1
     {
       \bool_if:NT \l_@@_writable_bool
-        { \iow_now:Nn \l_@@_file_iow {#1} }
+        { \iow_now:Nn \l_@@_file_write_iow {#1} }
       \bool_if:NT \l_@@_storing_bool
-        { \tl_put_right:Nn \l_@@_every_line_env_tl { ^^J #1 } }
+        { \tl_put_right:Nn \l_@@_save_every_body_lines_tl { ^^J #1 } }
     }
 \group_end:
 \cs_generate_variant:Nn \@@_verb_processor_output:n { e }
@@ -3557,27 +3673,27 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   }
 % \begin{macro}[TF]{\@@_if_nested:}
 %   The function \cs{@@_analyse_nesting:n} scans nested §\begin{scontents}§
-%   and steps a \cs{l_@@_env_nesting_int} counter. The \cs{@@_if_nested:}
+%   and steps a \cs{l_@@_nesting_env_int} counter. The \cs{@@_if_nested:}
 %   conditional tests if we're in a nested environment, and \cs{@@_nesting_decr:}
 %   reduces the nesting level, if an §\end{scontents}§ is found.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_analyse_nesting:n #1
   {
-    \int_zero:N \l_@@_tmpa_int
+    \int_zero:N \l_@@_nesting_aux_int
     \@@_analyse_nesting_format:n {#1}
-    \int_compare:nNnT { \l_@@_tmpa_int } > { 1 }
+    \int_compare:nNnT { \l_@@_nesting_aux_int } > { 1 }
       { \msg_warning:nn { scontents } { multiple-begin } }
   }
 \cs_new_protected:Npn \@@_nesting_incr:
   {
-    \int_incr:N \l_@@_env_nesting_int
-    \int_incr:N \l_@@_tmpa_int
+    \int_incr:N \l_@@_nesting_env_int
+    \int_incr:N \l_@@_nesting_aux_int
   }
 \cs_new_protected:Npn \@@_nesting_decr:
-  { \int_decr:N \l_@@_env_nesting_int }
+  { \int_decr:N \l_@@_nesting_env_int }
 \prg_new_protected_conditional:Npnn \@@_if_nested: { TF }
   {
-    \int_compare:nNnTF { \l_@@_env_nesting_int } > { \c_zero_int }
+    \int_compare:nNnTF { \l_@@_nesting_env_int } > { \c_zero_int }
       { \prg_return_true: }
       { \prg_return_false: }
   }
@@ -3664,24 +3780,6 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \end{macro}
 % \end{macro}
 %
-% \begin{macro}{\@@_finish_storing:NNN}
-%   Finishes the environment calling \cs{@@_finish_storing:NNN}.
-%    \begin{macrocode}
-%<*core>
-\cs_new_protected:Npn \@@_finish_storing:NNN #1 #2 #3
-  {
-    \bool_if:NT \l_@@_storing_bool
-      {
-        \bool_if:NF \l_@@_forced_eol_bool
-          { \tl_put_right:Ne #1 { \c_@@_hidden_space_str } }
-        \@@_store_to_seq:NN #1 #2
-        \bool_if:NT #3 { \@@_lastfrom_seq:V #2 }
-      }
-  }
-%</core>
-%    \end{macrocode}
-% \end{macro}
-%
 % \subsection{The internal \cs{@bsphack} and \cs{@esphack}}\label{func:sphack}
 %
 % \begin{macro}{\@@_bsphack:,\@@_esphack:}
@@ -3724,7 +3822,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
-% \subsection{The command \cs{Scontents}}
+% \subsection{The command \cs{Scontents}}\label{cmd:Scontents}
 %
 % User command to \mymeta{stored content}, adapted from code by Ulrich
 % Diez in \href{https://tex.stackexchange.com/a/472044/7832}{Stringify
@@ -3746,7 +3844,9 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \begin{macrocode}
 %<*loader>
 \NewDocumentCommand \Scontents { !s !O{} }
-  { \@@_Scontents_internal:nn {#1} {#2} }
+  {
+    \@@_Scontents_internal:nn {#1} {#2}
+  }
 %</loader>
 %<*core>
 \cs_new_protected:Npn \@@_Scontents_internal:nn #1 #2
@@ -3766,7 +3866,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_norm_arg:n #1
   {
-      \tl_set:Nn \l_@@_temp_tl {#1}
+      \tl_set:Nn \l_@@_Scontents_arg_tl {#1}
       \@@_Scontents_finish:
   }
 %</core>
@@ -3776,7 +3876,9 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \begin{macrocode}
 %<*loader>
 \NewDocumentCommand \@@_verb_arg:w { +v }
-  { \@@_verb_arg_internal:n {#1} }
+  {
+    \@@_verb_arg_internal:n {#1}
+  }
 %</loader>
 %    \end{macrocode}
 % \end{macro}
@@ -3797,76 +3899,37 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %<*core>
 \cs_new_protected:Npn \@@_verb_arg_internal:n #1
   {
-      \tl_set:Nn \l_@@_temp_tl {#1}
+      \tl_set:Nn \l_@@_Scontents_arg_tl {#1}
       \cs_if_exist:NT \obeyedline
         {
           \RenewDocumentCommand \obeyedline { } { \iow_char:N \^^M }
-          \tl_replace_all:Nee \l_@@_temp_tl { \obeyedline } { \iow_char:N \^^M }
+          \tl_replace_all:Nee \l_@@_Scontents_arg_tl { \obeyedline } { \iow_char:N \^^M }
         }
-      \tl_replace_all:Nee \l_@@_temp_tl { \iow_char:N \^^M } { \iow_char:N \^^J }
+      \tl_replace_all:Nee \l_@@_Scontents_arg_tl { \iow_char:N \^^M } { \iow_char:N \^^J }
       \@@_Scontents_finish:
-  }
-\cs_new_protected:Npn \@@_Scontents_finish:
-  {
-      \@@_file_write_cmd:VV \l_@@_fname_out_tl \l_@@_temp_tl
-      \@@_finish_storing:NNN
-        \l_@@_temp_tl
-        \l_@@_name_seq_cmd_tl
-        \l_@@_print_cmd_bool
-      \use:e
-        {
-    \group_end:
-    \bool_if:NF \l_@@_print_cmd_bool { \@@_esphack: }
-        }
-  }
-\cs_new_protected:Npn \@@_file_write_cmd:nn #1#2
-  {
-    \@@_file_if_writable:nT {#1}
-      {
-        \iow_open:Nn \l_@@_file_iow {#1}
-        \iow_now:Nn  \l_@@_file_iow {#2}
-        \iow_close:N \l_@@_file_iow
-      }
-  }
-\cs_generate_variant:Nn \@@_file_write_cmd:nn { VV }
-\prg_new_protected_conditional:Npnn \@@_file_if_writable:n #1 { T, F, TF }
-  {
-    \bool_if:NTF \l_@@_writing_bool
-      {
-        \file_if_exist:nTF {#1}
-          {
-            \bool_if:NTF \l_@@_overwrite_bool
-              {
-                \msg_warning:nne { scontents } { overwrite-file } {#1}
-                \prg_return_true:
-              }
-              {
-                \msg_warning:nne { scontents } { not-writing } {#1}
-                \prg_return_false:
-              }
-          }
-          {
-            \msg_warning:nne { scontents } { writing-file } {#1}
-            \prg_return_true:
-          }
-      }
-      { \prg_return_false: }
   }
 %</core>
 %    \end{macrocode}
 % \end{macro}
 %
-% \subsection{The command \cs{getstored}}
+% \subsection{The command \cs{getstored}}\label{cmd:getstored}
 %
 % \begin{macro}{\getstored,\@@_getstored:nn}
-%   User command §\getstored§ to extract \mymeta{stored content} in |seq|
-%   (robust).
-%
+%   User command §\getstored§ to extract \mymeta{stored content} in
+%   \emph{sequence} (robust).
 %    \begin{macrocode}
 %<*loader>
 \NewDocumentCommand \getstored { O{-1} m }
-  { \@@_getstored:nn {#1} {#2} }
+  {
+    \@@_getstored:nn {#1} {#2}
+  }
 %</loader>
+%    \end{macrocode}
+%   The internal function \cs{@@_getstored:nn} will set the end of line
+%   then apply the function \cs{@@_rescan_tokens:e} on the \mymeta{stored content}
+%   at the \mymeta{index} given by §{#1}§ in the sequence §{#2}§ via
+%   the function \cs{@@_getfrom_seq:nn}.
+%    \begin{macrocode}
 %<*core>
 \cs_new_protected:Npn \@@_getstored:nn #1 #2
   {
@@ -3882,11 +3945,10 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
-% \subsection{The command \cs{foreachsc}}
+% \subsection{The command \cs{foreachsc}}\label{cmd:foreachsc}
 %
 % \begin{macro}{\foreachsc,\@@_foreachsc:nn,\@@_foreach_add_body:n}
-%   User command §\foreachsc§ to loop over \mymeta{stored content} in |seq|.
-%
+%   User command §\foreachsc§ to loop over \mymeta{stored content} in \emph{sequence}.
 %    \begin{macrocode}
 %<*loader>
 \NewDocumentCommand \foreachsc { o m }
@@ -3897,7 +3959,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
   {
     \group_begin:
       \tl_if_novalue:nF {#1} { \keys_set:nn { scontents / foreachsc } {#1} }
-      \tl_set:Nn \l_@@_foreach_name_seq_tl {#2}
+      \tl_set:Nn \l_@@_foreachsc_arg_tl {#2}
       \seq_clear:N \l_@@_foreach_print_seq
       \bool_if:NF \l_@@_foreach_stop_bool
         {
@@ -3909,15 +3971,15 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
         { \l_@@_foreach_step_int }
         { \l_@@_foreach_stop_int }
         \@@_foreach_add_body:n
-      \tl_gset:Ne \g_@@_temp_tl
+      \tl_gset:Ne \g_@@_foreach_exec_tl
         {
           \exp_args:NNV \seq_use:Nn
             \l_@@_foreach_print_seq \l_@@_foreach_sep_tl
         }
     \group_end:
     \exp_after:wN \tl_gclear:N
-    \exp_after:wN \g_@@_temp_tl
-      \g_@@_temp_tl
+    \exp_after:wN \g_@@_foreach_exec_tl
+    \g_@@_foreach_exec_tl
   }
 \cs_new_protected:Npn \@@_foreach_add_body:n #1
   {
@@ -3928,7 +3990,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
         \bool_if:NTF \l_@@_foreach_wrapper_bool
           { \@@_foreach_wrapper:n }
           { \use:n }
-            { \getstored [#1] { \tl_use:N \l_@@_foreach_name_seq_tl } }
+            { \getstored [#1] { \tl_use:N \l_@@_foreachsc_arg_tl } }
         \bool_if:NT \l_@@_foreach_after_bool
           { \exp_not:V \l_@@_foreach_after_tl }
       }
@@ -3961,10 +4023,10 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
     \skip_set:Nn \parfillskip { 0pt plus 1fil }
     \skip_set:Nn \parskip { 0pt plus0pt minus0pt }
     \tex_par:D
-    \bool_set_false:N \l_@@_temp_bool
+    \bool_set_false:N \l_@@_plain_bool
     \cs_set:Npn \par
       {
-        \bool_if:NTF \l_@@_temp_bool
+        \bool_if:NTF \l_@@_plain_bool
           {
             \mode_leave_vertical:
             \null
@@ -3972,7 +4034,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
             \penalty \interlinepenalty
           }
           {
-            \bool_set_true:N \l_@@_temp_bool
+            \bool_set_true:N \l_@@_plain_bool
             \mode_if_horizontal:T
               { \tex_par:D \penalty \interlinepenalty }
           }
@@ -4206,19 +4268,19 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
       \tl_if_novalue:nF {#1} { \keys_set:nn { scontents / typemeaning } {#1} }
       \seq_if_empty:NT \l_@@_seq_item_seq
         { \seq_set_from_clist:Nn \l_@@_seq_item_seq { 1 } }
-      \tl_set:Ne \l_@@_temp_tl
+      \tl_set:Ne \l_@@_typestored_arg_tl
         { \@@_getfrom_seq:Nn \l_@@_seq_item_seq {#2} }
-      \@@_remove_trailing_eol:N \l_@@_temp_tl
-      \tl_replace_all:Nen \l_@@_temp_tl { \c_@@_hidden_space_str } { ^^J }
-      \tl_log:N \l_@@_temp_tl
-      \tl_if_empty:NF \l_@@_temp_tl
+      \@@_remove_trailing_eol:N \l_@@_typestored_arg_tl
+      \tl_replace_all:Nen \l_@@_typestored_arg_tl { \c_@@_hidden_space_str } { ^^J }
+      \tl_log:N \l_@@_typestored_arg_tl
+      \tl_if_empty:NF \l_@@_typestored_arg_tl
         {
           \bool_if:NT \l_@@_print_mergesc_bool
             {
-              \@@_typestored:N \l_@@_temp_tl
+              \@@_typestored:N \l_@@_typestored_arg_tl
             }
         }
-      \@@_file_write_cmd:VV \l_@@_fname_out_tl \l_@@_temp_tl
+      \@@_file_write_cmd:VV \l_@@_file_name_tl \l_@@_typestored_arg_tl
       \use:e
         {
     \group_end:
@@ -4296,21 +4358,21 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
   \char_set_catcode_active:N \^^I
   \cs_new_protected:Npn \@@_meaningsc:n #1
     {
-      \tl_set:Ne \l_@@_temp_tl
+      \tl_set:Ne \l_@@_meaningsc_arg_tl
         { \@@_getfrom_seq:Nn \l_@@_seq_item_seq {#1} }
-      \tl_replace_all:Nen \l_@@_temp_tl { \iow_char:N \^^J } { ~ }
-      \tl_replace_all:Nen \l_@@_temp_tl { \c_@@_hidden_space_str } { ~ }
-      \tl_log:N \l_@@_temp_tl
+      \tl_replace_all:Nen \l_@@_meaningsc_arg_tl { \iow_char:N \^^J } { ~ }
+      \tl_replace_all:Nen \l_@@_meaningsc_arg_tl { \c_@@_hidden_space_str } { ~ }
+      \tl_log:N \l_@@_meaningsc_arg_tl
       \tl_use:N \l_@@_verb_font_tl
-      \tl_replace_all:Nne \l_@@_temp_tl { ^^I } { \@@_tabs_to_spaces: }
-      \tl_if_empty:NF \l_@@_temp_tl
+      \tl_replace_all:Nne \l_@@_meaningsc_arg_tl { ^^I } { \@@_tabs_to_spaces: }
+      \tl_if_empty:NF \l_@@_meaningsc_arg_tl
         {
           \bool_if:NT \l_@@_print_mergesc_bool
             {
-              \cs_replacement_spec:N \l_@@_temp_tl
+              \cs_replacement_spec:N \l_@@_meaningsc_arg_tl
             }
         }
-      \@@_file_write_cmd:VV \l_@@_fname_out_tl \l_@@_temp_tl
+      \@@_file_write_cmd:VV \l_@@_file_name_tl \l_@@_meaningsc_arg_tl
     }
 \group_end:
 %</core>
@@ -4380,9 +4442,9 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 \cs_new_protected:Npn \@@_mergesc_parse_list:n #1
   {
     \clist_map_inline:nn {#1} { \@@_parse_mergesc:nw ##1 \s_@@_stop }
-    \seq_gpop_right:cN { g_@@_name_sc!internal_seq } \l_@@_temp_tl
-    \@@_remove_trailing_eol:N \l_@@_temp_tl
-    \seq_gput_right:cV { g_@@_name_sc!internal_seq } \l_@@_temp_tl
+    \seq_gpop_right:cN { g_@@_name_sc!internal_seq } \l_@@_mergesc_arg_tl
+    \@@_remove_trailing_eol:N \l_@@_mergesc_arg_tl
+    \seq_gput_right:cV { g_@@_name_sc!internal_seq } \l_@@_mergesc_arg_tl
   }
 \cs_new_protected:Npe \@@_remove_trailing_eol:N #1
   {
@@ -4440,11 +4502,13 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \subsection{The command \cs{setupsc}}
 %
 % \begin{macro}{\setupsc}
-%   User command §\setupsc§ to setup module for \cs{keys_set:nn}§{ scontents }§.
+%   User command §\setupsc§ to setup module for §\keys_set:nn { scontents }§.
 %    \begin{macrocode}
 %<*loader>
 \NewDocumentCommand \setupsc { +m }
-  { \keys_set:nn { scontents } {#1} }
+  {
+    \keys_set:nn { scontents } {#1}
+  }
 %</loader>
 %    \end{macrocode}
 % \end{macro}
@@ -4452,11 +4516,14 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \subsection{The command \cs{countsc}}
 %
 % \begin{macro}{\countsc}
-%   User command §\countsc§ to count number of contents stored in |seq|.
+%   User command §\countsc§ to count number of \mymeta{stored contents}
+%   in the \emph{sequence}.
 %    \begin{macrocode}
 %<*loader>
 \NewExpandableDocumentCommand \countsc { m }
-  { \seq_count:c { g_@@_name_#1_seq } }
+  {
+    \seq_count:c { g_@@_name_#1_seq }
+  }
 %</loader>
 %    \end{macrocode}
 % \end{macro}
@@ -4464,11 +4531,14 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \subsection{The command \cs{cleanseqsc}}
 %
 % \begin{macro}{\cleanseqsc}
-%   A user command §\cleanseqsc§ to clear (remove) a defined |seq|.
+%   A user command §\cleanseqsc§ to clear (remove) all \mymeta{stored contents}
+%   in the \emph{sequence}.
 %    \begin{macrocode}
 %<*loader>
 \NewDocumentCommand \cleanseqsc { m }
-  { \seq_gclear_new:c { g_@@_name_#1_seq } }
+  {
+    \seq_gclear_new:c { g_@@_name_#1_seq }
+  }
 %</loader>
 %    \end{macrocode}
 % \end{macro}

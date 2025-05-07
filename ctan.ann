@@ -1,4 +1,4 @@
-Changes in v2.4 2025-05-05:
+Changes in v2.4 2025-05-07:
 - Optimization of expansion code from `x` to `e`.
 - Restructuring code for documentation and implementation.
 - Add new keys for `\typestored` and `\meaningsc`.

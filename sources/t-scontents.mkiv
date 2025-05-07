@@ -37,11 +37,11 @@
 %D         title=\CONTEXT\ User Module,
 %D      subtitle=Storing Contents,
 %D        author=Pablo González,
-%D          date=2025-05-05,
+%D          date=2025-05-07,
 %D     copyright=Pablo González,
 %D         email=pablgonz@educarchile.cl,
 %D       license=LPPL]
-\def\ScontentsFileDate{2025-05-05}%
+\def\ScontentsFileDate{2025-05-07}%
 \def\ScontentsFileVersion{2.4}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
 \writestatus{loading}{User Module scontents v\ScontentsFileVersion}
@@ -63,6 +63,11 @@
     \ExplSyntaxOff
     \file_input_stop:
   }
+\int_new:N  \l__scontents_char_value_int
+\int_set:Nn \l__scontents_char_value_int { \char_value_catcode:n { `\@ } }
+\char_set_catcode_letter:N \@
+\file_input:n { xparse-generic.tex }
+\char_set_catcode:nn { `\@ } { \l__scontents_char_value_int }
 \tl_new:N \g__scontents_end_verbatimsc_tl
 \tl_gset_rescan:Nnn \g__scontents_end_verbatimsc_tl
   {
@@ -79,10 +84,6 @@
 \file_input:n { scontents-code.tex }
 \cs_new:Npn \__scontents_format_case:nnn #1 #2 #3
   {#3} % ConTeXt
-\int_set:Nn \l__scontents_tmpa_int { \char_value_catcode:n { `\@ } }
-\char_set_catcode_letter:N \@
-\file_input:n { xparse-generic.tex }
-\char_set_catcode:nn { `\@ } { \l__scontents_tmpa_int }
 \keys_define:nn { scontents }
   { verb-font .initial:n = \tt }
 \NewDocumentCommand \newenvsc { m O{} }
@@ -106,15 +107,23 @@
   }
 \newenvsc{scontents}
 \NewDocumentCommand \__scontents_grab_opt_arg:w { r[] }
-  { \__scontents_grab_opt_arg:n {#1} }
+  {
+    \__scontents_grab_opt_arg:n {#1}
+  }
 \cs_new_protected:Npn \__scontents_analyse_nesting_format:n
   { \__scontents_analyse_nesting_generic:nn { start } }
 \NewDocumentCommand \Scontents { !s !O{} }
-  { \__scontents_Scontents_internal:nn {#1} {#2} }
+  {
+    \__scontents_Scontents_internal:nn {#1} {#2}
+  }
 \NewDocumentCommand \__scontents_verb_arg:w { +v }
-  { \__scontents_verb_arg_internal:n {#1} }
+  {
+    \__scontents_verb_arg_internal:n {#1}
+  }
 \NewDocumentCommand \getstored { O{-1} m }
-  { \__scontents_getstored:nn {#1} {#2} }
+  {
+    \__scontents_getstored:nn {#1} {#2}
+  }
 \NewDocumentCommand \foreachsc { o m }
   { \__scontents_foreachsc:nn {#1} {#2} }
 \cs_if_exist:NF \dospecials
@@ -140,11 +149,17 @@
     \__scontents_mergesc_code:nn {#1} {#2}
   }
 \NewDocumentCommand \setupsc { +m }
-  { \keys_set:nn { scontents } {#1} }
+  {
+    \keys_set:nn { scontents } {#1}
+  }
 \NewExpandableDocumentCommand \countsc { m }
-  { \seq_count:c { g__scontents_name_#1_seq } }
+  {
+    \seq_count:c { g__scontents_name_#1_seq }
+  }
 \NewDocumentCommand \cleanseqsc { m }
-  { \seq_gclear_new:c { g__scontents_name_#1_seq } }
+  {
+    \seq_gclear_new:c { g__scontents_name_#1_seq }
+  }
 \ExplSyntaxOff
 \endinput
 %% 
