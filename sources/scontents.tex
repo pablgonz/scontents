@@ -27,7 +27,7 @@
 %%                                 t-scontents.mkiv and
 %%                                 scontents-code.tex.
 %% 
-\def\ScontentsFileDate{2025-05-07}%
+\def\ScontentsFileDate{2025-05-08}%
 \def\ScontentsFileVersion{2.4}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
 \input expl3-generic.tex
@@ -108,6 +108,7 @@
   { \__scontents_analyse_nesting_generic:nn { } }
 \NewDocumentCommand \Scontents { !s !O{} }
   {
+    \tl_set:Nn \l__scontents_cmd_name_tl { Scontents }
     \__scontents_Scontents_internal:nn {#1} {#2}
   }
 \NewDocumentCommand \__scontents_verb_arg:w { +v }
@@ -119,7 +120,10 @@
     \__scontents_getstored:nn {#1} {#2}
   }
 \NewDocumentCommand \foreachsc { o m }
-  { \__scontents_foreachsc:nn {#1} {#2} }
+  {
+    \tl_set:Nn \l__scontents_cmd_name_tl { foreachsc }
+    \__scontents_foreachsc:nn {#1} {#2}
+  }
 \cs_new_protected:Npn \verbatimsc
   {
     \group_begin:
@@ -128,7 +132,7 @@
   }
 \cs_new_protected:Npn \endverbatimsc
   { \group_end: }
-\cs_new_protected:Npn \__scontents_verbatimsc_aux:
+\cs_new_protected:Nn \__scontents_verbatimsc_aux:
   {
     \skip_vertical:N \parskip
     \dim_zero:N \parindent
@@ -159,11 +163,11 @@
     \tex_everypar:D \exp_after:wN
       { \tex_the:D \tex_everypar:D \tex_unpenalty:D }
   }
-\cs_new_protected:Npn \__scontents_nolig_list:
+\cs_new_protected:Nn \__scontents_nolig_list:
   { \do\`\do\<\do\>\do\,\do\'\do\- }
-\cs_new_protected:Npn \__scontents_vobeyspaces:
+\cs_new_protected:Nn \__scontents_vobeyspaces:
   { \__scontents_set_active_eq:NN \  \__scontents_xobeysp: }
-\cs_new_protected:Npn \__scontents_xobeysp:
+\cs_new_protected:Nn \__scontents_xobeysp:
   { \mode_leave_vertical: \nobreak \ }
 \cs_if_exist:NF \dospecials
   {
@@ -178,7 +182,7 @@
   }
 \group_begin:
   \char_set_catcode_active:n { `\* }
-  \cs_new_protected:Npn \__scontents_plain_disable_outer_par:
+  \cs_new_protected:Nn \__scontents_plain_disable_outer_par:
     {
       \group_begin:
         \char_set_lccode:nn { `\* } { `\^^L }
@@ -189,10 +193,12 @@
 \group_end:
 \NewDocumentCommand \typestored { o m }
   {
+    \tl_set:Nn \l__scontents_cmd_name_tl { typestored }
     \__scontents_typestored:nn {#1} {#2}
   }
 \NewDocumentCommand \meaningsc { o m }
   {
+    \tl_set:Nn \l__scontents_cmd_name_tl { meaningsc }
     \__scontents_meaningsc:nn {#1} {#2}
   }
 \NewDocumentCommand \mergesc { o m }

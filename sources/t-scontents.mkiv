@@ -37,11 +37,11 @@
 %D         title=\CONTEXT\ User Module,
 %D      subtitle=Storing Contents,
 %D        author=Pablo González,
-%D          date=2025-05-07,
+%D          date=2025-05-08,
 %D     copyright=Pablo González,
 %D         email=pablgonz@educarchile.cl,
 %D       license=LPPL]
-\def\ScontentsFileDate{2025-05-07}%
+\def\ScontentsFileDate{2025-05-08}%
 \def\ScontentsFileVersion{2.4}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
 \writestatus{loading}{User Module scontents v\ScontentsFileVersion}
@@ -114,6 +114,7 @@
   { \__scontents_analyse_nesting_generic:nn { start } }
 \NewDocumentCommand \Scontents { !s !O{} }
   {
+    \tl_set:Nn \l__scontents_cmd_name_tl { Scontents }
     \__scontents_Scontents_internal:nn {#1} {#2}
   }
 \NewDocumentCommand \__scontents_verb_arg:w { +v }
@@ -125,7 +126,10 @@
     \__scontents_getstored:nn {#1} {#2}
   }
 \NewDocumentCommand \foreachsc { o m }
-  { \__scontents_foreachsc:nn {#1} {#2} }
+  {
+    \tl_set:Nn \l__scontents_cmd_name_tl { foreachsc }
+    \__scontents_foreachsc:nn {#1} {#2}
+  }
 \cs_if_exist:NF \dospecials
   {
     \cs_new:Npn \dospecials
@@ -133,15 +137,17 @@
   }
 \definetyping[verbatimsc]
 \group_begin:
-  \cs_new_protected:Npn \__scontents_plain_disable_outer_par:
+  \cs_new_protected:Nn \__scontents_plain_disable_outer_par:
     { }
 \group_end:
 \NewDocumentCommand \typestored { o m }
   {
+    \tl_set:Nn \l__scontents_cmd_name_tl { typestored }
     \__scontents_typestored:nn {#1} {#2}
   }
 \NewDocumentCommand \meaningsc { o m }
   {
+    \tl_set:Nn \l__scontents_cmd_name_tl { meaningsc }
     \__scontents_meaningsc:nn {#1} {#2}
   }
 \NewDocumentCommand \mergesc { o m }

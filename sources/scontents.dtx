@@ -1953,6 +1953,7 @@ and more.+
 % \fi
 \begin{scontents}[write-out=scexamp9.ltx]
 % arara: xelatex: {shell: true, options: [-8bit]}
+% arara: xelatex: {shell: true, options: [-8bit]}
 % arara: clean: { extensions: [ aux, log] }
 \documentclass{article}
 \usepackage{scontents}
@@ -2358,17 +2359,22 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % welcomed, specific bugs or feature requests should be reported through the issue
 % tracker: \url{https://github.com/pablgonz/scontents/issues}.
 %
+% \begin{important}*
+% All variables and functions defined in this package are private and
+% are NOT intended to work or be used by another package or module.
+% \end{important}
+%
 % \subsection{Declaration of the package}
 %
-% First we set up the module name for \pkg{l3doc}:
+% First we set up the module name for \pkg{DocStrip} \pkg{l3doc} class:
 %    \begin{macrocode}
 %<@@=scontents>
 %    \end{macrocode}
 %
 % Now we define some common macros to hold the package date and version:
 %    \begin{macrocode}
-%<loader>\def\ScontentsFileDate{2025-05-07}%
-%<core>\def\ScontentsCoreFileDate{2025-05-07}%
+%<loader>\def\ScontentsFileDate{2025-05-08}%
+%<core>\def\ScontentsCoreFileDate{2025-05-08}%
 %<*loader>
 \def\ScontentsFileVersion{2.4}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
@@ -2469,7 +2475,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % \begin{macro}{\g_@@_end_verbatimsc_tl, \c_@@_end_env_tl,
 %               \l_@@_env_name_tl,}
-%   A global token list \cs{g_@@_end_verbatimsc_tl} match when ending
+%   The global token list \cs{g_@@_end_verbatimsc_tl} match when ending
 %   §verbatimsc§ (\S\ref{env:verbatimsc}).
 %    \begin{macrocode}
 %<*loader>
@@ -2486,9 +2492,9 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %<plain>  { \endverbatimsc }
 %<context>  { \stopverbatimsc }
 %    \end{macrocode}
-%   A token list \cs{c_@@_end_env_tl} match when ending environments
-%   defined by §\newenvsc§, \cs{l_@@_env_name_tl} storing the name
-%   of environments defined by §\newenvsc§ (\S\ref{cmd:newenvsc}).
+%   The constant token list \cs{c_@@_end_env_tl} match when ending
+%   environments defined by §\newenvsc§, the token list\cs{l_@@_env_name_tl}
+%   storing the \emph{name} of environments defined by §\newenvsc§ (\S\ref{cmd:newenvsc}).
 %    \begin{macrocode}
 \tl_new:N    \l_@@_env_name_tl
 \tl_const:Ne \c_@@_end_env_tl
@@ -2600,28 +2606,45 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
+% \begin{macro}{\l_@@_cmd_name_tl,}
+%   The token list \cs{l_@@_cmd_name_tl} saves the \emph{name} of the
+%   commands §\Scontents§, §\foreachsc§, §\typestored§, §\meaningsc§
+%   and §\mergesc§.
+%    \begin{macrocode}
+\tl_new:N \l_@@_cmd_name_tl
+%    \end{macrocode}
+% \end{macro}
+%
 % \begin{macro}{\l_@@_Scontents_arg_tl, \l_@@_foreachsc_arg_tl,
 %               \l_@@_typestored_arg_tl, \l_@@_meaningsc_arg_tl,
-%               \l_@@_mergesc_arg_tl, \l_@@_mergesc_keys_tl,
-%               \l_@@_cur_seq_name_str, \l_@@_cmd_name_tl }
+%               \l_@@_mergesc_arg_tl,}
 %   The token lists \cs{l_@@_Scontents_arg_tl}, \cs{l_@@_foreachsc_arg_tl},
 %   \cs{l_@@_typestored_arg_tl} and \cs{l_@@_meaningsc_arg_tl} save the
 %   \mymarg{argument} passed to the §\Scontents§ (\S\ref{cmd:Scontents}),
 %   §\foreachsc§ (\S\ref{cmd:foreachsc}), §\typestored§ (\S\ref{cmd:typestored})
 %   and §\meaningsc§ (\S\ref{cmd:meaningsc}) commands.
+%    \begin{macrocode}
+\tl_new:N \l_@@_Scontents_arg_tl
+\tl_new:N \l_@@_foreachsc_arg_tl
+\tl_new:N \l_@@_typestored_arg_tl
+\tl_new:N \l_@@_meaningsc_arg_tl
+%    \end{macrocode}
+% \end{macro}
 %
+% \begin{macro}{\l_@@_mergesc_arg_tl, \l_@@_mergesc_keys_tl,
+%               \l_@@_current_seq_name_str,}
 %   The token list \cs{l_@@_mergesc_arg_tl} save the \mymarg{argument}
 %   and the token list \cs{l_@@_mergesc_keys_tl} save the \mymeta{keys}
 %   passed to the §\mergesc§ (\S\ref{cmd:mergesc}) command.
+%
+%   The string variable \cs{l_@@_current_seq_name_str} stores the name of
+%   the \emph{current sequence} passed as an \mymarg{argument} to the
+%   §\typestored§ and §\meaningsc§ commands and is used by the function
+%   \cs{@@_parse_type_meaning_key:n}.
 %    \begin{macrocode}
-\tl_new:N  \l_@@_Scontents_arg_tl
-\tl_new:N  \l_@@_foreachsc_arg_tl
-\tl_new:N  \l_@@_typestored_arg_tl
-\tl_new:N  \l_@@_meaningsc_arg_tl
 \tl_new:N  \l_@@_mergesc_arg_tl
 \tl_new:N  \l_@@_mergesc_keys_tl
-\str_new:N \l_@@_cur_seq_name_str
-\tl_new:N  \l_@@_cmd_name_tl
+\str_new:N \l_@@_current_seq_name_str
 %    \end{macrocode}
 % \end{macro}
 %
@@ -2752,12 +2775,15 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % \begin{macro}{\@@_use_delimit_by_s_stop:nw,
 %               \@@_use_i_delimit_by_s_stop:nw,
-%               \@@_use_none_delimit_by_s_stop:w,}
-%   Some functions used by §\mergesc§ (\S\ref{cmd:mergesc}).
+%               \@@_use_none_delimit_by_s_stop:w,
+%               \@@_use_none_delimit_by_q_stop:w,}
+%   Some functions used in the implementation of §\mergesc§ (\S\ref{cmd:mergesc})
+%   and §scontents§ (\S\ref{env:scontents}).
 %    \begin{macrocode}
 \cs_new:Npn \@@_use_delimit_by_s_stop:nw #1 \s_@@_stop {#1}
 \cs_new:Npn \@@_use_i_delimit_by_s_stop:nw #1 #2 \s_@@_stop {#1}
 \cs_new:Npn \@@_use_none_delimit_by_s_stop:w #1 \s_@@_stop { }
+\cs_new:Npn \@@_use_none_delimit_by_q_stop:w #1 \q_@@_stop { }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -2781,8 +2807,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   Control sequences to replace tab `§^^I§' and form feed `§^^L§'
 %   characters.
 %    \begin{macrocode}
-\cs_new:Npe \@@_tab: { \c_space_tl }
-\cs_new:Npn \@@_par: { ^^J ^^J }
+\cs_new:Ne \@@_tab: { \c_space_tl }
+\cs_new:Nn \@@_par: { ^^J ^^J }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -3081,14 +3107,14 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
-% \subsubsection{Handling unknown keys for \cs{typestored}, \cs{meaningsc} and \cs{mergesc}}
+% \subsection[Parsing keys for \cs{typestored}]{Parsing keys for \cs{typestored}, \cs{meaningsc} and \cs{mergesc}}
 %
 % \begin{macro}{\@@_parse_type_meaning_key:n, \@@_parse_type_meaning_key:nn,
 %               \@@_parse_type_meaning_range:w, \@@_range_parser:nnnn,
 %               \@@_range_parser:nnen, \@@_range_parser_aux:nnn,}
 %   The §\typestored§, §\meaningsc§ and §\mergesc§ commands (which
 %   internally uses the previous two) accept an \emph{optional argument}
-%   containing the \mymeta{index} position or the range of
+%   containing the \mymeta{index} position, \mymeta{1-end} or the range of
 %   \mymeta{start-stop} positions of the \mymeta{stored content} in the
 %   \emph{sequence} along with other \mymeta{keys}.
 %
@@ -3102,7 +3128,6 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   (otherwise something odd as §1=1§ might have been used). If everything
 %   is correct, then set the value of the integer which holds the \mymeta{index},
 %   otherwise raise an error about an \emph{unknown} option.
-%
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_parse_type_meaning_key:n #1
   { \exp_args:NV \@@_parse_type_meaning_key:nn \l_keys_key_str {#1} }
@@ -3115,8 +3140,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 \cs_new_protected:Npn \@@_parse_type_meaning_range:w #1 - #2 - #3 \s_@@_mark
   {
     \@@_range_parser:nnen {#1} {#2}
-      { \seq_count:c { g_@@_name_\l_@@_cur_seq_name_str _seq } }
-      { \msg_error:nnn { scontents } { cmd-key-unknown } } 
+      { \seq_count:c { g_@@_name_ \l_@@_current_seq_name_str _seq } }
+      { \msg_error:nnn { scontents } { cmd-key-unknown } {#1} } 
   }
 \cs_new_protected:Npn \@@_range_parser:nnnn #1 #2 #3 #4
   {
@@ -3136,8 +3161,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
       }
       {
         \bool_lazy_and:nnTF
-            { \tl_if_empty_p:f { \int_to_roman:n { -0 #1 } } }
-            { \tl_if_empty_p:f { \int_to_roman:n { -0 #2 } } }
+          { \tl_if_empty_p:f { \int_to_roman:n { -0 #1 } } }
+          { \tl_if_empty_p:f { \int_to_roman:n { -0 #2 } } }
           {
             \int_compare:nNnTF {#2} > {#1}
               { \int_step_inline:nnnn {#1} { 1 } {#2} }
@@ -3292,7 +3317,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   definition and run \cs{@@_esphack:} if the §print-cmd§ key is not
 %   active.
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_Scontents_finish:
+\cs_new_protected:Nn \@@_Scontents_finish:
   {
     \@@_file_write_cmd:VV \l_@@_file_name_tl \l_@@_Scontents_arg_tl
     \@@_finish_storing:NNN
@@ -3706,7 +3731,6 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
       { \prg_return_true: }
       { \prg_return_false: }
   }
-\cs_new:Npn \@@_use_none_delimit_by_q_stop:w #1 \q_@@_stop { }
 %    \end{macrocode}
 %
 % \begin{important}*
@@ -4277,7 +4301,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
     \@@_bsphack:
     \group_begin:
       \seq_clear:N \l_@@_seq_item_seq
-      \str_set:Ne \l_@@_cur_seq_name_str {#2}
+      \str_set:Ne \l_@@_current_seq_name_str {#2}
       \tl_if_novalue:nF {#1} { \keys_set:nn { scontents / typemeaning } {#1} }
       \seq_if_empty:NT \l_@@_seq_item_seq
         { \seq_set_from_clist:Nn \l_@@_seq_item_seq { 1 } }
@@ -4357,7 +4381,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
     \@@_bsphack:
     \group_begin:
       \seq_clear:N \l_@@_seq_item_seq
-      \str_set:Ne \l_@@_cur_seq_name_str {#2}
+      \str_set:Ne \l_@@_current_seq_name_str {#2}
       \tl_if_novalue:nF {#1} { \keys_set:nn { scontents / typemeaning } {#1} }
       \seq_if_empty:NT \l_@@_seq_item_seq
         { \seq_set_from_clist:Nn \l_@@_seq_item_seq { 1 } }
@@ -4674,6 +4698,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
     \\ \\
     LaTeX~will~ignore~'#2'.
   }
+%</core>
 %    \end{macrocode}
 %
 % \subsection{Finish package}
@@ -4681,7 +4706,6 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % Finish package implementation.
 %
 %    \begin{macrocode}
-%</core>
 %<plain|context>\ExplSyntaxOff
 %<plain|context>\endinput
 %<latex|core>\file_input_stop:
