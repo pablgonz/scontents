@@ -2373,8 +2373,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % Now we define some common macros to hold the package date and version:
 %    \begin{macrocode}
-%<loader>\def\ScontentsFileDate{2025-05-08}%
-%<core>\def\ScontentsCoreFileDate{2025-05-08}%
+%<loader>\def\ScontentsFileDate{2025-05-09}%
+%<core>\def\ScontentsCoreFileDate{2025-05-09}%
 %<*loader>
 \def\ScontentsFileVersion{2.4}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
@@ -3375,7 +3375,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   the state of the variable \cs{l_@@_forced_eol_bool} set by the
 %   §force-eol§ key is checked and if this is \enquote{false} (default value)
 %   we will add \cs{c_@@_hidden_space_str} to the end of the token list passed
-%   in §{#1}§ which contains \mymarg{body env} for the §scontents§ environment
+%   in §{#1}§ which contains \mymarg{body env} for the generic environment §scontents§ 
 %   and the \mymarg{argument} for the §\Scontents§ command.
 %
 %   Then the function \cs{@@_store_to_seq:NN} is applied to \enquote{store}
@@ -3463,7 +3463,17 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
-% \subsection{The generic \env{scontents}}\label{env:generic:scontents}
+% \subsection{The generic base environment}\label{env:generic:scontents}
+%
+% In version 1.8 (2019-11-18) the command §\newenvsc§ (\S\ref{cmd:newenvsc})
+% was implemented, allowing you to create environments with the same
+% behavior as the base environment §scontents§. Since that version,
+% the base environment §scontents§ (\S\ref{env:scontents}) is defined
+% using §\newenvsc§.
+%
+% The references to §\begin{scontents}§ or §\end{scontents}§ described in
+% this section are for illustrative purposes only, but apply to any
+% environment defined using §\newenvsc§.
 %
 % \subsubsection{The keyval for environment}
 %
@@ -3845,20 +3855,51 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % \subsection{The command \cs{newenvsc}}\label{cmd:newenvsc}
 %
-% In order to be able to define environments that behave similarly to
-% §scontents§, we define a generic environment and make all other
-% environment as wrappers around that one.
+% In version 1.8 (2019-11-18) the command §\newenvsc§ was implemented,
+% allowing you to create environments with the same behavior as the base
+% environment §scontents§.
+% To achieve this, we will create new environments so that they wrap around
+% the generic environment (\S\ref{env:generic:scontents}).
 %
-% \begin{macro}{\newenvsc,\@@_setting_env:nn,\@@_define_env:nnn,
-%              \@@_generic_begin:,\@@_generic_end:,}
-%   The function \cs{@@_setting_env:nn} defines two internal functions
-%   \cs[no-index]{@@_\#1_begin:} and \cs[no-index]{@@_\#1_end:}, which
-%   set the \emph{current} environment's name §{#1}§ and save the name in
-%   \cs{l_@@_env_name_tl} and default properties set in §{#2}§
-%   then call \cs{@@_setup_verb_processor:}, the generic
-%   \cs{@@_generic_begin:} and \cs{@@_generic_end:}.
+% \begin{macro}{\@@_generic_begin:,\@@_generic_end:,}
+%   The function \cs{@@_generic_begin:} leaves the `§^^M§' character
+%   active and calls the generic environment start function
+%   \cs{@@_start_environment:w}.
 %    \begin{macrocode}
 %<*core>
+\cs_new_protected:Npn \@@_generic_begin:
+  {
+    \char_set_catcode_active:N \^^M
+    \@@_start_environment:w
+  }
+%    \end{macrocode}
+%   The function \cs{@@_generic_end:} calls the generic environment stop
+%   function \cs{@@_stop_environment:} and finally calls the function
+%   \cs{@@_finish_storing:NNN} which stores \mymarg{body env} in
+%   the \emph{sequence} \mymarg{seq name} and prints it from the \emph{sequence}
+%   if the §print-env§ key is active.
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_generic_end:
+  {
+    \@@_stop_environment:
+    \@@_finish_storing:NNN
+      \l_@@_processed_body_lines_tl
+      \l_@@_name_seq_env_tl
+      \l_@@_print_env_bool
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_setting_env:nn,\@@_define_env:nnn,}
+%   The function \cs{@@_setting_env:nn} receives the environment \emph{name}
+%   passed in §{#1}§ and save it in the variable \cs{l_@@_env_name_tl}
+%   along with the initial \mymeta{keys} passed in §{#2}§.
+%
+%   Two functions will be created \cs[no-index]{@@_\#1_begin:} and
+%   \cs[no-index]{@@_\#1_end:} which will internally call the
+%   \cs{@@_generic_begin:} and \cs{@@_generic_end:} functions and expand
+%   the arguments of the function \cs{@@_define_env:nnn} function.
+%    \begin{macrocode}
 \cs_new_protected:Npn \@@_setting_env:nn #1 #2
   {
     \cs_new_protected:cpn { @@_#1_begin: }
@@ -3877,7 +3918,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
   }
 %</core>
 %    \end{macrocode}
-%   Finally the function \cs{@@_define_env:nnn} will create the environments.
+%   The function \cs{@@_define_env:nnn} will create the environments for
+%   \hologo{LaTeX}, \hologo{plainTeX} and \hologo{ConTeXt}.
 %    \begin{macrocode}
 %<*loader>
 \cs_new_protected:Npn \@@_define_env:nnn #1 #2 #3
@@ -3895,7 +3937,11 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
       }
   }
 %    \end{macrocode}
-%   Now we just need to define the command for the user.
+% \end{macro}
+%
+% \begin{macro}{\newenvsc,}
+%   Now we just need to create the user command §\newenvsc§
+%   for \hologo{LaTeX}, \hologo{plainTeX} and \hologo{ConTeXt}.
 %    \begin{macrocode}
 \NewDocumentCommand \newenvsc { m O{} }
   {
@@ -3905,25 +3951,6 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
       { \@@_setting_env:nn {#1} {#2} }
   }
 %</loader>
-%    \end{macrocode}
-%   Now we define the generic functions \cs{@@_generic_begin:}
-%   and \cs{@@_generic_end:}.
-%    \begin{macrocode}
-%<*core>
-\cs_new_protected:Npn \@@_generic_begin:
-  {
-    \char_set_catcode_active:N \^^M
-    \@@_start_environment:w
-  }
-\cs_new_protected:Npn \@@_generic_end:
-  {
-    \@@_stop_environment:
-    \@@_finish_storing:NNN
-      \l_@@_processed_body_lines_tl
-      \l_@@_name_seq_env_tl
-      \l_@@_print_env_bool
-  }
-%</core>
 %    \end{macrocode}
 % \end{macro}
 %

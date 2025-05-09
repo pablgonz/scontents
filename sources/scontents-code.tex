@@ -27,7 +27,7 @@
 %%                                 t-scontents.mkiv and
 %%                                 scontents-code.tex.
 %% 
-\def\ScontentsCoreFileDate{2025-05-08}%
+\def\ScontentsCoreFileDate{2025-05-09}%
 \begingroup
   \catcode32=10
   \endlinechar=32
@@ -739,6 +739,19 @@
             ##2 \exp_not:N \q__scontents_stop
       }   { \__scontents_analyse_nesting_generic_process:nn {##1} {##2} }
   }
+\cs_new_protected:Npn \__scontents_generic_begin:
+  {
+    \char_set_catcode_active:N \^^M
+    \__scontents_start_environment:w
+  }
+\cs_new_protected:Npn \__scontents_generic_end:
+  {
+    \__scontents_stop_environment:
+    \__scontents_finish_storing:NNN
+      \l__scontents_processed_body_lines_tl
+      \l__scontents_name_seq_env_tl
+      \l__scontents_print_env_bool
+  }
 \cs_new_protected:Npn \__scontents_setting_env:nn #1 #2
   {
     \cs_new_protected:cpn { __scontents_#1_begin: }
@@ -754,19 +767,6 @@
       { \tl_to_str:n {#1} }
       { \cs:w __scontents_#1_begin: \cs_end: }
       { \cs:w __scontents_#1_end: \cs_end: }
-  }
-\cs_new_protected:Npn \__scontents_generic_begin:
-  {
-    \char_set_catcode_active:N \^^M
-    \__scontents_start_environment:w
-  }
-\cs_new_protected:Npn \__scontents_generic_end:
-  {
-    \__scontents_stop_environment:
-    \__scontents_finish_storing:NNN
-      \l__scontents_processed_body_lines_tl
-      \l__scontents_name_seq_env_tl
-      \l__scontents_print_env_bool
   }
 \cs_if_exist:NF \dospecials
   {
