@@ -78,16 +78,23 @@
 \file_input:n { scontents-code.tex }
 \cs_new:Npn \__scontents_format_case:nnn #1 #2 #3
   {#2} % Plain/Generic
-\bool_new:N \l__scontents_plain_bool
 \keys_define:nn { scontents }
   { verb-font .initial:n = \tt }
-\NewDocumentCommand \newenvsc { m O{} }
-  {
-    \cs_if_exist:cTF { #1 }
-      { \msg_error:nnn { scontents } { env-already-defined } {#1} }
-      { \__scontents_env_setting:nn {#1} {#2} }
-  }
-\cs_new_protected:Npn \__scontents_env_define:nnn #1 #2 #3
+\bool_new:N \l__scontents_plain_bool
+\group_begin:
+  \char_set_catcode_active:n { `\* }
+  \cs_new_protected:Nn \__scontents_plain_disable_outer_par:
+    {
+      \group_begin:
+        \char_set_lccode:nn { `\* } { `\^^L }
+        \tex_lowercase:D { \group_end:
+        \tex_let:D * \scan_stop:
+      }
+    }
+\group_end:
+\cs_new_protected:Npn \__scontents_analyse_nesting_format:n
+  { \__scontents_analyse_nesting_generic:nn { } }
+\cs_new_protected:Npn \__scontents_define_env:nnn #1 #2 #3
   {
     \NewDocumentEnvironment {#1} { }
       {
@@ -99,31 +106,13 @@
         \group_end:
       }
   }
+\NewDocumentCommand \newenvsc { m O{} }
+  {
+    \cs_if_exist:cTF { #1 }
+      { \msg_error:nnn { scontents } { env-already-defined } {#1} }
+      { \__scontents_setting_env:nn {#1} {#2} }
+  }
 \newenvsc{scontents}
-\NewDocumentCommand \__scontents_grab_opt_arg:w { r[] }
-  {
-    \__scontents_grab_opt_arg:n {#1}
-  }
-\cs_new_protected:Npn \__scontents_analyse_nesting_format:n
-  { \__scontents_analyse_nesting_generic:nn { } }
-\NewDocumentCommand \Scontents { !s !O{} }
-  {
-    \tl_set:Nn \l__scontents_cmd_name_tl { Scontents }
-    \__scontents_Scontents_internal:nn {#1} {#2}
-  }
-\NewDocumentCommand \__scontents_verb_arg:w { +v }
-  {
-    \__scontents_verb_arg_internal:n {#1}
-  }
-\NewDocumentCommand \getstored { O{-1} m }
-  {
-    \__scontents_getstored:nn {#1} {#2}
-  }
-\NewDocumentCommand \foreachsc { o m }
-  {
-    \tl_set:Nn \l__scontents_cmd_name_tl { foreachsc }
-    \__scontents_foreachsc:nn {#1} {#2}
-  }
 \cs_new_protected:Npn \verbatimsc
   {
     \group_begin:
@@ -179,43 +168,6 @@
     \cs_new_protected:Npn \exp_not:N \__scontents_xverb:w
       #1 \g__scontents_end_verbatimsc_tl
       { #1 \exp_not:N \endverbatimsc }
-  }
-\group_begin:
-  \char_set_catcode_active:n { `\* }
-  \cs_new_protected:Nn \__scontents_plain_disable_outer_par:
-    {
-      \group_begin:
-        \char_set_lccode:nn { `\* } { `\^^L }
-        \tex_lowercase:D { \group_end:
-        \tex_let:D * \scan_stop:
-      }
-    }
-\group_end:
-\NewDocumentCommand \typestored { o m }
-  {
-    \tl_set:Nn \l__scontents_cmd_name_tl { typestored }
-    \__scontents_typestored:nn {#1} {#2}
-  }
-\NewDocumentCommand \meaningsc { o m }
-  {
-    \tl_set:Nn \l__scontents_cmd_name_tl { meaningsc }
-    \__scontents_meaningsc:nn {#1} {#2}
-  }
-\NewDocumentCommand \mergesc { o m }
-  {
-    \__scontents_mergesc_code:nn {#1} {#2}
-  }
-\NewDocumentCommand \setupsc { +m }
-  {
-    \keys_set:nn { scontents } {#1}
-  }
-\NewExpandableDocumentCommand \countsc { m }
-  {
-    \seq_count:c { g__scontents_name_#1_seq }
-  }
-\NewDocumentCommand \cleanseqsc { m }
-  {
-    \seq_gclear_new:c { g__scontents_name_#1_seq }
   }
 \ExplSyntaxOff
 \endinput
