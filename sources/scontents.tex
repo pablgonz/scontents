@@ -113,6 +113,17 @@
       { \__scontents_setting_env:nn {#1} {#2} }
   }
 \newenvsc{scontents}
+\cs_if_exist:NF \dospecials
+  {
+    \cs_new:Npn \dospecials
+      { \seq_map_function:NN \l_char_special_seq \do }
+  }
+\use:e
+  {
+    \cs_new_protected:Npn \exp_not:N \__scontents_xverb:w
+      #1 \g__scontents_end_verbatimsc_tl
+      { #1 \exp_not:N \endverbatimsc }
+  }
 \cs_new_protected:Npn \verbatimsc
   {
     \group_begin:
@@ -158,17 +169,6 @@
   { \__scontents_set_active_eq:NN \  \__scontents_xobeysp: }
 \cs_new_protected:Nn \__scontents_xobeysp:
   { \mode_leave_vertical: \nobreak \ }
-\cs_if_exist:NF \dospecials
-  {
-    \cs_new:Npn \dospecials
-      { \seq_map_function:NN \l_char_special_seq \do }
-  }
-\use:e
-  {
-    \cs_new_protected:Npn \exp_not:N \__scontents_xverb:w
-      #1 \g__scontents_end_verbatimsc_tl
-      { #1 \exp_not:N \endverbatimsc }
-  }
 \ExplSyntaxOff
 \endinput
 %% 

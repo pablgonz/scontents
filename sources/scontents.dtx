@@ -812,10 +812,10 @@
 %
 % Some users use horizontal \texttt{TAB} `\LKeyTab' from keyboard to indented the source
 % code of the document and depending on the text editor used, some will use real \texttt{TAB}
-% (\enquote{\emph{hard tabs}}), others with \enquote{\emph{soft tabs}}(\verb*|  | or \verb*|    |)
+% (\emph{hard tabs}), others with \emph{soft tabs} (\verb*|  | or \verb*|    |)
 % or both.
 %
-% At first glance it may seem the same, but the way in which \texttt{TAB} (\enquote{\emph{hard tabs}})
+% At first glance it may seem the same, but the way in which \texttt{TAB} (\emph{hard tabs})
 % are processed according to the context in which they are found within
 % a file, both in \mymeta{reading}\footnote{Check the answer given by Ulrich Diez
 % in \href{https://tex.stackexchange.com/a/508103/7832}{Keyboard TAB
@@ -827,15 +827,16 @@
 % are treated as explicit spaces (in most contexts) and is the behavior when
 % \mymeta{stored content}, but when \mymeta{writing files} these are preserved.
 %
-% With a \hologo{TeX} Live distribution, the \texttt{TAB} character is \enquote{\emph{printable}}
+% With a \hologo{TeX} Live distribution, the \texttt{TAB} character is \emph{printable}
 % for "latex", "pdflatex" and "lualatex", but if you use "xelatex" you
 % must add the \texttt{\textcolor{optcolor}{-8bit}} option on the command
-% line, otherwise you will get \hologo{TeX} character \texttt{TAB} `§^^I§' in the \mymeta{output file}.
+% line, otherwise you will get \hologo{TeX} character \texttt{TAB} `§^^I§'
+% in the \mymeta{output file}.
 %
 % As a general recommendation \emph{\enquote{Do not use \texttt{TAB} character unless strictly
 % necessary}}, for example within a \emph{\enquote{verbatim environment}} that supports
-% this character such as \myenv{Verbatim} of the packages \mypkg{fancyvrb}\cite{fancyvrb}
-% and \mypkg{fvextra}\cite{fvextra} or \myenv{lstlisting} of the package \mypkg{listings}\cite{listings}
+% this character such as \myenv{Verbatim} of the packages \mypkg{fancyvrb}\cite{fancyvrb},
+% \mypkg{fvextra}\cite{fvextra} or \myenv{lstlisting} of the package \mypkg{listings}\cite{listings}
 % or when you want to generate a §MakeFile§ file.
 %
 % \subsection{Configuration of the options}
@@ -918,9 +919,9 @@
 % \vspace*{-\baselineskip}
 % \begin{center}
 % \small
-% \begin{tabular}{ccccccccc}
+% \begin{tabular}{lcccccccc}
 % \toprule
-% \texttt{key} &package &\ics*{setupsc} &\myenv*{scontents} &\ics*{Scontents} &\ics*{Scontents*} &\ics*{typestored} &\ics*{meaningsc} &\ics*{mergesc}\\
+% \texttt{key} & \texttt{package} &\ics*{setupsc} &\myenv*{scontents} &\ics*{Scontents} &\ics*{Scontents*} &\ics*{typestored} &\ics*{meaningsc} &\ics*{mergesc}\\
 % \midrule
 %  \mykey{store-env}  & \cmark  & \cmark  &  \cmark  & \xmark  & \xmark  & \xmark  & \xmark & \xmark \\
 %  \mykey{store-cmd}  & \cmark  & \cmark  &  \xmark  & \cmark  & \cmark  & \xmark  & \xmark & \xmark \\
@@ -933,7 +934,7 @@
 %  \mykey{write-out}  & \xmark  & \xmark  &  \cmark  & \xmark  & \cmark  & \cmark  & \cmark & \cmark \\
 %  \mykey{overwrite}  & \cmark  & \cmark  &  \cmark  & \xmark  & \cmark  & \cmark  & \cmark & \cmark \\
 %  \mykey{width-tab}  & \cmark  & \cmark  &  \xmark  & \xmark  & \xmark  & \cmark  & \cmark & \cmark \\
-%  \mykey{force-eol}  & \cmark  & \cmark  &  \cmark  & \cmark  & \cmark  & \xmark  & \xmark & \xmark \\
+%  \mykey{force-eol}  & \cmark  & \cmark  &  \cmark  & \xmark  & \cmark  & \xmark  & \xmark & \xmark \\
 %  \mykey{verb-font}  & \cmark  & \cmark  &  \xmark  & \xmark  & \xmark  & \xmark  & \xmark & \xmark \\
 %  \mykey{typestored} & \xmark  & \xmark  &  \xmark  & \xmark  & \xmark  & \xmark  & \xmark & \cmark \\
 %  \mykey{meaningsc}  & \xmark  & \xmark  &  \xmark  & \xmark  & \xmark  & \xmark  & \xmark & \cmark \\
@@ -1349,9 +1350,10 @@ This text is in the outer environment (after nested).
 %   \end{syntax}
 % The command \ics*{mergesc} assembles the \mymeta{stored content}
 % in the \emph{sequences} \mymarg{seq A}§[1]§, \mymarg{seq B}§[2-5]§ and
-% \mymarg{seq C}§[1-end]§ and then executes §\typestored§ (\S\ref{sec:typestored})
-% if the \mykey{typestored} key is active or §\meaningsc§ (\S\ref{sec:meaningsc})
-% if the \mykey{meaningsc} key is active.
+% \mymarg{seq C}§[1-§\textcolor{optcolor}{\texttt{end}}§]§ and then executes
+% §\typestored§ (\S\ref{sec:typestored}) if the \mykey{typestored} key is
+% active or §\meaningsc§ (\S\ref{sec:meaningsc}) if the \mykey{meaningsc}
+% key is active.
 % \end{function}
 %
 % The \mymarg{argument} taken by this command is a \emph{comma separated list}
@@ -1442,7 +1444,7 @@ This text is in the outer environment (after nested).
 % \fi
 %
 % \begin{important}*
-% At the moment, the \mypkg{fvextra}\cite{fvextra},\mypkg{fancyvrb}\cite{fancyvrb},
+% At the moment, the \mypkg{fvextra}\cite{fvextra}, \mypkg{fancyvrb}\cite{fancyvrb},
 % \mypkg{listings}\cite{listings} and \mypkg{minted}\cite{minted} packages
 % are not compatible with \emph{tagged} \texttt{PDF}.
 % \end{important}
@@ -2650,7 +2652,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   environment.
 % \begin{important}*
 %   All of these variables are used in the implementation of §\newenvsc§
-%   (\S\ref{cmd:newenvsc}) and the §scontents§ (\S\ref{env:scontents}).
+%   (\S\ref{cmd:newenvsc}) and the environments base functions (\S\ref{fun:base:env}).
 % \end{important}
 %    \begin{macrocode}
 %<*core>
@@ -2725,7 +2727,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %   when the key §overwrite§ is used.
 %   \begin{important}*
 %   This variable is used by the function \cs{@@_file_if_writable:nTF}
-%   (see \ref{the:environment:itself}).
+%   (see \ref{fun:save:body}).
 %   \end{important}
 %
 %    \begin{macrocode}
@@ -3463,7 +3465,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
-% \subsection{The generic base environment}\label{env:generic:scontents}
+% \subsection{Base functions for environments}\label{fun:base:env}
 %
 % In version 1.8 (2019-11-18) the command §\newenvsc§ (\S\ref{cmd:newenvsc})
 % was implemented, allowing you to create environments with the same
@@ -3475,7 +3477,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % this section are for illustrative purposes only, but apply to any
 % environment defined using §\newenvsc§.
 %
-% \subsubsection{The keyval for environment}
+% \subsubsection{Functions for the keyval environment}
 %
 % \begin{macro}{\@@_grab_opt_arg:n,\@@_grab_opt_arg:w}
 %   The function \cs{@@_grab_opt_arg:w} is called from the
@@ -3508,7 +3510,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
-% \subsubsection{Saving the body of environment}\label{the:environment:itself}
+% \subsubsection{Functions for save the body of environment}\label{fun:save:body}
 %
 % \begin{macro}{\@@_start_environment:w,\@@_start_after_option:w,
 %               \@@_check_line_process:en,\@@_stop_environment:}
@@ -3857,9 +3859,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % In version 1.8 (2019-11-18) the command §\newenvsc§ was implemented,
 % allowing you to create environments with the same behavior as the base
-% environment §scontents§.
-% To achieve this, we will create new environments so that they wrap around
-% the generic environment (\S\ref{env:generic:scontents}).
+% environment §scontents§. To achieve this, we will create new environments
+% so that they wrap around the base functions (\S\ref{fun:base:env}).
 %
 % \begin{macro}{\@@_generic_begin:,\@@_generic_end:,}
 %   The function \cs{@@_generic_begin:} leaves the `§^^M§' character
@@ -3973,7 +3974,48 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % \subsection{The environment \env{verbatimsc}}\label{env:verbatimsc}
 %
-% \subsubsection{Code for plain \TeX{} off \texttt{verbatimsc}}
+% The §verbatimsc§ environment is, in a way, a customized version of the
+% standard \myenv{verbatim} environment provided by \hologo{LaTeX}. For
+% correct operation in \hologo{plainTeX}, \hologo{LaTeX} and \hologo{ConTeXt},
+% we must add a couple of additional functions.
+%
+% \begin{macro}[int]{\dospecials}
+%   The \myenv{verbatim} environment in \LaTeX requires §\dospecials§.
+%   In case it doesn't exist (at the time \mypkg*{scontents} is loaded)
+%   we define §\dospecials§
+%   to use the \cs{l_char_special_seq}.
+%    \begin{macrocode}
+%<*!latex>
+\cs_if_exist:NF \dospecials
+  {
+    \cs_new:Npn \dospecials
+      { \seq_map_function:NN \l_char_special_seq \do }
+  }
+%</!latex>
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[int]{\@@_xverb:w,\end{verbatimsc},\endverbatimsc,\stopverbatimsc}
+%   The environment §verbatimsc§  needs to literally find the end of
+%   this §\end{verbatimsc}§ in the case of \hologo{LaTeX}. Here we set this
+%   for \hologo{plainTeX}, \hologo{LaTeX}, and \hologo{ConTeXt}.
+%    \begin{macrocode}
+%<*loader>
+%<*!context>
+\use:e
+  {
+    \cs_new_protected:Npn \exp_not:N \@@_xverb:w
+      #1 \g_@@_end_verbatimsc_tl
+%<latex>      { #1 \exp_not:N \end{verbatimsc} }
+%<plain>      { #1 \exp_not:N \endverbatimsc }
+%<context>      { #1 \exp_not:N \stopverbatimsc }
+  }
+%</!context>
+%</loader>
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsubsection{\hologo{plainTeX} version off \texttt{verbatimsc}}
 %
 % \begin{macro}[int]{\verbatimsc,\endverbatimsc,\@@_verbatimsc_aux:,
 %                    \@@_vobeyspaces:,\@@_xverb:,\@@_nolig_list:,\@@_xobeysp:}
@@ -4029,52 +4071,29 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}[int]{\dospecials}
-%   \LaTeX's requires §\dospecials§. In case it doesn't
-%   exist (at the time \mypkg*{scontents} is loaded) we define §\dospecials§
-%   to use the \cs{l_char_special_seq}.
-%    \begin{macrocode}
-%<*!latex>
-\cs_if_exist:NF \dospecials
-  {
-    \cs_new:Npn \dospecials
-      { \seq_map_function:NN \l_char_special_seq \do }
-  }
-%</!latex>
-%    \end{macrocode}
-% \end{macro}
+% \subsubsection{\hologo{ConTeXt} version off \texttt{verbatimsc}}
 %
-% \begin{macro}[int]{\endverbatimsc,\end{verbatimsc},\stopverbatimsc,\startverbatimsc,}
-%   Finally the \hologo{TeX}, \hologo{LaTeX} and \hologo{ConTeXt} version of
-%   §\end{verbatimsc}§ environment is defined.
-%    \begin{macrocode}
-%<*loader>
-%<*!context>
-\use:e
-  {
-    \cs_new_protected:Npn \exp_not:N \@@_xverb:w
-      #1 \g_@@_end_verbatimsc_tl
-%<latex>      { #1 \exp_not:N \end{verbatimsc} }
-%<plain>      { #1 \exp_not:N \endverbatimsc }
-%<context>      { #1 \exp_not:N \stopverbatimsc }
-  }
-%</!context>
-%    \end{macrocode}
+% \begin{macro}[int]{\startverbatimsc,\stopverbatimsc,}
 %   In \hologo{ConTeXt} we use our own tool §\definetyping§.
 %    \begin{macrocode}
+%<*loader>
 %<context>\definetyping[verbatimsc]
+%</loader>
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\@@_declare_instance:,verbatimsc}
+% \subsubsection{\hologo{LaTeX} version off \texttt{verbatimsc}}
+%
+% \begin{macro}{\@@_verbatimsc_instance:,verbatimsc}
 %  To be compatible with \emph{tagged} \texttt{PDF} we must define the
 %  environment §verbatimsc§ in terms of the \mypkg{xtemplate}\cite{latex2e}
 %  module integrated into the \LaTeX{} kernel and the new \texttt{blocks-code}
 %  from \mypkg{latex-lab}\cite{latexlab}. This code is adapted directly
 %  from Mrs. Ulrike Fischer's answer to \href{https://tex.stackexchange.com/a/741178/7832}{New verbatim environment with block code (tagged-pdf)}.
 %    \begin{macrocode}
+%<*loader>
 %<*latex>
-\cs_new_protected:Nn \@@_declare_instance:
+\cs_new_protected:Nn \@@_verbatimsc_instance:
   {
     \DeclareInstance{blockenv}{verbatimsc}{display}
       {
@@ -4095,7 +4114,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
   {
     \IfDocumentMetadataTF
       {
-        \@@_declare_instance:
+        \@@_verbatimsc_instance:
         \UseInstance{blockenv}{verbatimsc}{}
         \@setupverbinvisiblespace\frenchspacing\@vobeyspaces
         \@@_xverb:
@@ -4106,7 +4125,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
       }
   }
 %    \end{macrocode}
-%   The macro §\endverbatim§ in the second argument of the §verbatimsc§
+%   The §\endverbatim§ in the second argument of the §verbatimsc§
 %   environment is only needed for compatibility with the \mypkg{verbatim}\cite{verbatim}
 %   package.
 %    \begin{macrocode}
