@@ -27,7 +27,7 @@
 %%                                 t-scontents.mkiv and
 %%                                 scontents-code.tex.
 %% 
-\def\ScontentsFileDate{2025-05-09}%
+\def\ScontentsFileDate{2025-05-12}%
 \def\ScontentsFileVersion{2.4}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
 \NeedsTeXFormat{LaTeX2e}[2024-11-01]
@@ -87,7 +87,7 @@
       #1 \g__scontents_end_verbatimsc_tl
       { #1 \exp_not:N \end{verbatimsc} }
   }
-\cs_new_protected:Nn \__scontents_declare_instance:
+\cs_new_protected:Nn \__scontents_verbatimsc_instance:
   {
     \DeclareInstance{blockenv}{verbatimsc}{display}
       {
@@ -108,7 +108,7 @@
   {
     \IfDocumentMetadataTF
       {
-        \__scontents_declare_instance:
+        \__scontents_verbatimsc_instance:
         \UseInstance{blockenv}{verbatimsc}{}
         \@setupverbinvisiblespace\frenchspacing\@vobeyspaces
         \__scontents_xverb:
