@@ -35,24 +35,24 @@
 \tl_gset:ce { ver @ scontents . sty } { \ScontentsFileDate\space
   v\ScontentsFileVersion\space \ScontentsFileDescription }
 \iow_log:e { Package: ~ scontents ~ \use:c { ver @ scontents . sty } }
-\msg_set:nnn { scontents } { expl-too-old }
-  {
-    Please~install~an~up~to~date~TeX~distribution~
-    or~update~using~your~TeX~package~manager~or~from~CTAN. \\
-    See~documentation.~Loading~scontents~will~abort!
-  }
 \cs_if_exist:NF \int_step_tokens:nn
   {
+    \msg_new:nnn { scontents } { expl-too-old }
+      {
+        Please~install~an~up~to~date~TeX~distribution~or~update~using~
+        your~TeX~package~manager~or~from~CTAN. \\
+        See~documentation.~Loading~scontents~will~abort!
+      }
     \msg_fatal:nn { scontents } { expl-too-old }
     \ExplSyntaxOff
     \file_input_stop:
   }
-\msg_set:nnn { scontents } { already-loaded }
-  {
-    The~'scontents'~package~is~already~loaded.~Aborting~input~\msg_line_context:.
-  }
 \cs_if_exist:NT \__scontents_rescan_tokens:n
   {
+    \msg_new:nnn { scontents } { already-loaded }
+      {
+        The~'scontents'~package~is~already~loaded.~Aborting~input~\msg_line_context:.
+      }
     \msg_warning:nn { scontents } { already-loaded }
     \ExplSyntaxOff
     \file_input_stop:

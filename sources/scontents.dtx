@@ -445,18 +445,18 @@
 % Important words 1
     keywordstyle  = [1]{\color{gray}},%
     keywords      = [1]{begin,end,env,myseq,false,ExplSyntaxOff,ExplSyntaxOn,%
-                        NTF, N,x,e,n,nn,nnn,D,DocumentMetadata,IfDocumentMetadataTF,},%
+                        NTF, N,x,e,n,nn,nnn,D,Nnn,DocumentMetadata,IfDocumentMetadataTF,},%
 % Other words 2 (LaTeX)
     keywordstyle  = [2]{\color{blue!75}},%
     keywords      = [2]{usepackage,section,documentclass,input,usemodule,%
                     subsection,RequirePackage,%
                     ProvidesExplPackage,obeyedline,lstinline,Verb,macro,%
                     makebox,verb,detokenize,meaning,RenewDocumentCommand,%
-                    definetyping,lstset,small,ttfamily,tiny,color,%
+                    definetyping,lstset,small,ttfamily,tiny,color,scantokens,%
                     peek_charcode_ignore_spaces,cs_argument_spec,cs_parameter_spec,%
                     regex_replace_all,tl_replace_all,tex_scantokens,tex_endinput,%
                     file_input_stop,peek_charcode,cs_undefine,tl_rescan,int_to_roman,%
-                    int_step_tokens,keys_set,l_keys_key_str},%
+                    int_step_tokens,keys_set,l_keys_key_str,tl_gset_rescan,contextlmtxmode,},%
 % Other words 3
     keywordstyle  = [3]{\color{optcolor!85}},%
     keywords      = [3]{document,article,setlength,pagestyle,definecolor,myenvstore},%
@@ -2416,14 +2416,14 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % was added in release 2025-01-14 of \mypkg{expl3} included in
 % \hologo{TeX} Live 2024 (frozen).
 %    \begin{macrocode}
-\msg_set:nnn { scontents } { expl-too-old }
-  {
-    Please~install~an~up~to~date~TeX~distribution~
-    or~update~using~your~TeX~package~manager~or~from~CTAN. \\
-    See~documentation.~Loading~scontents~will~abort!
-  }
 \cs_if_exist:NF \int_step_tokens:nn
   {
+    \msg_new:nnn { scontents } { expl-too-old }
+      {
+        Please~install~an~up~to~date~TeX~distribution~or~update~using~
+        your~TeX~package~manager~or~from~CTAN. \\
+        See~documentation.~Loading~scontents~will~abort!
+      }
     \msg_fatal:nn { scontents } { expl-too-old }
     \ExplSyntaxOff
     \file_input_stop:
@@ -2434,21 +2434,42 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % (\LaTeX{} and \hologo{ConTeXt} already defend against that):
 %    \begin{macrocode}
 %<*plain>
-\msg_set:nnn { scontents } { already-loaded }
-  {
-    The~'scontents'~package~is~already~loaded.~Aborting~input~\msg_line_context:.
-  }
 \cs_if_exist:NT \@@_rescan_tokens:n
   {
+    \msg_new:nnn { scontents } { already-loaded }
+      {
+        The~'scontents'~package~is~already~loaded.~Aborting~input~\msg_line_context:.
+      }
     \msg_warning:nn { scontents } { already-loaded }
     \ExplSyntaxOff
     \file_input_stop:
   }
 %</plain>
+%    \end{macrocode}
+%   In \hologo{ConTeXt} we must take a precaution when running under LMTX
+%   since §\tex_scantokens:D§ is a copy of the primitive \hologo{eTeX}
+%   §\scantokens§ and §\tl_gset_rescan:Nnn§ is a wrapper around it and are
+%   not available under LMTX.
+% \begin{important}*
+%   This is an adaptation of the file \texttt{t-lua-widow-control.mkxl} part
+%   of Max Chernoff's \mypkg{lua-widow-control} package, §\contextlmtxmode§
+%   is described at \url{https://source.contextgarden.net/tex/context/base/mkxl/context.mkxl}.
+% \end{important}
+%    \begin{macrocode}
+%<*context>
+\bool_if:NT \contextlmtxmode
+  {
+    \msg_new:nnn { scontents } { luametatex }
+      {
+        The~'scontents'~package~doesn't~work~under~LMTX.
+      }
+    \msg_error:nn { scontents } { luametatex }
+  }
+%</context>
 %</loader>
 %    \end{macrocode}
 %
-% \subsubsection{Compatibility with \hologo{plainTeX} and \hologo{ConTeXt}}\label{comp:layer}
+% \subsubsection{Load \texttt{xparse-generic} in \hologo{plainTeX} and \hologo{ConTeXt}}\label{comp:layer}
 %
 % \begin{macro}{\l_@@_char_value_int}
 %   When loading the package outside of \LaTeX{} we can't usually use
@@ -3477,7 +3498,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % this section are for illustrative purposes only, but apply to any
 % environment defined using §\newenvsc§.
 %
-% \subsubsection{Functions for the keyval environment}
+% \subsubsection{Functions for keyval of environment}
 %
 % \begin{macro}{\@@_grab_opt_arg:n,\@@_grab_opt_arg:w}
 %   The function \cs{@@_grab_opt_arg:w} is called from the

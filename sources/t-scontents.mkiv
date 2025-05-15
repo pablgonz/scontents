@@ -51,17 +51,25 @@
 \tl_gset:ce { ver @ scontents . sty } { \ScontentsFileDate\space
   v\ScontentsFileVersion\space \ScontentsFileDescription }
 \iow_log:e { Package: ~ scontents ~ \use:c { ver @ scontents . sty } }
-\msg_set:nnn { scontents } { expl-too-old }
-  {
-    Please~install~an~up~to~date~TeX~distribution~
-    or~update~using~your~TeX~package~manager~or~from~CTAN. \\
-    See~documentation.~Loading~scontents~will~abort!
-  }
 \cs_if_exist:NF \int_step_tokens:nn
   {
+    \msg_new:nnn { scontents } { expl-too-old }
+      {
+        Please~install~an~up~to~date~TeX~distribution~or~update~using~
+        your~TeX~package~manager~or~from~CTAN. \\
+        See~documentation.~Loading~scontents~will~abort!
+      }
     \msg_fatal:nn { scontents } { expl-too-old }
     \ExplSyntaxOff
     \file_input_stop:
+  }
+\bool_if:NT \contextlmtxmode
+  {
+    \msg_new:nnn { scontents } { luametatex }
+      {
+        The~'scontents'~package~doesn't~work~under~LMTX.
+      }
+    \msg_error:nn { scontents } { luametatex }
   }
 \int_new:N  \l__scontents_char_value_int
 \int_set:Nn \l__scontents_char_value_int { \char_value_catcode:n { `\@ } }
