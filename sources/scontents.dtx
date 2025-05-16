@@ -1444,9 +1444,8 @@ This text is in the outer environment (after nested).
 % \fi
 %
 % \begin{important}*
-% At the moment, the \mypkg{fvextra}\cite{fvextra}, \mypkg{fancyvrb}\cite{fancyvrb},
-% \mypkg{listings}\cite{listings} and \mypkg{minted}\cite{minted} packages
-% are not compatible with \emph{tagged} \texttt{PDF}.
+% At the moment, the \mypkg{fvextra}\cite{fvextra} and \mypkg{fancyvrb}\cite{fancyvrb}
+% packages partially support \emph{tagged} \texttt{PDF}.
 % \end{important}
 %
 % \section{Other commands provided}
@@ -2107,25 +2106,50 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 \usepackage{scontents,unicode-math,hyperref}
 \hypersetup{pdftitle = {Test scontents package},}
 \begin{document}
-% environment
+Some
+
 \begin{scontents}[print-env=true]
     First code \verb|\foo|
 
-    And more code \verb|\baz|
+    And more code \verb|\bar|
 \end{scontents}
+
+Text
+
+\begin{scontents}[print-env=true]
+    Second code \verb|\foo|
+
+    And more code \verb|\bar|
+\end{scontents}
+
+Text
+
+\Scontents*{code \verb|\baz|}
 
 % \typestored
 \typestored[1]{contents}
+
+% \mergesc
+\mergesc[typestored]{ {contents}[1-end] }
+
+% \getstored
+\getstored[2]{contents}
 \end{document}
 \end{scontents}
 % \iffalse
 %</example>
 % \fi
 %
-% A verification test for the §\typestored§ command and the §verbatimsc§
-% environment compatible with \emph{tagged} \texttt{PDF}
-% \textattachfile[color=linkcolor,print=false]{scexamp11.ltx}{\faFile*[regular]}.
+% This example is just to show the compatibility of \mypkg*{scontents} with
+% \emph{tagged} \texttt{PDF} using |lualatex|. The attached files here
+% are just for testing \textattachfile[color=linkcolor,print=false]{scexamp11.ltx}{\faFile*[regular]}.
 % \lstinputlisting[language=scontents-doc,numbers=left]{scexamp11.ltx}
+%
+% \begin{important}*
+% This example have been checked using \href{https://dev.verapdf-rest.duallab.com}{\texttt{veraPDF}}
+% together with \href{https://ngpdf.com}{\texttt{ngpdf}}.
+% \end{important}
+%
 %
 % \newpage
 %
@@ -2145,7 +2169,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 % \begin{description}[font=\small\sffamily,wide=0pt,style=multiline,leftmargin=\descrwidth,nosep,noitemsep]
 % \item [\fileversion{} (ctan), \filedate]
 %    \begin{itemize}
-%        \item Optimization of expansion code from §x§ to §e§.
+%        \item Optimization of expansion code from `§x§' to `§e§'.
 %        \item Restructuring code for documentation and implementation.
 %        \item Add new keys for §\typestored§ and §\meaningsc§.
 %        \item Check the version of \mypkg{expl3} in \hologo{plainTeX} and \hologo{ConTeXt}.
@@ -2375,8 +2399,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %
 % Now we define some common macros to hold the package date and version:
 %    \begin{macrocode}
-%<loader>\def\ScontentsFileDate{2025-05-12}%
-%<core>\def\ScontentsCoreFileDate{2025-05-12}%
+%<loader>\def\ScontentsFileDate{2025-05-15}%
+%<core>\def\ScontentsCoreFileDate{2025-05-15}%
 %<*loader>
 \def\ScontentsFileVersion{2.4}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
