@@ -2167,7 +2167,11 @@ Text
 % \settowidth{\descrwidth}{\textsf{v1.0a, (ctan), 2019-07-30} }
 %
 % \begin{description}[font=\small\sffamily,wide=0pt,style=multiline,leftmargin=\descrwidth,nosep,noitemsep]
-% \item [\fileversion{} (ctan), \filedate]
+% \item [\fileversion{} (devp), \filedate]
+%    \begin{itemize}
+%        \item Work under \hologo{ConTeXt} LMTX.
+%    \end{itemize}
+% \item [v2.4 (ctan), 2025-05-15]
 %    \begin{itemize}
 %        \item Optimization of expansion code from `§x§' to `§e§'.
 %        \item Restructuring code for documentation and implementation.
@@ -2399,10 +2403,10 @@ Text
 %
 % Now we define some common macros to hold the package date and version:
 %    \begin{macrocode}
-%<loader>\def\ScontentsFileDate{2025-05-15}%
-%<core>\def\ScontentsCoreFileDate{2025-05-15}%
+%<loader>\def\ScontentsFileDate{2025-07-30}%
+%<core>\def\ScontentsCoreFileDate{2025-07-30}%
 %<*loader>
-\def\ScontentsFileVersion{2.4}%
+\def\ScontentsFileVersion{2.5}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
 %    \end{macrocode}
 %
@@ -2470,10 +2474,10 @@ Text
   }
 %</plain>
 %    \end{macrocode}
-%   In \hologo{ConTeXt} we must take a precaution when running under LMTX
-%   since §\tex_scantokens:D§ is a copy of the primitive \hologo{eTeX}
-%   §\scantokens§ and §\tl_gset_rescan:Nnn§ is a wrapper around it and are
-%   not available under LMTX.
+%   In \hologo{ConTeXt} we must take a precaution when running under LMTX.
+%^^A   since §\tex_scantokens:D§ is a copy of the primitive \hologo{eTeX}
+%^^A   §\scantokens§ and §\tl_gset_rescan:Nnn§ is a wrapper around it and are
+%^^A   not available under LMTX.
 % \begin{important}*
 %   This is an adaptation of the file \texttt{t-lua-widow-control.mkxl} part
 %   of Max Chernoff's \mypkg{lua-widow-control} package, §\contextlmtxmode§
@@ -2487,7 +2491,7 @@ Text
       {
         The~'scontents'~package~doesn't~work~under~LMTX.
       }
-    \msg_error:nn { scontents } { luametatex }
+    % \msg_error:nn { scontents } { luametatex }
   }
 %</context>
 %</loader>
@@ -3344,7 +3348,7 @@ Text
   {
     \@@_range_parser:nnen {#1} {#2}
       { \seq_count:c { g_@@_name_ \l_@@_current_seq_name_str _seq } }
-      { \msg_error:nnn { scontents } { cmd-key-unknown } {#1} } 
+      { \msg_error:nnn { scontents } { cmd-key-unknown } {#1} }
   }
 \cs_new_protected:Npn \@@_range_parser:nnnn #1 #2 #3 #4
   {
@@ -3422,7 +3426,7 @@ Text
 %   the state of the variable \cs{l_@@_forced_eol_bool} set by the
 %   §force-eol§ key is checked and if this is \enquote{false} (default value)
 %   we will add \cs{c_@@_hidden_space_str} to the end of the token list passed
-%   in §{#1}§ which contains \mymarg{body env} for the generic environment §scontents§ 
+%   in §{#1}§ which contains \mymarg{body env} for the generic environment §scontents§
 %   and the \mymarg{argument} for the §\Scontents§ command.
 %
 %   Then the function \cs{@@_store_to_seq:NN} is applied to \enquote{store}

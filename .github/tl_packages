@@ -28,6 +28,7 @@ makeindex
 dvipdfmx
 arara
 # For the doc and test/examples
+anonymouspro
 accsupp
 adjustbox
 alphalph
