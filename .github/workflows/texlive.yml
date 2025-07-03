@@ -40,7 +40,7 @@ jobs:
           version: 1.0
 
       - name: Setup TeX Live ${{ matrix.version }}
-        uses: teatimeguest/setup-texlive-action@v3
+        uses: TeX-Live/setup-texlive-action@v3
         with:
           version: ${{ matrix.version }}
           package-file: .github/tl_packages
