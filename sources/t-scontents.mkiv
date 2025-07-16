@@ -63,13 +63,17 @@
     \ExplSyntaxOff
     \file_input_stop:
   }
-\bool_if:NT \contextlmtxmode
+\bool_if:NTF \contextlmtxmode
   {
     \msg_new:nnn { scontents } { luametatex }
       {
         The~'scontents'~package~doesn't~work~under~LMTX.
       }
     % \msg_error:nn { scontents } { luametatex }
+    \tl_const:Ne \c__scontents_newline_tl { \syst_obeyed_line }
+  }
+  {
+    \tl_const:Ne \c__scontents_newline_tl { \iow_char:N \^^J }
   }
 \int_new:N  \l__scontents_char_value_int
 \int_set:Nn \l__scontents_char_value_int { \char_value_catcode:n { `\@ } }

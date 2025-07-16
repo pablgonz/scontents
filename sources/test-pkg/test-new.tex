@@ -1,0 +1,122 @@
+% ConTeXt
+\usemodule[expl3-generic]
+\ExplSyntaxOn
+% Trick for LMTX
+\bool_if:NTF \contextlmtxmode
+  {
+    \tl_const:Ne \c__mymodule_newline_tl { \syst_obeyed_line }
+  }
+  {
+    \tl_const:Ne \c__mymodule_newline_tl { \iow_char:N \^^J }
+  }
+\cs_generate_variant:Nn \tl_replace_all:Nnn { NeV }
+\int_set:Nn \l_tmpa_int { \char_value_catcode:n { `\@ } }
+\char_set_catcode_letter:N \@
+\file_input:n { xparse-generic.tex }
+\char_set_catcode:nn { `\@ } { \l_tmpa_int }
+\cs_new_protected:Npn \__mymodule_rescan_tokens:n #1 { \tex_scantokens:D {#1} }
+\cs_generate_variant:Nn \__mymodule_rescan_tokens:n { V, e }
+% need by xparse-generic
+\cs_if_exist:NF \dospecials
+  {
+    \cs_new:Npn \dospecials { \seq_map_function:NN \l_char_special_seq \do }
+  }
+% Internal vars and functions
+\tl_new:N \l__mymodule_Scontents_arg_tl
+\tl_new:N \g__mymodule_last_stored_tl
+\str_const:Ne \c__mymodule_hidden_space_str
+  { \c_percent_str \c_circumflex_str \c_circumflex_str A myheol \c_percent_str }
+\cs_new_protected:Npn \__mymodule_append_contents:nn #1#2
+  {
+    \seq_if_exist:cF { g__mymodule_name_#1_seq }
+      { \seq_new:c { g__mymodule_name_#1_seq } }
+    \seq_gput_right:cn { g__mymodule_name_#1_seq } {#2}
+  }
+\cs_generate_variant:Nn \__mymodule_append_contents:nn { Ve }
+\cs_new_protected:Npn \__mymodule_store_to_seq:NN #1#2
+  {
+    \tl_log:N #1
+    \__mymodule_append_contents:Ve #2 { \exp_not:V #1 }
+  }
+\cs_new_protected:Npn \__mymodule_finish_storing:NNN #1 #2 #3
+  {
+    \bool_if:NF \l__mymodule_forced_eol_bool
+      { \tl_put_right:Ne #1 { \c__mymodule_hidden_space_str } }
+    \__mymodule_store_to_seq:NN #1 #2
+    \bool_if:NT #3 { \__mymodule_lastfrom_seq:V #2 }
+  }
+\cs_new_protected:Npn \__mymodule_lastfrom_seq:n #1
+  {
+    \tl_gset:Ne \g__mymodule_last_stored_tl
+      {
+        \seq_item:cn { g__mymodule_name_#1_seq } { -1 }
+      }
+    \group_insert_after:N \__mymodule_rescan_tokens:V
+    \group_insert_after:N \g__mymodule_last_stored_tl
+    \group_insert_after:N \tl_gclear:N
+    \group_insert_after:N \g__mymodule_last_stored_tl
+  }
+\cs_generate_variant:Nn \__mymodule_lastfrom_seq:n { V }
+% keys and command
+\keys_define:nn { mymodule }
+  {
+    store-cmd .tl_set:N   = \l__mymodule_name_seq_cmd_tl,
+    store-cmd .initial:n  = contents,
+    print-cmd .bool_set:N = \l__mymodule_print_cmd_bool,
+    print-cmd .initial:n  = false,
+    print-cmd .default:n  = true,
+    force-eol .bool_set:N = \l__mymodule_forced_eol_bool,
+    force-eol .initial:n  = false,
+    force-eol .default:n  = true,
+  }
+\NewDocumentCommand \myScontents { !s !O{} }
+  {
+    \__mymodule_Scontents_code:nn {#1} {#2}
+  }
+\cs_new_protected:Npn \__mymodule_Scontents_code:nn #1 #2
+  {
+    \group_begin:
+      \tl_if_novalue:nF {#2}
+        { \keys_set:nn { mymodule } {#2} }
+      \char_set_catcode_active:n { 9 }
+      \bool_if:NTF #1
+        { \__mymodule_Scontents_verb_arg:w }
+        { \__mymodule_Scontents_norm_arg:n }
+  }
+\NewDocumentCommand \__mymodule_Scontents_verb_arg:w { +v }
+  {
+    \tl_set:Nn \l__mymodule_Scontents_arg_tl {#1}
+    \cs_if_exist:NT \obeyedline
+      {
+        \RenewDocumentCommand \obeyedline { } { \iow_char:N \^^M }
+        \tl_replace_all:Nee \l__mymodule_Scontents_arg_tl { \obeyedline } { \iow_char:N \^^M }
+      }
+    \tl_replace_all:NeV \l__mymodule_Scontents_arg_tl { \iow_char:N \^^M } \c__mymodule_newline_tl
+    \__mymodule_Scontents_finish:
+  }
+\cs_new_protected:Npn \__mymodule_Scontents_norm_arg:n #1
+  {
+    \tl_set:Nn \l__mymodule_Scontents_arg_tl {#1}
+    \__mymodule_Scontents_finish:
+  }
+\cs_new_protected:Nn \__mymodule_Scontents_finish:
+  {
+    \__mymodule_finish_storing:NNN
+      \l__mymodule_Scontents_arg_tl \l__mymodule_name_seq_cmd_tl \l__mymodule_print_cmd_bool
+    \use:e
+      {
+        \group_end:
+      }
+  }
+\ExplSyntaxOff
+\starttext
+Hola \myScontents*[print-cmd]{f
+
+\type{content with balanced braces}
+
+o
+
+o
+
+o}baz
+\stoptext

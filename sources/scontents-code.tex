@@ -142,6 +142,7 @@
 \cs_new_protected:Npn \__scontents_rescan_tokens:n #1 { \tex_scantokens:D {#1} }
 \cs_generate_variant:Nn \__scontents_rescan_tokens:n { V, e }
 \prg_generate_conditional_variant:Nnn \tl_if_empty:n { f } { p, TF }
+\cs_generate_variant:Nn \tl_replace_all:Nnn { NeV }
 \cs_new:Npn \__scontents_use_delimit_by_s_stop:nw #1 \s__scontents_stop {#1}
 \cs_new:Npn \__scontents_use_i_delimit_by_s_stop:nw #1 #2 \s__scontents_stop {#1}
 \cs_new:Npn \__scontents_use_none_delimit_by_s_stop:w #1 \s__scontents_stop { }
@@ -797,7 +798,8 @@
         \RenewDocumentCommand \obeyedline { } { \iow_char:N \^^M }
         \tl_replace_all:Nee \l__scontents_Scontents_arg_tl { \obeyedline } { \iow_char:N \^^M }
       }
-    \tl_replace_all:Nee \l__scontents_Scontents_arg_tl { \iow_char:N \^^M } { \iow_char:N \^^J }
+    % \tl_replace_all:Nee \l__scontents_Scontents_arg_tl { \iow_char:N \^^M } { \iow_char:N \^^J }
+    \tl_replace_all:NeV \l__scontents_Scontents_arg_tl { \iow_char:N \^^M } \c__scontents_newline_tl
     \__scontents_Scontents_finish:
   }
 \cs_new_protected:Npn \__scontents_Scontents_norm_arg:n #1
@@ -892,7 +894,8 @@
       \tl_set:Ne \l__scontents_typestored_arg_tl
         { \__scontents_getfrom_seq:Nn \l__scontents_seq_item_seq {#2} }
       \__scontents_remove_trailing_eol:N \l__scontents_typestored_arg_tl
-      \tl_replace_all:Nen \l__scontents_typestored_arg_tl { \c__scontents_hidden_space_str } { ^^J }
+      % \tl_replace_all:Nen \l__scontents_typestored_arg_tl { \c__scontents_hidden_space_str } { ^^J }
+      \tl_replace_all:NeV \l__scontents_typestored_arg_tl { \c__scontents_hidden_space_str } \c__scontents_newline_tl
       \tl_log:N \l__scontents_typestored_arg_tl
       \tl_if_empty:NF \l__scontents_typestored_arg_tl
         {

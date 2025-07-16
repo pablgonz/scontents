@@ -2485,16 +2485,28 @@ Text
 % \end{important}
 %    \begin{macrocode}
 %<*context>
-\bool_if:NT \contextlmtxmode
+\bool_if:NTF \contextlmtxmode
   {
     \msg_new:nnn { scontents } { luametatex }
       {
         The~'scontents'~package~doesn't~work~under~LMTX.
       }
     % \msg_error:nn { scontents } { luametatex }
+    \tl_const:Ne \c_@@_newline_tl { \syst_obeyed_line }
+  }
+  {
+    \tl_const:Ne \c_@@_newline_tl { \iow_char:N \^^J }
   }
 %</context>
 %</loader>
+%    \end{macrocode}
+%  Por alguna razón desconocida para mi, no funciona |\^^J| bajo LMTX, 
+%  Max me dio esto en el chat...preguntar que es lo que hace 
+%  |\syst_obeyed_line| y donde se encuentra documentado.
+%    \begin{macrocode}
+%<*loader&!context>
+\tl_const:Ne \c_@@_newline_tl { \iow_char:N \^^J }
+%</loader&!context>
 %    \end{macrocode}
 %
 % \subsubsection{Load \texttt{xparse-generic} in \hologo{plainTeX} and \hologo{ConTeXt}}\label{comp:layer}
@@ -2828,7 +2840,7 @@ Text
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\c_@@_hidden_space_str}
+% \begin{macro}{\c_@@_hidden_space_str,}
 %   The variable \cs{c_@@_hidden_space_str} is a constant \emph{string}
 %   to used to hide the \mymeta{forced space} added by \hologo{TeX} when
 %   recording content in a macro. This \emph{string} contains the \emph{reserved phrase}
@@ -2889,10 +2901,11 @@ Text
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}[int]{\tl_if_empty:fTF}
+% \begin{macro}[int]{\tl_if_empty:fTF,\tl_replace_all:NeV}
 %   Some nonstandard kernel variant.
 %    \begin{macrocode}
 \prg_generate_conditional_variant:Nnn \tl_if_empty:n { f } { p, TF }
+\cs_generate_variant:Nn \tl_replace_all:Nnn { NeV }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -4246,7 +4259,8 @@ Text
         \RenewDocumentCommand \obeyedline { } { \iow_char:N \^^M }
         \tl_replace_all:Nee \l_@@_Scontents_arg_tl { \obeyedline } { \iow_char:N \^^M }
       }
-    \tl_replace_all:Nee \l_@@_Scontents_arg_tl { \iow_char:N \^^M } { \iow_char:N \^^J }
+    % \tl_replace_all:Nee \l_@@_Scontents_arg_tl { \iow_char:N \^^M } { \iow_char:N \^^J }
+    \tl_replace_all:NeV \l_@@_Scontents_arg_tl { \iow_char:N \^^M } \c_@@_newline_tl
     \@@_Scontents_finish:
   }
 %    \end{macrocode}
@@ -4391,7 +4405,8 @@ Text
       \tl_set:Ne \l_@@_typestored_arg_tl
         { \@@_getfrom_seq:Nn \l_@@_seq_item_seq {#2} }
       \@@_remove_trailing_eol:N \l_@@_typestored_arg_tl
-      \tl_replace_all:Nen \l_@@_typestored_arg_tl { \c_@@_hidden_space_str } { ^^J }
+      % \tl_replace_all:Nen \l_@@_typestored_arg_tl { \c_@@_hidden_space_str } { ^^J }
+      \tl_replace_all:NeV \l_@@_typestored_arg_tl { \c_@@_hidden_space_str } \c_@@_newline_tl
       \tl_log:N \l_@@_typestored_arg_tl
       \tl_if_empty:NF \l_@@_typestored_arg_tl
         {

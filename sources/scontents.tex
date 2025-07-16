@@ -57,6 +57,7 @@
     \ExplSyntaxOff
     \file_input_stop:
   }
+\tl_const:Ne \c__scontents_newline_tl { \iow_char:N \^^J }
 \int_new:N  \l__scontents_char_value_int
 \int_set:Nn \l__scontents_char_value_int { \char_value_catcode:n { `\@ } }
 \char_set_catcode_letter:N \@
