@@ -14,8 +14,8 @@
 \char_set_catcode_letter:N \@
 \file_input:n { xparse-generic.tex }
 \char_set_catcode:nn { `\@ } { \l_tmpa_int }
-\cs_new_protected:Npn \__mymodule_rescan_tokens:n #1 { \tex_scantokens:D {#1} }
-\cs_generate_variant:Nn \__mymodule_rescan_tokens:n { V, e }
+% \scantokens in expl3
+\cs_generate_variant:Nn \tl_retokenize:n { e }
 % need by xparse-generic
 \cs_if_exist:NF \dospecials
   {
@@ -51,7 +51,7 @@
       {
         \seq_item:cn { g__mymodule_name_#1_seq } { -1 }
       }
-    \group_insert_after:N \__mymodule_rescan_tokens:V
+    \group_insert_after:N \tl_retokenize:V
     \group_insert_after:N \g__mymodule_last_stored_tl
     \group_insert_after:N \tl_gclear:N
     \group_insert_after:N \g__mymodule_last_stored_tl
@@ -108,6 +108,14 @@
         \group_end:
       }
   }
+
+\NewDocumentCommand \mygetstored { O{-1} m }
+  {
+    \tl_retokenize:e
+      {
+        \seq_item:cn { g__mymodule_name_#2_seq } {#1} 
+      }
+  }
 \ExplSyntaxOff
 \starttext
 Hola \myScontents*[print-cmd]{f
@@ -119,4 +127,20 @@ o
 o
 
 o}baz
+
+
+Foo
+
+
+Hola \myScontents*[print-cmd]{f
+
+\type{content with balanced braces}
+
+jdjjdjdjdjdjd
+
+o}baz
+
+Gggg
+
+\mygetstored[2]{contents}
 \stoptext

@@ -455,7 +455,7 @@
                     definetyping,lstset,small,ttfamily,tiny,color,scantokens,%
                     peek_charcode_ignore_spaces,cs_argument_spec,cs_parameter_spec,%
                     regex_replace_all,tl_replace_all,tex_scantokens,tex_endinput,%
-                    file_input_stop,peek_charcode,cs_undefine,tl_rescan,int_to_roman,%
+                    file_input_stop,peek_charcode,cs_undefine,tl_rescan,int_to_roman,tl_retokenize,%
                     int_step_tokens,keys_set,l_keys_key_str,tl_gset_rescan,contextlmtxmode,},%
 % Other words 3
     keywordstyle  = [3]{\color{optcolor!85}},%
@@ -710,7 +710,7 @@
 % \begin{important}*
 % Starting with version 2.3 the \mypkg*{scontents} package is fully
 % compatible with \emph{tagged} \texttt{PDF} and will have \LaTeX{}
-% release 2024-11-01 (\TeX{} Live 2024) as a minimum requirement.
+% release 2025-06-01 (\TeX{} Live 2025) and \mypkg{expl3} 2025-07-08 as a minimum requirement.
 % \end{important}
 %
 % \thispagestyle{plain}
@@ -726,9 +726,9 @@
 % \enquote{maintained}.
 %
 % The package \mypkg*{scontents} requires an updated version of \LaTeX{} to work
-% (minimum required to \LaTeX{} release 2024-11-01). This package can be used with "plain",
-% "context", "xelatex", "lualatex", "pdflatex" and the classical workflow
-% §latex>dvips>ps2pdf§.
+% (minimum required to \LaTeX{} release 2025-06-01 and \mypkg{expl3} 2025-07-08). 
+% This package can be used with "plain", "context", "xelatex", "lualatex", "pdflatex" 
+% and the classical workflow §latex>dvips>ps2pdf§.
 %
 % \section{The \texttt{scontents} package}
 % \label{sec:pkgscontents}
@@ -2169,7 +2169,9 @@ Text
 % \begin{description}[font=\small\sffamily,wide=0pt,style=multiline,leftmargin=\descrwidth,nosep,noitemsep]
 % \item [\fileversion{} (devp), \filedate]
 %    \begin{itemize}
-%        \item Work under \hologo{ConTeXt} LMTX.
+%        \item Replacing §\scantokens§ (primitive) with §\tl_retokenize:n§.
+%        \item Cleanup warnings and details returned by |expltools|.
+%        \item Update minimum required of \mypkg{expl3} to 2025-07-08.
 %    \end{itemize}
 % \item [v2.4 (ctan), 2025-05-15]
 %    \begin{itemize}
@@ -2403,8 +2405,8 @@ Text
 %
 % Now we define some common macros to hold the package date and version:
 %    \begin{macrocode}
-%<loader>\def\ScontentsFileDate{2025-07-30}%
-%<core>\def\ScontentsCoreFileDate{2025-07-30}%
+%<loader>\def\ScontentsFileDate{2025-10-04}%
+%<core>\def\ScontentsCoreFileDate{2025-10-04}%
 %<*loader>
 \def\ScontentsFileVersion{2.5}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
@@ -2412,13 +2414,13 @@ Text
 %
 % The \LaTeX{} loader is quite simple, we just need to make sure of the
 % minimum version for correct operation and then set interfaces up.
-% The choice of \LaTeX{} release 2024-11-01 is the latest available in
-% \TeX{} Live 2024 (frozen) and is necessary to be able to implement
+% The choice of \LaTeX{} release 2025-06-01 is the latest available in
+% \TeX{} Live 2025 and is necessary to be able to implement
 % the package's full compatibility with \emph{tagged} \texttt{PDF}.
 %
 %    \begin{macrocode}
 %<*latex>
-\NeedsTeXFormat{LaTeX2e}[2024-11-01]
+\NeedsTeXFormat{LaTeX2e}[2025-06-01]
 \ProvidesExplPackage
   {scontents} {\ScontentsFileDate} {\ScontentsFileVersion} {\ScontentsFileDescription}
 %</latex>
@@ -2440,11 +2442,11 @@ Text
 \iow_log:e { Package: ~ scontents ~ \use:c { ver @ scontents . sty } }
 %    \end{macrocode}
 % For \hologo{plainTeX} and \hologo{ConTeXt} we must check the minimum
-% requirement, in this case §\int_step_tokens:nn§ which
-% was added in release 2025-01-14 of \mypkg{expl3} included in
-% \hologo{TeX} Live 2024 (frozen).
+% requirement, in this case §\tl_retokenize:n§ which
+% was added in release 2025-07-08 of \mypkg{expl3} included in
+% \hologo{TeX} Live 2025.
 %    \begin{macrocode}
-\cs_if_exist:NF \int_step_tokens:nn
+\cs_if_exist:NF \tl_retokenize:n
   {
     \msg_new:nnn { scontents } { expl-too-old }
       {
@@ -2896,7 +2898,8 @@ Text
 %
 %    \begin{macrocode}
 %<*core>
-\cs_new_protected:Npn \@@_rescan_tokens:n #1 { \tex_scantokens:D {#1} }
+%%%\cs_new_protected:Npn \@@_rescan_tokens:n #1 { \tex_scantokens:D {#1} }
+\cs_new_protected:Npn \@@_rescan_tokens:n #1 { \tl_retokenize:n {#1} }
 \cs_generate_variant:Nn \@@_rescan_tokens:n { V, e }
 %    \end{macrocode}
 % \end{macro}
@@ -2906,6 +2909,7 @@ Text
 %    \begin{macrocode}
 \prg_generate_conditional_variant:Nnn \tl_if_empty:n { f } { p, TF }
 \cs_generate_variant:Nn \tl_replace_all:Nnn { NeV }
+\cs_generate_variant:Nn \tl_retokenize:n { e }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -4259,7 +4263,6 @@ Text
         \RenewDocumentCommand \obeyedline { } { \iow_char:N \^^M }
         \tl_replace_all:Nee \l_@@_Scontents_arg_tl { \obeyedline } { \iow_char:N \^^M }
       }
-    % \tl_replace_all:Nee \l_@@_Scontents_arg_tl { \iow_char:N \^^M } { \iow_char:N \^^J }
     \tl_replace_all:NeV \l_@@_Scontents_arg_tl { \iow_char:N \^^M } \c_@@_newline_tl
     \@@_Scontents_finish:
   }
@@ -4317,13 +4320,10 @@ Text
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_getstored:nn #1 #2
   {
-    \group_begin:
-      \int_set:Nn \tex_newlinechar:D { `\^^J }
-      \@@_rescan_tokens:e
-        {
-    \endgroup % This assumes \catcode`\\=0... Things might go off otherwise.
-    \@@_getfrom_seq:nn {#1} {#2}
-        }
+    \@@_rescan_tokens:e
+      {
+        \@@_getfrom_seq:nn {#1} {#2}
+      }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -4405,7 +4405,6 @@ Text
       \tl_set:Ne \l_@@_typestored_arg_tl
         { \@@_getfrom_seq:Nn \l_@@_seq_item_seq {#2} }
       \@@_remove_trailing_eol:N \l_@@_typestored_arg_tl
-      % \tl_replace_all:Nen \l_@@_typestored_arg_tl { \c_@@_hidden_space_str } { ^^J }
       \tl_replace_all:NeV \l_@@_typestored_arg_tl { \c_@@_hidden_space_str } \c_@@_newline_tl
       \tl_log:N \l_@@_typestored_arg_tl
       \tl_if_empty:NF \l_@@_typestored_arg_tl
@@ -4658,8 +4657,8 @@ Text
     with~an~environment~that~already~has~a~definition. \\ \\
     The~existing~definition~of~'#1'~will~not~be~altered.
   }
-\msg_new:nnn { scontents } { empty-stored-content }
-  { Empty~value~for~key~'getstored'~\msg_line_context:. }
+\msg_new:nnn { scontents } { empty-argument-command }
+  { Empty~~argument~for~'Scontents'~\msg_line_context:. }
 \msg_new:nnn { scontents } { empty-variable }
   { Variable~'#1'~empty~\msg_line_context:. }
 \msg_new:nnn { scontents } { overwrite-file }
@@ -4733,25 +4732,6 @@ Text
   }
 \msg_new:nnn { scontents } { empty-environment }
   { environment~'#1'~empty~\msg_line_context:. }
-\msg_new:nnnn { scontents } { verbatim-newline }
-  { Verbatim~argument~of~#1~ended~by~end~of~line. }
-  {
-    The~verbatim~argument~of~the~#1~cannot~contain~more~than~one~line,~
-    but~the~end~
-    of~the~current~line~has~been~reached.~You~may~have~forgotten~the~
-    closing~delimiter.
-    \\ \\
-    LaTeX~will~ignore~'#2'.
-  }
-\msg_new:nnnn { scontents } { verbatim-tokenized }
-  { The~verbatim~#1~cannot~be~used~inside~an~argument. }
-  {
-    The~#1~takes~a~verbatim~argument.~
-    It~may~not~appear~within~the~argument~of~another~function.~
-    It~received~an~illegal~token \tl_if_empty:nF {#3} { ~'#3' } .
-    \\ \\
-    LaTeX~will~ignore~'#2'.
-  }
 %</core>
 %    \end{macrocode}
 %

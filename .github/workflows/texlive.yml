@@ -1,4 +1,4 @@
-name: Automated testing (TL 2024 - 2025)
+name: Automated testing (TL 2025)
 
 on:
   push:
@@ -16,15 +16,11 @@ jobs:
     strategy:
       matrix:
         version:
-          - 2024
           - 2025
         command:
           - testpkg
           - examples
           - doc
-        exclude:
-          - { version: 2024, command: doc }
-          - { version: 2024, command: examples }
       fail-fast: false
     steps:
       - name: Checkout
@@ -36,8 +32,8 @@ jobs:
       - name: Update sources and install ghostscript-pygments
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
-          packages: fonts-urw-base35 libgs9-common libijs-0.35 libjbig2dec0 libopenjp2-7 libgs9 ghostscript python3-pygments
-          version: 2.0
+          packages: ghostscript python3-pygments
+          version: 1.0
 
       - name: Setup TeX Live ${{ matrix.version }}
         uses: TeX-Live/setup-texlive-action@v3
