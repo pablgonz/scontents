@@ -2405,9 +2405,8 @@ Text
 %
 % Now we define some common macros to hold the package date and version:
 %    \begin{macrocode}
-%<loader>\def\ScontentsFileDate{2025-10-04}%
-%<core>\def\ScontentsCoreFileDate{2025-10-04}%
 %<*loader>
+\def\ScontentsFileDate{2025-10-04}%
 \def\ScontentsFileVersion{2.5}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
 %    \end{macrocode}
@@ -2426,23 +2425,43 @@ Text
 %</latex>
 %    \end{macrocode}
 %
-% The \hologo{plainTeX} and \hologo{ConTeXt} loaders are similar
-% (probably because I don't know how to make a proper \hologo{ConTeXt}
-% module :-). We define a \LaTeX{}-style §\ver@scontents.sty§ macro with
-% version info (just in case) and add §\ExplSyntaxOn§ to be able to load
-% the frozen \mypkg{xparse}\cite{xparse} later (\S\ref{comp:layer}).
+% \subsubsection{Load \texttt{expl3-generic} and \texttt{xparse-generic} in \hologo{plainTeX} and \hologo{ConTeXt}}\label{comp:layer}
+%
+% \begin{macro}[int]{\ver@scontents.sty, l_@@_char_value_int}
+%   The \hologo{plainTeX} and \hologo{ConTeXt} loaders are similar
+%   (probably because I don't know how to make a proper \hologo{ConTeXt}
+%   module :-). We define a \LaTeX{}-style §\ver@scontents.sty§ macro with
+%   version info (just in case) and add §\ExplSyntaxOn§ to be able to load
+%   the frozen \mypkg{xparse}\cite{xparse}.
 %    \begin{macrocode}
 %<*!latex>
 %<context>\writestatus{loading}{User Module scontents v\ScontentsFileVersion}
 %<context>\unprotect
 \input expl3-generic.tex
 \ExplSyntaxOn
-\tl_gset:ce { ver @ scontents . sty } { \ScontentsFileDate\space
+\tl_new:c { ver @ scontents . sty } 
+\tl_set:ce { ver @ scontents . sty } { \ScontentsFileDate\space
   v\ScontentsFileVersion\space \ScontentsFileDescription }
-\iow_log:e { Package: ~ scontents ~ \use:c { ver @ scontents . sty } }
+\iow_log:e { Package: ~ scontents ~ \tl_use:c { ver @ scontents . sty } }
 %    \end{macrocode}
-% For \hologo{plainTeX} and \hologo{ConTeXt} we must check the minimum
-% requirement, in this case §\tl_retokenize:n§ which
+%   Outside of \LaTeX{} we can't usually use \mypkg{xparse}\cite{xparse} 
+%   now \mypkg{ltcmd}\cite{latex2e} part of the \LaTeX{} kernel. However 
+%   since the old \mypkg{xparse}\cite{xparse} provide \texttt{xparse-generic.tex} 
+%   is loadable in any format.
+%    \begin{macrocode}
+\int_new:N  \l_@@_char_value_int
+\int_set:Nn \l_@@_char_value_int { \char_value_catcode:n { `\@ } }
+\char_set_catcode_letter:N \@
+\file_input:n { xparse-generic.tex }
+\char_set_catcode:nn { `\@ } { \l_@@_char_value_int }
+%</!latex>
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsubsection{Checking \texttt{expl3} version}
+%
+% For \hologo{plainTeX}, \hologo{LaTeX} and \hologo{ConTeXt} we must check 
+% the minimum requirement, in this case §\tl_retokenize:n§ which
 % was added in release 2025-07-08 of \mypkg{expl3} included in
 % \hologo{TeX} Live 2025.
 %    \begin{macrocode}
@@ -2458,13 +2477,15 @@ Text
     \ExplSyntaxOff
     \file_input_stop:
   }
-%</!latex>
 %    \end{macrocode}
+%
+% \subsubsection{Preventing double loading in \hologo{plainTeX}}
+%
 % In \hologo{plainTeX}, check that the package isn't being loaded twice
 % (\LaTeX{} and \hologo{ConTeXt} already defend against that):
 %    \begin{macrocode}
 %<*plain>
-\cs_if_exist:NT \@@_rescan_tokens:n
+\tl_if_exist:NT \l_@@_cmd_name_tl
   {
     \msg_new:nnn { scontents } { already-loaded }
       {
@@ -2475,123 +2496,8 @@ Text
     \file_input_stop:
   }
 %</plain>
-%    \end{macrocode}
-%   In \hologo{ConTeXt} we must take a precaution when running under LMTX.
-%^^A   since §\tex_scantokens:D§ is a copy of the primitive \hologo{eTeX}
-%^^A   §\scantokens§ and §\tl_gset_rescan:Nnn§ is a wrapper around it and are
-%^^A   not available under LMTX.
-% \begin{important}*
-%   This is an adaptation of the file \texttt{t-lua-widow-control.mkxl} part
-%   of Max Chernoff's \mypkg{lua-widow-control} package, §\contextlmtxmode§
-%   is described at \url{https://source.contextgarden.net/tex/context/base/mkxl/context.mkxl}.
-% \end{important}
-%    \begin{macrocode}
-%<*context>
-\bool_if:NTF \contextlmtxmode
-  {
-    \msg_new:nnn { scontents } { luametatex }
-      {
-        The~'scontents'~package~doesn't~work~under~LMTX.
-      }
-    % \msg_error:nn { scontents } { luametatex }
-    \tl_const:Ne \c_@@_newline_tl { \syst_obeyed_line }
-  }
-  {
-    \tl_const:Ne \c_@@_newline_tl { \iow_char:N \^^J }
-  }
-%</context>
 %</loader>
 %    \end{macrocode}
-%  Por alguna razón desconocida para mi, no funciona |\^^J| bajo LMTX, 
-%  Max me dio esto en el chat...preguntar que es lo que hace 
-%  |\syst_obeyed_line| y donde se encuentra documentado.
-%    \begin{macrocode}
-%<*loader&!context>
-\tl_const:Ne \c_@@_newline_tl { \iow_char:N \^^J }
-%</loader&!context>
-%    \end{macrocode}
-%
-% \subsubsection{Load \texttt{xparse-generic} in \hologo{plainTeX} and \hologo{ConTeXt}}\label{comp:layer}
-%
-% \begin{macro}{\l_@@_char_value_int}
-%   When loading the package outside of \LaTeX{} we can't usually use
-%   \mypkg{xparse}\cite{xparse} now \mypkg{ltcmd}\cite{latex2e} part of
-%   the \LaTeX{} kernel. However since the old \mypkg{xparse}\cite{xparse}
-%   provide \texttt{xparse-generic.tex} is loadable in any format.
-%    \begin{macrocode}
-%<*loader&!latex>
-\int_new:N  \l_@@_char_value_int
-\int_set:Nn \l_@@_char_value_int { \char_value_catcode:n { `\@ } }
-\char_set_catcode_letter:N \@
-\file_input:n { xparse-generic.tex }
-\char_set_catcode:nn { `\@ } { \l_@@_char_value_int }
-%</loader&!latex>
-%    \end{macrocode}
-% \begin{important}*
-% The file \texttt{TDS:/tex/latex/l3packages/xparse/xparse-generic.tex}
-% is always available and frozen since 2021.
-% \end{important}
-% \end{macro}
-%
-% \subsubsection{Definition of variables by format}
-%
-% We define and set variables that must be handled separately in order
-% to work properly with \hologo{plainTeX}, \hologo{ConTeXt} and \LaTeX.
-%
-% \begin{macro}{\g_@@_end_verbatimsc_tl, \c_@@_end_env_tl,
-%               \l_@@_env_name_tl,}
-%   The global token list \cs{g_@@_end_verbatimsc_tl} match when ending
-%   §verbatimsc§ (\S\ref{env:verbatimsc}).
-%    \begin{macrocode}
-%<*loader>
-\tl_new:N \g_@@_end_verbatimsc_tl
-\tl_gset_rescan:Nnn \g_@@_end_verbatimsc_tl
-  {
-    \char_set_catcode_other:N \\
-%<*latex>
-    \char_set_catcode_other:N \{
-    \char_set_catcode_other:N \}
-%</latex>
-  }
-%<latex>  { \end{verbatimsc} }
-%<plain>  { \endverbatimsc }
-%<context>  { \stopverbatimsc }
-%    \end{macrocode}
-%   The constant token list \cs{c_@@_end_env_tl} match when ending
-%   environments defined by §\newenvsc§, the token list\cs{l_@@_env_name_tl}
-%   storing the \emph{name} of environments defined by §\newenvsc§ (\S\ref{cmd:newenvsc}).
-%    \begin{macrocode}
-\tl_new:N    \l_@@_env_name_tl
-\tl_const:Ne \c_@@_end_env_tl
-  {
-    \c_backslash_str
-%<latex|plain>    end
-%<context>    stop
-%<latex>    \c_left_brace_str
-      \exp_not:N \l_@@_env_name_tl
-%<latex>    \c_right_brace_str
-  }
-%</loader>
-%    \end{macrocode}
-% \end{macro}
-%
-% \subsubsection{Loading the package core}
-%
-% Now we load the core \mypkg*{scontents} code:
-%    \begin{macrocode}
-%<*loader>
-\file_input:n { scontents-code.tex }
-%    \end{macrocode}
-% \begin{macro}{\@@_format_case:nnn}
-%   Sometimes we need to detect the format from within a macro:
-%    \begin{macrocode}
-\cs_new:Npn \@@_format_case:nnn #1 #2 #3
-%<latex>  {#1} % LaTeX
-%<plain>  {#2} % Plain/Generic
-%<context>  {#3} % ConTeXt
-%</loader>
-%    \end{macrocode}
-% \end{macro}
 %
 % \subsubsection{Checking proper loader}
 %
@@ -2599,6 +2505,7 @@ Text
 % was copied from \texttt{expl3-code.tex}.
 %    \begin{macrocode}
 %<*core>
+\def\ScontentsCoreFileDate{2025-10-04}%
 \begingroup
   \catcode32=10
   \endlinechar=32
@@ -2641,6 +2548,99 @@ Text
     \fi
   \fi
 \next
+%</core>
+%    \end{macrocode}
+%
+% \subsection{Variables and functions by format}
+%
+% We define and set variables and one function that must be handled separately in order
+% to work properly with \hologo{plainTeX}, \LaTeX{} and \hologo{ConTeXt}.
+%
+% \begin{macro}{\@@_format_case:nnn}
+%   Sometimes we need to detect the format from within a macro:
+%    \begin{macrocode}
+%<*loader>
+\cs_new:Npn \@@_format_case:nnn #1 #2 #3
+%<latex>  {#1} % LaTeX
+%<plain>  {#2} % Plain/Generic
+%<context>  {#3} % ConTeXt
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\c_@@_newline_tl}
+%   A constant token list \cs{c_@@_newline_tl} to store `§^^J§' according to the formats
+%    \begin{macrocode}
+%<*!context>
+\tl_const:Ne \c_@@_newline_tl { \iow_char:N \^^J }
+%</!context>
+%    \end{macrocode}
+% \end{macro}
+%
+%  In \hologo{ConTeXt} we must take a precaution when running under LMTX.
+%  This is an adaptation of the file \texttt{t-lua-widow-control.mkxl} part
+%  of Max Chernoff's \mypkg{lua-widow-control} package, §\contextlmtxmode§
+%  is described at \url{https://source.contextgarden.net/tex/context/base/mkxl/context.mkxl}.
+%    \begin{macrocode}
+%<*context>
+\bool_if:NTF \contextlmtxmode
+  {
+    \msg_new:nnn { scontents } { luametatex }
+      {
+        The~'scontents'~package~doesn't~work~under~LMTX.
+      }
+    % \msg_error:nn { scontents } { luametatex }
+    \tl_const:Ne \c_@@_newline_tl { \syst_obeyed_line }
+  }
+  {
+    \tl_const:Ne \c_@@_newline_tl { \iow_char:N \^^J }
+  }
+%</context>
+%    \end{macrocode}
+%  Por alguna razón desconocida para mi, no funciona |\^^J| bajo LMTX, 
+%  Max me dio esto en el chat...preguntar que es lo que hace 
+%  |\syst_obeyed_line| y donde se encuentra documentado.
+%
+% \begin{macro}{\g_@@_end_verbatimsc_tl, \c_@@_end_env_tl,
+%               \l_@@_env_name_tl,}
+%   The global token list \cs{g_@@_end_verbatimsc_tl} match when ending
+%   §verbatimsc§ (\S\ref{env:verbatimsc}).
+%    \begin{macrocode}
+\tl_new:N \g_@@_end_verbatimsc_tl
+\tl_gset_rescan:Nnn \g_@@_end_verbatimsc_tl
+  {
+    \char_set_catcode_other:N \\
+%<*latex>
+    \char_set_catcode_other:N \{
+    \char_set_catcode_other:N \}
+%</latex>
+  }
+%<latex>  { \end{verbatimsc} }
+%<plain>  { \endverbatimsc }
+%<context>  { \stopverbatimsc }
+%    \end{macrocode}
+%   The constant token list \cs{c_@@_end_env_tl} match when ending
+%   environments defined by §\newenvsc§, the token list\cs{l_@@_env_name_tl}
+%   storing the \emph{name} of environments defined by §\newenvsc§ (\S\ref{cmd:newenvsc}).
+%    \begin{macrocode}
+\tl_new:N    \l_@@_env_name_tl
+\tl_const:Ne \c_@@_end_env_tl
+  {
+    \c_backslash_str
+%<latex|plain>    end
+%<context>    stop
+%<latex>    \c_left_brace_str
+      \exp_not:N \l_@@_env_name_tl
+%<latex>    \c_right_brace_str
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsection{Loading the package core}
+%
+% Now we load the core \mypkg*{scontents} code:
+%    \begin{macrocode}
+\file_input:n { scontents-code.tex }
+%</loader>
 %    \end{macrocode}
 %
 % \subsection{Keys for the package}
@@ -2651,6 +2651,7 @@ Text
 %   passed to the package as well as by the environments and commands
 %   defined.
 %    \begin{macrocode}
+%<*core>
 \keys_define:nn { scontents }
   {
     store-env .tl_set:N         = \l_@@_name_seq_env_tl,
@@ -2886,27 +2887,10 @@ Text
 %
 % \subsection{Utility functions}
 %
-% \begin{macro}{\@@_rescan_tokens:n,\@@_rescan_tokens:V,\@@_rescan_tokens:e}
-%   The function §\tl_rescan:nn§ provided by \mypkg{expl3} doesn't fit
-%   the needs of this package because it does not allow \emph{catcode changes}
-%   inside the argument, so verbatim used inside one of \mypkg*{scontents}'s
-%   commands/environments will not work. Here we create a private copy
-%   of §\tex_scantokens:D§ which will serve our purposes. See the answer
-%   by Ulrich Diez in \href{https://tex.stackexchange.com/a/577183/7832}{How do use
-%   \{<setup>\} in \textbackslash tl_set_rescan:Nnn to replace
-%   \textbackslash scantokens?}
-%
-%    \begin{macrocode}
-%<*core>
-%%%\cs_new_protected:Npn \@@_rescan_tokens:n #1 { \tex_scantokens:D {#1} }
-\cs_new_protected:Npn \@@_rescan_tokens:n #1 { \tl_retokenize:n {#1} }
-\cs_generate_variant:Nn \@@_rescan_tokens:n { V, e }
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}[int]{\tl_if_empty:fTF,\tl_replace_all:NeV}
+% \begin{macro}[int]{\tl_if_empty:fTF,\tl_replace_all:NeV,\tl_retokenize:e}
 %   Some nonstandard kernel variant.
 %    \begin{macrocode}
+%<*core>
 \prg_generate_conditional_variant:Nnn \tl_if_empty:n { f } { p, TF }
 \cs_generate_variant:Nn \tl_replace_all:Nnn { NeV }
 \cs_generate_variant:Nn \tl_retokenize:n { e }
@@ -3512,7 +3496,7 @@ Text
 % \begin{macro}{\@@_lastfrom_seq:n,\@@_lastfrom_seq:V}
 %   The function \cs{@@_lastfrom_seq:n} save the last \mymeta{stored content}
 %   from the \emph{sequence} pass to §#1§ in \cs{g_@@_last_tl}
-%   then rescan with the function \cs{@@_rescan_tokens:V} when the keys §print-env§
+%   then rescan with the function §\tl_retokenize:V§ when the keys §print-env§
 %   or §print-cmd§ are active.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_lastfrom_seq:n #1
@@ -3521,7 +3505,7 @@ Text
       {
         \seq_item:cn { g_@@_name_#1_seq } { -1 }
       }
-    \group_insert_after:N \@@_rescan_tokens:V
+    \group_insert_after:N \tl_retokenize:V
     \group_insert_after:N \g_@@_last_stored_tl
     \group_insert_after:N \tl_gclear:N
     \group_insert_after:N \g_@@_last_stored_tl
@@ -3730,7 +3714,7 @@ Text
                           \msg_warning:nnnn { scontents } { rescanning-text }
                             {#2} { \tl_use:N \l_@@_env_name_tl }
                         }
-                      \@@_rescan_tokens:n {#2}
+                      \tl_retokenize:n {#2}
                     }
                 }
               \char_set_active_eq:NN ^^M \@@_ret:w
@@ -4314,13 +4298,13 @@ Text
   }
 %    \end{macrocode}
 %   The internal function \cs{@@_getstored:nn} will set the end of line
-%   then apply the function \cs{@@_rescan_tokens:e} on the \mymeta{stored content}
+%   then apply the function §\tl_retokenize:e§ on the \mymeta{stored content}
 %   at the \mymeta{index} given by §{#1}§ in the sequence §{#2}§ via
 %   the function \cs{@@_getfrom_seq:nn}.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_getstored:nn #1 #2
   {
-    \@@_rescan_tokens:e
+    \tl_retokenize:e
       {
         \@@_getfrom_seq:nn {#1} {#2}
       }
@@ -4425,7 +4409,7 @@ Text
 %   The \cs{@@_typestored:N} macro is defined with active carriage return
 %   (\textsc{ascii} 13) characters to \emph{mimic} an actual §verbatim§ environment
 %   \enquote{on the loose}. The contents of the environment are placed in a
-%   §verbatimsc§ environment and rescanned using \cs{@@_rescan_tokens:e}.
+%   §verbatimsc§ environment and rescanned using §\tl_retokenize:e§.
 %    \begin{macrocode}
 \group_begin:
   \char_set_catcode_active:N \^^M
@@ -4437,7 +4421,7 @@ Text
       \cs_set_eq:NN ^^M \scan_stop:
       \cs_set_eq:cN { do@noligs } \@@_do_noligs:N
       \int_set:Nn \tex_newlinechar:D { `\^^J }
-      \@@_rescan_tokens:e
+      \tl_retokenize:e
         {
           \@@_format_case:nnn
             { \exp_not:N \begin{verbatimsc} } % LaTeX

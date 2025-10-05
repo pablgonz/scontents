@@ -37,21 +37,27 @@
 %D         title=\CONTEXT\ User Module,
 %D      subtitle=Storing Contents,
 %D        author=Pablo González,
-%D          date=2025-07-30,
+%D          date=2025-10-04,
 %D     copyright=Pablo González,
 %D         email=pablgonz@educarchile.cl,
 %D       license=LPPL]
-\def\ScontentsFileDate{2025-07-30}%
+\def\ScontentsFileDate{2025-10-04}%
 \def\ScontentsFileVersion{2.5}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
 \writestatus{loading}{User Module scontents v\ScontentsFileVersion}
 \unprotect
 \input expl3-generic.tex
 \ExplSyntaxOn
-\tl_gset:ce { ver @ scontents . sty } { \ScontentsFileDate\space
+\tl_new:c { ver @ scontents . sty }
+\tl_set:ce { ver @ scontents . sty } { \ScontentsFileDate\space
   v\ScontentsFileVersion\space \ScontentsFileDescription }
-\iow_log:e { Package: ~ scontents ~ \use:c { ver @ scontents . sty } }
-\cs_if_exist:NF \int_step_tokens:nn
+\iow_log:e { Package: ~ scontents ~ \tl_use:c { ver @ scontents . sty } }
+\int_new:N  \l__scontents_char_value_int
+\int_set:Nn \l__scontents_char_value_int { \char_value_catcode:n { `\@ } }
+\char_set_catcode_letter:N \@
+\file_input:n { xparse-generic.tex }
+\char_set_catcode:nn { `\@ } { \l__scontents_char_value_int }
+\cs_if_exist:NF \tl_retokenize:n
   {
     \msg_new:nnn { scontents } { expl-too-old }
       {
@@ -63,6 +69,8 @@
     \ExplSyntaxOff
     \file_input_stop:
   }
+\cs_new:Npn \__scontents_format_case:nnn #1 #2 #3
+  {#3} % ConTeXt
 \bool_if:NTF \contextlmtxmode
   {
     \msg_new:nnn { scontents } { luametatex }
@@ -75,11 +83,6 @@
   {
     \tl_const:Ne \c__scontents_newline_tl { \iow_char:N \^^J }
   }
-\int_new:N  \l__scontents_char_value_int
-\int_set:Nn \l__scontents_char_value_int { \char_value_catcode:n { `\@ } }
-\char_set_catcode_letter:N \@
-\file_input:n { xparse-generic.tex }
-\char_set_catcode:nn { `\@ } { \l__scontents_char_value_int }
 \tl_new:N \g__scontents_end_verbatimsc_tl
 \tl_gset_rescan:Nnn \g__scontents_end_verbatimsc_tl
   {
@@ -94,8 +97,6 @@
       \exp_not:N \l__scontents_env_name_tl
   }
 \file_input:n { scontents-code.tex }
-\cs_new:Npn \__scontents_format_case:nnn #1 #2 #3
-  {#3} % ConTeXt
 \keys_define:nn { scontents }
   { verb-font .initial:n = \tt }
 \group_begin:
