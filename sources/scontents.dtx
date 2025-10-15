@@ -469,7 +469,7 @@
     keywordstyle  = [5]{\color{red}},%
     keywords      = [5]{makeatletter, makeatother, let, @undefined, def,@bsphack, @esphack,%
                     par,item,parindent,@ifpackagelater,ver@xparse.sty, MakeFile,%
-                    ver@scontents.sty,dospecials,do@noligs,char,outer,jobname,inner},%
+                    ver@scontents.sty,l__scontents_ver_str,dospecials,do@noligs,char,outer,jobname,inner},%
 % Reserved words 6 (optcolor)
     keywordstyle  = [6]{\color{optcolor}},%
     keywords      = [6]{store-cmd,store-env,print-env,print-cmd,write-env,verb-font,%
@@ -810,10 +810,10 @@
 % \subsection{The TAB character}
 % \label{sec:tabcharacter}
 %
-% Some users use horizontal \texttt{TAB} `\LKeyTab' from keyboard to indented the source
-% code of the document and depending on the text editor used, some will use real \texttt{TAB}
-% (\emph{hard tabs}), others with \emph{soft tabs} (\verb*|  | or \verb*|    |)
-% or both.
+% Some users use the horizontal \texttt{TAB} `\LKeyTab' from keyboard to 
+% indent the source code of the document and depending on the text editor 
+% used, some will use real \texttt{TAB} (\emph{hard tabs}), others with 
+% \emph{soft tabs} (\verb*|  | or \verb*|    |) or both.
 %
 % At first glance it may seem the same, but the way in which \texttt{TAB} (\emph{hard tabs})
 % are processed according to the context in which they are found within
@@ -969,7 +969,7 @@
 %
 % For the correct operation §\begin{scontents}§ and §\end{scontents}§ must
 % be in \emph{different lines}, all \mymeta{keys} must be passed separated by
-% commas and \emph{without separation} `\verb*+ +' of the start of the
+% commas and \emph{without spaces} `\verb*+ +' of the start of the
 % environment.
 % \end{function}
 %
@@ -1143,7 +1143,7 @@ This text is in the outer environment (after nested).
 % regimen and \emph{\enquote{stores}} it in the \emph{sequence} set
 % by the key \mykey{store-cmd} at the time it is executed. If its \emph{\enquote{first}}
 % delimiter is a \emph{brace} `\texttt{\textcolor{gray}{\{}}', it will be
-% assumed that the \mymarg{argument} is nested into \emph{braces}. Otherwise it
+% assumed that the \mymarg{argument} is nested within \emph{braces}. Otherwise it
 % will be assumed that \mymarg{argument} is delimited by that
 % first delimiter \mymeta[cf=MediumOrchid]{del} like command §\verb§.
 % Blank lines are preserved, escaped braces `\texttt{\textcolor{gray}{\textbackslash\{}}' and
@@ -1231,7 +1231,7 @@ This text is in the outer environment (after nested).
 %   \end{syntax}
 % \end{function}
 %
-% The command \ics*{foreachsc} goes through and executes the command §\getstored§
+% The command \ics*{foreachsc} iterates through and executes the command §\getstored§
 % on the \mymeta{stored content} in the \emph{sequence} \mymarg{seq name}. If the
 % \emph{optional argument} is not passed run §\getstored§ on all \mymeta{stored content}
 % in the \emph{sequence} \mymarg{seq name}.
@@ -1365,7 +1365,7 @@ This text is in the outer environment (after nested).
 % \mykey{width-tab} and \mykey{overwrite}.
 %
 % The use of the \mykey{write-out} key with this command follows the same
-% rules already described, the main advantage is that it allows to join
+% rules already described, the main advantage is that allows joining
 % \mymeta{stored content} \emph{without rewriting} the file over and over again,
 % by design \hologo{TeX} does not have an \emph{append mode} for writing
 % files, this effectively allows you to write chunks of code and then
@@ -1459,7 +1459,7 @@ This text is in the outer environment (after nested).
 %   \begin{syntax}
 %      \cmdexamp{countsc}{seq name}
 %   \end{syntax}
-% The command \ics*{countsc} count a number of \mymeta{stored content} in the
+% The command \ics*{countsc} counts a number of \mymeta{stored content} in the
 % \emph{sequence} \mymarg{seq name}.
 % \end{function}
 %
@@ -1472,7 +1472,7 @@ This text is in the outer environment (after nested).
 %   \begin{syntax}
 %      \cmdexamp{cleanseqsc}{seq name}
 %   \end{syntax}
-% The command \ics*{cleanseqsc} remove all \mymeta{stored content} in the
+% The command \ics*{cleanseqsc} removes all \mymeta{stored content} in the
 % \emph{sequence} \mymarg{seq name}.
 % \end{function}
 %
@@ -2167,7 +2167,7 @@ Text
 % \settowidth{\descrwidth}{\textsf{v1.0a, (ctan), 2019-07-30} }
 %
 % \begin{description}[font=\small\sffamily,wide=0pt,style=multiline,leftmargin=\descrwidth,nosep,noitemsep]
-% \item [\fileversion{} (devp), \filedate]
+% \item [\fileversion{} (ctan), \filedate]
 %    \begin{itemize}
 %        \item Replacing §\scantokens§ (primitive) with §\tl_retokenize:n§.
 %        \item Cleanup warnings and details returned by |expltools|.
@@ -2406,7 +2406,7 @@ Text
 % Now we define some common macros to hold the package date and version:
 %    \begin{macrocode}
 %<*loader>
-\def\ScontentsFileDate{2025-10-04}%
+\def\ScontentsFileDate{2025-10-15}%
 \def\ScontentsFileVersion{2.5}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
 %    \end{macrocode}
@@ -2427,10 +2427,10 @@ Text
 %
 % \subsubsection{Load \texttt{expl3-generic} and \texttt{xparse-generic} in \hologo{plainTeX} and \hologo{ConTeXt}}\label{comp:layer}
 %
-% \begin{macro}[int]{\ver@scontents.sty, l_@@_char_value_int}
+% \begin{macro}[int]{\c_@@_version_str, \l_@@_char_value_int}
 %   The \hologo{plainTeX} and \hologo{ConTeXt} loaders are similar
 %   (probably because I don't know how to make a proper \hologo{ConTeXt}
-%   module :-). We define a \LaTeX{}-style §\ver@scontents.sty§ macro with
+%   module :-). We define a string variable \cs{c_@@_version_str} with
 %   version info (just in case) and add §\ExplSyntaxOn§ to be able to load
 %   the frozen \mypkg{xparse}\cite{xparse}.
 %    \begin{macrocode}
@@ -2439,10 +2439,9 @@ Text
 %<context>\unprotect
 \input expl3-generic.tex
 \ExplSyntaxOn
-\tl_new:c { ver @ scontents . sty } 
-\tl_set:ce { ver @ scontents . sty } { \ScontentsFileDate\space
+\str_const:ce { c_@@_version_str } { \ScontentsFileDate\space
   v\ScontentsFileVersion\space \ScontentsFileDescription }
-\iow_log:e { Package: ~ scontents ~ \tl_use:c { ver @ scontents . sty } }
+\iow_log:e { Package: ~ scontents ~ \str_use:c { c_@@_version_str } }
 %    \end{macrocode}
 %   Outside of \LaTeX{} we can't usually use \mypkg{xparse}\cite{xparse} 
 %   now \mypkg{ltcmd}\cite{latex2e} part of the \LaTeX{} kernel. However 
@@ -2505,7 +2504,7 @@ Text
 % was copied from \texttt{expl3-code.tex}.
 %    \begin{macrocode}
 %<*core>
-\def\ScontentsCoreFileDate{2025-10-04}%
+\def\ScontentsCoreFileDate{2025-10-15}%
 \begingroup
   \catcode32=10
   \endlinechar=32
@@ -2597,8 +2596,9 @@ Text
 %</context>
 %    \end{macrocode}
 %  Por alguna razón desconocida para mi, no funciona |\^^J| bajo LMTX, 
-%  Max me dio esto en el chat...preguntar que es lo que hace 
+%  Max me dio esto en el chat....preguntar que es lo que hace 
 %  |\syst_obeyed_line| y donde se encuentra documentado.
+%  |https://chat.stackexchange.com/transcript/message/68011831#68011831|.
 %
 % \begin{macro}{\g_@@_end_verbatimsc_tl, \c_@@_end_env_tl,
 %               \l_@@_env_name_tl,}
@@ -4242,6 +4242,10 @@ Text
 \NewDocumentCommand \@@_Scontents_verb_arg:w { +v }
   {
     \tl_set:Nn \l_@@_Scontents_arg_tl {#1}
+    \tl_if_empty:NT \l__enumext_ref_key_arg_tl
+      {
+        \msg_warning:nne { scontents } { empty-argument-command } { \l_@@_Scontents_arg_tl }
+      }    
     \cs_if_exist:NT \obeyedline
       {
         \RenewDocumentCommand \obeyedline { } { \iow_char:N \^^M }
@@ -4643,6 +4647,8 @@ Text
   }
 \msg_new:nnn { scontents } { empty-argument-command }
   { Empty~~argument~for~'Scontents'~\msg_line_context:. }
+\msg_new:nnn { scontents } { empty-environment }
+  { environment~'#1'~empty~\msg_line_context:. }
 \msg_new:nnn { scontents } { empty-variable }
   { Variable~'#1'~empty~\msg_line_context:. }
 \msg_new:nnn { scontents } { overwrite-file }
@@ -4714,8 +4720,6 @@ Text
     does~not~have~a~key~called~'#1'.\\
     Check~that~you~have~spelled~the~key~name~correctly.
   }
-\msg_new:nnn { scontents } { empty-environment }
-  { environment~'#1'~empty~\msg_line_context:. }
 %</core>
 %    \end{macrocode}
 %

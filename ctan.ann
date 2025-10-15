@@ -1,2 +1,4 @@
-Changes in v2.5 2025-10-04:
-- Work under ConTeXt LMTX.
+Changes in v2.5 2025-10-15:
+– Replacing `\scantokens` (primitive) with `\tl_retokenize:n`.
+– Cleanup warnings and details returned by `expltools`.
+– Update minimum required of `expl3` to 2025-07-08.

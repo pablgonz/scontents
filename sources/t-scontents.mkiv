@@ -48,10 +48,9 @@
 \unprotect
 \input expl3-generic.tex
 \ExplSyntaxOn
-\tl_new:c { ver @ scontents . sty }
-\tl_set:ce { ver @ scontents . sty } { \ScontentsFileDate\space
+\str_const:ce { c__scontents_version_str } { \ScontentsFileDate\space
   v\ScontentsFileVersion\space \ScontentsFileDescription }
-\iow_log:e { Package: ~ scontents ~ \tl_use:c { ver @ scontents . sty } }
+\iow_log:e { Package: ~ scontents ~ \str_use:c { c__scontents_version_str } }
 \int_new:N  \l__scontents_char_value_int
 \int_set:Nn \l__scontents_char_value_int { \char_value_catcode:n { `\@ } }
 \char_set_catcode_letter:N \@
