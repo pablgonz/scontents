@@ -27,7 +27,7 @@
 %%                                 t-scontents.mkiv and
 %%                                 scontents-code.tex.
 %% 
-\def\ScontentsCoreFileDate{2025-10-04}%
+\def\ScontentsCoreFileDate{2025-11-01}%
 \begingroup
   \catcode32=10
   \endlinechar=32
@@ -792,6 +792,10 @@
 \NewDocumentCommand \__scontents_Scontents_verb_arg:w { +v }
   {
     \tl_set:Nn \l__scontents_Scontents_arg_tl {#1}
+    \tl_if_empty:NT \l__enumext_ref_key_arg_tl
+      {
+        \msg_warning:nne { scontents } { empty-argument-command } { \l__scontents_Scontents_arg_tl }
+      }
     \cs_if_exist:NT \obeyedline
       {
         \RenewDocumentCommand \obeyedline { } { \iow_char:N \^^M }
@@ -1078,6 +1082,8 @@
   }
 \msg_new:nnn { scontents } { empty-argument-command }
   { Empty~~argument~for~'Scontents'~\msg_line_context:. }
+\msg_new:nnn { scontents } { empty-environment }
+  { environment~'#1'~empty~\msg_line_context:. }
 \msg_new:nnn { scontents } { empty-variable }
   { Variable~'#1'~empty~\msg_line_context:. }
 \msg_new:nnn { scontents } { overwrite-file }
@@ -1149,8 +1155,6 @@
     does~not~have~a~key~called~'#1'.\\
     Check~that~you~have~spelled~the~key~name~correctly.
   }
-\msg_new:nnn { scontents } { empty-environment }
-  { environment~'#1'~empty~\msg_line_context:. }
 \file_input_stop:
 %% 
 %%
