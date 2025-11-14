@@ -1,4 +1,4 @@
-Changes in v2.5 2025-11-01:
+Changes in v2.6 2025-11-14:
 – Replacing `\scantokens` (primitive) with `\tl_retokenize:n`.
 – Cleanup warnings and details returned by `expltools`.
 – Update minimum required of `expl3` to 2025-07-08.

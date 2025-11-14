@@ -2169,6 +2169,10 @@ Text
 % \begin{description}[font=\small\sffamily,wide=0pt,style=multiline,leftmargin=\descrwidth,nosep,noitemsep]
 % \item [\fileversion{} (ctan), \filedate]
 %    \begin{itemize}
+%        \item Internal environment §verbatimsc§ update for \emph{tagged} \texttt{PDF}.
+%    \end{itemize}
+% \item [v2.5 (ctan), 2025-11-01]
+%    \begin{itemize}
 %        \item Replacing §\scantokens§ (primitive) with §\tl_retokenize:n§.
 %        \item Cleanup warnings and details returned by |expltools|.
 %        \item Update minimum required of \mypkg{expl3} to 2025-07-08.
@@ -2406,8 +2410,8 @@ Text
 % Now we define some common macros to hold the package date and version:
 %    \begin{macrocode}
 %<*loader>
-\def\ScontentsFileDate{2025-11-01}%
-\def\ScontentsFileVersion{2.5}%
+\def\ScontentsFileDate{2025-11-14}%
+\def\ScontentsFileVersion{2.6}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
 %    \end{macrocode}
 %
@@ -2504,7 +2508,7 @@ Text
 % was copied from \texttt{expl3-code.tex}.
 %    \begin{macrocode}
 %<*core>
-\def\ScontentsCoreFileDate{2025-11-01}%
+\def\ScontentsCoreFileDate{2025-11-14}%
 \begingroup
   \catcode32=10
   \endlinechar=32
@@ -4147,17 +4151,16 @@ Text
   {
     \DeclareInstance{blockenv}{verbatimsc}{display}
       {
-        env-name       = verbatimsc,
+        name           = verbatimsc,
         tag-name       = verbatim,
-        tag-class      = ,
         tagging-recipe = standard,
-        inner-level-counter = ,
-        level-increase = false,
+        increment-level = false,
+        tagging-suppress-paras = true,
         setup-code     = ,
-        block-instance = displayblock,
+        block-instance = verbatimblock ,
+        para-instance  = justify ,
         inner-instance = ,
-        final-code     = \legacyverbatimsetup \tag_tool:n {paratag=codeline},
-        para-flattened = true
+        final-code     = \legacyverbatimsetup,%\tag_tool:n {paratag=codeline},
       }
   }
 \NewDocumentEnvironment { verbatimsc } { }
