@@ -22,7 +22,7 @@
 -- General package identification
 module     = "scontents"
 pkgversion = "2.6"
-pkgdate    = "2025-11-14"
+pkgdate    = "2025-11-20"
 
 -- Configuration of files for build and installation
 maindir       = "."

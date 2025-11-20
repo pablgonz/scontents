@@ -726,8 +726,8 @@
 % \enquote{maintained}.
 %
 % The package \mypkg*{scontents} requires an updated version of \LaTeX{} to work
-% (minimum required to \LaTeX{} release 2025-06-01 and \mypkg{expl3} 2025-07-08). 
-% This package can be used with "plain", "context", "xelatex", "lualatex", "pdflatex" 
+% (minimum required to \LaTeX{} release 2025-11-01 and \mypkg{expl3} 2025-07-08).
+% This package can be used with "plain", "context", "xelatex", "lualatex", "pdflatex"
 % and the classical workflow §latex>dvips>ps2pdf§.
 %
 % \section{The \texttt{scontents} package}
@@ -810,9 +810,9 @@
 % \subsection{The TAB character}
 % \label{sec:tabcharacter}
 %
-% Some users use the horizontal \texttt{TAB} `\LKeyTab' from keyboard to 
-% indent the source code of the document and depending on the text editor 
-% used, some will use real \texttt{TAB} (\emph{hard tabs}), others with 
+% Some users use the horizontal \texttt{TAB} `\LKeyTab' from keyboard to
+% indent the source code of the document and depending on the text editor
+% used, some will use real \texttt{TAB} (\emph{hard tabs}), others with
 % \emph{soft tabs} (\verb*|  | or \verb*|    |) or both.
 %
 % At first glance it may seem the same, but the way in which \texttt{TAB} (\emph{hard tabs})
@@ -2170,6 +2170,7 @@ Text
 % \item [\fileversion{} (ctan), \filedate]
 %    \begin{itemize}
 %        \item Internal environment §verbatimsc§ update for \emph{tagged} \texttt{PDF}.
+%        \item Update requirement to \hologo{LaTeX} release 2025-11-01.
 %    \end{itemize}
 % \item [v2.5 (ctan), 2025-11-01]
 %    \begin{itemize}
@@ -2410,20 +2411,20 @@ Text
 % Now we define some common macros to hold the package date and version:
 %    \begin{macrocode}
 %<*loader>
-\def\ScontentsFileDate{2025-11-14}%
+\def\ScontentsFileDate{2025-11-20}%
 \def\ScontentsFileVersion{2.6}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
 %    \end{macrocode}
 %
 % The \LaTeX{} loader is quite simple, we just need to make sure of the
 % minimum version for correct operation and then set interfaces up.
-% The choice of \LaTeX{} release 2025-06-01 is the latest available in
+% The choice of \LaTeX{} release 2025-11-01 is the latest available in
 % \TeX{} Live 2025 and is necessary to be able to implement
 % the package's full compatibility with \emph{tagged} \texttt{PDF}.
 %
 %    \begin{macrocode}
 %<*latex>
-\NeedsTeXFormat{LaTeX2e}[2025-06-01]
+\NeedsTeXFormat{LaTeX2e}[2025-11-01]
 \ProvidesExplPackage
   {scontents} {\ScontentsFileDate} {\ScontentsFileVersion} {\ScontentsFileDescription}
 %</latex>
@@ -2447,9 +2448,9 @@ Text
   v\ScontentsFileVersion\space \ScontentsFileDescription }
 \iow_log:e { Package: ~ scontents ~ \str_use:c { c_@@_version_str } }
 %    \end{macrocode}
-%   Outside of \LaTeX{} we can't usually use \mypkg{xparse}\cite{xparse} 
-%   now \mypkg{ltcmd}\cite{latex2e} part of the \LaTeX{} kernel. However 
-%   since the old \mypkg{xparse}\cite{xparse} provide \texttt{xparse-generic.tex} 
+%   Outside of \LaTeX{} we can't usually use \mypkg{xparse}\cite{xparse}
+%   now \mypkg{ltcmd}\cite{latex2e} part of the \LaTeX{} kernel. However
+%   since the old \mypkg{xparse}\cite{xparse} provide \texttt{xparse-generic.tex}
 %   is loadable in any format.
 %    \begin{macrocode}
 \int_new:N  \l_@@_char_value_int
@@ -2463,7 +2464,7 @@ Text
 %
 % \subsubsection{Checking \texttt{expl3} version}
 %
-% For \hologo{plainTeX}, \hologo{LaTeX} and \hologo{ConTeXt} we must check 
+% For \hologo{plainTeX}, \hologo{LaTeX} and \hologo{ConTeXt} we must check
 % the minimum requirement, in this case §\tl_retokenize:n§ which
 % was added in release 2025-07-08 of \mypkg{expl3} included in
 % \hologo{TeX} Live 2025.
@@ -2508,7 +2509,7 @@ Text
 % was copied from \texttt{expl3-code.tex}.
 %    \begin{macrocode}
 %<*core>
-\def\ScontentsCoreFileDate{2025-11-14}%
+\def\ScontentsCoreFileDate{2025-11-20}%
 \begingroup
   \catcode32=10
   \endlinechar=32
@@ -2599,8 +2600,8 @@ Text
   }
 %</context>
 %    \end{macrocode}
-%  Por alguna razón desconocida para mi, no funciona |\^^J| bajo LMTX, 
-%  Max me dio esto en el chat....preguntar que es lo que hace 
+%  Por alguna razón desconocida para mi, no funciona |\^^J| bajo LMTX,
+%  Max me dio esto en el chat....preguntar que es lo que hace
 %  |\syst_obeyed_line| y donde se encuentra documentado.
 %  |https://chat.stackexchange.com/transcript/message/68011831#68011831|.
 %
@@ -4248,7 +4249,7 @@ Text
     \tl_if_empty:NT \l__enumext_ref_key_arg_tl
       {
         \msg_warning:nne { scontents } { empty-argument-command } { \l_@@_Scontents_arg_tl }
-      }    
+      }
     \cs_if_exist:NT \obeyedline
       {
         \RenewDocumentCommand \obeyedline { } { \iow_char:N \^^M }

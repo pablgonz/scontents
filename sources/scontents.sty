@@ -27,10 +27,10 @@
 %%                                 t-scontents.mkiv and
 %%                                 scontents-code.tex.
 %% 
-\def\ScontentsFileDate{2025-11-01}%
-\def\ScontentsFileVersion{2.5}%
+\def\ScontentsFileDate{2025-11-20}%
+\def\ScontentsFileVersion{2.6}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
-\NeedsTeXFormat{LaTeX2e}[2025-06-01]
+\NeedsTeXFormat{LaTeX2e}[2025-11-01]
 \ProvidesExplPackage
   {scontents} {\ScontentsFileDate} {\ScontentsFileVersion} {\ScontentsFileDescription}
 \cs_if_exist:NF \tl_retokenize:n
@@ -104,17 +104,16 @@
   {
     \DeclareInstance{blockenv}{verbatimsc}{display}
       {
-        env-name       = verbatimsc,
+        name           = verbatimsc,
         tag-name       = verbatim,
-        tag-class      = ,
         tagging-recipe = standard,
-        inner-level-counter = ,
-        level-increase = false,
+        increment-level = false,
+        tagging-suppress-paras = true,
         setup-code     = ,
-        block-instance = displayblock,
+        block-instance = verbatimblock ,
+        para-instance  = justify ,
         inner-instance = ,
-        final-code     = \legacyverbatimsetup \tag_tool:n {paratag=codeline},
-        para-flattened = true
+        final-code     = \legacyverbatimsetup,%\tag_tool:n {paratag=codeline},
       }
   }
 \NewDocumentEnvironment { verbatimsc } { }
