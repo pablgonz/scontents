@@ -11,7 +11,7 @@ or show it in <code>&langle;verbatim style&rangle;</code>. This package is fully
 
 ## Requirements
 
-The minimum required is LaTeX release 2024-11-01.
+The minimum required is LaTeX release 2026-06-01.
 
 ## Installation
 
@@ -66,4 +66,4 @@ conditions of the [LaTeX Project Public License](https://www.latex-project.org/l
 
 ## Author and copyright
 
-Copyright 2019 — 2025 by Pablo González L.
+Copyright &#169; 2019 — 2026 by Pablo González L <pablgonz@educarchile.cl>

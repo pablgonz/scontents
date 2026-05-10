@@ -101,4 +101,4 @@ conditions of the [LaTeX Project Public License](https://www.latex-project.org/l
 
 ## Copyright
 
-Copyright 2019 — 2025 by Pablo González L.
+Copyright &#169; 2029 — 2026 by Pablo González L <pablgonz@educarchile.cl>
