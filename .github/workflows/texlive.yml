@@ -1,4 +1,4 @@
-name: Automated testing (TL 2025)
+name: Automated testing (TL 2026)
 
 on:
   push:
@@ -16,7 +16,7 @@ jobs:
     strategy:
       matrix:
         version:
-          - 2025
+          - 2026
         command:
           - testpkg
           - examples
@@ -24,7 +24,7 @@ jobs:
       fail-fast: false
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Run  github-actions-tune
         uses: abbbi/github-actions-tune@v1
@@ -36,7 +36,7 @@ jobs:
           version: 1.0
 
       - name: Setup TeX Live ${{ matrix.version }}
-        uses: TeX-Live/setup-texlive-action@v3
+        uses: TeX-Live/setup-texlive-action@v4
         with:
           version: ${{ matrix.version }}
           package-file: .github/tl_packages
@@ -50,7 +50,7 @@ jobs:
 
       # If fail some test, upload test and log file
       - name: Upload error files
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: github-error-files

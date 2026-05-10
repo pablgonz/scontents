@@ -21,8 +21,8 @@
 
 -- General package identification
 module     = "scontents"
-pkgversion = "2.6"
-pkgdate    = "2025-11-20"
+pkgversion = "2.7"
+pkgdate    = "2026-06-01"
 
 -- Configuration of files for build and installation
 maindir       = "."
@@ -151,27 +151,27 @@ end
 
 function typeset(file)
   local file = jobname(sourcefiledir.."/scontents.dtx")
-  print("** Running: lualatex -draftmode -interaction=batchmode "..file..".dtx")
-  errorlevel = runcmd("lualatex -draftmode -interaction=batchmode "..file..".dtx >"..os_null, typesetdir, {"TEXINPUTS","LUAINPUTS"})
+  print("** Running: lualatex-dev -draftmode -interaction=batchmode "..file..".dtx")
+  errorlevel = runcmd("lualatex-dev -draftmode -interaction=batchmode "..file..".dtx >"..os_null, typesetdir, {"TEXINPUTS","LUAINPUTS"})
   if errorlevel ~= 0 then
     local f = assert(io.open(typesetdir.."/scontents.log", "r"))
     err_log_file = f:read("*all")
     print(err_log_file)
     cp(file..".log", typesetdir, maindir)
     cp(file..".dtx", typesetdir, maindir)
-    error("** Error!!: lualatex -draftmode -interaction=batchmode "..file..".dtx")
+    error("** Error!!: lualatex-dev -draftmode -interaction=batchmode "..file..".dtx")
     return errorlevel
   end
-  print("** Running: lualatex -draftmode -interaction=batchmode "..file..".dtx")
-  errorlevel = runcmd("lualatex -draftmode -interaction=batchmode "..file..".dtx >"..os_null, typesetdir, {"TEXINPUTS","LUAINPUTS"})
+  print("** Running: lualatex-dev -draftmode -interaction=batchmode "..file..".dtx")
+  errorlevel = runcmd("lualatex-dev -draftmode -interaction=batchmode "..file..".dtx >"..os_null, typesetdir, {"TEXINPUTS","LUAINPUTS"})
   if errorlevel ~= 0 then
-    error("** Error!!: lualatex -draftmode -interaction=batchmode "..file..".dtx")
+    error("** Error!!: lualatex-dev -draftmode -interaction=batchmode "..file..".dtx")
     return errorlevel
   end
-  print("** Running: lualatex -interaction=batchmode "..file..".dtx")
-  errorlevel = runcmd("lualatex -interaction=batchmode "..file..".dtx >"..os_null, typesetdir, {"TEXINPUTS","LUAINPUTS"})
+  print("** Running: lualatex-dev -interaction=batchmode "..file..".dtx")
+  errorlevel = runcmd("lualatex-dev -interaction=batchmode "..file..".dtx >"..os_null, typesetdir, {"TEXINPUTS","LUAINPUTS"})
   if errorlevel ~= 0 then
-    error("** Error!!: lualatex -interaction=batchmode "..file..".dtx")
+    error("** Error!!: lualatex-dev -interaction=batchmode "..file..".dtx")
     return errorlevel
   end
   return 0
@@ -284,9 +284,9 @@ if options["target"] == "testpkg" then
   end
   -- First, no check error level :(
   local file = jobname(tmpdir.."/test-pkg-current.tex")
-  print("Running first test on the file: "..file..".tex using [pdflatex]")
-  os_message("** Running: pdflatex -interaction=batchmode "..file..".tex")
-  errorlevel = run(tmpdir, "pdflatex -no-file-line-error -interaction=nonstopmode "..file..".tex")
+  print("Running first test on the file: "..file..".tex using [pdflatex-dev]")
+  os_message("** Running: pdflatex-dev -interaction=batchmode "..file..".tex")
+  errorlevel = run(tmpdir, "pdflatex-dev -no-file-line-error -interaction=nonstopmode "..file..".tex")
   -- Second
   local file = jobname(tmpdir.."/test-format.plain.tex")
   print("Running second test on the file: "..file..".tex using [pdftex]")
@@ -304,16 +304,16 @@ if options["target"] == "testpkg" then
   --Third
   local file = jobname(tmpdir.."/test-format.latex.tex")
   print("Running third test on the file: "..file..".tex using [latex>dvips>ps2pdf]")
-  errorlevel = run(tmpdir, "latex "..file..".tex > "..os_null)
+  errorlevel = run(tmpdir, "latex-dev "..file..".tex > "..os_null)
   if errorlevel ~= 0 then
     local f = assert(io.open(tmpdir.."/"..file..".log", "r"))
     err_log_file = f:read("*all")
     print(err_log_file)
     cp(file..".log", tmpdir, maindir)
-    error("** Error!!: latex "..file..".tex")
+    error("** Error!!: latex-dev "..file..".tex")
     return errorlevel
   else
-    os_message("** Running: latex "..file..".tex")
+    os_message("** Running: latex-dev "..file..".tex")
   end
   errorlevel = run(tmpdir, "dvips -q "..file..".dvi > "..os_null)
   if errorlevel ~= 0 then
@@ -353,17 +353,18 @@ if options["target"] == "testpkg" then
   end
   -- Fifth (Tagged PDF)
   local file = jobname(tmpdir.."/test-tagged-pdf.tex")
-  print("Running fifth test on the file: "..file..".tex using [lualatex]")
-  errorlevel = run(tmpdir, "lualatex "..file..".tex")
+  print("Running fifth test on the file: "..file..".tex using [lualatex-dev]")
+  errorlevel = run(tmpdir, "lualatex-dev "..file..".tex")
+  errorlevel = run(tmpdir, "lualatex-dev "..file..".tex")
   if errorlevel ~= 0 then
     local f = assert(io.open(tmpdir.."/"..file..".log", "r"))
     err_log_file = f:read("*all")
     print(err_log_file)
     cp(file..".log", tmpdir, maindir)
-    error("** Error!!: lualatex "..file..".tex")
+    error("** Error!!: lualatex-dev "..file..".tex")
     return errorlevel
   else
-    os_message("** Running: lualatex "..file..".tex")
+    os_message("** Running: lualatex-dev "..file..".tex")
   end
   -- Copy generated .pdf files to maindir
   errorlevel = cp("*.pdf", tmpdir, maindir)
@@ -387,12 +388,12 @@ if options["target"] == "examples" then
   local file = jobname(tmpdir.."/scontents.dtx")
   -- Unpack sample files
   print("Unpack samples into ./"..tmpdir.." from file "..file..".dtx")
-  errorlevel = run(tmpdir, "lualatex -draftmode -interaction=batchmode "..file..".dtx > "..os_null)
+  errorlevel = run(tmpdir, "lualatex-dev -draftmode -interaction=batchmode "..file..".dtx > "..os_null)
   if errorlevel ~= 0 then
-    error("** Error!!: lualatex -draftmode -interaction=batchmode "..file..".dtx")
+    error("** Error!!: lualatex-dev -draftmode -interaction=batchmode "..file..".dtx")
     return errorlevel
   else
-    os_message("** Running: lualatex -draftmode -interaction=batchmode "..file..".dtx")
+    os_message("** Running: lualatex-dev -draftmode -interaction=batchmode "..file..".dtx")
   end
   -- List of sample files
   samples = {

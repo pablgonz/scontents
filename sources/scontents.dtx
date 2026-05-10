@@ -1,6 +1,6 @@
 % \iffalse meta-comment
 %
-% Copyright (C) 2019-2025 by Pablo González L <pablgonz@educarchile.cl>
+% Copyright (C) 2019-2026 by Pablo González L <pablgonz@educarchile.cl>
 %
 % This work may be distributed and/or modified under the conditions of the
 % LaTeX Project Public License, either version 1.3c of this license or (at
@@ -585,7 +585,7 @@
 }
 \setfoot{\rlap{\hskip\dimexpr-\oddsidemargin-1in\relax%
          \parbox{1.93\paperwidth}{\hfil\thepage\,/\,\pageref{LastPage}}}}%
-        {\parbox{\textwidth}{\raggedright \textcolor{gray}{\raisebox{-1pt}{\textcopyright}{}2019--2025 by Pablo González L}}}%
+        {\parbox{\textwidth}{\raggedright \textcolor{gray}{\raisebox{-1pt}{\textcopyright}{}2019--2026 by Pablo González L}}}%
         {}%
 \sethead{\llap{\raisebox{0.55cm}{\parbox{\dimexpr\oddsidemargin+1in\relax}{\makebox[0pt][l]{\hspace{15pt}\pkglogo\space\fileversion}}}}}
         {\raisebox{0.55cm}{\parbox{\textwidth}{\hspace*{-\oddsidemargin}\centering\small\S.\thesection\space\sectiontitle}}}%
@@ -640,7 +640,7 @@
 %    \filedate.}\\[25pt]
 %    \author{
 %    \large
-%    \raisebox{-1pt}{\textcopyright}{}2019--2025 by Pablo González L\thanks{
+%    \raisebox{-1pt}{\textcopyright}{}2019--2026 by Pablo González L\thanks{
 %    E-mail: \textcolor{OrangeRed}{\textsf{\guillemotleft}}\email{pablgonz@educarchile.cl}\textcolor{OrangeRed}{\textsf{\guillemotright}}.
 %       }%
 %    }
@@ -710,7 +710,7 @@
 % \begin{important}*
 % Starting with version 2.3 the \mypkg*{scontents} package is fully
 % compatible with \emph{tagged} \texttt{PDF} and will have \LaTeX{}
-% release 2025-06-01 (\TeX{} Live 2025) and \mypkg{expl3} 2025-07-08 as a minimum requirement.
+% release 2026-06-01 (\TeX{} Live 2026) and update \mypkg{expl3} release as a minimum requirement.
 % \end{important}
 %
 % \thispagestyle{plain}
@@ -726,7 +726,7 @@
 % \enquote{maintained}.
 %
 % The package \mypkg*{scontents} requires an updated version of \LaTeX{} to work
-% (minimum required to \LaTeX{} release 2025-11-01 and \mypkg{expl3} 2025-07-08).
+% (minimum required to \LaTeX{} release 2026-06-01 and \mypkg{expl3} update).
 % This package can be used with "plain", "context", "xelatex", "lualatex", "pdflatex"
 % and the classical workflow §latex>dvips>ps2pdf§.
 %
@@ -1561,7 +1561,7 @@ $ pdfdetach -saveall scontents.pdf
 %<*example>
 % \fi
 \begin{scontents}[write-out=scexamp1.ltx]
-% arara: pdflatex
+% arara: pdflatex: { branch: developer}
 % arara: clean: { extensions: [ aux, log] }
 \documentclass{article}
 \usepackage[store-cmd=solutions]{scontents}
@@ -1600,7 +1600,7 @@ Second exercise
 %<*example>
 % \fi
 \begin{scontents}[write-out=scexamp2.ltx]
-% arara: pdflatex
+% arara: pdflatex: { branch: developer}
 % arara: clean: { extensions: [ aux, log] }
 \documentclass{article}
 \usepackage[store-env=defexercise,store-cmd=defexercise]{scontents}
@@ -1645,7 +1645,7 @@ seventies that the \NSA\ has known that for 40 years.\par
 %<*example>
 % \fi
 \begin{scontents}[write-out=scexamp3.ltx]
-% arara: pdflatex
+% arara: pdflatex: { branch: developer}
 % arara: clean: { extensions: [ aux, log] }
 \documentclass{article}
 \usepackage[store-cmd=tikz]{scontents}
@@ -1707,7 +1707,7 @@ This is a \verb*|fake poor man's buffer :)|.
 %<*example>
 % \fi
 \begin{scontents}[write-out=scexamp4.ltx]
-% arara: pdflatex
+% arara: pdflatex: { branch: developer}
 % arara: clean: { extensions: [ aux, log] }
 \documentclass{article}
 \usepackage{scontents}
@@ -1750,7 +1750,7 @@ This is stored in other: \getstored{other}
 %<*example>
 % \fi
 \begin{scontents}[write-out=scexamp5.ltx]
-% arara: pdflatex
+% arara: pdflatex: { branch: developer}
 % arara: clean: { extensions: [ aux, log] }
 \documentclass{article}
 \usepackage{scontents}
@@ -1788,7 +1788,7 @@ This is from the verbatim environment:
 %<*example>
 % \fi
 \begin{scontents}[write-out=scexamp6.ltx]
-% arara: pdflatex
+% arara: pdflatex: { branch: developer}
 % arara: clean: { extensions: [ aux, log] }
 \documentclass[10pt]{article}
 \usepackage{scontents}
@@ -1821,7 +1821,7 @@ Something in the whole course.
 %<*example>
 % \fi
 \begin{scontents}[write-out=scexamp7.ltx]
-% arara: pdflatex
+% arara: pdflatex: { branch: developer}
 % arara: clean: { extensions: [ aux, log] }
 \documentclass{article}
 \usepackage{scontents}
@@ -1887,7 +1887,7 @@ Prove new \Verb*{ fancyvrb with braces } and environment \verb+Verbatim*+
 %<*example>
 % \fi
 \begin{scontents}[write-out=scexamp8.ltx]
-% arara: pdflatex
+% arara: pdflatex: { branch: developer}
 % arara: clean: { extensions: [ aux, log] }
 \documentclass{article}
 \usepackage{scontents}
@@ -1953,8 +1953,8 @@ and more.+
 %<*example>
 % \fi
 \begin{scontents}[write-out=scexamp9.ltx]
-% arara: xelatex: {shell: true, options: [-8bit]}
-% arara: xelatex: {shell: true, options: [-8bit]}
+% arara: xelatex: { branch: developer, shell: true, options: [-8bit]}
+% arara: xelatex: { branch: developer, shell: true, options: [-8bit]}
 % arara: clean: { extensions: [ aux, log] }
 \documentclass{article}
 \usepackage{scontents}
@@ -2014,7 +2014,7 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %<*example>
 % \fi
 \begin{scontents}[write-out=scexamp10.ltx]
-% arara: pdflatex
+% arara: pdflatex: { branch: developer}
 % arara: clean: { extensions: [ aux, log] }
 \documentclass{article}
 \usepackage{scontents}
@@ -2099,8 +2099,8 @@ Read \Verb{\jobname.tsc} (shows TABs as red arrows):
 %<*example>
 % \fi
 \begin{scontents}[write-out=scexamp11.ltx]
-% arara: lualatex
-% arara: lualatex
+% arara: lualatex: { branch: developer}
+% arara: lualatex: { branch: developer}
 % arara: clean: { extensions: [ aux, log] }
 \DocumentMetadata{tagging=on, lang=en-US, pdfversion=2.0, pdfstandard=ua-2}
 \documentclass{article}
@@ -2169,6 +2169,11 @@ Text
 %
 % \begin{description}[font=\small\sffamily,wide=0pt,style=multiline,leftmargin=\descrwidth,nosep,noitemsep]
 % \item [\fileversion{} (ctan), \filedate]
+%    \begin{itemize}
+%        \item Internal environment §verbatimsc§ update for \emph{tagged} \texttt{PDF}.
+%        \item Update requirement to \hologo{LaTeX} release 2026-06-01.
+%    \end{itemize}
+% \item [v2.6 (ctan), 2025-11-20]
 %    \begin{itemize}
 %        \item Internal environment §verbatimsc§ update for \emph{tagged} \texttt{PDF}.
 %        \item Update requirement to \hologo{LaTeX} release 2025-11-01.
@@ -2298,7 +2303,7 @@ Text
 % \begin{thebibliography}{10}
 % \bibitem{expl3} The \hologo{LaTeX} Project. \enquote{The \textsf{expl3}
 % package}. Available from
-% \textsc{ctan}, \url{https://www.ctan.org/pkg/expl3}, 2025.
+% \textsc{ctan}, \url{https://www.ctan.org/pkg/expl3}, 2026.
 %
 % \bibitem{filecontentsdef} \textsc{Burnol, Jean François}. \enquote{The
 % \textsf{filecontentsdef} package}. Available from
@@ -2314,43 +2319,43 @@ Text
 %
 % \bibitem{fancyvrb} \textsc{Van Zandt, Timothy}. \enquote{The \textsf{fancyvrb}
 % package - Fancy Verbatims in \hologo{LaTeX}}. Available from
-% \textsc{ctan}, \url{https://www.ctan.org/pkg/fancyvrb}, 2024.
+% \textsc{ctan}, \url{https://www.ctan.org/pkg/fancyvrb}, 2026.
 %
 % \bibitem{listings} \textsc{Hoffmann, Jobst}. \enquote{The \textsf{listings}
 % package}. Available from
-% \textsc{ctan}, \url{https://www.ctan.org/pkg/listings}, 2024.
+% \textsc{ctan}, \url{https://www.ctan.org/pkg/listings}, 2025.
 %
 % \bibitem{fvextra} \textsc{Poore, Geoffrey M}. \enquote{The \textsf{fvextra}
 % package - Highlighted source code in \hologo{LaTeX}}. Available from
-% \textsc{ctan}, \url{https://www.ctan.org/pkg/minted}, 2025.
+% \textsc{ctan}, \url{https://www.ctan.org/pkg/minted}, 2026.
 %
 % \bibitem{minted} \textsc{Poore, Geoffrey M}. \enquote{The \textsf{minted}
 % package - Highlighted source code in \hologo{LaTeX}}. Available from
-% \textsc{ctan}, \url{https://www.ctan.org/pkg/minted}, 2025.
+% \textsc{ctan}, \url{https://www.ctan.org/pkg/minted}, 2026.
 %
 % \bibitem{inter3} The \hologo{LaTeX} Project. \enquote{The \hologo{LaTeX}3
 % Interfaces}. Available from
-% \textsc{ctan}, \url{https://www.ctan.org/pkg/l3kernel}, 2025.
+% \textsc{ctan}, \url{https://www.ctan.org/pkg/l3kernel}, 2026.
 %
 % \bibitem{latex2e} The \hologo{LaTeX} Project. \enquote{The \hologo{LaTeX2e}
 % sources}. Available from
-% \textsc{ctan}, \url{https://ctan.org/tex-archive/macros/latex/base}, 2025.
+% \textsc{ctan}, \url{https://ctan.org/tex-archive/macros/latex/base}, 2026.
 %
 % \bibitem{userguide} The \hologo{LaTeX} Project. \enquote{\hologo{LaTeX} for authors
 % current version}. Available from
-% \textsc{ctan}, \url{https://ctan.org/pkg/latex-base}, 2025.
+% \textsc{ctan}, \url{https://ctan.org/pkg/latex-base}, 2026.
 %
 % \bibitem{tagpdf} \textsc{Fischer, Ulrike}. \enquote{\textsf{tagpdf} – \hologo{LaTeX}
 % kernel code for PDF tagging}. Available from
-% \textsc{ctan}, \url{https://www.ctan.org/pkg/tagpdf}, 2025.
+% \textsc{ctan}, \url{https://www.ctan.org/pkg/tagpdf}, 2026.
 %
 % \bibitem{latexlab} The \hologo{LaTeX} Project. \enquote{\textsf{latex-lab} – \hologo{LaTeX}
 % laboratory}. Available from
-% \textsc{ctan}, \url{https://www.ctan.org/pkg/latex-lab}, 2025.
+% \textsc{ctan}, \url{https://www.ctan.org/pkg/latex-lab}, 2026.
 %
 % \bibitem{tcolorbox} \textsc{F. Sturm, Thomas}. \enquote{\textsf{tcolorbox} – Coloured boxes,
 % for \hologo{LaTeX} examples and theorems, etc}. Available from
-% \textsc{ctan}, \url{https://ctan.org/pkg/tcolorbox}, 2025.
+% \textsc{ctan}, \url{https://ctan.org/pkg/tcolorbox}, 2026.
 %
 % \bibitem{verbatim} The \hologo{LaTeX} Project. \enquote{\textsf{verbatim} – Reimplementation
 % of and extensions to \hologo{LaTeX} \textsf{verbatim}}. Available from
@@ -2412,20 +2417,20 @@ Text
 % Now we define some common macros to hold the package date and version:
 %    \begin{macrocode}
 %<*loader>
-\def\ScontentsFileDate{2025-11-20}%
-\def\ScontentsFileVersion{2.6}%
+\def\ScontentsFileDate{2026-06-01}%
+\def\ScontentsFileVersion{2.7}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
 %    \end{macrocode}
 %
 % The \LaTeX{} loader is quite simple, we just need to make sure of the
 % minimum version for correct operation and then set interfaces up.
-% The choice of \LaTeX{} release 2025-11-01 is the latest available in
-% \TeX{} Live 2025 and is necessary to be able to implement
+% The choice of \LaTeX{} release 2026-06-01 is the latest available in
+% \TeX{} Live 2026 and is necessary to be able to implement
 % the package's full compatibility with \emph{tagged} \texttt{PDF}.
 %
 %    \begin{macrocode}
 %<*latex>
-\NeedsTeXFormat{LaTeX2e}[2025-11-01]
+\NeedsTeXFormat{LaTeX2e}[2026-06-01]
 \ProvidesExplPackage
   {scontents} {\ScontentsFileDate} {\ScontentsFileVersion} {\ScontentsFileDescription}
 %</latex>
@@ -2510,7 +2515,7 @@ Text
 % was copied from \texttt{expl3-code.tex}.
 %    \begin{macrocode}
 %<*core>
-\def\ScontentsCoreFileDate{2025-11-20}%
+\def\ScontentsCoreFileDate{2026-06-01}%
 \begingroup
   \catcode32=10
   \endlinechar=32
@@ -2593,17 +2598,17 @@ Text
       {
         The~'scontents'~package~doesn't~work~under~LMTX.
       }
-    % \msg_error:nn { scontents } { luametatex }
-    \tl_const:Ne \c_@@_newline_tl { \syst_obeyed_line }
+    \msg_error:nn { scontents } { luametatex }
+    % \tl_const:Ne \c_@@_newline_tl { \syst_obeyed_line }
   }
   {
     \tl_const:Ne \c_@@_newline_tl { \iow_char:N \^^J }
   }
 %</context>
 %    \end{macrocode}
-%  Por alguna razón desconocida para mi, no funciona |\^^J| bajo LMTX,
-%  Max me dio esto en el chat....preguntar que es lo que hace
-%  |\syst_obeyed_line| y donde se encuentra documentado.
+%  For some reason unknown to me, it doesn't work under LMTX,
+%  Max gave me this in the chat....ask what it does
+%  |\syst_obeyed_line| and where it's documented.
 %  |https://chat.stackexchange.com/transcript/message/68011831#68011831|.
 %
 % \begin{macro}{\g_@@_end_verbatimsc_tl, \c_@@_end_env_tl,
@@ -4151,18 +4156,15 @@ Text
 %<*latex>
 \cs_new_protected:Nn \@@_verbatimsc_instance:
   {
-    \DeclareInstance{blockenv}{verbatimsc}{display}
+    \DeclareInstance{blockenv}{verbatimsc}{std}
       {
         name           = verbatimsc,
-        tag-name       = verbatim,
+        tag-name       = \UseStructureName{block/verbatim},
         tagging-recipe = standard,
-        increment-level = false,
         tagging-suppress-paras = true,
-        setup-code     = ,
-        block-instance = verbatimblock ,
+        block-instance = verbatim,
         para-instance  = justify ,
-        inner-instance = ,
-        final-code     = \legacyverbatimsetup,%\tag_tool:n {paratag=codeline},
+        final-code     = \legacyverbatimsetup{invisible},
       }
   }
 \NewDocumentEnvironment { verbatimsc } { }
@@ -4187,7 +4189,7 @@ Text
   {
     \IfDocumentMetadataTF
       {
-        \endblockenv
+        \BlockEnvEnd
       }
       { \endverbatim }
   }
