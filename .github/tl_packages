@@ -1,11 +1,18 @@
 # Required to build
 l3build
+latex-dev
+latex-bin-dev
 latex-bin
 latex-tools-dev
 latex-base-dev
 latex-lab-dev
 l3experimental
-pdfmanagement-testphase
+xelatex-dev
+minted
+collection-context
+# collection-latexextra
+latex-devel
+pdfmanagement
 latex-lab
 tagpdf
 luamml
@@ -107,7 +114,6 @@ lualatex-math
 mflogo
 mflogo-font
 microtype
-minted
 pdfescape
 pdftexcmds
 pgf
