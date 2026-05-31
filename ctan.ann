@@ -1,3 +1,5 @@
 Changes in v2.7 2026-06-01:
 – Internal environment `verbatimsc` update for _tagged_ PDF.
-– Update requirement to LaTeX release 2025-11-01.
+– Update requirement to LaTeX release 2026-06-01.
+– Add `debug-var` key for writing variables to the `.log` file.
+– Update and improvements documentation and examples.
