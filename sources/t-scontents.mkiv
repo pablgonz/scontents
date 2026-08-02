@@ -6,7 +6,7 @@
 %%
 %% scontents.dtx  (with options: `loader,context')
 %% 
-%% Copyright (C) 2019-2025 by Pablo González L <pablgonz@educarchile.cl>
+%% Copyright (C) 2019-2026 by Pablo González L <pablgonz@educarchile.cl>
 %% 
 %% This work may be distributed and/or modified under the conditions of the
 %% LaTeX Project Public License, either version 1.3c of this license or (at
@@ -33,16 +33,16 @@
 %% scontents.dtx  (with options: `loader,context')
 %D  \module
 %D    [     file=t-scontents,
-%D       version=2.6,
+%D       version=2.8,
 %D         title=\CONTEXT\ User Module,
 %D      subtitle=Storing Contents,
 %D        author=Pablo González,
-%D          date=2025-11-20,
+%D          date=2026-11-01,
 %D     copyright=Pablo González,
 %D         email=pablgonz@educarchile.cl,
 %D       license=LPPL]
-\def\ScontentsFileDate{2025-11-20}%
-\def\ScontentsFileVersion{2.6}%
+\def\ScontentsFileDate{2026-11-01}%
+\def\ScontentsFileVersion{2.8}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
 \writestatus{loading}{User Module scontents v\ScontentsFileVersion}
 \unprotect
@@ -76,8 +76,8 @@
       {
         The~'scontents'~package~doesn't~work~under~LMTX.
       }
-    % \msg_error:nn { scontents } { luametatex }
-    \tl_const:Ne \c__scontents_newline_tl { \syst_obeyed_line }
+    \msg_error:nn { scontents } { luametatex }
+    % \tl_const:Ne \c__scontents_newline_tl { \syst_obeyed_line }
   }
   {
     \tl_const:Ne \c__scontents_newline_tl { \iow_char:N \^^J }

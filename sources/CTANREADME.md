@@ -1,6 +1,6 @@
 ## scontents — Stores LaTeX contents in memory or files
 
-Release v2.7 \[2026-06-01\]
+Release v2.8 \[2026-11-01\]
 
 ## Description
 
