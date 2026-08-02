@@ -1,6 +1,5 @@
 # Required to build
 l3build
-latex-dev
 latex-bin-dev
 latex-bin
 latex-tools-dev
@@ -11,7 +10,6 @@ xelatex-dev
 minted
 collection-context
 # collection-latexextra
-latex-devel
 pdfmanagement
 latex-lab
 tagpdf
