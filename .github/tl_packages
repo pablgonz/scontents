@@ -5,6 +5,8 @@ latex-bin
 latex-tools-dev
 latex-base-dev
 latex-lab-dev
+l3kernel
+l3packages
 l3experimental
 xelatex-dev
 minted
@@ -95,9 +97,6 @@ intcalc
 kvdefinekeys
 kvoptions
 kvsetkeys
-l3backend
-l3kernel
-l3packages
 lastpage
 letltxmacro
 libertinus-fonts
