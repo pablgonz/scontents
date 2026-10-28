@@ -1,0 +1,151 @@
+% test-010.lvt -- estructura etiquetada del contenido de scontents
+%
+% Pablo González L. <pablgonz@yahoo.com>
+%
+% Regresion:  l3build save test-010
+%             l3build check test-010
+%
+% Test de regresion del etiquetado (tagged PDF): el log guarda el arbol de
+% etiquetas (\SHOWPDFTAGS) del contenido guardado e impreso con
+% \getstored, \foreachsc, print-env, print-cmd y \newenvsc, y del entorno
+% verbatimsc que usan \typestored y \mergesc. Se basa en
+% sources/test-pkg/test-tagged-pdf.tex; los casos sin etiquetado estan en
+% test-001, test-002 y test-003.
+%
+% Hecho con cariño por Pablo González L.
+\input{regression-test}
+
+\DocumentMetadata
+  {
+    lang=en-US,
+    pdfversion=2.0,
+    pdfstandard=ua-2,
+    tagging=on,
+  }
+\documentclass{article}
+\ExplSyntaxOn
+\debug_on:n { all }
+\ExplSyntaxOff
+\usepackage{scontents}
+\usepackage{hyperref}
+\hypersetup
+  {
+    pdfdisplaydoctitle = true,
+    pdftitle           = {test-010: tagged contents of scontents},
+  }
+\setlength{\parindent}{0pt}
+\begin{document}
+
+\section*{A. Store and get}
+
+% Estructura: lo guardado no deja nada en el arbol.
+\Scontents[store-cmd=exercise]{Prove that there are infinitely many primes.\par}
+\Scontents*[store-cmd=exercise]+Refute it in less than 140 \verb|characters|.+
+\begin{scontents}[store-env=exercise]
+\def\NSA{NSA}%
+Prove that factorization is easy and that the \NSA\ has known it for
+40 years.\par
+\end{scontents}
+
+% Estructura: un P por cada contenido recuperado.
+1. Stored contents with \texttt{\textbackslash getstored}.
+
+\getstored[1]{exercise}
+
+\getstored[2]{exercise}
+
+% Estructura: L > LI por cada contenido.
+2. All stored contents with \texttt{\textbackslash foreachsc}.
+
+\begin{itemize}
+\foreachsc[before={\item }]{exercise}
+\end{itemize}
+
+% Estructura: un bloque quote por cada contenido. Los contenidos terminan
+% en \par: con un comando de texto como \emph{...\par} el etiquetado deja
+% el texto de la seccion siguiente fuera de su encabezado.
+3. Stored contents with \texttt{sep} and \texttt{wrapper}.
+
+\foreachsc[sep={\par}, wrapper={\begin{quote}#1\end{quote}}]{exercise}
+
+\section*{B. Print while storing}
+
+% Estructura: P con el texto impreso por el entorno.
+4. Environment with \texttt{print-env}.
+
+\begin{scontents}[print-env=true]
+First code \verb|\foo|
+
+And more code \verb|\bar|.
+\end{scontents}
+
+% Estructura: nada, el entorno no imprime.
+5. Environment without \texttt{print-env}.
+
+\begin{scontents}[print-env=false]
+    Second code \verb|\foo|
+
+And more code \verb|\bar|.
+\end{scontents}
+
+Text after the environment.
+
+% Estructura: P con el texto impreso por el comando.
+6. Command with \texttt{print-cmd}.
+
+\Scontents*[print-cmd]{code \verb|\baz|}
+
+% Estructura: entorno de \newenvsc que imprime.
+7. Environment defined with \texttt{\textbackslash newenvsc}.
+
+\newenvsc{printsc}[store-env=printsc, print-env=true]
+\begin{printsc}
+Text printed by an environment of \verb|\newenvsc|.
+\end{printsc}
+
+\section*{C. Verbatim}
+
+% Estructura: bloque verbatim (verbatimsc).
+8. One stored content with \texttt{\textbackslash typestored}.
+
+\typestored[1]{contents}
+
+% Estructura: un solo bloque verbatim con varias lineas.
+9. All stored contents with \texttt{\textbackslash mergesc[typestored]}.
+
+\mergesc[typestored]{ {contents}[1-end] }
+
+% Estructura: texto del significado en un P.
+10. All stored contents with \texttt{\textbackslash mergesc[meaningsc]}.
+
+\mergesc[meaningsc]{ {contents}[1-end] }
+
+% Estructura: el contenido guardado con un entorno verbatim.
+11. Stored content with a verbatim environment.
+
+\begin{scontents}[store-env=verb]
+Before the verbatim environment.
+\begin{verbatim}
+  \raw{text} & % #
+\end{verbatim}
+After the verbatim environment.
+\end{scontents}
+
+\getstored{verb}
+
+% Estructura: verbatimsc dentro de una lista.
+12. \texttt{\textbackslash typestored} inside a list.
+
+\begin{itemize}
+  \item First item.
+    \typestored{verb}
+  \item Second item.
+\end{itemize}
+
+\START
+
+\SHOWPDFTAGS
+
+\OMIT
+
+\end{document}

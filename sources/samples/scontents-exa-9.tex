@@ -1,0 +1,45 @@
+% arara: lualatex: { branch: developer }
+% arara: clean: { extensions: [ aux, log ] }
+\documentclass{article}
+\usepackage{scontents}
+\ExplSyntaxOn
+\cs_undefine:N \verbatimsc
+\cs_undefine:N \endverbatimsc
+\ExplSyntaxOff
+\usepackage{minted}
+\newminted{tex}{linenos}
+\newenvironment{verbatimsc}{\VerbatimEnvironment\begin{texcode}}{\end{texcode}}
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\begin{document}
+\section{Test \texttt{\textbackslash begin\{scontents\}} with \texttt{minted}}
+Test \verb+{scontents}+ \par
+
+\begin{scontents}[overwrite,write-env=\jobname.tsc,force-eol=true]
+Using \verb+scontents+ env no \verb+[key=val]+, save in seq \verb+contents+
+with index 1.\par
+
+Prove new \Verb*{ new fvextra with braces } and environment \verb+Verbatim*+
+\begin{Verbatim}[obeytabs, showtabs, tab=\rightarrowfill, tabcolor=red]
+No tab
+	One real tab
+		Two real Tab plus 	one tab
+\end{Verbatim}
+\end{scontents}
+
+\section{See \Verb{\jobname.tsc}}
+Read \Verb{\jobname.tsc} (shows TABs as red arrows):
+\VerbatimInput[obeytabs, showtabs, tab=\rightarrowfill, tabcolor=red]{\jobname.tsc}
+
+\section{Test \texttt{\textbackslash Scontents} with \texttt{minted}}
+
+\Scontents{ We have coded \par this in \LaTeX: $E=mc^2$.}
+
+\section{Test \texttt{\textbackslash getstored}}
+\getstored[1]{contents}\par
+\getstored{contents}
+
+\section{Test \texttt{\textbackslash typestored}}
+\typestored[1]{contents}
+\typestored[2]{contents}
+\end{document}

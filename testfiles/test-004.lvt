@@ -1,0 +1,70 @@
+% test-004.lvt -- claves de scontents pasadas como opciones del paquete
+%
+% Pablo González L. <pablgonz@yahoo.com>
+%
+% Regresion:  l3build save test-004
+%             l3build check test-004
+%
+% Test de regresion de las claves pasadas en \usepackage: store-all,
+% print-all, force-eol y width-tab. Las mismas claves con \setupsc estan en
+% test-001 y test-002.
+%
+% Hecho con cariño por Pablo González L.
+\input{regression-test}
+
+\documentclass{article}
+\ExplSyntaxOn
+\debug_on:n { all }
+\ExplSyntaxOff
+\usepackage[store-all=opt, print-all, force-eol, width-tab=4]{scontents}
+\begin{document}
+
+% \BOXSTART y \BOXEND componen lo impreso en una caja y la muestran en el
+% log.
+\newcommand\BOXSTART{\setbox0=\vbox\bgroup\hsize=250pt \parindent=0pt\relax}
+\newcommand\BOXEND{\par\egroup\showbox0 }
+\newcommand\COUNT[1]{\TYPE{countsc{#1}=\countsc{#1}}}
+
+\START
+
+% 1. store-all y print-all: entornos y comandos se guardan en opt y se
+% imprimen.
+\BEGINTEST{[1] store-all=opt y print-all}
+\BOXSTART
+\begin{scontents}
+Entorno con las opciones del paquete.
+\end{scontents}
+\Scontents{Comando con las opciones del paquete.}
+\BOXEND
+\COUNT{opt}
+\TYPE{contents existe: \ifcsname g__scontents_name_contents_seq\endcsname si\else no\fi}
+\ENDTEST
+
+% 2. force-eol: el final de linea queda como espacio.
+\BEGINTEST{[2] force-eol}
+\BOXSTART
+X\getstored[1]{opt}Y\par
+X\getstored[2]{opt}Y
+\BOXEND
+\ENDTEST
+
+% 3. width-tab=4.
+\BEGINTEST{[3] width-tab=4}
+\Scontents*[print-cmd=false]|A	B|
+\BOXSTART
+\typestored[-1]{opt}
+\BOXEND
+\ENDTEST
+
+% 4. Las claves de la opcion se pueden cambiar con \setupsc.
+\BEGINTEST{[4] setupsc despues de las opciones}
+\setupsc{store-all=otra, print-all=false, width-tab=1}
+\Scontents*|A	B|
+\BOXSTART
+\typestored{otra}
+\BOXEND
+\COUNT{otra}
+\ENDTEST
+
+\OMIT
+\end{document}

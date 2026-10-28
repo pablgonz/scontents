@@ -1,22 +1,34 @@
 --[[
-   Configuration script for l3build from the scontents package
-   At the moment the possible options that can be passed on to
-   l3build are:
+   Configuration script for l3build from the scontents package.
+   At the moment the possible targets that can be passed are:
    * tag        : Update the version and date
    * doc        : Generate the documentation [-q]
    * unpack     : Unpacks the source files [-q]
    * install    : Install the package locally, you can use
                   it in conjunction with [--full] [--dry-run]
    * uninstall  : Uninstall the package locally
-   * clean      : Clean the directory tree and repo
-   * ctan       : Generate the compressed package (.zip)
+   * clean      : Clean the directory tree and the files ignored by git
+                  (only lists them with --dry-run; never removes files
+                  that git does not ignore)
+   * ctan       : Generate the compressed package (.zip); it first checks that
+                  the PDFs of /test-pkg and /samples are up to date
    * upload     : Upload the package to ctan, you must add
                   -F ctan.ann in conjunction with [--debug]
-   * testpkg    : Compile the tests included in the test-pkg/
-   * tagged     : Check version and date in files
-   * examples   : Compile the example files included in .dtx file
+   * tagcheck   : Check version and date in files
+   * check      : Run the regression tests in /testfiles (LuaTeX, latex-dev,
+                  one run); l3build check test-001 runs only that test
+   * save       : Save the reference (.tlg) of a test after reviewing its
+                  output: l3build save test-001
+   * testSE     : Compile and validate the files in /test-pkg with plain TeX,
+                  LaTeX (latex>dvips>ps2pdf, pdflatex and tagged lualatex)
+                  and ConTeXt, PDFs copied there
+   * example    : Compile (one run) the files in /samples, PDFs copied there
+   The targets testSE and example accept file names (with or without .tex)
+   to run only those files: l3build example scontents-exa-2
    * release    : It performs the checks before generating a public
-                  release (on git and ctan).
+                  release (on git and ctan), commits the PDFs that
+                  example, testSE and ctan regenerate and creates the
+                  git tag.
 --]]
 
 -- General package identification
@@ -28,7 +40,6 @@ pkgdate    = "2026-11-01"
 maindir       = "."
 sourcefiledir = "./sources"
 textfiledir   = "./sources"
---textfiles     = {textfiledir.."/CTANREADME.md"}
 sourcefiles   = {"**/*.dtx", "**/*.ins"}
 installfiles  = {"**/*.sty", "**/*.tex", "**/*.mkiv"}
 tdslocations  = {
@@ -42,65 +53,78 @@ tdslocations  = {
   "source/latex/scontents/scontents.ins"
 }
 
--- Unpacking files from .ins file
+-- Unpacking files from scontents.ins
 unpackfiles = { "scontents.ins" }
 unpackopts  = "--interaction=batchmode"
 unpackexe   = "luatex"
 
--- Generating documentation
-typesetfiles  = {"scontents.dtx"}
+-- Regression tests (l3build check / save): the .lvt files in ./testfiles.
+-- The package needs the development format, so the tests run with
+-- latex-dev. Tests without tagging (test-001...) compare the contents
+-- written to the log and the boxes with what is printed; tests with tagging
+-- (test-010...) compare the tag tree (\SHOWPDFTAGS); test-100 has the
+-- messages. One run is enough: no test uses references.
+testfiledir  = "./testfiles"
+checkengines = { "luatex" }
+stdengine    = "luatex"
+checkformat  = "latex-dev"
+checkruns    = 1
 
--- Update package date and version
-tagfiles = {"sources/scontents.ins", "sources/scontents.dtx", "sources/CTANREADME.md", "ctan.ann"}
-local mydate = os.date("!%Y-%m-%d")
+-- test-003 and test-100 write files with the write-* keys; they are removed
+-- before each test so that the messages (writing / not writing /
+-- overwriting) are always the same.
+dynamicfiles = { "test-*-*.tsc" }
 
-function update_tag(file,content,tagname,tagdate)
-  if not tagname and tagdate == mydate or "" then
-    tagname = pkgversion
-    tagdate = pkgdate
-    print("** "..file.." have been tagged with the version and date of build.lua")
-  else
-    local v_maj, v_min = string.match(tagname, "^v?(%d+)(%S*)$")
-    if v_maj == "" or not v_min then
-      print("Error!!: Invalid tag '"..tagname.."', none of the files have been tagged")
-      os.exit(0)
-    else
-      tagname = string.format("%i%s", v_maj, v_min)
-      tagdate = mydate
+-- The structure elements of the tagged tests carry sequential ids
+-- (ID.00012, ...): one node more or less would shift all the following ones
+-- and flood the diff, so the ids are not compared.
+function normalize_log_hook(line)
+  return (string.gsub(line, 'id="ID%.%d+"', 'id="ID.NN"'))
+end
+
+-- Typesetting scontents documentation step by step :)
+-- The documentation uses mylhmc.lua and mylhmc.sty from sources/ (they are
+-- not part of the package and are not distributed) and the examples of
+-- sources/samples and sources/test-pkg are copied as they are, nothing is
+-- checked here.
+function docinit_hook()
+  local errorlevel = (cp("*.tex", unpackdir, typesetdir) + cp("*.sty", unpackdir, typesetdir))
+  if errorlevel ~= 0 then
+    error("** Error!!: Can't copy .tex and .sty files from "..unpackdir.." to "..typesetdir)
+  end
+  errorlevel = (cp("mylhmc.lua", sourcefiledir, typesetdir) + cp("mylhmc.sty", sourcefiledir, typesetdir))
+  if errorlevel ~= 0 then
+    error("** Error!!: Can't copy mylhmc.lua and mylhmc.sty files from "..sourcefiledir.." to "..typesetdir)
+  end
+  local smpdir = sourcefiledir.."/samples"
+  if direxists(smpdir) then
+    cp("*.tex", smpdir, typesetdir)
+    cp("*.pdf", smpdir, typesetdir)
+  end
+  return 0
+end
+
+function typeset(file)
+  local file = jobname(sourcefiledir.."/scontents.dtx")
+  local runs = {
+    "lualatex-dev -draftmode -interaction=batchmode ",
+    "lualatex-dev -draftmode -interaction=batchmode ",
+    "lualatex-dev -interaction=batchmode ",
+  }
+  for _, cmd in ipairs(runs) do
+    print("** Running: "..cmd..file..".dtx")
+    local errorlevel = runcmd(cmd..file..".dtx >"..os_null, typesetdir, {"TEXINPUTS","LUAINPUTS"})
+    if errorlevel ~= 0 then
+      local f = io.open(typesetdir.."/"..file..".log", "r")
+      if f then
+        print(f:read("*all"))
+        f:close()
+      end
+      cp(file..".log", typesetdir, maindir)
+      error("** Error!!: "..cmd..file..".dtx")
     end
-    print("** "..file.." have been tagged with the version "..tagname.." and date "..mydate)
   end
-
-  if string.match(file, "scontents.ins") then
-    content = string.gsub(content,
-                          "date=%d%d%d%d%-%d%d%-%d%d",
-                          "date="..tagdate)
-    content = string.gsub(content,
-                          "version=%d%.%d%w?",
-                          "version="..tagname)
-  end
-  if string.match(file, "scontents.dtx") then
-    content = string.gsub(content,
-                          "\\ScontentsFileDate{(.-)}",
-                          "\\ScontentsFileDate{"..tagdate.."}")
-    content = string.gsub(content,
-                          "\\ScontentsCoreFileDate{(.-)}",
-                          "\\ScontentsCoreFileDate{"..tagdate.."}")
-    content = string.gsub(content,
-                          "\\ScontentsFileVersion{(.-)}",
-                          "\\ScontentsFileVersion{"..tagname.."}")
-  end
-  if string.match(file, "CTANREADME.md") then
-    content = string.gsub(content,
-                          "Release v%d+.%d+%a* \\%[%d%d%d%d%-%d%d%-%d%d\\%]",
-                          "Release v"..tagname.." \\["..tagdate.."\\]")
-  end
-  if string.match(file,"ctan.ann") then
-    content = string.gsub(content,
-                         "v%d%.%d%w? %d%d%d%d%-%d%d%-%d%d",
-                         "v"..tagname..' '..tagdate)
-  end
-  return content
+  return 0
 end
 
 -- Configuration for ctan
@@ -109,19 +133,16 @@ ctanpkg    = "scontents"
 ctanzip    = ctanpkg.."-"..pkgversion
 packtdszip = false
 
--- Clean files
-cleanfiles = {module..".pdf", ctanzip..".curlopt", ctanzip..".zip"}
-
 --  Configuration for package distribution in ctan
 uploadconfig = {
   author       = "Pablo González L",
   uploader     = "Pablo González L",
   email        = "pablgonz@yahoo.com",
   pkg          = ctanpkg,
-  version      = pkgversion,
+  version      = pkgversion .. " " .. pkgdate,
   license      = "lppl1.3c",
   summary      = "Stores LaTeX contents in memory or files",
-  description  =[[This package stores valid LaTeX code in memory (sequences) using the l3seq module of expl3. The stored content (including verbatim) can be used as many times as desired in the document, additionally can be written to external files if desired.]],
+  description  = [[This package stores valid LaTeX code in memory (sequences) using the l3seq module of expl3. The stored content (including verbatim) can be used as many times as desired in the document, additionally can be written to external files if desired.]],
   topic        = { "File management", "Experimental LaTeX3" },
   ctanPath     = "/macros/latex/contrib/" .. ctanpkg,
   repository   = "https://github.com/pablgonz/" .. module,
@@ -132,385 +153,575 @@ uploadconfig = {
   update       = true
 }
 
--- Line length in 80 characters
+-- Clean files (scontents.pdf is versioned in git, so clean must not remove it)
+cleanfiles = {ctanzip..".curlopt", ctanzip..".zip"}
+
+-- Update package date and version
+tagfiles = {
+  "sources/scontents.ins",
+  "sources/scontents.dtx",
+  "sources/CTANREADME.md",
+  "ctan.ann"
+}
+
+-- Line length helper (80 chars layout)
 local function os_message(text)
   local mymax = 77 - string.len(text) - string.len("done")
-  local msg = text.." "..string.rep(".", mymax).." done"
-  return print(msg)
+  if mymax < 1 then mymax = 1 end
+  print(text .. " " .. string.rep(".", mymax) .. " done")
 end
 
--- Typesetting scontents documentation step by step :)
-function docinit_hook()
-  errorlevel = (cp("*.tex", unpackdir, typesetdir) + cp("*.sty", unpackdir, typesetdir))
-  if errorlevel ~= 0 then
-    error("** Error!!: Can't copy .tex and .sty files from "..unpackdir.." to "..typesetdir)
-    return errorlevel
-  end
-  return 0
-end
-
-function typeset(file)
-  local file = jobname(sourcefiledir.."/scontents.dtx")
-  print("** Running: lualatex-dev -draftmode -interaction=batchmode "..file..".dtx")
-  errorlevel = runcmd("lualatex-dev -draftmode -interaction=batchmode "..file..".dtx >"..os_null, typesetdir, {"TEXINPUTS","LUAINPUTS"})
-  if errorlevel ~= 0 then
-    local f = assert(io.open(typesetdir.."/scontents.log", "r"))
-    err_log_file = f:read("*all")
-    print(err_log_file)
-    cp(file..".log", typesetdir, maindir)
-    cp(file..".dtx", typesetdir, maindir)
-    error("** Error!!: lualatex-dev -draftmode -interaction=batchmode "..file..".dtx")
-    return errorlevel
-  end
-  print("** Running: lualatex-dev -draftmode -interaction=batchmode "..file..".dtx")
-  errorlevel = runcmd("lualatex-dev -draftmode -interaction=batchmode "..file..".dtx >"..os_null, typesetdir, {"TEXINPUTS","LUAINPUTS"})
-  if errorlevel ~= 0 then
-    error("** Error!!: lualatex-dev -draftmode -interaction=batchmode "..file..".dtx")
-    return errorlevel
-  end
-  print("** Running: lualatex-dev -interaction=batchmode "..file..".dtx")
-  errorlevel = runcmd("lualatex-dev -interaction=batchmode "..file..".dtx >"..os_null, typesetdir, {"TEXINPUTS","LUAINPUTS"})
-  if errorlevel ~= 0 then
-    error("** Error!!: lualatex-dev -interaction=batchmode "..file..".dtx")
-    return errorlevel
-  end
-  return 0
-end
-
--- Create check_marked_tags() function
-local function check_marked_tags()
-  local f = assert(io.open("sources/scontents.dtx", "r"))
-  marked_tags = f:read("*all")
+-- Helper to safely read file content
+local function read_file(filepath)
+  local f = io.open(filepath, "r")
+  if not f then return nil end
+  local content = f:read("*all")
   f:close()
-  local m_pkgd = string.match(marked_tags, "\\ScontentsFileDate{(.-)}")
-  local m_pkgv = string.match(marked_tags, "\\ScontentsFileVersion{(.-)}")
-  if pkgversion == m_pkgv and pkgdate == m_pkgd then
-    os_message("Checking version and date in scontents.dtx")
-  else
-    print("** Warning: scontents.dtx is marked with version "..m_pkgv.." and date "..m_pkgd)
-    print("** Warning: build.lua is marked with version "..pkgversion.." and date "..pkgdate)
-    print("** Check version and date in build.lua then run l3build tag")
-  end
+  return content
 end
 
--- Create check_readme_tags() function
+-- Update function: the version and date are always taken from build.lua
+function update_tag(file, content, tagname, tagdate)
+  tagname = pkgversion
+  tagdate = pkgdate
+
+  if string.match(file, "scontents%.ins$") then
+    content = string.gsub(content, "date=%d%d%d%d%-%d%d%-%d%d", "date=" .. tagdate)
+    content = string.gsub(content, "version=%d+%.%d+%w?", "version=" .. tagname)
+  end
+  if string.match(file, "scontents%.dtx$") then
+    content = string.gsub(content, "\\ScontentsFileDate{(.-)}", "\\ScontentsFileDate{" .. tagdate .. "}")
+    content = string.gsub(content, "\\ScontentsCoreFileDate{(.-)}", "\\ScontentsCoreFileDate{" .. tagdate .. "}")
+    content = string.gsub(content, "\\ScontentsFileVersion{(.-)}", "\\ScontentsFileVersion{" .. tagname .. "}")
+  end
+  if string.match(file, "CTANREADME%.md$") then
+    content = string.gsub(content, "Release v%d+%.%d+%a*%s*\\%[%d%d%d%d%-%d%d%-%d%d\\%]", "Release v" .. tagname .. " \\[" .. tagdate .. "\\]")
+  end
+  if string.match(file, "ctan%.ann$") then
+    content = string.gsub(content, "v%d+%.%d+%w? %d%d%d%d%-%d%d%-%d%d", "v" .. tagname .. " " .. tagdate)
+  end
+
+  print("** " .. file .. " has been tagged with version " .. tagname .. " and date " .. tagdate)
+  return content
+end
+
+-- Individual verification functions
+local function check_dtx_tags()
+  local content = read_file("sources/scontents.dtx")
+  if not content then return false end
+  local m_pkgd  = string.match(content, "\\ScontentsFileDate{(.-)}")
+  local m_cored = string.match(content, "\\ScontentsCoreFileDate{(.-)}")
+  local m_pkgv  = string.match(content, "\\ScontentsFileVersion{(.-)}")
+  if m_pkgv ~= pkgversion or m_pkgd ~= pkgdate or m_cored ~= pkgdate then
+    print("** Warning: Mismatches found in sources/scontents.dtx")
+    return false
+  end
+  os_message("Checking version and date in scontents.dtx")
+  return true
+end
+
 local function check_readme_tags()
-  local pkgversion = "v"..pkgversion
+  local content = read_file("sources/CTANREADME.md")
+  if not content then return false end
+  local m_readmev, m_readmed = string.match(content, "Release%s+(v%d+%.%d+%a*)%s+\\%[(%d%d%d%d%-%d%d%-%d%d)\\%]")
+  if "v" .. pkgversion ~= m_readmev or pkgdate ~= m_readmed then
+    print("** Warning: Mismatches found in sources/CTANREADME.md")
+    return false
+  end
+  os_message("Checking version and date in CTANREADME.md")
+  return true
+end
 
-  local f = assert(io.open("sources/CTANREADME.md", "r"))
-  readme_tags = f:read("*all")
-  f:close()
-  local m_readmev, m_readmed = string.match(readme_tags, "Release (v%d+.%d+%a*) \\%[(%d%d%d%d%-%d%d%-%d%d)\\%]")
+-- Unified verification runner
+local function check_all_tags()
+  local ok_dtx = check_dtx_tags()
+  local ok_readme = check_readme_tags()
+  return ok_dtx and ok_readme
+end
 
-  if pkgversion == m_readmev and pkgdate == m_readmed then
-    os_message("Checking version and date in README.md")
+-- Standalone audit target: l3build tagcheck
+target_list.tagcheck = {
+  desc = "Check version and date in files",
+  help = "Reports every file whose version or date differs from build.lua.",
+  func = function()
+    if check_all_tags() then return 0 end
+    return 1
+  end,
+}
+
+-- Helper function to generate an isolated build environment
+local function system_temp_dir()
+  local is_windows = package.config:sub(1, 1) == "\\"
+  if is_windows then
+    return os.getenv("TEMP") or os.getenv("TMP") or "C:\\Windows\\Temp"
   else
-    print("** Warning: README.md is marked with version "..m_readmev.." and date "..m_readmed)
-    print("** Warning: build.lua is marked with version "..pkgversion.." and date "..pkgdate)
-    print("** Check version and date in build.lua then run l3build tag")
+    return os.getenv("TMPDIR") or "/tmp"
   end
 end
 
--- Config tag_hook
-function tag_hook(tagname)
-  check_marked_tags()
-  check_readme_tags()
-end
-
--- Add "tagged" target to l3build CLI
-if options["target"] == "tagged" then
-  check_marked_tags()
-  check_readme_tags()
-  os.exit(0)
-end
-
--- Create make_tmp_dir() function
 local function make_tmp_dir()
-  -- Check version and date
-  check_marked_tags()
-  check_readme_tags()
-  -- Fix basename(path) in windows
-  local function basename(path)
-    return path:match("^.*[\\/]([^/\\]*)$")
+  -- Unified tag verification before unpacking
+  if not check_all_tags() then
+    error("** Error!!: Tag verification failed before preparing environment")
   end
+
+  local sep = package.config:sub(1, 1)
+  local base = system_temp_dir()
   local tmpname = os.tmpname()
-  tmpdir = basename(tmpname)
-  -- Create a tmp dir
-  errorlevel = mkdir(tmpdir)
+  local unique = tmpname:match("([^/\\]+)$") or tostring(os.time())
+  os.remove(tmpname) -- os.tmpname() sometimes creates an empty file; not needed
+
+  tmpdir = base .. sep .. "scontents-build-" .. unique -- Global variable consumed by custom targets
+
+  -- Create temporary directory
+  local errorlevel = mkdir(tmpdir)
   if errorlevel ~= 0 then
-    error("** Error!!: The ./"..tmpdir.." directory could not be created")
-    return errorlevel
+    error("** Error!!: Could not create temporary directory " .. tmpdir)
   else
-    os_message("Creating the temporary directory ./"..tmpdir)
+    os_message("Creating temporary directory " .. tmpdir)
   end
-  -- Copy files
-  errorlevel = (cp("*.dtx", sourcefiledir, tmpdir) + cp("*.ins", sourcefiledir, tmpdir))
+
+  -- Copy source files (.dtx and .ins)
+  errorlevel = cp("*.dtx", sourcefiledir, tmpdir) + cp("*.ins", sourcefiledir, tmpdir)
   if errorlevel ~= 0 then
-    error("** Error!!: Can't copy .dtx and .ins files from "..sourcefiledir.." to ./"..tmpdir)
-    return errorlevel
+    error("** Error!!: Failed to copy source files to " .. tmpdir)
   else
-    os_message("Copying scontents.dtx and scontents.ins from "..sourcefiledir.." to ./"..tmpdir)
+    os_message("Copying scontents.dtx and scontents.ins to " .. tmpdir)
   end
-  -- Unpack files
-  print("Unpacks the source files into ./"..tmpdir)
-  local file = jobname(tmpdir.."/scontents.ins")
-  errorlevel = run(tmpdir, "luatex -interaction=batchmode "..file..".ins > "..os_null)
+
+  -- Unpack source files
+  os_message("Unpacking source files in " .. tmpdir)
+  local file = jobname("scontents.ins")
+  errorlevel = run(tmpdir, "luatex -interaction=batchmode " .. file .. ".ins > " .. os_null)
   if errorlevel ~= 0 then
-    local f = assert(io.open(tmpdir.."/"..file..".log", "r"))
-    err_log_file = f:read("*all")
-    print(err_log_file)
-    cp(file..".log", tmpdir, maindir)
-    cp(file..".ins", tmpdir, maindir)
-    error("** Error!!: luatex -interaction=batchmode "..file..".ins")
-    return errorlevel
+    local f = io.open(tmpdir .. "/" .. file .. ".log", "r")
+    if f then
+      print(f:read("*all"))
+      f:close()
+    end
+    cp(file .. ".log", tmpdir, maindir)
+    cp(file .. ".ins", tmpdir, maindir)
+    error("** Error!!: Unpacking failed with luatex")
   else
-    os_message("** Running: luatex -interaction=batchmode "..file..".ins")
-    rm(tmpdir, file..".log")
+    os_message("Successfully unpacked " .. file .. ".ins")
+    rm(tmpdir, file .. ".log")
   end
   return 0
 end
 
--- We added a new target "testpkg" to run the tests files in test-pkg/
-if options["target"] == "testpkg" then
-  -- Create a tmp dir and unpack files
-  make_tmp_dir()
-  -- Copy test files
-  errorlevel = cp("*.*", "sources/test-pkg", tmpdir)
-  if errorlevel ~= 0 then
-    error("** Error!!: Can't copy files from sources/test-pkg to ./"..tmpdir)
-    return errorlevel
-  else
-    os_message("** Copying files from sources/test-pkg to ./"..tmpdir)
+-- Names (without extension) of the .tex files in srcdir. Only plain file
+-- names are accepted because they end up in shell commands.
+local function list_samples(srcdir, wanted_only)
+  if not direxists(srcdir) then
+    error("** Error!!: Directory " .. srcdir .. " not found")
   end
-  -- First, no check error level :(
-  local file = jobname(tmpdir.."/test-pkg-current.tex")
-  print("Running first test on the file: "..file..".tex using [pdflatex-dev]")
-  os_message("** Running: pdflatex-dev -interaction=batchmode "..file..".tex")
-  errorlevel = run(tmpdir, "pdflatex-dev -no-file-line-error -interaction=nonstopmode "..file..".tex")
-  -- Second
-  local file = jobname(tmpdir.."/test-format.plain.tex")
-  print("Running second test on the file: "..file..".tex using [pdftex]")
-  errorlevel = run(tmpdir, "pdftex "..file..".tex > "..os_null)
-  if errorlevel ~= 0 then
-    local f = assert(io.open(tmpdir.."/"..file..".log", "r"))
-    err_log_file = f:read("*all")
-    print(err_log_file)
-    cp(file..".log", tmpdir, maindir)
-    error("** Error!!: pdftex "..file..".tex")
-    return errorlevel
-  else
-    os_message("** Running: pdftex "..file..".tex")
-  end
-  --Third
-  local file = jobname(tmpdir.."/test-format.latex.tex")
-  print("Running third test on the file: "..file..".tex using [latex>dvips>ps2pdf]")
-  errorlevel = run(tmpdir, "latex-dev "..file..".tex > "..os_null)
-  if errorlevel ~= 0 then
-    local f = assert(io.open(tmpdir.."/"..file..".log", "r"))
-    err_log_file = f:read("*all")
-    print(err_log_file)
-    cp(file..".log", tmpdir, maindir)
-    error("** Error!!: latex-dev "..file..".tex")
-    return errorlevel
-  else
-    os_message("** Running: latex-dev "..file..".tex")
-  end
-  errorlevel = run(tmpdir, "dvips -q "..file..".dvi > "..os_null)
-  if errorlevel ~= 0 then
-    local f = assert(io.open(tmpdir.."/"..file..".log", "r"))
-    err_log_file = f:read("*all")
-    print(err_log_file)
-    cp(file..".log", tmpdir, maindir)
-    error("** Error!!: dvips "..file..".dvi")
-    return errorlevel
-  else
-    os_message("** Running: dvips "..file..".dvi")
-  end
-  errorlevel = run(tmpdir, "ps2pdf "..file..".ps > "..os_null)
-  if errorlevel ~= 0 then
-    local f = assert(io.open(tmpdir.."/"..file..".log", "r"))
-    err_log_file = f:read("*all")
-    print(err_log_file)
-    cp(file..".log", tmpdir, maindir)
-    error("** Error!!: ps2pdf "..file..".ps")
-    return errorlevel
-  else
-    os_message("** Running: ps2pdf "..file..".ps")
-  end
-  -- Fourth
-  local file = jobname(tmpdir.."/test-format.context.tex")
-  print("Running fourth test on the file: "..file..".tex using [context]")
-  errorlevel = run(tmpdir, "context --luatex "..file..".tex > "..os_null)
-  if errorlevel ~= 0 then
-    local f = assert(io.open(tmpdir.."/"..file..".log", "r"))
-    err_log_file = f:read("*all")
-    print(err_log_file)
-    cp(file..".log", tmpdir, maindir)
-    error("** Error!!: context --luatex "..file..".tex")
-    return errorlevel
-  else
-    os_message("** Running: context --luatex "..file..".tex")
-  end
-  -- Fifth (Tagged PDF)
-  local file = jobname(tmpdir.."/test-tagged-pdf.tex")
-  print("Running fifth test on the file: "..file..".tex using [lualatex-dev]")
-  errorlevel = run(tmpdir, "lualatex-dev "..file..".tex")
-  errorlevel = run(tmpdir, "lualatex-dev "..file..".tex")
-  if errorlevel ~= 0 then
-    local f = assert(io.open(tmpdir.."/"..file..".log", "r"))
-    err_log_file = f:read("*all")
-    print(err_log_file)
-    cp(file..".log", tmpdir, maindir)
-    error("** Error!!: lualatex-dev "..file..".tex")
-    return errorlevel
-  else
-    os_message("** Running: lualatex-dev "..file..".tex")
-  end
-  -- Copy generated .pdf files to maindir
-  errorlevel = cp("*.pdf", tmpdir, maindir)
-  if errorlevel ~= 0 then
-    error("** Error!!: Can't copy generated pdf files to ./"..maindir)
-    return errorlevel
-  else
-    os_message("Copy generated .pdf files to ./"..maindir)
-  end
-   -- If are OK then remove ./temp dir
-  cleandir(tmpdir)
-  lfs.rmdir(tmpdir)
-  os_message("Remove temporary directory ./"..tmpdir)
-  os.exit(0)
-end
-
--- We added a new target "examples" to run the examples files for scontents
-if options["target"] == "examples" then
-  -- Create a tmp dir and unpack files
-  make_tmp_dir()
-  local file = jobname(tmpdir.."/scontents.dtx")
-  -- Unpack sample files
-  print("Unpack samples into ./"..tmpdir.." from file "..file..".dtx")
-  errorlevel = run(tmpdir, "lualatex-dev -draftmode -interaction=batchmode "..file..".dtx > "..os_null)
-  if errorlevel ~= 0 then
-    error("** Error!!: lualatex-dev -draftmode -interaction=batchmode "..file..".dtx")
-    return errorlevel
-  else
-    os_message("** Running: lualatex-dev -draftmode -interaction=batchmode "..file..".dtx")
-  end
-  -- List of sample files
-  samples = {
-    "scexamp1",
-    "scexamp2",
-    "scexamp3",
-    "scexamp4",
-    "scexamp5",
-    "scexamp6",
-    "scexamp7",
-    "scexamp8",
-    "scexamp9",
-    "scexamp10",
-    "scexamp11",
-  }
-  -- Compiling sample files
-  print("Compiling sample files in ./"..tmpdir.." using [arara]")
-  for i, samples in ipairs(samples) do
-    errorlevel = run(tmpdir, "arara "..samples..".ltx > "..os_null)
-    if errorlevel ~= 0 then
-      local f = assert(io.open(tmpdir.."/"..samples..".log", "r"))
-      err_log_file = f:read("*all")
-      print(err_log_file)
-      cp(samples..".ltx", tmpdir, maindir)
-      cp(samples..".log", tmpdir, maindir)
-      error("** Error!!: arara "..samples..".ltx")
-      return errorlevel
-    else
-      os_message("** Running: arara "..samples..".ltx")
+  local samples = {}
+  for file in lfs.dir(srcdir) do
+    local name = file:match("^([%w%-_%.]+)%.tex$")
+    if name then
+      table.insert(samples, name)
+    elseif file:match("%.tex$") then
+      print("** Warning: skipping " .. file .. " (unsafe file name)")
     end
   end
-  -- Copy generated .pdf files to maindir
-  errorlevel = cp("scexamp*.pdf", tmpdir, maindir)
-  if errorlevel ~= 0 then
-    error("** Error!!: Can't copy generated pdf files to ./"..maindir)
-    return errorlevel
-  else
-    os_message("Copy generated .pdf files to ./"..maindir)
+  table.sort(samples)
+  if #samples == 0 then
+    error("** Error!!: No .tex files found in " .. srcdir)
   end
-  -- If are OK then remove ./temp dir
-  cleandir(tmpdir)
-  lfs.rmdir(tmpdir)
-  os_message("Remove temporary directory ./"..tmpdir)
-  os.exit(0)
+  -- Keeps only the names given on the command line (l3build example name ...);
+  -- with no names all the files are kept. A name can be written with or
+  -- without the .tex extension.
+  local wanted = options["names"]
+  if not wanted or #wanted == 0 then
+    return samples
+  end
+  local exists = {}
+  for _, name in ipairs(samples) do exists[name] = true end
+  local selected = {}
+  for _, arg_name in ipairs(wanted) do
+    local name = (arg_name:gsub("%.tex$", ""))
+    if not exists[name] then
+      error("** Error!!: " .. name .. ".tex not found in " .. srcdir)
+    end
+    table.insert(selected, name)
+  end
+  return selected
 end
 
--- Clean repo
+-- On errors the temporary directory is kept, so the logs can be inspected
+local function fail(msg)
+  print("** Temporary directory kept for inspection: " .. tmpdir)
+  error(msg)
+end
+
+-- Helper to detect whether an executable is in the PATH (Windows and Linux)
+local function has_cmd(cmd)
+  local is_windows = package.config:sub(1, 1) == "\\"
+  local null_dev = os_null or (is_windows and "NUL" or "/dev/null")
+  local check = is_windows and ("where " .. cmd .. " > " .. null_dev .. " 2>&1")
+                           or ("command -v " .. cmd .. " > " .. null_dev .. " 2>&1")
+  local res = os.execute(check)
+  return (res == true or res == 0)
+end
+
+local function show_log(dir, name)
+  local f = io.open(dir .. "/" .. name .. ".log", "r")
+  if f then
+    print(f:read("*all"))
+    f:close()
+  end
+end
+
+-- PDF validators (the ones that are installed)
+local run_rnv, run_verapdf
+
+local function announce_validators()
+  run_rnv = has_cmd("rnv-wrapp") and has_cmd("show-pdf-tags")
+  run_verapdf = has_cmd("verapdf")
+  if run_rnv and run_verapdf then
+    os_message("Validators detected: show-pdf-tags, rnv-wrapp & veraPDF")
+  elseif run_rnv then
+    os_message("Validators detected: show-pdf-tags & rnv-wrapp")
+  elseif run_verapdf then
+    os_message("Validator detected: veraPDF")
+  end
+end
+
+local function validate_pdf(dir, pdf_file)
+  if run_rnv then
+    local cmd_rnv = "show-pdf-tags --xml " .. pdf_file .. " | rnv-wrapp"
+    if run(dir, cmd_rnv .. " > " .. os_null) ~= 0 then
+      print("\n[RNC Validation Error Output]:")
+      run(dir, cmd_rnv)
+      fail("** Error!!: Tag structure validation (rnv-wrapp) failed for " .. pdf_file)
+    end
+  end
+  if run_verapdf then
+    local cmd_vera = "verapdf --flavour ua2 --format text " .. pdf_file
+    if run(dir, cmd_vera .. " > " .. os_null) ~= 0 then
+      print("\n[PDF/UA-2 Validation Error Output]:")
+      run(dir, cmd_vera)
+      fail("** Error!!: veraPDF (PDF/UA-2) validation failed for " .. pdf_file)
+    end
+  end
+  if run_rnv or run_verapdf then
+    print("PASS")
+  end
+end
+
+-- Run each command of the list in the temporary directory, the file name
+-- is appended to each command; on error the log of the file is shown,
+-- unless ignore is true (the file is expected to raise errors)
+local function run_commands(sample, cmds, logname, ignore)
+  for _, cmd in ipairs(cmds) do
+    os_message("Running: " .. cmd .. " " .. sample)
+    if run(tmpdir, cmd .. " " .. sample .. " > " .. os_null) ~= 0 and not ignore then
+      show_log(tmpdir, logname or sample)
+      fail("** Error!!: " .. cmd .. " failed for " .. sample)
+    end
+  end
+end
+
+-- Custom target: l3build example
+-- Compiles once with lualatex-dev the files in sources/samples; the PDFs
+-- are left there
+target_list.example = {
+  desc = "Compile (one run) the files in /samples",
+  help = "Accepts file names, with or without .tex: l3build example scontents-exa-2",
+  func = function()
+    local srcdir = sourcefiledir .. "/samples"
+    local samples = list_samples(srcdir)
+    make_tmp_dir()
+    if cp("*.tex", srcdir, tmpdir) ~= 0 then
+      fail("** Error!!: Failed to copy example files from " .. srcdir .. " to " .. tmpdir)
+    end
+    os_message("Copied example files from " .. srcdir .. " to " .. tmpdir)
+    for _, sample in ipairs(samples) do
+      run_commands(sample .. ".tex", { "lualatex-dev -interaction=nonstopmode" }, sample)
+      if cp(sample .. ".pdf", tmpdir, srcdir) ~= 0 then
+        fail("** Error!!: Failed to copy " .. sample .. ".pdf to " .. srcdir)
+      end
+      os_message("OK: " .. sample .. ".tex, copied " .. sample .. ".pdf to " .. srcdir)
+    end
+    os_message("All " .. #samples .. " example files compiled")
+    cleandir(tmpdir)
+    lfs.rmdir(tmpdir)
+    os_message("Removed temporary directory " .. tmpdir)
+    return 0
+  end,
+}
+
+-- The files of sources/test-pkg are compiled according to their name:
+--   test-format.plain.tex   : pdftex (plain TeX)
+--   test-format.latex.tex   : latex-dev > dvips > ps2pdf
+--   test-format.context.tex : context --luatex
+--   test-tagged-pdf.tex     : lualatex-dev (two runs) and validated
+--   test-pkg-current.tex    : pdflatex-dev, its errors are not checked
+-- The other files in sources/test-pkg are not compiled.
+local testse_files = {
+  ["test-format.plain"]   = { cmds = { "pdftex -interaction=nonstopmode" } },
+  ["test-format.latex"]   = { cmds = { "latex-dev -interaction=nonstopmode" },
+                              post = { "dvips -q", "ps2pdf" } },
+  ["test-format.context"] = { cmds = { "context --luatex --nonstopmode" } },
+  ["test-tagged-pdf"]     = { cmds = { "lualatex-dev -interaction=nonstopmode",
+                                       "lualatex-dev -interaction=nonstopmode" },
+                              validate = true },
+  ["test-pkg-current"]    = { cmds = { "pdflatex-dev -interaction=nonstopmode" },
+                              ignore = true },
+}
+
+-- Custom target: l3build testSE
+-- Compiles the files in sources/test-pkg with their format and validates the
+-- tagged one; the PDFs are left there
+target_list.testSE = {
+  desc = "Compile and validate the files in /test-pkg (all formats)",
+  help = "Accepts file names, with or without .tex: l3build testSE test-tagged-pdf",
+  func = function()
+    local srcdir = sourcefiledir .. "/test-pkg"
+    local samples = {}
+    for _, name in ipairs(list_samples(srcdir)) do
+      if testse_files[name] then
+        table.insert(samples, name)
+      elseif options["names"] and #options["names"] > 0 then
+        error("** Error!!: " .. name .. ".tex is not compiled by testSE")
+      end
+    end
+    make_tmp_dir()
+    if cp("*.*", srcdir, tmpdir) ~= 0 then
+      fail("** Error!!: Failed to copy test files from " .. srcdir .. " to " .. tmpdir)
+    end
+    os_message("Copied test files from " .. srcdir .. " to " .. tmpdir)
+    announce_validators()
+    for _, sample in ipairs(samples) do
+      local spec = testse_files[sample]
+      run_commands(sample .. ".tex", spec.cmds, sample, spec.ignore)
+      if spec.post then
+        run_commands(sample .. ".dvi", { spec.post[1] }, sample)
+        run_commands(sample .. ".ps", { spec.post[2] }, sample)
+      end
+      if spec.validate then
+        validate_pdf(tmpdir, sample .. ".pdf")
+      end
+      if cp(sample .. ".pdf", tmpdir, srcdir) ~= 0 then
+        fail("** Error!!: Failed to copy " .. sample .. ".pdf to " .. srcdir)
+      end
+      os_message("OK: " .. sample .. ".tex, copied " .. sample .. ".pdf to " .. srcdir)
+    end
+    os_message("All " .. #samples .. " test files compiled")
+    cleandir(tmpdir)
+    lfs.rmdir(tmpdir)
+    os_message("Removed temporary directory " .. tmpdir)
+    return 0
+  end,
+}
+
+-- The PDFs attached to the manual are the ones that 'l3build example' leaves
+-- in sources/samples, and 'l3build testSE' leaves its PDFs in
+-- sources/test-pkg. Before packaging, check that all of them exist and are
+-- not older than their .tex (target ctan and release only; doc copies what
+-- is there without checking).
+local function check_example_pdfs()
+  local stale = {}
+  local function check(dir, names)
+    for _, sample in ipairs(names) do
+      local tex = lfs.attributes(dir .. "/" .. sample .. ".tex", "modification")
+      local pdf = sample .. ".pdf"
+      local mod = lfs.attributes(dir .. "/" .. pdf, "modification")
+      if not mod then
+        table.insert(stale, dir .. "/" .. pdf .. " (missing)")
+      elseif mod < tex then
+        table.insert(stale, dir .. "/" .. pdf .. " (older than " .. sample .. ".tex)")
+      end
+    end
+  end
+  check(sourcefiledir .. "/samples", list_samples(sourcefiledir .. "/samples"))
+  local tests = {}
+  for name in pairs(testse_files) do table.insert(tests, name) end
+  table.sort(tests)
+  check(sourcefiledir .. "/test-pkg", tests)
+  if #stale > 0 then
+    error("** Error!!: PDFs of the examples out of date, run 'l3build example' and 'l3build testSE' first:\n   "
+      .. table.concat(stale, "\n   "))
+  end
+  os_message("Checking PDFs of sources/test-pkg and sources/samples")
+end
+
+if options["target"] == "ctan" then
+  check_example_pdfs()
+end
+
+-- Clean repo with Git
+-- 'git clean -X' removes only the files ignored by .gitignore (build/, logs,
+-- ...), so it needs no confirmation. Untracked files that are not ignored
+-- (new files not yet added) are never removed: they are only listed.
+-- With --dry-run it only lists.
 if options["target"] == "clean" then
-  print("Clean files in repo")
-  os.execute("git clean -xdfq")
-  os_message("** Running: git clean -xdfq")
+  local function git_out(cmd)
+    local f = io.popen(cmd .. " 2>&1", "r")
+    if not f then return nil end
+    local out = f:read("*a") or ""
+    f:close()
+    return out
+  end
+
+  local inside = git_out("git rev-parse --is-inside-work-tree")
+  if not inside or not inside:match("^true") then
+    os_message("Not a Git work tree: skipping git clean")
+  else
+    local preview = git_out("git ls-files --others --ignored --exclude-standard --directory")
+    if not preview or preview:match("^%s*$") then
+      os_message("Nothing to clean with Git")
+    else
+      print("** Ignored files and directories removed by git clean:")
+      io.write(preview)
+      if options["dry-run"] then
+        os_message("Dry run: nothing removed")
+      else
+        os_message("Cleaning ignored repository files with Git")
+        local res = os.execute("git clean -Xdfq")
+        if res ~= 0 and res ~= true then
+          error("** Error!!: git clean failed")
+        end
+      end
+    end
+    local kept = git_out("git ls-files --others --exclude-standard --directory")
+    if kept and not kept:match("^%s*$") then
+      print("** Untracked files NOT removed (add them or delete them by hand):")
+      io.write(kept)
+    end
+  end
+  -- No os.exit() here so that l3build goes on cleaning the build/ directory
 end
 
--- Capture os cmd for git
+-- Capture shell output safely (e.g. for Git queries)
 local function os_capture(cmd, raw)
-  local f = assert(io.popen(cmd, 'r'))
-  local s = assert(f:read('*a'))
+  local f = io.popen(cmd, "r")
+  if not f then return "" end
+  local s = f:read("*a") or ""
   f:close()
   if raw then return s end
-    s = string.gsub(s, '^%s+', '')
-    s = string.gsub(s, '%s+$', '')
-    s = string.gsub(s, '[\n\r]+', ' ')
+  s = string.gsub(s, "^%s+", "")
+  s = string.gsub(s, "%s+$", "")
+  s = string.gsub(s, "[\n\r]+", " ")
   return s
 end
 
--- We added a new target "release" to do the final checks for git and ctan
-if options["target"] == "release" then
-  -- os.execute("git clean -xdfq")
-  local gitbranch = os_capture("git symbolic-ref --short HEAD")
-  local gitstatus = os_capture("git status --porcelain")
-  local tagongit  = os_capture('git for-each-ref refs/tags --sort=-taggerdate --format="%(refname:short)" --count=1')
-  local gitpush   = os_capture("git log --branches --not --remotes")
-
-  if gitbranch == "master" then
-    os_message("** Checking git branch '"..gitbranch.."': OK")
-  else
-    error("** Error!!: You must be on the 'master' branch")
+-- Run another l3build target quietly; its failure stops the release
+local function run_l3build(tgt, extra)
+  os_message("Running 'l3build " .. tgt .. "'" .. (extra or ""))
+  local res = os.execute("l3build " .. tgt .. " > " .. os_null)
+  if res ~= 0 and res ~= true then
+    error("** Error!!: 'l3build " .. tgt .. "' failed (run it alone to see why); nothing was tagged or pushed")
   end
-  local file = jobname(sourcefiledir.."/scontents.ins")
-  errorlevel = run(sourcefiledir, "luatex --interaction=batchmode "..file..".ins > "..os_null)
-  if errorlevel ~= 0 then
-    error("** Error!!: luatex -interaction=batchmode "..file..".ins")
-    return errorlevel
-  else
-    os_message("** Running: luatex -interaction=batchmode "..file..".ins")
-  end
-  if gitstatus == "" then
-    os_message("** Checking status of the files: OK")
-  else
-    error("** Error!!: Files have been edited, please commit all changes")
-  end
-  if gitpush == "" then
-    os_message("** Checking pending commits: OK")
-  else
-    error("** Error!!: There are pending commits, please run git push")
-  end
-  check_marked_tags()
-  local pkgversion = "v"..pkgversion
-  os_message("** Checking last tag marked in GitHub "..tagongit..": OK")
-  errorlevel = os.execute("git tag -a "..pkgversion.." -m 'Release "..pkgversion.." "..pkgdate.."'")
-  if errorlevel ~= 0 then
-    error("** Error!!: run git tag -d "..pkgversion.." && git push --delete origin "..pkgversion)
-    return errorlevel
-  else
-    os_message("** Running: git tag -a "..pkgversion.." -m 'Release "..pkgversion.." "..pkgdate.."'")
-  end
-  os_message("** Running: git push --tags --quiet")
-  os.execute("git push --tags --quiet")
-  if fileexists(ctanzip..".zip") then
-    os_message("** Checking "..ctanzip..".zip file to send to CTAN: OK")
-  else
-    os_message("** Creating "..ctanzip..".zip file to send to CTAN")
-    os.execute("l3build ctan > "..os_null)
-  end
-  os_message("** Running: l3build upload -F ctan.ann --debug")
-  os.execute("l3build upload -F ctan.ann --debug >"..os_null)
-  print("** Now check "..ctanzip..".curlopt file and add changes to ctan.ann")
-  print("** If everything is OK run (manually): l3build upload")
-  os.exit(0)
 end
+
+-- Run a git command; its failure stops the release with the given message
+local function run_git(cmd, msg)
+  local res = os.execute(cmd)
+  if res ~= 0 and res ~= true then
+    error(msg)
+  end
+end
+
+-- Target "release": performs pre-release checks for Git and CTAN
+local function release_target()
+  -- 1. Verify working branch is 'master'
+  local gitbranch = os_capture("git symbolic-ref --short HEAD")
+  if gitbranch == "master" then
+    os_message("Checking git branch 'master'")
+  else
+    error("** Error!!: You must be on the 'master' branch (currently on '" .. gitbranch .. "')")
+  end
+
+  -- 2. Verify clean working directory (before generating any build files)
+  local gitstatus = os_capture("git status --porcelain")
+  if gitstatus == "" then
+    os_message("Checking working directory status")
+  else
+    error("** Error!!: Uncommitted changes detected. Please commit all changes before release.")
+  end
+
+  -- 3. Verify local commits are pushed
+  local gitpush = os_capture("git log --branches --not --remotes")
+  if gitpush == "" then
+    os_message("Checking pending commits")
+  else
+    error("** Error!!: There are unpushed local commits. Run 'git push' first.")
+  end
+
+  -- 4. Audit version/date consistency across all files
+  if not check_all_tags() then
+    error("** Error!!: Tag verification failed. Update build.lua or run 'l3build tag'")
+  end
+
+  -- 5. Test source extraction via luatex
+  local file = jobname(sourcefiledir .. "/scontents.ins")
+  local errorlevel = run(sourcefiledir, "luatex --interaction=batchmode " .. file .. ".ins > " .. os_null)
+  if errorlevel ~= 0 then
+    error("** Error!!: Failed to process " .. file .. ".ins with luatex")
+  else
+    os_message("Unpacking " .. file .. ".ins with luatex")
+  end
+
+  -- 6. Build CTAN package archive if absent
+  if fileexists(ctanzip .. ".zip") then
+    os_message("Checking CTAN package " .. ctanzip .. ".zip")
+  else
+    -- The PDFs attached to the manual are regenerated first: the ctan
+    -- target refuses to run if they are missing or older than their .tex
+    run_l3build("example", " (PDFs of sources/samples)")
+    run_l3build("testSE", " (PDFs of sources/test-pkg)")
+    run_l3build("ctan", " (" .. ctanzip .. ".zip)")
+  end
+
+  -- 7. Perform CTAN upload dry run. With --debug l3build posts the form to
+  -- httpbin.org and always exits with status 1, so the check looks at the
+  -- echoed form (package and version) instead of the exit status.
+  os_message("Running dry-run upload check")
+  local dryrun = os_capture("l3build upload -F ctan.ann --debug 2>&1", true)
+  local okpkg = string.find(dryrun, '"pkg": "' .. ctanpkg .. '"', 1, true)
+  local okver = string.find(dryrun, '"version": "' .. uploadconfig.version .. '"', 1, true)
+  if not (okpkg and okver) then
+    error("** Error!!: dry-run upload check failed; nothing was tagged or pushed")
+  end
+
+  -- 8. Commit what the steps above regenerated (the PDFs versioned in git),
+  -- so that the tag points to the commit that matches the zip. The working
+  -- directory was clean in step 2: only regenerated files can have changed.
+  local regenerated = os_capture("git status --porcelain --untracked-files=no")
+  if regenerated == "" then
+    os_message("No regenerated files to commit")
+  else
+    local commit_msg = "Release v" .. pkgversion .. " [" .. pkgdate .. "]"
+    run_git("git add -u", "** Error!!: 'git add -u' failed; nothing was tagged or pushed")
+    run_git('git commit --quiet -m "' .. commit_msg .. '"', "** Error!!: 'git commit' failed; nothing was tagged or pushed")
+    os_message("Committing regenerated files: " .. commit_msg)
+    run_git("git push --quiet", "** Error!!: 'git push' failed. The commit exists locally; push it manually.")
+    os_message("Pushing the commit to remote")
+  end
+
+  -- 9. Tag commit in Git (only after everything above succeeded)
+  local tag_version = "v" .. pkgversion
+  local tagongit = os_capture('git for-each-ref refs/tags --sort=-taggerdate --format="%(refname:short)" --count=1')
+  os_message("Checking latest Git tag (latest: " .. (tagongit ~= "" and tagongit or "none") .. ")")
+
+  local tag_cmd = string.format('git tag -a %s -m "Release %s %s"', tag_version, tag_version, pkgdate)
+  run_git(tag_cmd, "** Error!!: Could not create Git tag " .. tag_version .. ". Verify if it already exists.")
+  os_message("Creating Git tag " .. tag_version)
+
+  os_message("Pushing Git tags to remote")
+  run_git("git push --tags --quiet", "** Error!!: 'git push --tags' failed. The tag " .. tag_version .. " exists locally; push it manually.")
+
+  print("-----------------------------------------------------------------")
+  print("** Pre-release checks completed successfully!")
+  print("** Review '" .. ctanzip .. ".curlopt' and verify 'ctan.ann'")
+  print("** To publish to CTAN, run manually: l3build upload")
+  print("-----------------------------------------------------------------")
+  return 0
+end
+
+target_list.release = {
+  desc = "Checks before a public release (git and ctan), then tags and pushes",
+  help = "Runs the checks, creates the git tag and pushes it; then run l3build upload by hand.",
+  func = release_target,
+}

@@ -1,0 +1,290 @@
+% test-002.lvt -- recuperar el contenido guardado con scontents (sin etiquetado)
+%
+% Pablo González L. <pablgonz@yahoo.com>
+%
+% Regresion:  l3build save test-002
+%             l3build check test-002
+%
+% Test de regresion de \getstored, \foreachsc (before, after, start, step,
+% stop, wrapper, sep), \typestored y \meaningsc (indice, rango, lista de
+% indices, width-tab, print-cmd, verb-font) y \mergesc (typestored,
+% meaningsc). El contenido se guarda antes de \START, asi el log solo
+% guarda lo que hace cada caso: la caja con lo impreso y, con debug-var
+% (activa por defecto), el contenido que pasan \typestored y \meaningsc.
+% Las lineas de la secuencia tab llevan caracteres TAB reales.
+%
+% Hecho con cariño por Pablo González L.
+\input{regression-test}
+
+\documentclass{article}
+\ExplSyntaxOn
+\debug_on:n { all }
+\ExplSyntaxOff
+\usepackage{scontents}
+% \meaningsc deja lineas largas sin cortar: no se vuelcan al log.
+\hfuzz=\maxdimen \hbadness=10000
+\begin{document}
+
+% \BOXSTART y \BOXEND componen lo impreso en una caja y la muestran en el
+% log.
+\newcommand\BOXSTART{\setbox0=\vbox\bgroup\hsize=250pt \parindent=0pt\relax}
+\newcommand\BOXEND{\par\egroup\showbox0 }
+
+% Contenido de los casos: data tiene cuatro contenidos, tab lleva TAB y
+% code lleva un entorno verbatim.
+\Scontents[store-cmd=data]{Uno}
+\Scontents[store-cmd=data]{Dos}
+\Scontents[store-cmd=data]{Tres}
+\Scontents[store-cmd=data]{Cuatro}
+\Scontents*[store-cmd=tab]|A	B		C|
+\begin{scontents}[store-env=tab]
+	Linea con un TAB
+		Linea con dos TAB
+\end{scontents}
+\begin{scontents}[store-env=code]
+\textbf{Negrita} y \verb|\foo|.
+\begin{verbatim}
+  verbatim  &  %
+\end{verbatim}
+\end{scontents}
+
+\START
+
+\TYPE{=== A. \string\getstored\space ===}
+
+% 1. Sin indice: el ultimo contenido.
+\BEGINTEST{[1] getstored sin indice}
+\BOXSTART
+\getstored{data}
+\BOXEND
+\ENDTEST
+
+% 2. Indices positivos, negativos y expresiones enteras.
+\BEGINTEST{[2] getstored con indices}
+\BOXSTART
+\getstored[1]{data}\par
+\getstored[2]{data}\par
+\getstored[-1]{data}\par
+\getstored[-4]{data}\par
+\getstored[1+2]{data}
+\BOXEND
+\ENDTEST
+
+% 3. Contenido con un entorno verbatim.
+\BEGINTEST{[3] getstored con verbatim}
+\BOXSTART
+\getstored{code}
+\BOXEND
+\ENDTEST
+
+% 4. \getstored es robusto: no se expande en un \edef.
+\BEGINTEST{[4] getstored en un edef}
+\edef\x{\getstored[3]{data}}
+\TYPE{\meaning\x}
+\ENDTEST
+
+% 5. \getstored en un argumento movil.
+\BEGINTEST{[5] getstored en section}
+\BOXSTART
+\section*{Titulo \getstored[2]{data}}
+\BOXEND
+\ENDTEST
+
+\TYPE{=== B. \string\foreachsc\space ===}
+
+% 6. Sin claves.
+\BEGINTEST{[6] foreachsc sin claves}
+\BOXSTART
+\foreachsc{data}
+\BOXEND
+\ENDTEST
+
+% 7. sep, before y after.
+\BEGINTEST{[7] foreachsc sep, before y after}
+\BOXSTART
+\foreachsc[sep={, }]{data}\par
+\foreachsc[before={[}, after={]}]{data}\par
+\foreachsc[before={<}, after={>}, sep={ - }]{data}
+\BOXEND
+\ENDTEST
+
+% 8. start, step y stop.
+\BEGINTEST{[8] foreachsc start, step y stop}
+\BOXSTART
+\foreachsc[start=2, sep={,}]{data}\par
+\foreachsc[step=2, sep={,}]{data}\par
+\foreachsc[stop=3, sep={,}]{data}\par
+\foreachsc[start=2, step=2, stop=4, sep={,}]{data}\par
+\foreachsc[start=3, stop=3]{data}
+\BOXEND
+\ENDTEST
+
+% 9. wrapper.
+\BEGINTEST{[9] foreachsc wrapper}
+\BOXSTART
+\foreachsc[wrapper={\textbf{#1}}, sep={ }]{data}\par
+\foreachsc[wrapper={(#1)}, before={<}, after={>}, start=2, stop=3]{data}
+\BOXEND
+\ENDTEST
+
+% 10. Dentro de una lista.
+\BEGINTEST{[10] foreachsc en itemize}
+\BOXSTART
+\begin{itemize}
+\foreachsc[before={\item }]{data}
+\end{itemize}
+\BOXEND
+\ENDTEST
+
+\TYPE{=== C. \string\typestored\space ===}
+
+% 11. Sin argumento opcional: el primer contenido.
+\BEGINTEST{[11] typestored sin indice}
+\BOXSTART
+\typestored{data}
+\BOXEND
+\ENDTEST
+
+% 12. Indice, indice negativo, rango, 1-end y lista de indices.
+\BEGINTEST{[12] typestored con indices y rangos}
+\BOXSTART
+\typestored[2]{data}
+\typestored[-1]{data}
+\typestored[2-3]{data}
+\typestored[1-end]{data}
+\typestored[1, 3]{data}
+\BOXEND
+\ENDTEST
+
+% 13. print-cmd=false: no se imprime nada, solo el log de debug-var.
+\BEGINTEST{[13] typestored print-cmd=false}
+\BOXSTART
+\typestored[1-end, print-cmd=false]{data}
+\BOXEND
+\ENDTEST
+
+% 14. Contenido con verbatim.
+\BEGINTEST{[14] typestored con verbatim}
+\BOXSTART
+\typestored{code}
+\BOXEND
+\ENDTEST
+
+% 15. width-tab: cada TAB se cambia por width-tab espacios.
+\BEGINTEST{[15] typestored width-tab}
+\BOXSTART
+\typestored[1-end]{tab}
+\typestored[1-end, width-tab=2]{tab}
+\typestored[1-end, width-tab=4]{tab}
+\BOXEND
+\ENDTEST
+
+% 16. width-tab con \setupsc.
+\BEGINTEST{[16] setupsc width-tab}
+\setupsc{width-tab=3}
+\BOXSTART
+\typestored[1]{tab}
+\BOXEND
+\ENDTEST
+
+\TYPE{=== D. \string\meaningsc\space ===}
+
+% 17. Sin argumento opcional, indice, rango y lista de indices.
+\BEGINTEST{[17] meaningsc con indices y rangos}
+\BOXSTART
+\meaningsc{data}\par
+\meaningsc[-1]{data}\par
+\meaningsc[2-3]{data}\par
+\meaningsc[1-end]{data}\par
+\meaningsc[4, 1]{data}
+\BOXEND
+\ENDTEST
+
+% 18. print-cmd=false.
+\BEGINTEST{[18] meaningsc print-cmd=false}
+\BOXSTART
+\meaningsc[1-end, print-cmd=false]{data}
+\BOXEND
+\ENDTEST
+
+% 19. Contenido con verbatim y con TAB.
+\BEGINTEST{[19] meaningsc con verbatim y width-tab}
+\BOXSTART
+\meaningsc{code}\par
+\meaningsc[1-end]{tab}\par
+\meaningsc[1-end, width-tab=4]{tab}
+\BOXEND
+\ENDTEST
+
+% 20. verb-font.
+\BEGINTEST{[20] setupsc verb-font}
+\setupsc{verb-font=\sffamily}
+\BOXSTART
+\meaningsc[1]{data}
+\BOXEND
+\ENDTEST
+
+\TYPE{=== E. \string\mergesc\space ===}
+
+% 21. typestored con indices de varias secuencias.
+\BEGINTEST{[21] mergesc typestored}
+\BOXSTART
+\mergesc[typestored]{ {data}[1], {code}[1], {data}[3] }
+\BOXEND
+\ENDTEST
+
+% 22. Secuencia sin indice: todos sus contenidos; rangos con end, indice
+% negativo y rango descendente.
+\BEGINTEST{[22] mergesc typestored con secuencias completas y rangos}
+\BOXSTART
+\mergesc[typestored]{ {data}, {tab}[1] }
+\mergesc[typestored]{ {data}[2-end], {data}[1] }
+\mergesc[typestored]{ {data}[-1], {data}[end-3] }
+\BOXEND
+\ENDTEST
+
+% 23. meaningsc y width-tab.
+\BEGINTEST{[23] mergesc meaningsc}
+\BOXSTART
+\mergesc[meaningsc]{ {data}[1-end] }\par
+\mergesc[meaningsc, width-tab=4]{ {tab} }
+\BOXEND
+\ENDTEST
+
+% 24. print-cmd=false.
+\BEGINTEST{[24] mergesc print-cmd=false}
+\BOXSTART
+\mergesc[typestored, print-cmd=false]{ {data}[1], {data}[2] }
+\BOXEND
+\ENDTEST
+
+% 25. Un documento armado con partes fijas y partes variables.
+\BEGINTEST{[25] mergesc con un documento completo}
+\begin{scontents}[store-env=mce]
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\end{scontents}
+\begin{scontents}[store-env=mce]
+\begin{document}
+\end{scontents}
+\begin{scontents}[store-env=mce]
+\end{document}
+\end{scontents}
+\begin{scontents}[store-env=mce-1]
+\usepackage{amsmath}
+\end{scontents}
+\begin{scontents}[store-env=mce-1]
+\begin{align}
+  0 & \neq 1
+\end{align}
+\end{scontents}
+\BOXSTART
+\mergesc[typestored]
+  {
+    {mce}[1], {mce-1}[1], {mce}[2], {mce-1}[2], {mce}[3]
+  }
+\BOXEND
+\ENDTEST
+
+\OMIT
+\end{document}

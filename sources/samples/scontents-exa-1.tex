@@ -1,0 +1,22 @@
+% arara: lualatex: { branch: developer }
+% arara: clean: { extensions: [ aux, log ] }
+\documentclass{article}
+\usepackage[store-cmd=solutions]{scontents}
+\newtheorem{ex}{Exercise}
+\setlength{\parindent}{0pt}
+\pagestyle{empty}
+\begin{document}
+\section{Problems}
+\begin{ex}
+First exercise
+\Scontents{First solution.}
+\end{ex}
+
+\begin{ex}
+Second exercise
+\Scontents{Second solution.}
+\end{ex}
+
+\section{Solutions}
+\foreachsc[sep={\\[10pt]}]{solutions}
+\end{document}

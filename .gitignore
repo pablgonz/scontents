@@ -47,6 +47,13 @@ _minted*
 *.zip
 *.curlopt
 
+## PDFs versioned in the repository (after the *.pdf rule):
+## the manual and the PDFs that 'l3build example' and 'l3build testSE'
+## leave in sources/samples and sources/test-pkg
+!/scontents.pdf
+!/sources/samples/*.pdf
+!/sources/test-pkg/*.pdf
+
 ## For testing
 **/sources/test-pkg/CTANREADME.md
 **/sources/test-pkg/scontents.ins

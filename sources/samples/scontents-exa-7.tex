@@ -1,0 +1,50 @@
+% arara: lualatex: { branch: developer }
+% arara: clean: { extensions: [ aux, log ] }
+\documentclass{article}
+\usepackage{scontents}
+\ExplSyntaxOn
+\cs_undefine:N \verbatimsc
+\cs_undefine:N \endverbatimsc
+\ExplSyntaxOff
+\usepackage{fvextra}
+\usepackage{xcolor}
+\definecolor{mygray}{gray}{0.9}
+\usepackage{tcolorbox}
+\newenvironment{verbatimsc}%
+{\VerbatimEnvironment
+\begin{tcolorbox}[colback=mygray, boxsep=0pt, arc=0pt, boxrule=0pt]
+\begin{Verbatim}[fontsize=\scriptsize, breaklines, breakafter=*, breaksymbolsep=0.5em,
+breakaftersymbolpre={\,\tiny\ensuremath{\rfloor}}]}%
+{\end{Verbatim}%
+\end{tcolorbox}}
+\setlength{\parindent}{0pt}
+\pagestyle{empty}
+\begin{document}
+\section{Test \texttt{\textbackslash begin\{scontents\}} with \texttt{fancyvrb}}
+Test \verb+{scontents}+ \par
+
+\begin{scontents}
+Using \verb+scontents+ env no \verb+[key=val]+, save in seq \verb+contents+
+with index 1.
+
+Prove new \Verb*{ fancyvrb with braces } and environment \verb+Verbatim*+
+\begin{verbatim}
+ verbatim  environment
+\end{verbatim}
+\end{scontents}
+
+\section{Test \texttt{\textbackslash Scontents} with \texttt{fancyvrb}}
+\Scontents{ We have coded this in \LaTeX: $E=mc^2$.}
+
+\section{Test \texttt{\textbackslash getstored}}
+\getstored[1]{contents}\par
+\getstored{contents}
+
+\section{Test \texttt{\textbackslash meaningsc}}
+\meaningsc[1]{contents}\par
+\meaningsc[2]{contents}
+
+\section{Test \texttt{\textbackslash typestored}}
+\typestored[1]{contents}
+\typestored[2]{contents}
+\end{document}

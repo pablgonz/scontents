@@ -1,0 +1,36 @@
+% arara: lualatex: { branch: developer }
+% arara: clean: { extensions: [ aux, log ] }
+\DocumentMetadata{tagging=on, lang=en-US, pdfversion=2.0, pdfstandard=ua-2}
+\documentclass{article}
+\usepackage{scontents,unicode-math,hyperref}
+\hypersetup{pdftitle = {Test scontents package},}
+\begin{document}
+Some
+
+\begin{scontents}[print-env=true]
+    First code \verb|\foo|
+
+    And more code \verb|\bar|
+\end{scontents}
+
+Text
+
+\begin{scontents}[print-env=true]
+    Second code \verb|\foo|
+
+    And more code \verb|\bar|
+\end{scontents}
+
+Text
+
+\Scontents*{code \verb|\baz|}
+
+% \typestored
+\typestored[1]{contents}
+
+% \mergesc
+\mergesc[typestored]{ {contents}[1-end] }
+
+% \getstored
+\getstored[2]{contents}
+\end{document}

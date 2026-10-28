@@ -1,0 +1,325 @@
+% test-001.lvt -- almacenamiento de contenido con scontents (sin etiquetado)
+%
+% Pablo González L. <pablgonz@yahoo.com>
+%
+% Regresion:  l3build save test-001
+%             l3build check test-001
+%
+% Test de regresion del entorno scontents, de \Scontents, \Scontents*, de
+% las claves para guardar e imprimir (store-env, store-cmd, store-all,
+% print-env, print-cmd, print-all, force-eol, debug-var), de \setupsc, de
+% \newenvsc, de \countsc y de \cleanseqsc. Con debug-var (activa por
+% defecto) cada contenido guardado se escribe en el log; lo impreso se
+% compone en una caja que tambien va al log (\BOXSTART ... \BOXEND). El
+% documento no usa \DocumentMetadata: el caso con etiquetado esta en
+% test-010.
+%
+% Los entornos de scontents leen su contenido linea a linea, por eso no
+% pueden ir dentro del argumento de una macro: cada caso usa \BEGINTEST y
+% \ENDTEST, y la caja se abre y se cierra con \BOXSTART y \BOXEND.
+%
+% Hecho con cariño por Pablo González L.
+\input{regression-test}
+
+\documentclass{article}
+\ExplSyntaxOn
+\debug_on:n { all }
+\ExplSyntaxOff
+\usepackage{scontents}
+\begin{document}
+
+% \BOXSTART y \BOXEND componen lo impreso en una caja y la muestran en el
+% log. \SHOWSEQ muestra la secuencia completa y \COUNT el numero de
+% contenidos guardados.
+\newcommand\BOXSTART{\setbox0=\vbox\bgroup\hsize=250pt \parindent=0pt\relax}
+\newcommand\BOXEND{\par\egroup\showbox0 }
+\ExplSyntaxOn
+\NewDocumentCommand \SHOWSEQ { m }
+  { \seq_show:c { g__scontents_name_#1_seq } }
+\ExplSyntaxOff
+\newcommand\COUNT[1]{\TYPE{countsc{#1}=\countsc{#1}}}
+
+% \newenvsc define el entorno de forma local: se define aqui, fuera de los
+% grupos de los casos, para usarlo en los casos de la seccion D.
+\newenvsc{envnuevo}[store-env=nuevo, print-env=false]
+
+\START
+
+\TYPE{=== A. Entorno scontents ===}
+
+% 1. Sin claves: se guarda en la secuencia contents.
+\BEGINTEST{[1] scontents sin claves}
+\begin{scontents}
+Uno dos tres.
+\end{scontents}
+\COUNT{contents}
+\ENDTEST
+
+% 2. Varias lineas, linea en blanco, \verb y caracteres especiales.
+\BEGINTEST{[2] store-env=envuno con varias lineas}
+\begin{scontents}[store-env=envuno]
+Primera linea con \verb|\foo| y $x^2$.
+
+Segunda linea despues de una linea en blanco: & # % ~ _ ^.
+\end{scontents}
+\COUNT{envuno}
+\SHOWSEQ{envuno}
+\ENDTEST
+
+% 3. print-env=true: se guarda y se imprime.
+\BEGINTEST{[3] print-env=true}
+\BOXSTART
+\begin{scontents}[store-env=envdos, print-env=true]
+Texto impreso con \verb|\bar|.
+\end{scontents}
+\BOXEND
+\ENDTEST
+
+% 4. print-env sin valor equivale a true.
+\BEGINTEST{[4] print-env sin valor}
+\BOXSTART
+\begin{scontents}[store-env=envdos, print-env]
+Otro texto impreso.
+\end{scontents}
+\BOXEND
+\COUNT{envdos}
+\ENDTEST
+
+% 5. print-env=false: no se imprime nada (la caja queda vacia).
+\BEGINTEST{[5] print-env=false}
+\BOXSTART
+\begin{scontents}[store-env=envdos, print-env=false]
+Texto que no se imprime.
+\end{scontents}
+\BOXEND
+\ENDTEST
+
+% 6. force-eol: con false (por defecto) no hay espacio al final del
+% contenido, con true el final de linea queda como espacio.
+\BEGINTEST{[6] force-eol=false y force-eol=true}
+\begin{scontents}[store-env=eol]
+Sin fin de linea
+\end{scontents}
+\begin{scontents}[store-env=eol, force-eol=true]
+Con fin de linea
+\end{scontents}
+\begin{scontents}[store-env=eol, force-eol]
+Con fin de linea sin valor
+\end{scontents}
+\BOXSTART
+X\getstored[1]{eol}Y\par
+X\getstored[2]{eol}Y\par
+X\getstored[3]{eol}Y
+\BOXEND
+\ENDTEST
+
+% 7. Argumento opcional en la linea siguiente: solo se toma si la linea
+% del \begin termina con %.
+\BEGINTEST{[7] argumento opcional en la linea siguiente}
+\begin{scontents}%
+[store-env=envtres]
+Contenido de envtres.
+\end{scontents}
+\COUNT{envtres}
+\ENDTEST
+
+% 8. Entornos scontents anidados: el interior se guarda como texto.
+\BEGINTEST{[8] entornos anidados}
+\begin{scontents}[store-env=outer]
+Antes del anidado.
+\begin{scontents}[store-env=inner]
+Dentro del anidado.
+\end{scontents}
+Despues del anidado.
+\end{scontents}
+\COUNT{outer}
+\TYPE{inner existe: \ifcsname g__scontents_name_inner_seq\endcsname si\else no\fi}
+\BOXSTART
+\getstored{outer}
+\BOXEND
+\COUNT{inner}
+\ENDTEST
+
+% 9. Entorno verbatim dentro del contenido guardado.
+\BEGINTEST{[9] verbatim dentro de scontents}
+\begin{scontents}[store-env=verb]
+Antes.
+\begin{verbatim}
+  \raw{texto} & % #
+\end{verbatim}
+Despues.
+\end{scontents}
+\BOXSTART
+\getstored{verb}
+\BOXEND
+\ENDTEST
+
+\TYPE{=== B. Comandos \string\Scontents\space y \string\Scontents* ===}
+
+% 10. Sin claves: se guarda en la secuencia contents.
+\BEGINTEST{[10] Scontents sin claves}
+\Scontents{Contenido de un comando.}
+\COUNT{contents}
+\ENDTEST
+
+% 11. store-cmd y print-cmd.
+\BEGINTEST{[11] store-cmd y print-cmd}
+\BOXSTART
+\Scontents[store-cmd=cmduno]{No se imprime.}
+\Scontents[store-cmd=cmduno, print-cmd=true]{Se imprime.}
+\Scontents[store-cmd=cmduno, print-cmd]{Se imprime sin valor.}
+\BOXEND
+\COUNT{cmduno}
+\ENDTEST
+
+% 12. \Scontents* con llaves y con delimitadores, \verb dentro.
+\BEGINTEST{[12] Scontents* con llaves y delimitadores}
+\Scontents*[store-cmd=cmddos]{Llaves con \verb|\foo|.}
+\Scontents*[store-cmd=cmddos]|Barras con \verb+\bar+.|
+\Scontents*[store-cmd=cmddos]+Mas con \verb|\baz| y \verb|%#&|.+
+\COUNT{cmddos}
+\BOXSTART
+\foreachsc[sep={\par}]{cmddos}
+\BOXEND
+\ENDTEST
+
+% 13. \Scontents* en varias lineas con un entorno verbatim.
+\BEGINTEST{[13] Scontents* en varias lineas}
+\BOXSTART
+\Scontents*[store-cmd=cmdtres, print-cmd]{Primera linea.
+
+\begin{verbatim}
+  verbatim  dentro
+\end{verbatim}
+Ultima linea.}
+\BOXEND
+\ENDTEST
+
+% 14. force-eol en \Scontents.
+\BEGINTEST{[14] force-eol en Scontents}
+\Scontents[store-cmd=cmdeol]{Sin}
+\Scontents[store-cmd=cmdeol, force-eol]{Con}
+\BOXSTART
+X\getstored[1]{cmdeol}Y\par
+X\getstored[2]{cmdeol}Y
+\BOXEND
+\ENDTEST
+
+\TYPE{=== C. Claves globales con \string\setupsc ===}
+
+% 15. store-all guarda entornos y comandos en la misma secuencia; la
+% clave es local al grupo del test.
+\BEGINTEST{[15] setupsc store-all}
+\setupsc{store-all=todo}
+\begin{scontents}
+Entorno en todo.
+\end{scontents}
+\Scontents{Comando en todo.}
+\COUNT{todo}
+\ENDTEST
+\BEGINTEST{[15] store-all despues del grupo}
+\Scontents{Comando en contents.}
+\COUNT{todo}
+\COUNT{contents}
+\ENDTEST
+
+% 16. print-all imprime entornos y comandos.
+\BEGINTEST{[16] setupsc print-all}
+\setupsc{store-all=impr, print-all}
+\BOXSTART
+\begin{scontents}
+Entorno impreso.
+\end{scontents}
+\Scontents{Comando impreso.}
+\BOXEND
+\ENDTEST
+
+% 17. print-all=false anula print-env y print-cmd.
+\BEGINTEST{[17] setupsc print-all=false}
+\setupsc{store-all=impr, print-env, print-cmd, print-all=false}
+\BOXSTART
+\begin{scontents}
+Entorno no impreso.
+\end{scontents}
+\Scontents{Comando no impreso.}
+\BOXEND
+\COUNT{impr}
+\ENDTEST
+
+% 18. debug-var=false: lo guardado no se escribe en el log.
+\BEGINTEST{[18] debug-var=false}
+\setupsc{debug-var=false}
+\begin{scontents}[store-env=nolog]
+No aparece en el log.
+\end{scontents}
+\Scontents[store-cmd=nolog]{Tampoco aparece.}
+\COUNT{nolog}
+\ENDTEST
+
+\TYPE{=== D. \string\newenvsc ===}
+
+% 19. Entorno nuevo con sus claves por defecto (definido antes de \START).
+\BEGINTEST{[19] newenvsc}
+\begin{envnuevo}
+Contenido de envnuevo.
+\end{envnuevo}
+\COUNT{nuevo}
+\ENDTEST
+
+% 20. Las claves del entorno se pueden cambiar en cada uso.
+\BEGINTEST{[20] newenvsc con claves}
+\BOXSTART
+\begin{envnuevo}[store-env=nuevodos, print-env]
+Contenido impreso de envnuevo.
+\end{envnuevo}
+\BOXEND
+\COUNT{nuevo}
+\COUNT{nuevodos}
+\ENDTEST
+
+% 21. Entorno nuevo anidado consigo mismo.
+\BEGINTEST{[21] newenvsc anidado}
+\begin{envnuevo}[store-env=nest]
+Antes.
+\begin{envnuevo}[store-env=innernest]
+Dentro.
+\end{envnuevo}
+Despues.
+\end{envnuevo}
+\COUNT{nest}
+\BOXSTART
+\getstored{nest}\par
+\getstored{innernest}
+\BOXEND
+\ENDTEST
+
+% 22. Las claves de \setupsc no cambian las de un entorno de \newenvsc.
+\BEGINTEST{[22] newenvsc y setupsc}
+\setupsc{print-env=true}
+\BOXSTART
+\begin{envnuevo}
+No se imprime.
+\end{envnuevo}
+\BOXEND
+\ENDTEST
+
+\TYPE{=== E. \string\countsc\space y \string\cleanseqsc ===}
+
+% 23. \cleanseqsc vacia la secuencia.
+\BEGINTEST{[23] cleanseqsc}
+\COUNT{cmduno}
+\cleanseqsc{cmduno}
+\COUNT{cmduno}
+\SHOWSEQ{cmduno}
+\Scontents[store-cmd=cmduno]{Nuevo primero.}
+\COUNT{cmduno}
+\ENDTEST
+
+% 24. \cleanseqsc con una secuencia que no existe la crea vacia.
+\BEGINTEST{[24] cleanseqsc de una secuencia nueva}
+\cleanseqsc{vacia}
+\COUNT{vacia}
+\ENDTEST
+
+\OMIT
+\end{document}

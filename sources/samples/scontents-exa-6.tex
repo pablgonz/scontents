@@ -1,0 +1,16 @@
+% arara: lualatex: { branch: developer }
+% arara: clean: { extensions: [ aux, log ] }
+\documentclass[10pt]{article}
+\usepackage{scontents}
+\newenvsc{forshort}[store-env=forshort,print-env=false]
+\setlength{\parindent}{0pt}
+\pagestyle{empty}
+\begin{document}
+
+Something in the whole course.
+
+\begin{forshort}
+    Just a summary...
+\end{forshort}
+
+\end{document}

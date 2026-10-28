@@ -1,0 +1,425 @@
+% test-100.lvt -- mensajes de error y de aviso de scontents
+%
+% Pablo González L. <pablgonz@yahoo.com>
+%
+% Regresion:  l3build save test-100
+%             l3build check test-100
+%
+% Cada caso provoca un mensaje del paquete y va precedido de \CASE{id};
+% asi el .tlg dice a que caso pertenece cada mensaje. \CASE solo toma el
+% [id]: el codigo del caso va despues en un grupo normal, no en el
+% argumento de una macro, porque el entorno scontents y \Scontents* leen su
+% contenido con otros catcodes. Cada caso se compone en su propio grupo y
+% parrafo, para que un error o un cambio de estado no arrastre a los demas.
+% Un caso nuevo se anade al final de su seccion y el [id] no se reutiliza.
+% Los archivos test-100-*.tsc estan en dynamicfiles (build.lua): se borran
+% antes del test, por eso los mensajes de la seccion I (writing, not
+% writing, overwriting) son siempre los mismos.
+%
+% Hecho con cariño por Pablo González L.
+\input{regression-test}
+
+\documentclass{article}
+\ExplSyntaxOn
+\debug_on:n { all }
+\ExplSyntaxOff
+\usepackage{scontents}
+\setlength{\textheight}{16000pt}
+% Los casos con errores pueden dejar cajas anchas: no se vuelcan al log.
+\hfuzz=\maxdimen \vfuzz=\maxdimen \hbadness=10000 \vbadness=10000
+\begin{document}
+
+\newcommand\CASE[1]{\par\TYPE{[#1]}}
+
+% Contenido de los casos: data tiene tres contenidos.
+\Scontents[store-cmd=data]{Uno}
+\Scontents[store-cmd=data]{Dos}
+\Scontents[store-cmd=data]{Tres}
+
+\START
+
+\TYPE{=== A. Claves desconocidas ===}
+
+\CASE{A1}
+  {
+\begin{scontents}[clavefalsa]
+x
+\end{scontents}
+  }
+
+\CASE{A2}
+  {
+\begin{scontents}[clavefalsa=valor]
+x
+\end{scontents}
+  }
+
+\CASE{A3}
+  {
+    \Scontents[clavefalsa]{x}
+  }
+
+\CASE{A4}
+  {
+    \Scontents*[clavefalsa=valor]{x}
+  }
+
+\CASE{A5}
+  {
+    \foreachsc[clavefalsa]{data}
+  }
+
+\CASE{A6}
+  {
+    \foreachsc[clavefalsa=valor]{data}
+  }
+
+\CASE{A7}
+  {
+    \typestored[clavefalsa]{data}
+  }
+
+\CASE{A8}
+  {
+    \typestored[clavefalsa=valor]{data}
+  }
+
+\CASE{A9}
+  {
+    \meaningsc[clavefalsa]{data}
+  }
+
+\CASE{A10}
+  {
+    \mergesc[typestored, clavefalsa]{ {data}[1] }
+  }
+
+\CASE{A11}
+  {
+    \newenvsc{envnuevo}[store-env=nuevo]
+\begin{envnuevo}[clavefalsa]
+x
+\end{envnuevo}
+  }
+
+\CASE{A12}
+  {
+    \setupsc{clavefalsa}
+  }
+
+\CASE{A13}
+  {
+\begin{scontents}[store-env]
+x
+\end{scontents}
+  }
+
+\CASE{A14}
+  {
+    \mergesc[typestored=valor]{ {data}[1] }
+  }
+
+\CASE{A15}
+  {
+    \newenvsc{envmal}[write-env=\jobname-c.tsc]
+\begin{envmal}
+x
+\end{envmal}
+  }
+
+\TYPE{=== B. Enteros positivos ===}
+
+\CASE{B1}
+  {
+    \setupsc{width-tab=0}
+  }
+
+\CASE{B2}
+  {
+    \setupsc{width-tab=-2}
+  }
+
+\CASE{B3}
+  {
+    \setupsc{width-tab=}
+  }
+
+\CASE{B4}
+  {
+    \foreachsc[start=0]{data}
+  }
+
+\CASE{B5}
+  {
+    \foreachsc[step=-1]{data}
+  }
+
+\CASE{B6}
+  {
+    \foreachsc[stop=0]{data}
+  }
+
+\CASE{B7}
+  {
+    \typestored[1, width-tab=0]{data}
+  }
+
+\TYPE{=== C. Nombre de secuencia vacio ===}
+
+\CASE{C1}
+  {
+\begin{scontents}[store-env=]
+x
+\end{scontents}
+  }
+
+\CASE{C2}
+  {
+    \Scontents[store-cmd={}]{x}
+  }
+
+\CASE{C3}
+  {
+    \setupsc{store-all={ }}
+    \Scontents*{x}
+  }
+
+\TYPE{=== D. Secuencias que no existen ===}
+
+\CASE{D1}
+  {
+    \getstored{noexiste}
+  }
+
+\CASE{D2}
+  {
+    \foreachsc{noexiste}
+  }
+
+\CASE{D3}
+  {
+    \typestored{noexiste}
+  }
+
+\CASE{D4}
+  {
+    \meaningsc{noexiste}
+  }
+
+\CASE{D5}
+  {
+    \TYPE{countsc=\countsc{noexiste}}
+  }
+
+\CASE{D6}
+  {
+    \mergesc[typestored]{ {noexiste}[1] }
+  }
+
+\CASE{D7}
+  {
+    \mergesc[typestored]{ {noexiste} }
+  }
+
+\TYPE{=== E. Indices fuera de rango ===}
+
+\CASE{E1}
+  {
+    \getstored[0]{data}
+  }
+
+\CASE{E2}
+  {
+    \getstored[4]{data}
+  }
+
+\CASE{E3}
+  {
+    \getstored[-4]{data}
+  }
+
+\CASE{E4}
+  {
+    \typestored[0]{data}
+  }
+
+\CASE{E5}
+  {
+    \typestored[9]{data}
+  }
+
+\CASE{E6}
+  {
+    \typestored[2-9]{data}
+  }
+
+\CASE{E7}
+  {
+    \meaningsc[-9]{data}
+  }
+
+\CASE{E8}
+  {
+    \mergesc[typestored]{ {data}[9] }
+  }
+
+\CASE{E9}
+  {
+    \foreachsc[stop=5]{data}
+  }
+
+\CASE{E10}
+  {
+    \mergesc[typestored]{ {data}[-1], {data}[abc] }
+  }
+
+\CASE{E11}
+  {
+    \mergesc[meaningsc]{ {data}[2-9] }
+  }
+
+\TYPE{=== F. Contenido en blanco ===}
+
+\CASE{F1}
+  {
+    \Scontents[store-cmd=blanco, force-eol]{ }
+    \typestored{blanco}
+  }
+
+\TYPE{=== G. Argumento vacio ===}
+
+\CASE{G1}
+  {
+    \Scontents{}
+  }
+
+\CASE{G2}
+  {
+    \Scontents*{}
+  }
+
+\CASE{G3}
+  {
+    \Scontents*||
+  }
+
+\TYPE{=== H. mergesc sin typestored ni meaningsc ===}
+
+\CASE{H1}
+  {
+    \mergesc{ {data}[1] }
+  }
+
+\CASE{H2}
+  {
+    \mergesc[print-cmd=false]{ {data}[1] }
+  }
+
+\TYPE{=== I. Archivos ===}
+
+\CASE{I1}
+  {
+\begin{scontents}[write-out=\jobname-a.tsc]
+x
+\end{scontents}
+  }
+
+\CASE{I2}
+  {
+\begin{scontents}[write-out=\jobname-a.tsc]
+y
+\end{scontents}
+  }
+
+\CASE{I3}
+  {
+\begin{scontents}[write-out=\jobname-a.tsc, overwrite]
+z
+\end{scontents}
+  }
+
+\CASE{I4}
+  {
+    \Scontents[write-out=\jobname-b.tsc]{x}
+  }
+
+\CASE{I5}
+  {
+    \Scontents[write-cmd=\jobname-b.tsc]{y}
+  }
+
+\CASE{I6}
+  {
+    \Scontents*[write-out=\jobname-b.tsc, overwrite]|z|
+  }
+
+\CASE{I7}
+  {
+    \typestored[1, write-out=\jobname-b.tsc, print-cmd=false]{data}
+  }
+
+\CASE{I8}
+  {
+    \meaningsc[1, write-out=\jobname-b.tsc, overwrite, print-cmd=false]{data}
+  }
+
+\TYPE{=== J. newenvsc ===}
+
+\CASE{J1}
+  {
+    \newenvsc{scontents}
+  }
+
+\CASE{J2}
+  {
+    \newenvsc{itemize}[store-env=x]
+  }
+
+\TYPE{=== K. Entorno scontents ===}
+
+\CASE{K1}
+  {
+\begin{scontents}[store-env=vacio]
+\end{scontents}
+  }
+
+\CASE{K2}
+  {
+\begin{scontents} basura
+x
+\end{scontents}
+  }
+
+\CASE{K3}
+  {
+\begin{scontents}[store-env=k3] basura
+x
+\end{scontents}
+  }
+
+\CASE{K4}
+  {
+\begin{scontents} [store-env=k4]
+x
+\end{scontents}
+  }
+
+\CASE{K5}
+  {
+\begin{scontents}[store-env=k5]
+x
+\end{scontents}Texto despues.
+  }
+
+\CASE{K6}
+  {
+\begin{scontents}[store-env=k6]
+\begin{scontents} \begin{scontents}
+x
+\end{scontents}
+\end{scontents}
+\end{scontents}
+  }
+
+\OMIT
+\end{document}

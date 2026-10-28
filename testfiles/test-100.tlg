@@ -1,0 +1,539 @@
+This is a generated file for the l3build validation system.
+Don't change this file in any respect.
+=== A. Claves desconocidas ===
+[A1]
+! Package scontents Error: The key 'clavefalsa' is unknown by environment 'scontents' and is being ignored.
+For immediate help type H <return>.
+ ...                                              
+l. ...\begin{scontents}[clavefalsa]
+The environment 'scontents' does not have a key called 'clavefalsa'.
+Check that you have spelled the key name correctly.
+> \l__scontents_processed_body_lines_tl=x%^^Ascheol%.
+Defining \g__scontents_name_contents_seq on line ...
+[A2]
+! Package scontents Error: The key 'clavefalsa=valor' is unknown by environment 'scontents' and is being ignored.
+For immediate help type H <return>.
+ ...                                              
+l. ...\begin{scontents}[clavefalsa=valor]
+The environment 'scontents' does not have a key called 'clavefalsa'.
+Check that you have spelled the key name correctly.
+> \l__scontents_processed_body_lines_tl=x%^^Ascheol%.
+[A3]
+! Package scontents Error: The key 'clavefalsa' is unknown by command \Scontents and is being ignored on line ....
+For immediate help type H <return>.
+ ...                                              
+l. ...    \Scontents[clavefalsa]
+                               {x}
+The command \Scontents does not have a key called 'clavefalsa'.
+Check that you have spelled the key name correctly.
+> \l__scontents_Scontents_arg_tl=x%^^Ascheol%.
+[A4]
+! Package scontents Error: The key 'clavefalsa=valor' is unknown by command \Scontents and is being ignored on line ....
+For immediate help type H <return>.
+ ...                                              
+l. ...    \Scontents*[clavefalsa=valor]
+                                      {x}
+The command \Scontents does not have a key called 'clavefalsa'.
+Check that you have spelled the key name correctly.
+> \l__scontents_Scontents_arg_tl=x%^^Ascheol%.
+[A5]
+! Package scontents Error: The key 'clavefalsa' is unknown by command \foreachsc and is being ignored on line ....
+For immediate help type H <return>.
+ ...                                              
+l. ...    \foreachsc[clavefalsa]{data}
+The command \foreachsc does not have a key called 'clavefalsa'.
+Check that you have spelled the key name correctly.
+[A6]
+! Package scontents Error: The key 'clavefalsa=valor' is unknown by command \foreachsc and is being ignored on line ....
+For immediate help type H <return>.
+ ...                                              
+l. ...    \foreachsc[clavefalsa=valor]{data}
+The command \foreachsc does not have a key called 'clavefalsa'.
+Check that you have spelled the key name correctly.
+[A7]
+! Package scontents Error: The key 'clavefalsa' is unknown by command \typestored and is being ignored on line ....
+For immediate help type H <return>.
+ ...                                              
+l. ...    \typestored[clavefalsa]{data}
+The command \typestored does not have a key called 'clavefalsa'.
+Check that you have spelled the key name correctly.
+> \l__scontents_typestored_arg_tl=Uno.
+[A8]
+! Package scontents Error: The key 'clavefalsa=valor' is unknown by command \typestored and is being ignored on line ....
+For immediate help type H <return>.
+ ...                                              
+l. ...    \typestored[clavefalsa=valor]{data}
+The command \typestored does not have a key called 'clavefalsa'.
+Check that you have spelled the key name correctly.
+> \l__scontents_typestored_arg_tl=Uno.
+[A9]
+! Package scontents Error: The key 'clavefalsa' is unknown by command \meaningsc and is being ignored on line ....
+For immediate help type H <return>.
+ ...                                              
+l. ...    \meaningsc[clavefalsa]{data}
+The command \meaningsc does not have a key called 'clavefalsa'.
+Check that you have spelled the key name correctly.
+> \l__scontents_meaningsc_arg_tl=Uno .
+[A10]
+! Package scontents Error: The key 'clavefalsa' is unknown by command \mergesc and is being ignored on line ....
+For immediate help type H <return>.
+ ...                                              
+l. ......rgesc[typestored, clavefalsa]{ {data}[1] }
+The command \mergesc does not have a key called 'clavefalsa'.
+Check that you have spelled the key name correctly.
+> \l__scontents_typestored_arg_tl=Uno.
+[A11]
+Defining \__scontents_envnuevo_begin: on line ...
+Defining \__scontents_envnuevo_end: on line ...
+! Package scontents Error: The key 'clavefalsa' is unknown by environment 'envnuevo' and is being ignored.
+For immediate help type H <return>.
+ ...                                              
+l. ...\begin{envnuevo}[clavefalsa]
+The environment 'envnuevo' does not have a key called 'clavefalsa'.
+Check that you have spelled the key name correctly.
+> \l__scontents_processed_body_lines_tl=x%^^Ascheol%.
+Defining \g__scontents_name_nuevo_seq on line ...
+[A12]
+! LaTeX Error: The key 'scontents/clavefalsa' is unknown and is being ignored.
+For immediate help type H <return>.
+ ...                                              
+l. ...    \setupsc{clavefalsa}
+The module 'scontents' does not have a key called 'scontents/clavefalsa'.
+Check that you have spelled the key name correctly.
+[A13]
+! Package scontents Error: Empty sequence name for storing content on line ....
+For immediate help type H <return>.
+ ...                                              
+l. ...\end{scontents}
+The keys 'store-env', 'store-cmd' and 'store-all' need a non-empty sequence name. The content will not be stored.
+[A14]
+! LaTeX Error: The key 'scontents/mergesc/typestored' does not take a value.
+For immediate help type H <return>.
+ ...                                              
+l. ...    \mergesc[typestored=valor]{ {data}[1] }
+The key 'scontents/mergesc/typestored' should be given without a value.
+The value 'valor' was present: the key will be ignored.
+! Package scontents Error: Missing mandatory key 'typestored' or 'meaningsc' for \mergesc on line ....
+For immediate help type H <return>.
+ ...                                              
+l. ...    \mergesc[typestored=valor]{ {data}[1] }
+The command \mergesc needs one of the keys 'typestored' or 'meaningsc'.
+Check that you have spelled the key name correctly.
+[A15]
+Defining \__scontents_envmal_begin: on line ...
+Defining \__scontents_envmal_end: on line ...
+! LaTeX Error: The key 'scontents/write-env' is unknown and is being ignored.
+For immediate help type H <return>.
+ ...                                              
+l. ...\begin{envmal}
+The module 'scontents' does not have a key called 'scontents/write-env'.
+Check that you have spelled the key name correctly.
+> \l__scontents_processed_body_lines_tl=x%^^Ascheol%.
+=== B. Enteros positivos ===
+[B1]
+! Package scontents Error: The key 'width-tab' needs a positive integer, '0' given on line ....
+For immediate help type H <return>.
+ ...                                              
+l. ...    \setupsc{width-tab=0}
+The value '0' is ignored and the key 'width-tab' keeps its previous value.
+[B2]
+! Package scontents Error: The key 'width-tab' needs a positive integer, '-2' given on line ....
+For immediate help type H <return>.
+ ...                                              
+l. ...    \setupsc{width-tab=-2}
+The value '-2' is ignored and the key 'width-tab' keeps its previous value.
+[B3]
+! Package scontents Error: The key 'width-tab' needs a positive integer, '' given on line ....
+For immediate help type H <return>.
+ ...                                              
+l. ...    \setupsc{width-tab=}
+The value '' is ignored and the key 'width-tab' keeps its previous value.
+[B4]
+! Package scontents Error: The key 'start' needs a positive integer, '0' given on line ....
+For immediate help type H <return>.
+ ...                                              
+l. ...    \foreachsc[start=0]{data}
+The value '0' is ignored and the key 'start' keeps its previous value.
+[B5]
+! Package scontents Error: The key 'step' needs a positive integer, '-1' given on line ....
+For immediate help type H <return>.
+ ...                                              
+l. ...    \foreachsc[step=-1]{data}
+The value '-1' is ignored and the key 'step' keeps its previous value.
+[B6]
+! Package scontents Error: The key 'stop' needs a positive integer, '0' given on line ....
+For immediate help type H <return>.
+ ...                                              
+l. ...    \foreachsc[stop=0]{data}
+The value '0' is ignored and the key 'stop' keeps its previous value.
+[B7]
+! Package scontents Error: The key 'width-tab' needs a positive integer, '0' given on line ....
+For immediate help type H <return>.
+ ...                                              
+l. ...    \typestored[1, width-tab=0]{data}
+The value '0' is ignored and the key 'width-tab' keeps its previous value.
+> \l__scontents_typestored_arg_tl=Uno.
+=== C. Nombre de secuencia vacio ===
+[C1]
+! Package scontents Error: Empty sequence name for storing content on line ....
+For immediate help type H <return>.
+ ...                                              
+l. ...\end{scontents}
+The keys 'store-env', 'store-cmd' and 'store-all' need a non-empty sequence name. The content will not be stored.
+[C2]
+! Package scontents Error: Empty sequence name for storing content on line ....
+For immediate help type H <return>.
+ ...                                              
+l. ...    \Scontents[store-cmd={}]{x}
+The keys 'store-env', 'store-cmd' and 'store-all' need a non-empty sequence name. The content will not be stored.
+[C3]
+! Package scontents Error: Empty sequence name for storing content on line ....
+For immediate help type H <return>.
+ ...                                              
+l. ...    \Scontents*{x}
+The keys 'store-env', 'store-cmd' and 'store-all' need a non-empty sequence name. The content will not be stored.
+=== D. Secuencias que no existen ===
+[D1]
+! Use of \??? doesn't match its definition.
+<argument> \???  
+                 ! Package scontents Error: Storage named 'noexiste' is not ...
+l. ...    \getstored{noexiste}
+If you say, e.g., `\def\a1{...}', then you must always
+put `1' after `\a', since control sequence names are
+made up of letters only. The macro here has not been
+followed by the required stuff, so I'm ignoring it.
+[D2]
+! Package scontents Error: Storage named 'noexiste' is not defined.
+For immediate help type H <return>.
+ ...                                              
+l. ...    \foreachsc{noexiste}
+No content has been stored in a sequence named 'noexiste'.
+[D3]
+! Use of \??? doesn't match its definition.
+<argument> \???  
+                 ! Package scontents Error: Storage named 'noexiste' is not ...
+l. ...    \typestored{noexiste}
+If you say, e.g., `\def\a1{...}', then you must always
+put `1' after `\a', since control sequence names are
+made up of letters only. The macro here has not been
+followed by the required stuff, so I'm ignoring it.
+> \l__scontents_typestored_arg_tl=.
+[D4]
+! Use of \??? doesn't match its definition.
+<argument> \???  
+                 ! Package scontents Error: Storage named 'noexiste' is not ...
+l. ...    \meaningsc{noexiste}
+If you say, e.g., `\def\a1{...}', then you must always
+put `1' after `\a', since control sequence names are
+made up of letters only. The macro here has not been
+followed by the required stuff, so I'm ignoring it.
+> \l__scontents_meaningsc_arg_tl=.
+[D5]
+! Use of \??? doesn't match its definition.
+<argument> \???  
+                 ! Package scontents Error: Storage named 'noexiste' is not ...
+l. ...    \TYPE{countsc=\countsc{noexiste}}
+If you say, e.g., `\def\a1{...}', then you must always
+put `1' after `\a', since control sequence names are
+made up of letters only. The macro here has not been
+followed by the required stuff, so I'm ignoring it.
+countsc=0
+[D6]
+! Package scontents Error: Storage named 'noexiste' is not defined.
+For immediate help type H <return>.
+ ...                                              
+l. ...    \mergesc[typestored]{ {noexiste}[1] }
+No content has been stored in a sequence named 'noexiste'.
+[D7]
+! Package scontents Error: Storage named 'noexiste' is not defined.
+For immediate help type H <return>.
+ ...                                              
+l. ...    \mergesc[typestored]{ {noexiste} }
+No content has been stored in a sequence named 'noexiste'.
+=== E. Indices fuera de rango ===
+[E1]
+! Use of \??? doesn't match its definition.
+<argument> \???  
+                 ! Package scontents Error: Index of sequence 'data' cannot ...
+l. ...    \getstored[0]{data}
+If you say, e.g., `\def\a1{...}', then you must always
+put `1' after `\a', since control sequence names are
+made up of letters only. The macro here has not been
+followed by the required stuff, so I'm ignoring it.
+[E2]
+! Use of \??? doesn't match its definition.
+<argument> \???  
+                 ! Package scontents Error: Index '4' out of range for 'data...
+l. ...    \getstored[4]{data}
+If you say, e.g., `\def\a1{...}', then you must always
+put `1' after `\a', since control sequence names are
+made up of letters only. The macro here has not been
+followed by the required stuff, so I'm ignoring it.
+[E3]
+! Use of \??? doesn't match its definition.
+<argument> \???  
+                 ! Package scontents Error: Index '-4' out of range for 'dat...
+l. ...    \getstored[-4]{data}
+If you say, e.g., `\def\a1{...}', then you must always
+put `1' after `\a', since control sequence names are
+made up of letters only. The macro here has not been
+followed by the required stuff, so I'm ignoring it.
+[E4]
+! Use of \??? doesn't match its definition.
+<argument> \???  
+                 ! Package scontents Error: Index of sequence 'data' cannot ...
+l. ...    \typestored[0]{data}
+If you say, e.g., `\def\a1{...}', then you must always
+put `1' after `\a', since control sequence names are
+made up of letters only. The macro here has not been
+followed by the required stuff, so I'm ignoring it.
+> \l__scontents_typestored_arg_tl=.
+[E5]
+! Use of \??? doesn't match its definition.
+<argument> \???  
+                 ! Package scontents Error: Index '9' out of range for 'data...
+l. ...    \typestored[9]{data}
+If you say, e.g., `\def\a1{...}', then you must always
+put `1' after `\a', since control sequence names are
+made up of letters only. The macro here has not been
+followed by the required stuff, so I'm ignoring it.
+> \l__scontents_typestored_arg_tl=.
+[E6]
+! Use of \??? doesn't match its definition.
+<argument> \???  
+                 ! Package scontents Error: Index '4' out of range for 'data...
+l. ...    \typestored[2-9]{data}
+If you say, e.g., `\def\a1{...}', then you must always
+put `1' after `\a', since control sequence names are
+made up of letters only. The macro here has not been
+followed by the required stuff, so I'm ignoring it.
+! Use of \??? doesn't match its definition.
+<argument> \???  
+                 ! Package scontents Error: Index '5' out of range for 'data...
+l. ...    \typestored[2-9]{data}
+If you say, e.g., `\def\a1{...}', then you must always
+put `1' after `\a', since control sequence names are
+made up of letters only. The macro here has not been
+followed by the required stuff, so I'm ignoring it.
+! Use of \??? doesn't match its definition.
+<argument> \???  
+                 ! Package scontents Error: Index '6' out of range for 'data...
+l. ...    \typestored[2-9]{data}
+If you say, e.g., `\def\a1{...}', then you must always
+put `1' after `\a', since control sequence names are
+made up of letters only. The macro here has not been
+followed by the required stuff, so I'm ignoring it.
+! Use of \??? doesn't match its definition.
+<argument> \???  
+                 ! Package scontents Error: Index '7' out of range for 'data...
+l. ...    \typestored[2-9]{data}
+If you say, e.g., `\def\a1{...}', then you must always
+put `1' after `\a', since control sequence names are
+made up of letters only. The macro here has not been
+followed by the required stuff, so I'm ignoring it.
+! Use of \??? doesn't match its definition.
+<argument> \???  
+                 ! Package scontents Error: Index '8' out of range for 'data...
+l. ...    \typestored[2-9]{data}
+If you say, e.g., `\def\a1{...}', then you must always
+put `1' after `\a', since control sequence names are
+made up of letters only. The macro here has not been
+followed by the required stuff, so I'm ignoring it.
+! Use of \??? doesn't match its definition.
+<argument> \???  
+                 ! Package scontents Error: Index '9' out of range for 'data...
+l. ...    \typestored[2-9]{data}
+If you say, e.g., `\def\a1{...}', then you must always
+put `1' after `\a', since control sequence names are
+made up of letters only. The macro here has not been
+followed by the required stuff, so I'm ignoring it.
+> \l__scontents_typestored_arg_tl=Dos
+Tres.
+[E7]
+! Use of \??? doesn't match its definition.
+<argument> \???  
+                 ! Package scontents Error: Index '-9' out of range for 'dat...
+l. ...    \meaningsc[-9]{data}
+If you say, e.g., `\def\a1{...}', then you must always
+put `1' after `\a', since control sequence names are
+made up of letters only. The macro here has not been
+followed by the required stuff, so I'm ignoring it.
+> \l__scontents_meaningsc_arg_tl=.
+[E8]
+! Package scontents Error: Index '9' out of range for 'data', the maximum is 3.
+For immediate help type H <return>.
+ ...                                              
+l. ...    \mergesc[typestored]{ {data}[9] }
+The sequence 'data' has 3 stored contents, use an index from 1 to 3 or from -3 to -1.
+[E9]
+! Use of \??? doesn't match its definition.
+<argument> \???  
+                 ! Package scontents Error: Index '4' out of range for 'data...
+l. ...    \foreachsc[stop=5]{data}
+If you say, e.g., `\def\a1{...}', then you must always
+put `1' after `\a', since control sequence names are
+made up of letters only. The macro here has not been
+followed by the required stuff, so I'm ignoring it.
+! Use of \??? doesn't match its definition.
+<argument> \???  
+                 ! Package scontents Error: Index '5' out of range for 'data...
+l. ...    \foreachsc[stop=5]{data}
+If you say, e.g., `\def\a1{...}', then you must always
+put `1' after `\a', since control sequence names are
+made up of letters only. The macro here has not been
+followed by the required stuff, so I'm ignoring it.
+[E10]
+! Package scontents Error: The key 'abc' is unknown by command \mergesc and is being ignored on line ....
+For immediate help type H <return>.
+ ...                                              
+l. ......sc[typestored]{ {data}[-1], {data}[abc] }
+The command \mergesc does not have a key called 'abc'.
+Check that you have spelled the key name correctly.
+> \l__scontents_typestored_arg_tl=Tres.
+[E11]
+! Package scontents Error: Index '4' out of range for 'data', the maximum is 3.
+For immediate help type H <return>.
+ ...                                              
+l. ...    \mergesc[meaningsc]{ {data}[2-9] }
+The sequence 'data' has 3 stored contents, use an index from 1 to 3 or from -3 to -1.
+! Package scontents Error: Index '5' out of range for 'data', the maximum is 3.
+For immediate help type H <return>.
+ ...                                              
+l. ...    \mergesc[meaningsc]{ {data}[2-9] }
+The sequence 'data' has 3 stored contents, use an index from 1 to 3 or from -3 to -1.
+! Package scontents Error: Index '6' out of range for 'data', the maximum is 3.
+For immediate help type H <return>.
+ ...                                              
+l. ...    \mergesc[meaningsc]{ {data}[2-9] }
+The sequence 'data' has 3 stored contents, use an index from 1 to 3 or from -3 to -1.
+! Package scontents Error: Index '7' out of range for 'data', the maximum is 3.
+For immediate help type H <return>.
+ ...                                              
+l. ...    \mergesc[meaningsc]{ {data}[2-9] }
+The sequence 'data' has 3 stored contents, use an index from 1 to 3 or from -3 to -1.
+! Package scontents Error: Index '8' out of range for 'data', the maximum is 3.
+For immediate help type H <return>.
+ ...                                              
+l. ...    \mergesc[meaningsc]{ {data}[2-9] }
+The sequence 'data' has 3 stored contents, use an index from 1 to 3 or from -3 to -1.
+! Package scontents Error: Index '9' out of range for 'data', the maximum is 3.
+For immediate help type H <return>.
+ ...                                              
+l. ...    \mergesc[meaningsc]{ {data}[2-9] }
+The sequence 'data' has 3 stored contents, use an index from 1 to 3 or from -3 to -1.
+> \l__scontents_meaningsc_arg_tl=Dos Tres.
+=== F. Contenido en blanco ===
+[F1]
+> \l__scontents_Scontents_arg_tl= .
+Defining \g__scontents_name_blanco_seq on line ...
+> \l__scontents_typestored_arg_tl= .
+! Package scontents Error: Blank stored content to print on line ....
+For immediate help type H <return>.
+ ...                                              
+l. ...    \typestored{blanco}
+The stored content only has spaces, so there is nothing to print in verbatim style. Check the stored content or the index.
+=== G. Argumento vacio ===
+[G1]
+Package scontents Warning: Empty argument for \Scontents on line ....
+> \l__scontents_Scontents_arg_tl=%^^Ascheol%.
+[G2]
+Package scontents Warning: Empty argument for \Scontents on line ....
+> \l__scontents_Scontents_arg_tl=%^^Ascheol%.
+[G3]
+Package scontents Warning: Empty argument for \Scontents on line ....
+> \l__scontents_Scontents_arg_tl=%^^Ascheol%.
+=== H. mergesc sin typestored ni meaningsc ===
+[H1]
+! Package scontents Error: Missing mandatory key 'typestored' or 'meaningsc' for \mergesc on line ....
+For immediate help type H <return>.
+ ...                                              
+l. ...    \mergesc{ {data}[1] }
+The command \mergesc needs one of the keys 'typestored' or 'meaningsc'.
+Check that you have spelled the key name correctly.
+[H2]
+! Package scontents Error: Missing mandatory key 'typestored' or 'meaningsc' for \mergesc on line ....
+For immediate help type H <return>.
+ ...                                              
+l. ...    \mergesc[print-cmd=false]{ {data}[1] }
+The command \mergesc needs one of the keys 'typestored' or 'meaningsc'.
+Check that you have spelled the key name correctly.
+=== I. Archivos ===
+[I1]
+Package scontents Info: Writing file 'test-100-a.tsc'.
+\l__scontents_file_write_iow=\write...
+[I2]
+Package scontents Warning: File 'test-100-a.tsc' already exists. Not writing on line ....
+[I3]
+Package scontents Info: Overwriting file 'test-100-a.tsc'.
+[I4]
+Package scontents Info: Writing file 'test-100-b.tsc'.
+[I5]
+Package scontents Warning: File 'test-100-b.tsc' already exists. Not writing on line ....
+> \l__scontents_Scontents_arg_tl=y%^^Ascheol%.
+[I6]
+Package scontents Info: Overwriting file 'test-100-b.tsc'.
+[I7]
+> \l__scontents_typestored_arg_tl=Uno.
+Package scontents Warning: File 'test-100-b.tsc' already exists. Not writing on line ....
+[I8]
+> \l__scontents_meaningsc_arg_tl=Uno .
+Package scontents Info: Overwriting file 'test-100-b.tsc'.
+=== J. newenvsc ===
+[J1]
+! Package scontents Error: Environment 'scontents' already defined!
+For immediate help type H <return>.
+ ...                                              
+l. ...  }
+You have used \newenvsc with an environment that already has a definition.
+The existing definition of 'scontents' will not be altered.
+[J2]
+! Package scontents Error: Environment 'itemize' already defined!
+For immediate help type H <return>.
+ ...                                              
+l. ...    \newenvsc{itemize}[store-env=x]
+You have used \newenvsc with an environment that already has a definition.
+The existing definition of 'itemize' will not be altered.
+=== K. Entorno scontents ===
+[K1]
+Package scontents Warning: Environment 'scontents' is empty on line ....
+> \l__scontents_processed_body_lines_tl=%^^Ascheol%.
+Defining \g__scontents_name_vacio_seq on line ...
+[K2]
+! Package scontents Error: Junk characters after \begin{scontents} on line ...:
+(scontents)                
+(scontents)                 basura
+For immediate help type H <return>.
+ ...                                              
+l. ...\begin{scontents} basura
+Nothing is allowed after the start of the environment on the same line. These characters are ignored.
+> \l__scontents_processed_body_lines_tl=x%^^Ascheol%.
+[K3]
+! Package scontents Error: Junk characters after \begin{scontents}[...] on line ...:
+(scontents)                
+(scontents)                 basura
+For immediate help type H <return>.
+ ...                                              
+l. ...\begin{scontents}[store-env=k3] basura
+Nothing is allowed after the start of the environment on the same line. These characters are ignored.
+> \l__scontents_processed_body_lines_tl=x%^^Ascheol%.
+Defining \g__scontents_name_k3_seq on line ...
+[K4]
+! Package scontents Error: Junk characters after \begin{scontents} on line ...:
+(scontents)                
+(scontents)                 [store-env=k4]
+For immediate help type H <return>.
+ ...                                              
+l. ...\begin{scontents} [store-env=k4]
+Nothing is allowed after the start of the environment on the same line. These characters are ignored.
+> \l__scontents_processed_body_lines_tl=x%^^Ascheol%.
+[K5]
+> \l__scontents_processed_body_lines_tl=x%^^Ascheol%.
+Defining \g__scontents_name_k5_seq on line ...
+Package scontents Warning: Rescanning text 'Texto despues.' after \end{scontents} on line ....
+[K6]
+Package scontents Warning: Multiple \begin{scontents} on line ....
+> \l__scontents_processed_body_lines_tl=\begin{scontents} \begin{scontents}
+x
+\end{scontents}
+\end{scontents}%^^Ascheol%.
+Defining \g__scontents_name_k6_seq on line ...

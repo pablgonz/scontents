@@ -1,0 +1,47 @@
+% arara: lualatex: { branch: developer }
+% arara: clean: { extensions: [ aux, log ] }
+\documentclass{article}
+\usepackage[store-cmd=tikz]{scontents}
+\usepackage{tikz}
+\setlength{\parindent}{0pt}
+\pagestyle{empty}
+\Scontents{\matrix{ \node (a) {$a$} ; & \node (b) {$b$} ; \\ } ;}
+\Scontents{\matrix[ampersand replacement=\&]
+{ \node (a) {$a$} ; \& \node (b) {$b$} ; \\ } ;}
+\Scontents{\matrix{\node (a) {$a$} ; & \node (b) {$b$} ; \\ } ; }
+\begin{document}
+\section{tikzpicture}
+\begin{tikzpicture}
+\getstored[1]{tikz}
+\end{tikzpicture}
+
+\begin{tikzpicture}
+\getstored[2]{tikz}
+\end{tikzpicture}
+
+\begin{tikzpicture}
+\getstored{tikz}
+\end{tikzpicture}
+
+\begin{scontents}[store-env=buffer]
+Hello World!
+
+This is a \verb*|fake poor man's buffer :)|.
+\end{scontents}
+
+\section{source tikz}
+\typestored[1]{tikz}
+\typestored[2]{tikz}
+\typestored[3]{tikz}
+
+\section{fake buffer}
+\subsection{real content}
+\getstored[1]{buffer}
+\subsection{verbatim style}
+\typestored[1]{buffer}
+\subsection{meaning}
+\meaningsc[1]{buffer}
+
+\section{tikz again}
+\foreachsc[before={\begin{tikzpicture}},after={\end{tikzpicture}},sep={\\[10pt]}]{tikz}
+\end{document}

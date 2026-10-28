@@ -1,0 +1,51 @@
+% arara: lualatex: { branch: developer }
+% arara: clean: { extensions: [ aux, log ] }
+\documentclass{article}
+\usepackage{scontents}
+\ExplSyntaxOn
+\cs_undefine:N \verbatimsc
+\cs_undefine:N \endverbatimsc
+\ExplSyntaxOff
+\usepackage{xcolor}
+\usepackage{listings}
+\lstnewenvironment{verbatimsc}
+  {
+   \lstset{
+           basicstyle=\small\ttfamily,
+           breaklines=true,
+           columns=fullflexible,
+           language=[LaTeX]TeX,
+           numbers=left,
+           numbersep=1em,
+           numberstyle=\tiny\color{gray},
+           keywordstyle=\color{red}
+          }
+  }{}
+\setlength{\parindent}{0pt}
+\pagestyle{empty}
+\begin{document}
+\section{Test \texttt{\textbackslash begin\{scontents\}} with \texttt{listings}}
+Test \verb+{scontents}+ \par
+
+\begin{scontents}
+Using \verb+scontents+ env no \verb+[key=val]+, save in seq \verb+contents+ with index 1.\par
+
+Prove \lstinline[basicstyle=\ttfamily]| lstinline | and environment \verb+Verbatim*+
+\begin{verbatim}
+  verbatim  environment
+\end{verbatim}
+\end{scontents}
+
+\section{Test \texttt{\textbackslash Scontents*} with \texttt{listings}}
+
+\Scontents*+We have coded this in \lstinline[basicstyle=\ttfamily]|\LaTeX: $E=mc^2$|
+and more.+
+
+\section{Test \texttt{\textbackslash getstored}}
+\getstored{contents}\par
+\getstored[1]{contents}
+
+\section{Test \texttt{\textbackslash typestored}}
+\typestored[1]{contents}
+\typestored[2]{contents}
+\end{document}

@@ -1,0 +1,1026 @@
+This is a generated file for the l3build validation system.
+Don't change this file in any respect.
+=== A. Entorno scontents ===
+============================================================
+TEST 1: [1] scontents sin claves
+============================================================
+> \l__scontents_processed_body_lines_tl=Uno dos tres.%^^Ascheol%.
+Defining \g__scontents_name_contents_seq on line ...
+countsc{contents}=1
+============================================================
+============================================================
+TEST 2: [2] store-env=envuno con varias lineas
+============================================================
+> \l__scontents_processed_body_lines_tl=Primera linea con \verb|\foo| y $x^2$.
+Segunda linea despues de una linea en blanco: & # % ~ _ ^.%^^Ascheol%.
+Defining \g__scontents_name_envuno_seq on line ...
+countsc{envuno}=1
+The sequence \g__scontents_name_envuno_seq contains the items (without outer braces):
+>  {Primera linea con \verb|\foo| y $x^2$.
+Segunda linea despues de una linea en blanco: & # % ~ _ ^.%^^Ascheol%}.
+<recently read> }
+l. ...\SHOWSEQ{envuno}
+============================================================
+============================================================
+TEST 3: [3] print-env=true
+============================================================
+> \l__scontents_processed_body_lines_tl=Texto impreso con \verb|\bar|.%^^Ascheol%.
+Defining \g__scontents_name_envdos_seq on line ...
+> \box...=
+\vbox(6.94+1.94)x250.0, direction TLT
+.\hbox(6.94+1.94)x250.0, glue set 142.26fil, direction TLT
+..\localpar
+...\localinterlinepenalty=0
+...\localbrokenpenalty=0
+...\localleftbox=null
+...\localrightbox=null
+..\hbox(0.0+0.0)x0.0, direction TLT
+..\TU/lmr/m/n/10 T
+..\kern-0.83 (font)
+..\TU/lmr/m/n/10 e
+..\TU/lmr/m/n/10 x
+..\TU/lmr/m/n/10 t
+..\TU/lmr/m/n/10 o
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 i
+..\TU/lmr/m/n/10 m
+..\discretionary (penalty 50)
+...< \TU/lmr/m/n/10 -
+..\TU/lmr/m/n/10 p
+..\TU/lmr/m/n/10 r
+..\TU/lmr/m/n/10 e
+..\TU/lmr/m/n/10 s
+..\TU/lmr/m/n/10 o
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 c
+..\TU/lmr/m/n/10 o
+..\TU/lmr/m/n/10 n
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\hbox(0.0+0.0)x0.0, direction TLT
+..\TU/lmtt/m/n/10 \
+..\TU/lmtt/m/n/10 b
+..\TU/lmtt/m/n/10 a
+..\TU/lmtt/m/n/10 r
+..\TU/lmr/m/n/10 .
+..\penalty 10000
+..\glue(\parfillskip) 0.0 plus 1.0fil
+..\glue(\rightskip) 0.0
+! OK.
+\BOXEND ->\par \egroup \showbox 0 
+l. ...\BOXEND
+============================================================
+============================================================
+TEST 4: [4] print-env sin valor
+============================================================
+> \l__scontents_processed_body_lines_tl=Otro texto impreso.%^^Ascheol%.
+> \box...=
+\vbox(7.05+1.94)x250.0, direction TLT
+.\hbox(7.05+1.94)x250.0, glue set 163.5fil, direction TLT
+..\localpar
+...\localinterlinepenalty=0
+...\localbrokenpenalty=0
+...\localleftbox=null
+...\localrightbox=null
+..\hbox(0.0+0.0)x0.0, direction TLT
+..\TU/lmr/m/n/10 O
+..\TU/lmr/m/n/10 t
+..\TU/lmr/m/n/10 r
+..\TU/lmr/m/n/10 o
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 t
+..\TU/lmr/m/n/10 e
+..\TU/lmr/m/n/10 x
+..\TU/lmr/m/n/10 t
+..\TU/lmr/m/n/10 o
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 i
+..\TU/lmr/m/n/10 m
+..\discretionary (penalty 50)
+...< \TU/lmr/m/n/10 -
+..\TU/lmr/m/n/10 p
+..\TU/lmr/m/n/10 r
+..\TU/lmr/m/n/10 e
+..\TU/lmr/m/n/10 s
+..\TU/lmr/m/n/10 o
+..\TU/lmr/m/n/10 .
+..\penalty 10000
+..\glue(\parfillskip) 0.0 plus 1.0fil
+..\glue(\rightskip) 0.0
+! OK.
+\BOXEND ->\par \egroup \showbox 0 
+l. ...\BOXEND
+countsc{envdos}=2
+============================================================
+============================================================
+TEST 5: [5] print-env=false
+============================================================
+> \l__scontents_processed_body_lines_tl=Texto que no se imprime.%^^Ascheol%.
+> \box...=
+\vbox(0.0+0.0)x0.0, direction TLT
+! OK.
+\BOXEND ->\par \egroup \showbox 0 
+l. ...\BOXEND
+============================================================
+============================================================
+TEST 6: [6] force-eol=false y force-eol=true
+============================================================
+> \l__scontents_processed_body_lines_tl=Sin fin de linea%^^Ascheol%.
+Defining \g__scontents_name_eol_seq on line ...
+> \l__scontents_processed_body_lines_tl=Con fin de linea.
+> \l__scontents_processed_body_lines_tl=Con fin de linea sin valor.
+> \box...=
+\vbox(31.05+0.22)x250.0, direction TLT
+.\hbox(7.05+0.22)x250.0, glue set 169.43001fil, direction TLT
+..\localpar
+...\localinterlinepenalty=0
+...\localbrokenpenalty=0
+...\localleftbox=null
+...\localrightbox=null
+..\hbox(0.0+0.0)x0.0, direction TLT
+..\TU/lmr/m/n/10 X
+..\TU/lmr/m/n/10 S
+..\TU/lmr/m/n/10 i
+..\TU/lmr/m/n/10 n
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 ﬁ
+..\TU/lmr/m/n/10 n
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 d
+..\TU/lmr/m/n/10 e
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 l
+..\TU/lmr/m/n/10 i
+..\TU/lmr/m/n/10 n
+..\discretionary (penalty 50)
+...< \TU/lmr/m/n/10 -
+..\TU/lmr/m/n/10 e
+..\TU/lmr/m/n/10 a
+..\TU/lmr/m/n/10 Y
+..\penalty 10000
+..\glue(\parfillskip) 0.0 plus 1.0fil
+..\glue(\rightskip) 0.0
+.\glue(\parskip) 0.0 plus 1.0
+.\glue(\parskip) 0.0
+.\glue(\baselineskip) 4.73
+.\hbox(7.05+0.22)x250.0, glue set 162.5fil, direction TLT
+..\localpar
+...\localinterlinepenalty=0
+...\localbrokenpenalty=0
+...\localleftbox=null
+...\localrightbox=null
+..\hbox(0.0+0.0)x0.0, direction TLT
+..\TU/lmr/m/n/10 X
+..\kern-0.28 (font)
+..\TU/lmr/m/n/10 C
+..\TU/lmr/m/n/10 o
+..\TU/lmr/m/n/10 n
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 ﬁ
+..\TU/lmr/m/n/10 n
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 d
+..\TU/lmr/m/n/10 e
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 l
+..\TU/lmr/m/n/10 i
+..\TU/lmr/m/n/10 n
+..\TU/lmr/m/n/10 e
+..\TU/lmr/m/n/10 a
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 Y
+..\penalty 10000
+..\glue(\parfillskip) 0.0 plus 1.0fil
+..\glue(\rightskip) 0.0
+.\glue(\parskip) 0.0 plus 1.0
+.\glue(\parskip) 0.0
+.\glue(\baselineskip) 4.73
+.\hbox(7.05+0.22)x250.0, glue set 122.14fil, direction TLT
+..\localpar
+...\localinterlinepenalty=0
+...\localbrokenpenalty=0
+...\localleftbox=null
+...\localrightbox=null
+..\hbox(0.0+0.0)x0.0, direction TLT
+..\TU/lmr/m/n/10 X
+..\kern-0.28 (font)
+..\TU/lmr/m/n/10 C
+..\TU/lmr/m/n/10 o
+..\TU/lmr/m/n/10 n
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 ﬁ
+..\TU/lmr/m/n/10 n
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 d
+..\TU/lmr/m/n/10 e
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 l
+..\TU/lmr/m/n/10 i
+..\TU/lmr/m/n/10 n
+..\TU/lmr/m/n/10 e
+..\TU/lmr/m/n/10 a
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 s
+..\TU/lmr/m/n/10 i
+..\TU/lmr/m/n/10 n
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 v
+..\kern-0.56 (font)
+..\TU/lmr/m/n/10 a
+..\TU/lmr/m/n/10 l
+..\TU/lmr/m/n/10 o
+..\TU/lmr/m/n/10 r
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 Y
+..\penalty 10000
+..\glue(\parfillskip) 0.0 plus 1.0fil
+..\glue(\rightskip) 0.0
+! OK.
+\BOXEND ->\par \egroup \showbox 0 
+l. ...\BOXEND
+============================================================
+============================================================
+TEST 7: [7] argumento opcional en la linea siguiente
+============================================================
+> \l__scontents_processed_body_lines_tl=Contenido de envtres.%^^Ascheol%.
+Defining \g__scontents_name_envtres_seq on line ...
+countsc{envtres}=1
+============================================================
+============================================================
+TEST 8: [8] entornos anidados
+============================================================
+> \l__scontents_processed_body_lines_tl=Antes del anidado.
+\begin{scontents}[store-env=inner]
+Dentro del anidado.
+\end{scontents}
+Despues del anidado.%^^Ascheol%.
+Defining \g__scontents_name_outer_seq on line ...
+countsc{outer}=1
+inner existe: no
+> \l__scontents_processed_body_lines_tl=Dentro del anidado.%^^Ascheol%.
+Defining \g__scontents_name_inner_seq on line ...
+> \box...=
+\vbox(7.16+1.94)x250.0, direction TLT
+.\hbox(7.16+1.94)x250.0, glue set 71.63fil, direction TLT
+..\localpar
+...\localinterlinepenalty=0
+...\localbrokenpenalty=0
+...\localleftbox=null
+...\localrightbox=null
+..\hbox(0.0+0.0)x0.0, direction TLT
+..\TU/lmr/m/n/10 A
+..\TU/lmr/m/n/10 n
+..\kern-0.28 (font)
+..\TU/lmr/m/n/10 t
+..\TU/lmr/m/n/10 e
+..\TU/lmr/m/n/10 s
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 d
+..\TU/lmr/m/n/10 e
+..\TU/lmr/m/n/10 l
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 a
+..\TU/lmr/m/n/10 n
+..\TU/lmr/m/n/10 i
+..\TU/lmr/m/n/10 d
+..\TU/lmr/m/n/10 a
+..\TU/lmr/m/n/10 d
+..\TU/lmr/m/n/10 o
+..\TU/lmr/m/n/10 .
+..\glue(\spaceskip) 4.44 plus 4.99498 minus 0.37
+..\TU/lmr/m/n/10 D
+..\TU/lmr/m/n/10 e
+..\discretionary (penalty 50)
+...< \TU/lmr/m/n/10 -
+..\TU/lmr/m/n/10 s
+..\TU/lmr/m/n/10 p
+..\TU/lmr/m/n/10 u
+..\TU/lmr/m/n/10 e
+..\TU/lmr/m/n/10 s
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 d
+..\TU/lmr/m/n/10 e
+..\TU/lmr/m/n/10 l
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 a
+..\TU/lmr/m/n/10 n
+..\TU/lmr/m/n/10 i
+..\TU/lmr/m/n/10 d
+..\TU/lmr/m/n/10 a
+..\TU/lmr/m/n/10 d
+..\TU/lmr/m/n/10 o
+..\TU/lmr/m/n/10 .
+..\penalty 10000
+..\glue(\parfillskip) 0.0 plus 1.0fil
+..\glue(\rightskip) 0.0
+! OK.
+\BOXEND ->\par \egroup \showbox 0 
+l. ...\BOXEND
+countsc{inner}=1
+============================================================
+============================================================
+TEST 9: [9] verbatim dentro de scontents
+============================================================
+> \l__scontents_processed_body_lines_tl=Antes.
+\begin{verbatim}
+  \raw{texto} & % #
+\end{verbatim}
+Despues.%^^Ascheol%.
+Defining \g__scontents_name_verb_seq on line ...
+> \box...=
+\vbox(47.16+1.94)x250.0, direction TLT
+.\hbox(7.16+0.11)x250.0, glue set 222.17fil, direction TLT
+..\localpar
+...\localinterlinepenalty=0
+...\localbrokenpenalty=0
+...\localleftbox=null
+...\localrightbox=null
+..\hbox(0.0+0.0)x0.0, direction TLT
+..\TU/lmr/m/n/10 A
+..\TU/lmr/m/n/10 n
+..\kern-0.28 (font)
+..\TU/lmr/m/n/10 t
+..\TU/lmr/m/n/10 e
+..\TU/lmr/m/n/10 s
+..\TU/lmr/m/n/10 .
+..\penalty 10000
+..\glue(\parfillskip) 0.0 plus 1.0fil
+..\glue(\rightskip) 0.0
+.\penalty -51
+.\glue 8.0 plus 3.0 minus 4.0
+.\glue 0.0 plus 1.0
+.\glue(\parskip) 0.0
+.\glue(\parskip) 0.0
+.\glue(\baselineskip) 4.95
+.\hbox(6.94+0.83)x250.0, glue set 150.25fil, direction TLT
+..\localpar
+...\localinterlinepenalty=0
+...\localbrokenpenalty=0
+...\localleftbox=null
+...\localrightbox=null
+..\hbox(0.0+0.0)x0.0, direction TLT
+...\glue 0.0
+...\glue 0.0
+...\glue -5.0
+...\hbox(0.0+0.0)x0.0, direction TLT
+...\glue 5.0
+..\penalty 10000
+..\glue(\spaceskip) 5.25
+..\penalty 10000
+..\glue(\spaceskip) 5.25
+..\TU/lmtt/m/n/10 \
+..\TU/lmtt/m/n/10 r
+..\TU/lmtt/m/n/10 a
+..\TU/lmtt/m/n/10 w
+..\TU/lmtt/m/n/10 {
+..\TU/lmtt/m/n/10 t
+..\TU/lmtt/m/n/10 e
+..\TU/lmtt/m/n/10 x
+..\TU/lmtt/m/n/10 t
+..\TU/lmtt/m/n/10 o
+..\TU/lmtt/m/n/10 }
+..\penalty 10000
+..\glue(\spaceskip) 5.25
+..\TU/lmtt/m/n/10 &
+..\penalty 10000
+..\glue(\spaceskip) 5.25
+..\TU/lmtt/m/n/10 %
+..\penalty 10000
+..\glue(\spaceskip) 5.25
+..\TU/lmtt/m/n/10 #
+..\hbox(0.0+0.0)x0.0, direction TLT
+..\penalty 10000
+..\glue(\parfillskip) 0.0 plus 1.0fil
+..\glue(\rightskip) 0.0
+.\penalty 0
+.\penalty -51
+.\glue 8.0 plus 2.0 minus 4.0
+.\glue(\parskip) 0.0 plus 1.0
+.\glue(\parskip) 0.0
+.\glue(\baselineskip) 4.34
+.\hbox(6.83+1.94)x250.0, glue set 211.7fil, direction TLT
+..\localpar
+...\localinterlinepenalty=0
+...\localbrokenpenalty=0
+...\localleftbox=null
+...\localrightbox=null
+..\TU/lmr/m/n/10 D
+..\TU/lmr/m/n/10 e
+..\discretionary (penalty 50)
+...< \TU/lmr/m/n/10 -
+..\TU/lmr/m/n/10 s
+..\TU/lmr/m/n/10 p
+..\TU/lmr/m/n/10 u
+..\TU/lmr/m/n/10 e
+..\TU/lmr/m/n/10 s
+..\TU/lmr/m/n/10 .
+..\penalty 10000
+..\glue(\parfillskip) 0.0 plus 1.0fil
+..\glue(\rightskip) 0.0
+! OK.
+\BOXEND ->\par \egroup \showbox 0 
+l. ...\BOXEND
+============================================================
+=== B. Comandos \Scontents y \Scontents* ===
+============================================================
+TEST 10: [10] Scontents sin claves
+============================================================
+> \l__scontents_Scontents_arg_tl=Contenido de un comando.%^^Ascheol%.
+countsc{contents}=2
+============================================================
+============================================================
+TEST 11: [11] store-cmd y print-cmd
+============================================================
+> \l__scontents_Scontents_arg_tl=No se imprime.%^^Ascheol%.
+Defining \g__scontents_name_cmduno_seq on line ...
+> \l__scontents_Scontents_arg_tl=Se imprime.%^^Ascheol%.
+> \l__scontents_Scontents_arg_tl=Se imprime sin valor.%^^Ascheol%.
+> \box...=
+\vbox(7.05+1.94)x250.0, direction TLT
+.\hbox(7.05+1.94)x250.0, glue set 100.7fil, direction TLT
+..\localpar
+...\localinterlinepenalty=0
+...\localbrokenpenalty=0
+...\localleftbox=null
+...\localrightbox=null
+..\hbox(0.0+0.0)x0.0, direction TLT
+..\TU/lmr/m/n/10 S
+..\TU/lmr/m/n/10 e
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 i
+..\TU/lmr/m/n/10 m
+..\discretionary (penalty 50)
+...< \TU/lmr/m/n/10 -
+..\TU/lmr/m/n/10 p
+..\TU/lmr/m/n/10 r
+..\TU/lmr/m/n/10 i
+..\TU/lmr/m/n/10 m
+..\TU/lmr/m/n/10 e
+..\TU/lmr/m/n/10 .
+..\glue(\spaceskip) 4.44 plus 4.99498 minus 0.37
+..\TU/lmr/m/n/10 S
+..\TU/lmr/m/n/10 e
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 i
+..\TU/lmr/m/n/10 m
+..\discretionary (penalty 50)
+...< \TU/lmr/m/n/10 -
+..\TU/lmr/m/n/10 p
+..\TU/lmr/m/n/10 r
+..\TU/lmr/m/n/10 i
+..\TU/lmr/m/n/10 m
+..\TU/lmr/m/n/10 e
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 s
+..\TU/lmr/m/n/10 i
+..\TU/lmr/m/n/10 n
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 v
+..\kern-0.56 (font)
+..\TU/lmr/m/n/10 a
+..\TU/lmr/m/n/10 l
+..\TU/lmr/m/n/10 o
+..\TU/lmr/m/n/10 r
+..\TU/lmr/m/n/10 .
+..\penalty 10000
+..\glue(\parfillskip) 0.0 plus 1.0fil
+..\glue(\rightskip) 0.0
+! OK.
+\BOXEND ->\par \egroup \showbox 0 
+l. ...\BOXEND
+countsc{cmduno}=3
+============================================================
+============================================================
+TEST 12: [12] Scontents* con llaves y delimitadores
+============================================================
+> \l__scontents_Scontents_arg_tl=Llaves con \verb|\foo|.%^^Ascheol%.
+Defining \g__scontents_name_cmddos_seq on line ...
+> \l__scontents_Scontents_arg_tl=Barras con \verb+\bar+.%^^Ascheol%.
+> \l__scontents_Scontents_arg_tl=Mas con \verb|\baz| y \verb|%#&|.%^^Ascheol%.
+countsc{cmddos}=3
+> \box...=
+\vbox(30.94+2.05)x250.0, direction TLT
+.\hbox(6.94+0.83)x250.0, glue set 177.43fil, direction TLT
+..\localpar
+...\localinterlinepenalty=0
+...\localbrokenpenalty=0
+...\localleftbox=null
+...\localrightbox=null
+..\hbox(0.0+0.0)x0.0, direction TLT
+..\TU/lmr/m/n/10 L
+..\TU/lmr/m/n/10 l
+..\TU/lmr/m/n/10 a
+..\kern-0.28 (font)
+..\TU/lmr/m/n/10 v
+..\kern-0.28 (font)
+..\TU/lmr/m/n/10 e
+..\TU/lmr/m/n/10 s
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 c
+..\TU/lmr/m/n/10 o
+..\TU/lmr/m/n/10 n
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\hbox(0.0+0.0)x0.0, direction TLT
+..\TU/lmtt/m/n/10 \
+..\TU/lmtt/m/n/10 f
+..\TU/lmtt/m/n/10 o
+..\TU/lmtt/m/n/10 o
+..\TU/lmr/m/n/10 .
+..\penalty 10000
+..\glue(\parfillskip) 0.0 plus 1.0fil
+..\glue(\rightskip) 0.0
+.\glue(\parskip) 0.0 plus 1.0
+.\glue(\parskip) 0.0
+.\glue(\baselineskip) 4.23
+.\hbox(6.94+0.83)x250.0, glue set 175.7fil, direction TLT
+..\localpar
+...\localinterlinepenalty=0
+...\localbrokenpenalty=0
+...\localleftbox=null
+...\localrightbox=null
+..\hbox(0.0+0.0)x0.0, direction TLT
+..\TU/lmr/m/n/10 B
+..\TU/lmr/m/n/10 a
+..\TU/lmr/m/n/10 r
+..\discretionary (penalty 50)
+...< \TU/lmr/m/n/10 -
+..\TU/lmr/m/n/10 r
+..\TU/lmr/m/n/10 a
+..\TU/lmr/m/n/10 s
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 c
+..\TU/lmr/m/n/10 o
+..\TU/lmr/m/n/10 n
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\hbox(0.0+0.0)x0.0, direction TLT
+..\TU/lmtt/m/n/10 \
+..\TU/lmtt/m/n/10 b
+..\TU/lmtt/m/n/10 a
+..\TU/lmtt/m/n/10 r
+..\TU/lmr/m/n/10 .
+..\penalty 10000
+..\glue(\parfillskip) 0.0 plus 1.0fil
+..\glue(\rightskip) 0.0
+.\glue(\parskip) 0.0 plus 1.0
+.\glue(\parskip) 0.0
+.\glue(\baselineskip) 4.23
+.\hbox(6.94+2.05)x250.0, glue set 158.76fil, direction TLT
+..\localpar
+...\localinterlinepenalty=0
+...\localbrokenpenalty=0
+...\localleftbox=null
+...\localrightbox=null
+..\hbox(0.0+0.0)x0.0, direction TLT
+..\TU/lmr/m/n/10 M
+..\TU/lmr/m/n/10 a
+..\TU/lmr/m/n/10 s
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 c
+..\TU/lmr/m/n/10 o
+..\TU/lmr/m/n/10 n
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\hbox(0.0+0.0)x0.0, direction TLT
+..\TU/lmtt/m/n/10 \
+..\TU/lmtt/m/n/10 b
+..\TU/lmtt/m/n/10 a
+..\TU/lmtt/m/n/10 z
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 y
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\hbox(0.0+0.0)x0.0, direction TLT
+..\TU/lmtt/m/n/10 %
+..\TU/lmtt/m/n/10 #
+..\TU/lmtt/m/n/10 &
+..\TU/lmr/m/n/10 .
+..\penalty 10000
+..\glue(\parfillskip) 0.0 plus 1.0fil
+..\glue(\rightskip) 0.0
+! OK.
+\BOXEND ->\par \egroup \showbox 0 
+l. ...\BOXEND
+============================================================
+============================================================
+TEST 13: [13] Scontents* en varias lineas
+============================================================
+> \l__scontents_Scontents_arg_tl=Primera linea.
+\begin{verbatim}
+  verbatim  dentro
+\end{verbatim}
+Ultima linea.%^^Ascheol%.
+Defining \g__scontents_name_cmdtres_seq on line ...
+> \box...=
+\vbox(50.94+0.22)x250.0, direction TLT
+.\hbox(6.94+0.11)x250.0, glue set 188.13fil, direction TLT
+..\localpar
+...\localinterlinepenalty=0
+...\localbrokenpenalty=0
+...\localleftbox=null
+...\localrightbox=null
+..\hbox(0.0+0.0)x0.0, direction TLT
+..\TU/lmr/m/n/10 P
+..\TU/lmr/m/n/10 r
+..\TU/lmr/m/n/10 i
+..\TU/lmr/m/n/10 m
+..\TU/lmr/m/n/10 e
+..\TU/lmr/m/n/10 r
+..\TU/lmr/m/n/10 a
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 l
+..\TU/lmr/m/n/10 i
+..\TU/lmr/m/n/10 n
+..\TU/lmr/m/n/10 e
+..\TU/lmr/m/n/10 a
+..\TU/lmr/m/n/10 .
+..\penalty 10000
+..\glue(\parfillskip) 0.0 plus 1.0fil
+..\glue(\rightskip) 0.0
+.\penalty -51
+.\glue 10.0 plus 4.0 minus 5.0
+.\glue 0.0 plus 1.0
+.\glue(\parskip) 0.0
+.\glue(\parskip) 0.0
+.\glue(\baselineskip) 5.78
+.\hbox(6.11+0.06)x250.0, glue set 155.5fil, direction TLT
+..\localpar
+...\localinterlinepenalty=0
+...\localbrokenpenalty=0
+...\localleftbox=null
+...\localrightbox=null
+..\hbox(0.0+0.0)x0.0, direction TLT
+...\glue 0.0
+...\glue 0.0
+...\glue -5.0
+...\hbox(0.0+0.0)x0.0, direction TLT
+...\glue 5.0
+..\penalty 10000
+..\glue(\spaceskip) 5.25
+..\penalty 10000
+..\glue(\spaceskip) 5.25
+..\TU/lmtt/m/n/10 v
+..\TU/lmtt/m/n/10 e
+..\TU/lmtt/m/n/10 r
+..\TU/lmtt/m/n/10 b
+..\TU/lmtt/m/n/10 a
+..\TU/lmtt/m/n/10 t
+..\TU/lmtt/m/n/10 i
+..\TU/lmtt/m/n/10 m
+..\penalty 10000
+..\glue(\spaceskip) 5.25
+..\penalty 10000
+..\glue(\spaceskip) 5.25
+..\TU/lmtt/m/n/10 d
+..\TU/lmtt/m/n/10 e
+..\TU/lmtt/m/n/10 n
+..\TU/lmtt/m/n/10 t
+..\TU/lmtt/m/n/10 r
+..\TU/lmtt/m/n/10 o
+..\hbox(0.0+0.0)x0.0, direction TLT
+..\penalty 10000
+..\glue(\parfillskip) 0.0 plus 1.0fil
+..\glue(\rightskip) 0.0
+.\penalty 0
+.\penalty -51
+.\glue 10.0 plus 3.0 minus 5.0
+.\glue(\parskip) 0.0 plus 1.0
+.\glue(\parskip) 0.0
+.\glue(\baselineskip) 5.0
+.\hbox(6.94+0.22)x250.0, glue set 193.05fil, direction TLT
+..\localpar
+...\localinterlinepenalty=0
+...\localbrokenpenalty=0
+...\localleftbox=null
+...\localrightbox=null
+..\TU/lmr/m/n/10 U
+..\TU/lmr/m/n/10 l
+..\discretionary (penalty 50)
+...< \TU/lmr/m/n/10 -
+..\TU/lmr/m/n/10 t
+..\TU/lmr/m/n/10 i
+..\TU/lmr/m/n/10 m
+..\TU/lmr/m/n/10 a
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 l
+..\TU/lmr/m/n/10 i
+..\TU/lmr/m/n/10 n
+..\TU/lmr/m/n/10 e
+..\TU/lmr/m/n/10 a
+..\TU/lmr/m/n/10 .
+..\penalty 10000
+..\glue(\parfillskip) 0.0 plus 1.0fil
+..\glue(\rightskip) 0.0
+! OK.
+\BOXEND ->\par \egroup \showbox 0 
+l. ...\BOXEND
+============================================================
+============================================================
+TEST 14: [14] force-eol en Scontents
+============================================================
+> \l__scontents_Scontents_arg_tl=Sin%^^Ascheol%.
+Defining \g__scontents_name_cmdeol_seq on line ...
+> \l__scontents_Scontents_arg_tl=Con.
+> \box...=
+\vbox(19.05+0.22)x250.0, direction TLT
+.\hbox(7.05+0.22)x250.0, glue set 221.1fil, direction TLT
+..\localpar
+...\localinterlinepenalty=0
+...\localbrokenpenalty=0
+...\localleftbox=null
+...\localrightbox=null
+..\hbox(0.0+0.0)x0.0, direction TLT
+..\TU/lmr/m/n/10 X
+..\TU/lmr/m/n/10 S
+..\TU/lmr/m/n/10 i
+..\TU/lmr/m/n/10 n
+..\TU/lmr/m/n/10 Y
+..\penalty 10000
+..\glue(\parfillskip) 0.0 plus 1.0fil
+..\glue(\rightskip) 0.0
+.\glue(\parskip) 0.0 plus 1.0
+.\glue(\parskip) 0.0
+.\glue(\baselineskip) 4.73
+.\hbox(7.05+0.22)x250.0, glue set 214.17fil, direction TLT
+..\localpar
+...\localinterlinepenalty=0
+...\localbrokenpenalty=0
+...\localleftbox=null
+...\localrightbox=null
+..\hbox(0.0+0.0)x0.0, direction TLT
+..\TU/lmr/m/n/10 X
+..\kern-0.28 (font)
+..\TU/lmr/m/n/10 C
+..\TU/lmr/m/n/10 o
+..\TU/lmr/m/n/10 n
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 Y
+..\penalty 10000
+..\glue(\parfillskip) 0.0 plus 1.0fil
+..\glue(\rightskip) 0.0
+! OK.
+\BOXEND ->\par \egroup \showbox 0 
+l. ...\BOXEND
+============================================================
+=== C. Claves globales con \setupsc===
+============================================================
+TEST 15: [15] setupsc store-all
+============================================================
+> \l__scontents_processed_body_lines_tl=Entorno en todo.%^^Ascheol%.
+Defining \g__scontents_name_todo_seq on line ...
+> \l__scontents_Scontents_arg_tl=Comando en todo.%^^Ascheol%.
+countsc{todo}=2
+============================================================
+============================================================
+TEST 16: [15] store-all despues del grupo
+============================================================
+> \l__scontents_Scontents_arg_tl=Comando en contents.%^^Ascheol%.
+countsc{todo}=2
+countsc{contents}=3
+============================================================
+============================================================
+TEST 17: [16] setupsc print-all
+============================================================
+> \l__scontents_processed_body_lines_tl=Entorno impreso.%^^Ascheol%.
+Defining \g__scontents_name_impr_seq on line ...
+> \l__scontents_Scontents_arg_tl=Comando impreso.%^^Ascheol%.
+> \box...=
+\vbox(7.05+1.94)x250.0, direction TLT
+.\hbox(7.05+1.94)x250.0, glue set 92.71fil, direction TLT
+..\localpar
+...\localinterlinepenalty=0
+...\localbrokenpenalty=0
+...\localleftbox=null
+...\localrightbox=null
+..\hbox(0.0+0.0)x0.0, direction TLT
+..\TU/lmr/m/n/10 E
+..\TU/lmr/m/n/10 n
+..\discretionary (penalty 50)
+...< \TU/lmr/m/n/10 -
+...= \kern-0.28 (font)
+..\TU/lmr/m/n/10 t
+..\TU/lmr/m/n/10 o
+..\TU/lmr/m/n/10 r
+..\TU/lmr/m/n/10 n
+..\TU/lmr/m/n/10 o
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 i
+..\TU/lmr/m/n/10 m
+..\discretionary (penalty 50)
+...< \TU/lmr/m/n/10 -
+..\TU/lmr/m/n/10 p
+..\TU/lmr/m/n/10 r
+..\TU/lmr/m/n/10 e
+..\TU/lmr/m/n/10 s
+..\TU/lmr/m/n/10 o
+..\TU/lmr/m/n/10 .
+..\TU/lmr/m/n/10 C
+..\TU/lmr/m/n/10 o
+..\discretionary (penalty 50)
+...< \TU/lmr/m/n/10 -
+..\TU/lmr/m/n/10 m
+..\TU/lmr/m/n/10 a
+..\TU/lmr/m/n/10 n
+..\TU/lmr/m/n/10 d
+..\TU/lmr/m/n/10 o
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 i
+..\TU/lmr/m/n/10 m
+..\discretionary (penalty 50)
+...< \TU/lmr/m/n/10 -
+..\TU/lmr/m/n/10 p
+..\TU/lmr/m/n/10 r
+..\TU/lmr/m/n/10 e
+..\TU/lmr/m/n/10 s
+..\TU/lmr/m/n/10 o
+..\TU/lmr/m/n/10 .
+..\penalty 10000
+..\glue(\parfillskip) 0.0 plus 1.0fil
+..\glue(\rightskip) 0.0
+! OK.
+\BOXEND ->\par \egroup \showbox 0 
+l. ...\BOXEND
+============================================================
+============================================================
+TEST 18: [17] setupsc print-all=false
+============================================================
+> \l__scontents_processed_body_lines_tl=Entorno no impreso.%^^Ascheol%.
+> \l__scontents_Scontents_arg_tl=Comando no impreso.%^^Ascheol%.
+> \box...=
+\vbox(0.0+0.0)x0.0, direction TLT
+! OK.
+\BOXEND ->\par \egroup \showbox 0 
+l. ...\BOXEND
+countsc{impr}=4
+============================================================
+============================================================
+TEST 19: [18] debug-var=false
+============================================================
+Defining \g__scontents_name_nolog_seq on line ...
+countsc{nolog}=2
+============================================================
+=== D. \newenvsc===
+============================================================
+TEST 20: [19] newenvsc
+============================================================
+> \l__scontents_processed_body_lines_tl=Contenido de envnuevo.%^^Ascheol%.
+Defining \g__scontents_name_nuevo_seq on line ...
+countsc{nuevo}=1
+============================================================
+============================================================
+TEST 21: [20] newenvsc con claves
+============================================================
+> \l__scontents_processed_body_lines_tl=Contenido impreso de envnuevo.%^^Ascheol%.
+Defining \g__scontents_name_nuevodos_seq on line ...
+> \box...=
+\vbox(7.05+1.94)x250.0, direction TLT
+.\hbox(7.05+1.94)x250.0, glue set 108.25fil, direction TLT
+..\localpar
+...\localinterlinepenalty=0
+...\localbrokenpenalty=0
+...\localleftbox=null
+...\localrightbox=null
+..\hbox(0.0+0.0)x0.0, direction TLT
+..\TU/lmr/m/n/10 C
+..\TU/lmr/m/n/10 o
+..\TU/lmr/m/n/10 n
+..\discretionary (penalty 50)
+...< \TU/lmr/m/n/10 -
+...= \kern-0.28 (font)
+..\TU/lmr/m/n/10 t
+..\TU/lmr/m/n/10 e
+..\TU/lmr/m/n/10 n
+..\TU/lmr/m/n/10 i
+..\TU/lmr/m/n/10 d
+..\TU/lmr/m/n/10 o
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 i
+..\TU/lmr/m/n/10 m
+..\discretionary (penalty 50)
+...< \TU/lmr/m/n/10 -
+..\TU/lmr/m/n/10 p
+..\TU/lmr/m/n/10 r
+..\TU/lmr/m/n/10 e
+..\TU/lmr/m/n/10 s
+..\TU/lmr/m/n/10 o
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 d
+..\TU/lmr/m/n/10 e
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 e
+..\TU/lmr/m/n/10 n
+..\discretionary (penalty 50)
+...< \TU/lmr/m/n/10 -
+...= \kern-0.28 (font)
+..\TU/lmr/m/n/10 v
+..\TU/lmr/m/n/10 n
+..\kern-0.28 (font)
+..\TU/lmr/m/n/10 u
+..\TU/lmr/m/n/10 e
+..\TU/lmr/m/n/10 v
+..\kern-0.28 (font)
+..\TU/lmr/m/n/10 o
+..\TU/lmr/m/n/10 .
+..\penalty 10000
+..\glue(\parfillskip) 0.0 plus 1.0fil
+..\glue(\rightskip) 0.0
+! OK.
+\BOXEND ->\par \egroup \showbox 0 
+l. ...\BOXEND
+countsc{nuevo}=1
+countsc{nuevodos}=1
+============================================================
+============================================================
+TEST 22: [21] newenvsc anidado
+============================================================
+> \l__scontents_processed_body_lines_tl=Antes.
+\begin{envnuevo}[store-env=innernest]
+Dentro.
+\end{envnuevo}
+Despues.%^^Ascheol%.
+Defining \g__scontents_name_nest_seq on line ...
+countsc{nest}=1
+> \l__scontents_processed_body_lines_tl=Dentro.%^^Ascheol%.
+Defining \g__scontents_name_innernest_seq on line ...
+> \box...=
+\vbox(19.16+0.11)x250.0, direction TLT
+.\hbox(7.16+1.94)x250.0, glue set 179.43fil, direction TLT
+..\localpar
+...\localinterlinepenalty=0
+...\localbrokenpenalty=0
+...\localleftbox=null
+...\localrightbox=null
+..\hbox(0.0+0.0)x0.0, direction TLT
+..\TU/lmr/m/n/10 A
+..\TU/lmr/m/n/10 n
+..\kern-0.28 (font)
+..\TU/lmr/m/n/10 t
+..\TU/lmr/m/n/10 e
+..\TU/lmr/m/n/10 s
+..\TU/lmr/m/n/10 .
+..\glue(\spaceskip) 4.44 plus 4.99498 minus 0.37
+..\TU/lmr/m/n/10 D
+..\TU/lmr/m/n/10 e
+..\discretionary (penalty 50)
+...< \TU/lmr/m/n/10 -
+..\TU/lmr/m/n/10 s
+..\TU/lmr/m/n/10 p
+..\TU/lmr/m/n/10 u
+..\TU/lmr/m/n/10 e
+..\TU/lmr/m/n/10 s
+..\TU/lmr/m/n/10 .
+..\penalty 10000
+..\glue(\parfillskip) 0.0 plus 1.0fil
+..\glue(\rightskip) 0.0
+.\glue(\parskip) 0.0 plus 1.0
+.\glue(\parskip) 0.0
+.\glue(\baselineskip) 3.23
+.\hbox(6.83+0.11)x250.0, glue set 217.05fil, direction TLT
+..\localpar
+...\localinterlinepenalty=0
+...\localbrokenpenalty=0
+...\localleftbox=null
+...\localrightbox=null
+..\hbox(0.0+0.0)x0.0, direction TLT
+..\TU/lmr/m/n/10 D
+..\TU/lmr/m/n/10 e
+..\TU/lmr/m/n/10 n
+..\discretionary (penalty 50)
+...< \TU/lmr/m/n/10 -
+...= \kern-0.28 (font)
+..\TU/lmr/m/n/10 t
+..\TU/lmr/m/n/10 r
+..\TU/lmr/m/n/10 o
+..\TU/lmr/m/n/10 .
+..\penalty 10000
+..\glue(\parfillskip) 0.0 plus 1.0fil
+..\glue(\rightskip) 0.0
+! OK.
+\BOXEND ->\par \egroup \showbox 0 
+l. ...\BOXEND
+============================================================
+============================================================
+TEST 23: [22] newenvsc y setupsc
+============================================================
+> \l__scontents_processed_body_lines_tl=No se imprime.%^^Ascheol%.
+> \box...=
+\vbox(0.0+0.0)x0.0, direction TLT
+! OK.
+\BOXEND ->\par \egroup \showbox 0 
+l. ...\BOXEND
+============================================================
+=== E. \countsc y \cleanseqsc===
+============================================================
+TEST 24: [23] cleanseqsc
+============================================================
+countsc{cmduno}=3
+countsc{cmduno}=0
+The sequence \g__scontents_name_cmduno_seq is empty
+> .
+<recently read> }
+l. ...\SHOWSEQ{cmduno}
+> \l__scontents_Scontents_arg_tl=Nuevo primero.%^^Ascheol%.
+countsc{cmduno}=1
+============================================================
+============================================================
+TEST 25: [24] cleanseqsc de una secuencia nueva
+============================================================
+Defining \g__scontents_name_vacia_seq on line ...
+countsc{vacia}=0
+============================================================

@@ -1,0 +1,195 @@
+% test-003.lvt -- escribir el contenido en archivos con scontents (sin etiquetado)
+%
+% Pablo González L. <pablgonz@yahoo.com>
+%
+% Regresion:  l3build save test-003
+%             l3build check test-003
+%
+% Test de regresion de las claves write-env, write-cmd, write-out y
+% overwrite en el entorno scontents, en \Scontents, \Scontents*,
+% \typestored, \meaningsc, \mergesc y en un entorno de \newenvsc. Cada
+% archivo escrito se lee despues linea a linea con \SHOWTSC (no se usa el
+% \SHOWFILE de l3build porque no muestra los TAB) y sus lineas
+% van al log entre barras, asi el .tlg guarda tambien los espacios y los
+% TAB del final y del principio. Los archivos test-003-*.tsc estan en
+% dynamicfiles (build.lua): se borran antes del test, por eso el mensaje de
+% cada archivo (writing, overwriting) es siempre el mismo. Las lineas de
+% los casos con TAB llevan caracteres TAB reales.
+%
+% Hecho con cariño por Pablo González L.
+\input{regression-test}
+
+\documentclass{article}
+\ExplSyntaxOn
+\debug_on:n { all }
+\ExplSyntaxOff
+\usepackage{scontents}
+\begin{document}
+
+% \BOXSTART y \BOXEND componen lo impreso en una caja y la muestran en el
+% log. \SHOWTSC escribe en el log las lineas del archivo y \COUNT el
+% numero de contenidos guardados.
+\newcommand\BOXSTART{\setbox0=\vbox\bgroup\hsize=250pt \parindent=0pt\relax}
+\newcommand\BOXEND{\par\egroup\showbox0 }
+\ExplSyntaxOn
+\ior_new:N \g_test_file_ior
+\NewDocumentCommand \SHOWTSC { m }
+  {
+    \iow_log:e { ---~ begin~ file~ #1 ~--- }
+    \ior_open:Nn \g_test_file_ior {#1}
+    \ior_str_map_inline:Nn \g_test_file_ior { \iow_log:n { |##1| } }
+    \ior_close:N \g_test_file_ior
+    \iow_log:e { ---~ end~ file~ #1 ~--- }
+  }
+\ExplSyntaxOff
+\newcommand\COUNT[1]{\TYPE{countsc{#1}=\countsc{#1}}}
+
+% Contenido para \typestored, \meaningsc y \mergesc.
+\Scontents[store-cmd=data]{Uno}
+\Scontents[store-cmd=data]{Dos}
+\Scontents[store-cmd=data]{Tres}
+
+% \newenvsc define el entorno de forma local y solo admite store-env y
+% print-env como claves iniciales: se define aqui y write-env se pasa al
+% usarlo.
+\newenvsc{envfile}[store-env=envfile]
+
+\START
+
+\TYPE{=== A. Entorno scontents ===}
+
+% 1. write-env: se guarda y se escribe.
+\BEGINTEST{[1] write-env}
+\begin{scontents}[store-env=envw, write-env=\jobname-a.tsc]
+Primera linea con \verb|\foo|.
+
+Tercera linea: & # % ~ _ ^.
+\end{scontents}
+\COUNT{envw}
+\SHOWTSC{\jobname-a.tsc}
+\ENDTEST
+
+% 2. write-out: solo se escribe, no se guarda.
+\BEGINTEST{[2] write-out}
+\begin{scontents}[store-env=envw, write-out=\jobname-b.tsc]
+Solo en el archivo.
+\end{scontents}
+\COUNT{envw}
+\SHOWTSC{\jobname-b.tsc}
+\ENDTEST
+
+% 3. Los TAB, los espacios y un entorno verbatim se escriben tal cual.
+\BEGINTEST{[3] write-env con TAB y verbatim}
+\begin{scontents}[store-env=envw, write-env=\jobname-c.tsc]
+Sin TAB
+	Un TAB
+		Dos TAB y   tres espacios
+\begin{verbatim}
+  verbatim  dentro
+\end{verbatim}
+\end{scontents}
+\SHOWTSC{\jobname-c.tsc}
+\ENDTEST
+
+% 4. overwrite: el archivo del caso 1 se vuelve a escribir.
+\BEGINTEST{[4] write-env y overwrite}
+\begin{scontents}[store-env=envw, write-env=\jobname-a.tsc, overwrite]
+Contenido nuevo de a.
+\end{scontents}
+\COUNT{envw}
+\SHOWTSC{\jobname-a.tsc}
+\ENDTEST
+
+% 5. print-env y write-env.
+\BEGINTEST{[5] print-env y write-env}
+\BOXSTART
+\begin{scontents}[store-env=envw, print-env, write-env=\jobname-d.tsc]
+Impreso y escrito.
+\end{scontents}
+\BOXEND
+\SHOWTSC{\jobname-d.tsc}
+\ENDTEST
+
+% 6. Entorno de \newenvsc con write-env.
+\BEGINTEST{[6] newenvsc con write-env}
+\begin{envfile}[write-env=\jobname-e.tsc]
+Escrito por envfile.
+\end{envfile}
+\COUNT{envfile}
+\SHOWTSC{\jobname-e.tsc}
+\ENDTEST
+
+\TYPE{=== B. \string\Scontents\space y \string\Scontents* ===}
+
+% 7. write-cmd: se guarda y se escribe.
+\BEGINTEST{[7] Scontents write-cmd}
+\Scontents[store-cmd=cmdw, write-cmd=\jobname-f.tsc]{Texto con \textbf{negrita}.}
+\COUNT{cmdw}
+\SHOWTSC{\jobname-f.tsc}
+\ENDTEST
+
+% 8. write-out: solo se escribe, no se guarda.
+\BEGINTEST{[8] Scontents write-out}
+\Scontents[store-cmd=cmdw, write-out=\jobname-g.tsc]{Solo en el archivo.}
+\COUNT{cmdw}
+\SHOWTSC{\jobname-g.tsc}
+\ENDTEST
+
+% 9. \Scontents* en varias lineas, con TAB.
+\BEGINTEST{[9] Scontents* write-cmd con TAB}
+\Scontents*[store-cmd=cmdw, write-cmd=\jobname-h.tsc]{Primera	linea con \verb|\foo|.
+		Segunda linea con dos TAB.}
+\COUNT{cmdw}
+\SHOWTSC{\jobname-h.tsc}
+\ENDTEST
+
+% 10. \Scontents* con delimitadores, write-out y overwrite.
+\BEGINTEST{[10] Scontents* write-out y overwrite}
+\Scontents*[write-out=\jobname-g.tsc, overwrite]|Nuevo con \verb+\bar+.|
+\SHOWTSC{\jobname-g.tsc}
+\ENDTEST
+
+% 11. overwrite con \setupsc.
+\BEGINTEST{[11] setupsc overwrite}
+\setupsc{overwrite}
+\Scontents[write-out=\jobname-f.tsc]{Otra vez f.}
+\SHOWTSC{\jobname-f.tsc}
+\ENDTEST
+
+\TYPE{=== C. \string\typestored, \string\meaningsc\space y \string\mergesc\space ===}
+
+% 12. \typestored con write-out.
+\BEGINTEST{[12] typestored write-out}
+\BOXSTART
+\typestored[1-end, write-out=\jobname-i.tsc]{data}
+\BOXEND
+\SHOWTSC{\jobname-i.tsc}
+\ENDTEST
+
+% 13. \typestored con write-out y print-cmd=false: solo se escribe.
+\BEGINTEST{[13] typestored write-out y print-cmd=false}
+\BOXSTART
+\typestored[2, write-out=\jobname-j.tsc, print-cmd=false]{data}
+\BOXEND
+\SHOWTSC{\jobname-j.tsc}
+\ENDTEST
+
+% 14. \meaningsc con write-out.
+\BEGINTEST{[14] meaningsc write-out}
+\BOXSTART
+\meaningsc[1-end, write-out=\jobname-k.tsc]{data}
+\BOXEND
+\SHOWTSC{\jobname-k.tsc}
+\ENDTEST
+
+% 15. \mergesc con write-out y despues con overwrite.
+\BEGINTEST{[15] mergesc write-out y overwrite}
+\BOXSTART
+\mergesc[typestored, write-out=\jobname-l.tsc]{ {data}[3], {data}[1] }
+\mergesc[meaningsc, write-out=\jobname-l.tsc, overwrite]{ {data}[2-3] }
+\BOXEND
+\SHOWTSC{\jobname-l.tsc}
+\ENDTEST
+
+\OMIT
+\end{document}
