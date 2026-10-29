@@ -1,0 +1,38 @@
+% test-005.lvt -- opciones del paquete desconocidas
+%
+% Pablo González L. <pablgonz@yahoo.com>
+%
+% Regresion:  l3build save test-005
+%             l3build check test-005
+%
+% Test de regresion de las opciones del paquete: una opcion desconocida,
+% sin valor y con valor, da el error cmd-key-unknown o
+% cmd-key-value-unknown con el nombre de \usepackage, y las opciones
+% conocidas se aplican. Las opciones se procesan al cargar el paquete, por
+% eso \START va antes de \usepackage; lo que se escribe en el log desde
+% el final de la carga hasta \begin{document} queda fuera (\OMIT ... \TIMO).
+%
+% Hecho con cariño por Pablo González L.
+\input{regression-test}
+
+\documentclass{article}
+\START
+\usepackage[clavefalsa, store-env=opcion, valorfalso=algo, width-tab=3]{scontents}
+\OMIT
+\begin{document}
+\TIMO
+
+\TYPE{=== Opciones conocidas ===}
+
+% Las opciones store-env y width-tab se aplicaron.
+\BEGINTEST{[1] store-env y width-tab como opciones}
+\begin{scontents}
+Guardado en la secuencia opcion.
+\end{scontents}
+\TYPE{countsc{opcion}=\countsc{opcion}}
+\ExplSyntaxOn
+\TYPE{width-tab=\int_use:N \l__scontents_tab_width_int}
+\ExplSyntaxOff
+\ENDTEST
+
+\end{document}

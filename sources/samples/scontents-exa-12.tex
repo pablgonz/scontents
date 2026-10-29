@@ -1,0 +1,23 @@
+% arara: lualatex: { branch: developer }
+% arara: lualatex: { branch: developer }
+% arara: clean: { extensions: [ aux, log, sct ] }
+\documentclass{article}
+\usepackage[remember=objectives]{scontents}
+\begin{document}
+\section{Objectives}
+The project has \countsc{objectives} objectives, developed in the
+methods: \foreachsc[sep={; }]{objectives}.
+
+The first one is the key of the project: \getstored[1]{objectives}.
+
+\section{Methods}
+\subsection{First objective}
+\Scontents[store-cmd=objectives, print-cmd]{measure the effect of the method on small samples}
+
+The samples are taken from the previous studies.
+
+\subsection{Second objective}
+\begin{scontents}[store-env=objectives, print-env]
+compare the results with the ones of the previous studies
+\end{scontents}
+\end{document}
