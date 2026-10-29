@@ -1,0 +1,265 @@
+% test-020.lvt -- scontents en plain TeX
+%
+% Pablo González L. <pablgonz@yahoo.com>
+%
+% Regresion:  l3build save -c config-plain test-020
+%             l3build check -c config-plain test-020
+%
+% Test de regresion de scontents cargado con \input scontents.tex en plain
+% TeX (pdftex): el pseudo entorno \scontents ... \endscontents, \Scontents,
+% \Scontents*, \getstored, \foreachsc, \typestored y el entorno verbatimsc
+% de plain, \meaningsc, \mergesc, \newenvsc, \setupsc, \countsc,
+% \cleanseqsc, la escritura de archivos y algunos mensajes. Los casos con
+% LaTeX estan en testfiles/ y los de ConTeXt en testfiles-context/. Las
+% lineas de la secuencia tab llevan caracteres TAB reales.
+%
+% Hecho con cariño por Pablo González L.
+\input regression-test.tex
+\input expl3-generic.tex
+% xparse-generic.tex, que scontents carga en plain TeX y ConTeXt, usa
+% \cs_argument_spec:N, que esta obsoleto: con la depuracion de obsoletos
+% activa su carga da errores, por eso se desactiva solo esa parte.
+\ExplSyntaxOn
+\debug_on:n { all }
+\debug_off:n { deprecation }
+\ExplSyntaxOff
+\input scontents.tex
+
+% \BOXSTART y \BOXEND componen lo impreso en una caja y la muestran en el
+% log. \SHOWTSC escribe en el log las lineas de un archivo y \COUNT el
+% numero de contenidos guardados.
+\def\BOXSTART{\setbox0=\vbox\bgroup\hsize=250pt \parindent=0pt\relax}
+\def\BOXEND{\par\egroup\showbox0 }
+\ExplSyntaxOn
+\ior_new:N \g_test_file_ior
+\cs_new_protected:Npn \SHOWTSC #1
+  {
+    \iow_log:e { ---~ begin~ file~ #1 ~--- }
+    \ior_open:Nn \g_test_file_ior {#1}
+    \ior_str_map_inline:Nn \g_test_file_ior { \iow_log:n { |##1| } }
+    \ior_close:N \g_test_file_ior
+    \iow_log:e { ---~ end~ file~ #1 ~--- }
+  }
+\ExplSyntaxOff
+\def\COUNT#1{\TYPE{countsc{#1}=\countsc{#1}}}
+
+% Contenido para \getstored, \foreachsc, \typestored, \meaningsc y \mergesc.
+\Scontents[store-cmd=data]{Uno}
+\Scontents[store-cmd=data]{Dos}
+\Scontents[store-cmd=data]{Tres}
+\Scontents*[store-cmd=tab]|A	B		C|
+\scontents[store-env=tab]
+	Linea con un TAB
+		Linea con dos TAB
+\endscontents
+
+% \newenvsc define el pseudo entorno \penv ... \endpenv.
+\newenvsc{penv}[store-env=penv]
+
+\START
+
+\TYPE{=== A. Guardar ===}
+
+% 1. Pseudo entorno sin claves: se guarda en contents.
+\BEGINTEST{[1] scontents sin claves}
+\scontents
+Uno dos tres.
+\endscontents
+\COUNT{contents}
+\ENDTEST
+
+% 2. store-env y print-env.
+\BEGINTEST{[2] store-env y print-env}
+\BOXSTART
+\scontents[store-env=envuno, print-env]
+Texto impreso por el pseudo entorno.
+\endscontents
+\BOXEND
+\COUNT{envuno}
+\ENDTEST
+
+% 3. force-eol.
+\BEGINTEST{[3] force-eol}
+\scontents[store-env=eol]
+Sin
+\endscontents
+\scontents[store-env=eol, force-eol]
+Con
+\endscontents
+\BOXSTART
+X\getstored[1]{eol}Y\par
+X\getstored[2]{eol}Y
+\BOXEND
+\ENDTEST
+
+% 4. Pseudo entornos anidados.
+\BEGINTEST{[4] pseudo entornos anidados}
+\scontents[store-env=outer]
+Antes.
+\scontents[store-env=inner]
+Dentro.
+\endscontents
+Despues.
+\endscontents
+\BOXSTART
+\getstored{outer}
+\BOXEND
+\COUNT{inner}
+\ENDTEST
+
+% 5. \Scontents y \Scontents* con print-cmd.
+\BEGINTEST{[5] Scontents y Scontents*}
+\BOXSTART
+\Scontents[store-cmd=cmd, print-cmd]{Con llaves.}
+\Scontents*[store-cmd=cmd, print-cmd]|Con barras y 50\%.|
+\BOXEND
+\COUNT{cmd}
+\ENDTEST
+
+% 6. store-all y print-all con \setupsc.
+\BEGINTEST{[6] setupsc store-all y print-all}
+\setupsc{store-all=todo, print-all}
+\BOXSTART
+\scontents
+Entorno en todo.
+\endscontents
+\Scontents{Comando en todo.}
+\BOXEND
+\COUNT{todo}
+\ENDTEST
+
+% 7. Entorno de \newenvsc, tambien anidado y con claves.
+\BEGINTEST{[7] newenvsc}
+\penv
+Antes.
+\penv[store-env=penvin]
+Dentro.
+\endpenv
+Despues.
+\endpenv
+\BOXSTART
+\getstored{penv}\par
+\getstored{penvin}
+\BOXEND
+\ENDTEST
+
+\TYPE{=== B. Recuperar ===}
+
+% 8. \getstored con indices.
+\BEGINTEST{[8] getstored}
+\BOXSTART
+\getstored{data}\par
+\getstored[1]{data}\par
+\getstored[-2]{data}
+\BOXEND
+\ENDTEST
+
+% 9. \foreachsc con sep, before, after, start, stop y wrapper.
+\BEGINTEST{[9] foreachsc}
+\BOXSTART
+\foreachsc[sep={, }]{data}\par
+\foreachsc[before={<}, after={>}, start=2]{data}\par
+\foreachsc[wrapper={(#1)}, stop=2, sep={\par}]{data}
+\BOXEND
+\ENDTEST
+
+% 10. \typestored y verbatimsc de plain: indices, rangos y TAB.
+\BEGINTEST{[10] typestored}
+\BOXSTART
+\typestored{data}
+\typestored[-1]{data}
+\typestored[2-end]{data}
+\typestored[1-end, width-tab=2]{tab}
+\BOXEND
+\ENDTEST
+
+% 11. \meaningsc y verb-font.
+\BEGINTEST{[11] meaningsc}
+\setupsc{verb-font=\it}
+\BOXSTART
+\meaningsc[1-end]{data}\par
+\meaningsc[1-end, width-tab=3]{tab}
+\BOXEND
+\ENDTEST
+
+% 12. \mergesc con typestored y meaningsc.
+\BEGINTEST{[12] mergesc}
+\BOXSTART
+\mergesc[typestored]{ {data}[3], {tab}[1] }
+\mergesc[meaningsc]{ {data}, {data}[-1] }
+\BOXEND
+\ENDTEST
+
+% 13. \countsc y \cleanseqsc.
+\BEGINTEST{[13] countsc y cleanseqsc}
+\COUNT{cmd}
+\cleanseqsc{cmd}
+\COUNT{cmd}
+\ENDTEST
+
+\TYPE{=== C. Archivos ===}
+
+% 14. write-env, write-cmd, write-out y overwrite; un archivo escrito en la
+% misma compilacion ya existe para la escritura siguiente.
+\BEGINTEST{[14] archivos}
+\scontents[store-env=file, write-env=\jobname-a.tsc]
+Primera linea.
+	Segunda linea con TAB.
+\endscontents
+\SHOWTSC{\jobname-a.tsc}
+\Scontents[write-cmd=\jobname-b.tsc]{Comando escrito.}
+\SHOWTSC{\jobname-b.tsc}
+\typestored[1-end, write-out=\jobname-b.tsc, overwrite, print-cmd=false]{data}
+\SHOWTSC{\jobname-b.tsc}
+\Scontents[write-out=\jobname-a.tsc]{No se escribe: el archivo ya existe.}
+\SHOWTSC{\jobname-a.tsc}
+\COUNT{file}
+\ENDTEST
+
+\TYPE{=== D. Mensajes ===}
+
+% Mensajes de plain: los del pseudo entorno deben nombrar \scontents y
+% \endscontents, no \begin{scontents}. Cada caso va en su propio grupo.
+
+% 15. Clave desconocida.
+\BEGINTEST{[15] clave desconocida}
+\scontents[clavefalsa]
+x
+\endscontents
+\ENDTEST
+
+% 16. Secuencia que no existe.
+\BEGINTEST{[16] secuencia que no existe}
+\foreachsc{noexiste}
+\ENDTEST
+
+% 17. Caracteres despues del inicio.
+\BEGINTEST{[17] caracteres despues del inicio}
+\scontents basura
+x
+\endscontents
+\ENDTEST
+
+% 18. Mas de un inicio en la misma linea.
+\BEGINTEST{[18] mas de un inicio en la misma linea}
+\scontents[store-env=mult]
+\scontents \scontents
+x
+\endscontents
+\endscontents
+\endscontents
+\ENDTEST
+
+% 19. Entorno ya definido.
+\BEGINTEST{[19] entorno ya definido}
+\newenvsc{penv}
+\ENDTEST
+
+% 20. Caracteres despues del final: se vuelven a leer.
+\BEGINTEST{[20] caracteres despues del final}
+\scontents[store-env=resc]
+x
+\endscontents Texto despues.
+\ENDTEST
+
+\END

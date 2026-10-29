@@ -597,6 +597,15 @@
     keywords      = [12]{let, @undefined, def, @bsphack, @esphack, @ifpackagelater,%
                     ver@xparse.sty, ver@scontents.sty, l__scontents_ver_str, do@noligs,%
                     MakeFile},%
+% Reserved words 13 (message names)
+    keywordstyle  = [13]{\color{red}},%
+    keywords      = [13]{already-loaded, cmd-key-unknown, cmd-key-value-unknown,%
+                    empty-argument-command, empty-environment, empty-store-name,%
+                    empty-variable, env-already-defined, env-key-unknown,%
+                    env-key-value-unknown, expl-too-old, index-out-of-range,%
+                    junk-after-begin, luametatex, mergesc-missing-key, multiple-begin,%
+                    not-writing, overwrite-file, positive-integer, rescanning-text,%
+                    undefined-storage, writing-file},%
 % literate
     literate      =*{\{}{{{\color{brace}{\char`\{}}}}{1}
                     {\}}{{{\color{brace}{\char`\}}}}}{1}
@@ -708,6 +717,8 @@
 \RenewDocumentCommand \tableofcontents { }
   {
     \group_begin:
+    % Restore the l3doc \parskip locally (only for the TOC)
+    \skip_set:Nn \parskip { 0pt~plus~3pt~minus~0pt }
     \section*
       {
         \contentsname \quad
@@ -838,7 +849,7 @@
 %
 % \begin{important}*
 % Starting with version 2.3 the \mypkg*[no-index]{scontents} package is fully
-% compatible with \emph{tagged} \texttt{PDF} and will have \LaTeX{}
+% compatible with \emph{tagged} \texttt{PDF}\cite{tagpdf} and will have \LaTeX{}
 % release 2026-06-01 (\TeX{} Live 2026) and update \mypkg{expl3} release as a minimum requirement.
 % \end{important}
 %
@@ -977,11 +988,12 @@
 %     \cmdexamp{setupsc}{key \textnormal{\textcolor{gray}{=}} val}
 %   \end{syntax}
 %
-% The command \ics*{setupsc} sets the \mymeta{keys} in a global way,
-% it can be used both in the preamble and in the body of the document
-% as many times as desired. However, options set in the declaration of
-% an environment (with |\newenvsc|) have precedence over options
-% set with |\setupsc|.
+% The command \ics*{setupsc} takes the mandatory argument
+% \mymarg{key \textnormal{\textcolor{gray}{=}} val} and sets the \mymeta{keys} for the rest of the
+% document, or until the end of the current group, it can be used both in
+% the preamble and in the body of the document as many times as desired.
+% However, options set in the declaration of an environment (with
+% |\newenvsc|) have precedence over options set with |\setupsc|.
 %
 % Options in the optional arguments of environments and
 % commands have the highest precedence, overriding both
@@ -1078,9 +1090,10 @@
 %   \envexamp{scontents}
 %   \end{syntax}
 %
-% The \myenv*{scontents} environment processes \mymarg{body env} and
-% \emph{\enquote{stores}} it in a \mymeta{sequence} or \emph{\enquote{writes}}
-% it to an \mymeta{external file} if desired, including \emph{verbatim
+% The \myenv*{scontents} environment takes the optional argument
+% \myoarg{key \textnormal{\textcolor{gray}{=}} val} and the \mymarg{body env}, which it
+% \emph{\enquote{stores}} in a \mymeta{sequence} or \emph{\enquote{writes}}
+% to an \mymeta{external file} if desired, including \emph{verbatim
 % material}. After the package has been loaded, the environment can be
 % used both in the preamble and in the body of the document.
 %
@@ -1137,6 +1150,10 @@ This text is in the outer environment (after nested).
 %   \begin{syntax}
 %   \envexaplain{scontents}
 %   \end{syntax}
+%   The \emph{pseudo environment} takes the same optional argument
+%   \myoarg{key \textnormal{\textcolor{gray}{=}} val} as the \myenv*[no-index]{scontents}
+%   environment, on the same line as |\scontents|, and the
+%   \mymarg{body env} up to |\endscontents|.
 % \end{function}
 %
 % \hologo{ConTeXt} users should use |\startscontents| and |\stopscontents|.
@@ -1144,6 +1161,10 @@ This text is in the outer environment (after nested).
 %   \begin{syntax}
 %   \envexaplain[start]{scontents}[stop]
 %   \end{syntax}
+%   The \emph{pseudo environment} takes the same optional argument
+%   \myoarg{key \textnormal{\textcolor{gray}{=}} val} as the \myenv*[no-index]{scontents}
+%   environment, on the same line as |\startscontents|, and the
+%   \mymarg{body env} up to |\stopscontents|.
 % \end{function}
 %
 % \subsection*{Options for environment}
@@ -1200,13 +1221,21 @@ This text is in the outer environment (after nested).
 %   \begin{syntax}
 %    \usebox{\exaboxtmp}
 %   \end{syntax}
+% The command \ics*{newenvsc} takes the mandatory argument
+% \mymarg{env name} and the optional argument \myoarg{initial keys}, and
+% creates the \mymeta{new environment} \mymarg{env name} with the same
+% characteristics of the \myenv*[no-index]{scontents} environment. The
+% values entered in \myoarg{initial keys} will be considered as the
+% default values for this new environment and the valid \mymeta{keys} are
+% \mykey{store-env} and \mykey{print-env}. If \mymarg{env name} already
+% exists, an \enquote{error} is returned and its definition is not altered.
 % \end{function}
 %
-% The command \ics*{newenvsc} allows you to create \mymeta{new environments}
-% based on the same characteristics of the \myenv*[no-index]{scontents} environment.
-% The values entered in \myoarg{initial keys} will be considered as the
-% default values for this new environment and the valid \mymeta{keys} are
-% \mykey{store-env} and \mykey{print-env}. For example:
+% In \hologo{plainTeX} and \hologo{ConTeXt} the \mymeta{new environment}
+% is a \emph{pseudo environment} as the one of \myenv*[no-index]{scontents}
+% (\S\ref{subsec:envscontents}): for an environment named |myenv| it is
+% |\myenv|\,\dots\,|\endmyenv| in \hologo{plainTeX} and
+% |\startmyenv|\,\dots\,|\stopmyenv| in \hologo{ConTeXt}. For example:
 %
 % \iffalse
 %<*example>
@@ -1230,9 +1259,14 @@ This text is in the outer environment (after nested).
 %     \cmdexamp[*]{Scontents}[key \textnormal{\textcolor{gray}{=}} val]{argument}
 %     \cmdexamp[*]{Scontents}[key \textnormal{\textcolor{gray}{=}} val]{argument}[del]
 %   \end{syntax}
+% The command \ics*{Scontents} takes an optional \emph{starred argument}
+% `|*|', the optional argument \myoarg{key \textnormal{\textcolor{gray}{=}} val} and the mandatory
+% \mymarg{argument}, between \emph{braces} or, in the starred version,
+% between two \mymeta[cf=star]{del}, and stores the \mymarg{argument} in
+% the \emph{sequence} set by the key \mykey{store-cmd}.
 % \end{function}
 %
-% The \ics*{Scontents} command reads the \mymarg{argument} in standard
+% The command |\Scontents| reads the \mymarg{argument} in standard
 % mode and \emph{\enquote{stores}} it in the \emph{sequence} set
 % by the key \mykey{store-cmd} at the time it is executed. It is not
 % possible to pass \emph{verbatim things}, but it is possible to use
@@ -1315,17 +1349,17 @@ This text is in the outer environment (after nested).
 %   \begin{syntax}
 %      \cmdexamp{getstored}[index]{seq name}
 %   \end{syntax}
+% The command \ics*{getstored} takes the optional argument
+% \myoarg{index} and the mandatory argument \mymarg{seq name}, and
+% retrieves the \mymeta{stored content} whose \emph{position} in the
+% \emph{sequence} \mymarg{seq name} is the \emph{integer value} set in
+% \mymeta{index}. A \emph{negative} \mymeta{index} counts from the last
+% \mymeta{stored content} and, if the \emph{optional argument} is not
+% passed, the \emph{\enquote{last}} \mymeta{stored content} is retrieved.
 % \end{function}
 %
-% The \ics*{getstored} command retrieves the \mymeta{stored content}
-% according to the \emph{integer value} set in \mymeta{index} which
-% corresponds to the \emph{position} of the \mymeta{stored content}
-% in the \emph{sequence} \mymarg{seq name}.
-%
 % The command is robust and can be used as an \mymarg{argument} for
-% another command. If the \emph{optional argument} is not passed,
-% the default value is the \emph{\enquote{last}} \mymeta{stored content}
-% in the \emph{sequence} \mymarg{seq name}.
+% another command.
 %
 % \subsection{The command \cs{foreachsc}}\label{subsec:foreachsc}
 %
@@ -1333,12 +1367,13 @@ This text is in the outer environment (after nested).
 %   \begin{syntax}
 %     \cmdexamp{foreachsc}[key \textnormal{\textcolor{gray}{=}} val]{seq name}
 %   \end{syntax}
+% The command \ics*{foreachsc} takes the optional argument
+% \myoarg{key \textnormal{\textcolor{gray}{=}} val} and the mandatory argument \mymarg{seq name},
+% and executes the command |\getstored| on each \mymeta{stored content}
+% in the \emph{sequence} \mymarg{seq name}. If the \emph{optional
+% argument} is not passed, |\getstored| is executed on all the
+% \mymeta{stored content} in the \emph{sequence} \mymarg{seq name}.
 % \end{function}
-%
-% The command \ics*{foreachsc} iterates through and executes the command |\getstored|
-% on the \mymeta{stored content} in the \emph{sequence} \mymarg{seq name}. If the
-% \emph{optional argument} is not passed run |\getstored| on all \mymeta{stored content}
-% in the \emph{sequence} \mymarg{seq name}.
 %
 % \subsubsection*{Options for command}
 %
@@ -1390,24 +1425,26 @@ This text is in the outer environment (after nested).
 %   \begin{syntax}
 %     \cmdexamp{typestored}[index\textnormal{\textcolor{gray}{,}} start-stop\textnormal{\textcolor{gray}{,}} 1-end\textnormal{\textcolor{gray}{,}} keys]{seq name}
 %   \end{syntax}
-% The command \ics*{typestored} places the \mymeta{stored content} in
-% the \emph{sequence} \mymarg{seq name} into the internally \myenv*[no-index]{verbatimsc}
-% environment (\S\ref{subsec:verbatimsc}). The \emph{integer value} set at \mymeta{index} corresponds
-% to the \emph{position} of the \mymeta{stored content} in the \emph{sequence}
-% \mymarg{seq name} will be printed, a \emph{negative} \mymeta{index} counts
-% from the last \mymeta{stored content} as in |\getstored|, if \mymeta{1-end}
-% is used \emph{\enquote{all}} \mymeta{stored content} in the \emph{sequence}
-% \mymarg{seq name} will be printed.
+% The command \ics*{typestored} takes the optional argument with the
+% \mymeta{index}, the \mymeta{start-stop}, the \mymeta{1-end} and the
+% \mymeta{keys}, and the mandatory argument \mymarg{seq name}, and prints
+% the \mymeta{stored content} in the \emph{sequence} \mymarg{seq name}
+% in the internal \myenv*[no-index]{verbatimsc} environment
+% (\S\ref{subsec:verbatimsc}). If the \emph{optional argument} is not
+% passed, the \emph{first} \mymeta{stored content} is printed.
 % \end{function}
 %
-% The \emph{integer values} set by \mymeta{start-stop} define the \emph{range}
-% of the \mymeta{stored content} in the \emph{sequence} \mymarg{seq name}
-% that will be printed, the rest of the accepted \mymeta{keys} are \mykey{print-cmd}
-% with default value |true|, \mykey{write-out}, \mykey{width-tab}
-% and \mykey{overwrite}.
-%
-% If the \emph{optional argument} is not passed, the \emph{first} \mymeta{stored content}
-% in the \emph{sequence} \mymarg{seq name} will be printed.
+% The \emph{integer value} set in \mymeta{index} is the \emph{position}
+% of the \mymeta{stored content} in the \emph{sequence} \mymarg{seq name},
+% a \emph{negative} \mymeta{index} counts from the last
+% \mymeta{stored content} as in |\getstored|. The \emph{integer values}
+% set in \mymeta{start-stop} define a \emph{range} of positions, where
+% |end| is the last \mymeta{stored content} and a \mymeta{start} greater
+% than \mymeta{stop} prints the \emph{range} in reverse order, and
+% \mymeta{1-end} prints \emph{\enquote{all}} the \mymeta{stored content}.
+% Several of them can be given separated by commas. The rest of the
+% accepted \mymeta{keys} are \mykey{print-cmd} with default value |true|,
+% \mykey{write-out}, \mykey{width-tab} and \mykey{overwrite}.
 %
 % \begin{important}*
 % In the key \mykey{write-out} the character \texttt{TAB} will be written
@@ -1423,15 +1460,15 @@ This text is in the outer environment (after nested).
 %   \begin{syntax}
 %     \cmdexamp{meaningsc}[index\textnormal{\textcolor{gray}{,}} start-stop\textnormal{\textcolor{gray}{,}} 1-end\textnormal{\textcolor{gray}{,}} keys]{seq name}
 %   \end{syntax}
-% The command \ics*{meaningsc} executes |\meaning| on the \mymeta{stored content}
-% in the \emph{sequence} \mymarg{seq name}. The \mymeta{index},
-% \mymeta{start-stop}, \mymeta{1-end} and \mymeta{keys} have the
-% same behavior as in the command |\typestored|. If the \emph{optional argument}
-% is not passed it defaults to the first \mymeta{stored content} in the
-% \emph{sequence} \mymarg{seq name}.
+% The command \ics*{meaningsc} takes the same optional argument as
+% |\typestored| (\S\ref{subsec:typestored}) and the mandatory argument
+% \mymarg{seq name}, and prints the \emph{meaning} of the
+% \mymeta{stored content} in the \emph{sequence} \mymarg{seq name}, as
+% |\meaning| does, on a single line. The \mymeta{index},
+% \mymeta{start-stop}, \mymeta{1-end} and \mymeta{keys} have the same
+% behavior as in |\typestored| and, if the \emph{optional argument} is
+% not passed, the \emph{first} \mymeta{stored content} is printed.
 % \end{function}
-%
-%
 %
 % \subsection{The command \cs{mergesc}}\label{subsec:mergesc}
 %
@@ -1444,9 +1481,12 @@ This text is in the outer environment (after nested).
 %   \begin{syntax}
 %      \cmdexamp{mergesc}[typestored \textnormal{\textcolor{lightgray}{\textbar}} meaningsc\textcolor{lightgray}{, }keys]{\usebox{\argmergesc}}
 %   \end{syntax}
-% The command \ics*{mergesc} assembles the \mymeta{stored content}
-% in the \emph{sequences} \mymarg{seq A}|[1]|, \mymarg{seq B}|[2-5]| and
-% \mymarg{seq C}|[1-|\mykey{end}|]| and then executes
+% The command \ics*{mergesc} takes the optional argument with the
+% \mymeta{keys}, one of them \mykey{typestored} or \mykey{meaningsc}, and
+% the mandatory argument with a \emph{comma separated list} of
+% \emph{sequences}, and assembles the \mymeta{stored content} in them, as
+% \mymarg{seq A}|[1]|, \mymarg{seq B}|[2-5]| and
+% \mymarg{seq C}|[1-|\mykey{end}|]| in the syntax, and then executes
 % |\typestored| (\S\ref{subsec:typestored}) if the \mykey{typestored} key is
 % active or |\meaningsc| (\S\ref{subsec:meaningsc}) if the \mykey{meaningsc}
 % key is active.
@@ -1548,8 +1588,11 @@ This text is in the outer environment (after nested).
 %   \begin{syntax}
 %      \cmdexamp{countsc}{seq name}
 %   \end{syntax}
-% The command \ics*{countsc} counts a number of \mymeta{stored content} in the
-% \emph{sequence} \mymarg{seq name}.
+% The command \ics*{countsc} takes the mandatory argument
+% \mymarg{seq name} and returns the number of \mymeta{stored content} in
+% the \emph{sequence} \mymarg{seq name}. The command is expandable, so it
+% can be used in an \emph{integer expression}, and if the \emph{sequence}
+% does not exist an \enquote{error} is returned along with |0|.
 % \end{function}
 %
 % \subsection{The command \cs{cleanseqsc}}\label{subsec:cleanseqsc}
@@ -1558,8 +1601,10 @@ This text is in the outer environment (after nested).
 %   \begin{syntax}
 %      \cmdexamp{cleanseqsc}{seq name}
 %   \end{syntax}
-% The command \ics*{cleanseqsc} removes all \mymeta{stored content} in the
-% \emph{sequence} \mymarg{seq name}.
+% The command \ics*{cleanseqsc} takes the mandatory argument
+% \mymarg{seq name} and removes all \mymeta{stored content} in the
+% \emph{sequence} \mymarg{seq name}. If the \emph{sequence} does not
+% exist, it is created empty.
 % \end{function}
 %
 % \section[The \textnormal{\texttt{scontents}} package in action]{The \mypkg*[no-index]{scontents} package in action}
@@ -1720,8 +1765,85 @@ $ pdfdetach -saveall scontents.pdf
 % together with \href{https://ngpdf.com}{\texttt{ngpdf}}.
 % \end{important}
 %
+% \let\stdsection\section
+% \def\section*#1{\stdsection{#1}}
+% \expandafter\let\expandafter\thebibliography\csname HDorg@thebibliography\endcsname
 %
-% \newpage
+% \begin{thebibliography}{10}
+%
+% \bibitem{filecontentsdef} \textsc{Burnol, Jean François}. \enquote{The
+% \textsf{filecontentsdef} package}. Available from
+% \textsc{ctan}, \url{https://ctan.org/pkg/filecontentsdef}, 2019.
+%
+% \bibitem{expl3} The \hologo{LaTeX} Project. \enquote{The \textsf{expl3}
+% package}. Available from
+% \textsc{ctan}, \url{https://www.ctan.org/pkg/expl3}, 2026.
+%
+% \bibitem{tagpdf} \textsc{Fischer, Ulrike}. \enquote{\textsf{tagpdf} – \hologo{LaTeX}
+% kernel code for PDF tagging}. Available from
+% \textsc{ctan}, \url{https://www.ctan.org/pkg/tagpdf}, 2026.
+%
+% \bibitem{fancyvrb} \textsc{Van Zandt, Timothy}. \enquote{The \textsf{fancyvrb}
+% package - Fancy Verbatims in \hologo{LaTeX}}. Available from
+% \textsc{ctan}, \url{https://www.ctan.org/pkg/fancyvrb}, 2026.
+%
+% \bibitem{fvextra} \textsc{Poore, Geoffrey M}. \enquote{The \textsf{fvextra}
+% package - Extensions and patches for \textsf{fancyvrb}}. Available from
+% \textsc{ctan}, \url{https://www.ctan.org/pkg/fvextra}, 2026.
+%
+% \bibitem{listings} \textsc{Hoffmann, Jobst}. \enquote{The \textsf{listings}
+% package}. Available from
+% \textsc{ctan}, \url{https://www.ctan.org/pkg/listings}, 2025.
+%
+% \bibitem{minted} \textsc{Poore, Geoffrey M}. \enquote{The \textsf{minted}
+% package - Highlighted source code in \hologo{LaTeX}}. Available from
+% \textsc{ctan}, \url{https://www.ctan.org/pkg/minted}, 2026.
+%
+% \bibitem{answers} \textsc{Wright, Joseph}. \enquote{\textsf{answers} – Setting
+% questions (or exercises) and answers}. Available from
+% \textsc{ctan},
+% \url{https://ctan.org/pkg/answers}, 2014.
+%
+% \bibitem{tcolorbox} \textsc{F. Sturm, Thomas}. \enquote{\textsf{tcolorbox} – Coloured boxes,
+% for \hologo{LaTeX} examples and theorems, etc}. Available from
+% \textsc{ctan}, \url{https://ctan.org/pkg/tcolorbox}, 2026.
+%
+% \bibitem{xparse} The \hologo{LaTeX} Project. \enquote{The \textsf{xparse}
+% package}. Available from
+% \textsc{ctan}, \url{https://www.ctan.org/pkg/xparse}, 2024.
+%
+% \bibitem{latex2e} The \hologo{LaTeX} Project. \enquote{The \hologo{LaTeX2e}
+% sources}. Available from
+% \textsc{ctan}, \url{https://ctan.org/tex-archive/macros/latex/base}, 2026.
+%
+% \bibitem{userguide} The \hologo{LaTeX} Project. \enquote{\hologo{LaTeX} for authors
+% current version}. Available from
+% \textsc{ctan}, \url{https://ctan.org/pkg/latex-base}, 2026.
+%
+% \bibitem{xsim} \textsc{Niederberger, Clemens}. \enquote{\textsf{xsim} – eXercise
+% Sheets IMproved}. Available from
+% \textsc{ctan}, \url{https://www.ctan.org/pkg/xsim}, 2023.
+%
+% \bibitem{latexlab} The \hologo{LaTeX} Project. \enquote{\textsf{latex-lab} – \hologo{LaTeX}
+% laboratory}. Available from
+% \textsc{ctan}, \url{https://www.ctan.org/pkg/latex-lab}, 2026.
+%
+% \bibitem{verbatim} The \hologo{LaTeX} Project. \enquote{\textsf{verbatim} – Reimplementation
+% of and extensions to \hologo{LaTeX} \textsf{verbatim}}. Available from
+% \textsc{ctan}, \url{https://www.ctan.org/pkg/verbatim}, 2023.
+%
+% \bibitem{inter3} The \hologo{LaTeX} Project. \enquote{The \hologo{LaTeX}3
+% Interfaces}. Available from
+% \textsc{ctan}, \url{https://www.ctan.org/pkg/l3kernel}, 2026.
+%
+% \bibitem{keyval} \textsc{Wright, Joseph}. \enquote{Programming
+% \textsf{key–value} in \textsf{expl3}}. Available from
+% \textsc{TUGboat},
+% \url{https://www.tug.org/TUGboat/tb31-1/tb97wright-l3keys.pdf}, 2010.
+%
+% \end{thebibliography}
+%
+% \let\section\stdsection
 %
 % \section{Change history}\label{sec:changes}
 %
@@ -1729,11 +1851,11 @@ $ pdfdetach -saveall scontents.pdf
 % development, from the first public implementation using the \mypkg{filecontentsdef}\cite{filecontentsdef}
 % package to the current version with only \mypkg{expl3}\cite{expl3}.
 %
-% \setlist[itemize,1]{label=\textendash,wide=0.5em,nosep,noitemsep,leftmargin=10pt}
+% \setlist[itemize,1]{label=\textendash,leftmargin=*,labelsep=0.5em,nosep,noitemsep}
 % \newlength\descrwidth
 % \settowidth{\descrwidth}{\textsf{v1.0a, (ctan), 2019-07-30} }
 %
-% \begin{description}[font=\small\sffamily,wide=0pt,style=multiline,leftmargin=\descrwidth,nosep,noitemsep]
+% \begin{description}[font=\small\sffamily,wide=0pt,style=multiline,leftmargin=1.1\descrwidth,nosep,noitemsep]
 % \item [\fileversion{} (ctan), \filedate]
 %    \begin{itemize}
 %        \item Fix warning for empty argument in |\Scontents| and |\Scontents*|.
@@ -1742,9 +1864,15 @@ $ pdfdetach -saveall scontents.pdf
 %        \item The messages for writing and overwriting files only go to the \texttt{.log} file.
 %        \item Fix \mykey{wrapper} key and allow |\par| in the optional argument of |\foreachsc|.
 %        \item Fix negative \mymeta{index} in |\typestored|, |\meaningsc| and |\mergesc|.
+%        \item Fix the check of existing \mymeta{output files} in \hologo{ConTeXt} for files written in the same run.
+%        \item Fix loading in \hologo{ConTeXt} when \mypkg{expl3} was already loaded by another module.
+%        \item The messages of the environments show their start and end as written in \hologo{plainTeX} and \hologo{ConTeXt}.
 %        \item The \enquote{error} |index-out-of-range| shows the limit of the sequence and the \enquote{errors} |index-out-of-range| and |empty-variable| have a help text.
 %        \item Fix \mymarg{seq name} without \mymeta{index}, undefined sequences and \mymeta{index} out of range in |\mergesc|.
 %        \item Fix \texttt{TAB} at the beginning of a line in |\typestored| and |\mergesc|.
+%        \item Fix empty line at the beginning of |\typestored| and |\mergesc| in \hologo{plainTeX}.
+%        \item Unknown \mymeta{keys} in the package options, |\setupsc| and the \mymeta{initial keys} of |\newenvsc| return an \enquote{error} that names the command.
+%        \item Added regression tests for \hologo{LaTeX}, \hologo{plainTeX} and \hologo{ConTeXt}, run with |l3build check|.
 %    \end{itemize}
 % \item [v2.7 (ctan), 2026-06-01]
 %    \begin{itemize}
@@ -1760,7 +1888,7 @@ $ pdfdetach -saveall scontents.pdf
 %    \end{itemize}
 % \item [v2.5 (ctan), 2025-11-01]
 %    \begin{itemize}
-%        \item Replacing |\scantokens| (primitive) with |\tl_retokenize:n|.
+%        \item Replacing |\scantokens| (primitive) with \myhlc|\tl_retokenize:n|.
 %        \item Cleanup warnings and details returned by |expltools|.
 %        \item Update minimum required of \mypkg{expl3} to 2025-07-08.
 %    \end{itemize}
@@ -1780,7 +1908,7 @@ $ pdfdetach -saveall scontents.pdf
 % \item [v2.2 (ctan), 2025-03-26]
 %    \begin{itemize}
 %        \item Fix internal definition for some functions.
-%        \item Replace |\peek_charcode_ignore_spaces:NTF| by |\peek_charcode:NTF|.
+%        \item Replace \myhlc|\peek_charcode_ignore_spaces:NTF| by \myhlc|\peek_charcode:NTF|.
 %        \item Set correct code for |\obeyedline| implement in \LaTeX{} release 2024-06-01.
 %    \end{itemize}
 % \item [v2.1 (ctan), 2024-06-14]
@@ -1789,7 +1917,7 @@ $ pdfdetach -saveall scontents.pdf
 %        \item Add |\mergesc| command.
 %        \item Fix internal definition for seq var.
 %        \item Fix internal code for |\typestored|.
-%        \item Replace |\cs_argument_spec:N| by |\cs_parameter_spec:N|.
+%        \item Replace \myhlc|\cs_argument_spec:N| by \myhlc|\cs_parameter_spec:N|.
 %        \item Detect \mypkg{l3keys2e} package (obsolete in june 2022 \LaTeX{} release).
 %        \item Minor adjustments in the documentation.
 %    \end{itemize}
@@ -1851,17 +1979,17 @@ $ pdfdetach -saveall scontents.pdf
 %        \item Internal code has been rewritten more efficiently.
 %        \item Remove \emph{starred argument} `|*|' for |\typestored|.
 %        \item Remove \mypkg{filecontentsdef} dependency.
-%        \item Changing |\regex_replace_all:| for |\tl_replace_all:|.
+%        \item Changing \myhlc|\regex_replace_all:| for \myhlc|\tl_replace_all:|.
 %    \end{itemize}
 % \item [v1.2 (ctan), 2019-08-28]
 %    \begin{itemize}
 %        \item Restructuring of documentation.
-%        \item Added copy of |\tex_scantokens:|.
+%        \item Added copy of \myhlc|\tex_scantokens:|.
 %    \end{itemize}
 % \item [v1.1 (ctan), 2019-08-12]
 %    \begin{itemize}
 %        \item Extension of documentation.
-%        \item Replace |\tex_endinput:D| by |\file_input_stop:|.
+%        \item Replace \myhlc|\tex_endinput:D| by \myhlc|\file_input_stop:|.
 %    \end{itemize}
 % \item [v1.0 (ctan), 2019-07-30]
 %    \begin{itemize}
@@ -1876,83 +2004,6 @@ $ pdfdetach -saveall scontents.pdf
 % described.}
 %
 % \printindex[userdoc]
-%
-% \let\stdsection\section
-% \def\section*#1{\stdsection{#1}}
-%
-% \begin{thebibliography}{10}
-% \bibitem{expl3} The \hologo{LaTeX} Project. \enquote{The \textsf{expl3}
-% package}. Available from
-% \textsc{ctan}, \url{https://www.ctan.org/pkg/expl3}, 2026.
-%
-% \bibitem{filecontentsdef} \textsc{Burnol, Jean François}. \enquote{The
-% \textsf{filecontentsdef} package}. Available from
-% \textsc{ctan}, \url{https://ctan.org/pkg/filecontentsdef}, 2019.
-%
-% \bibitem{xparse} The \hologo{LaTeX} Project. \enquote{The \textsf{xparse}
-% package}. Available from
-% \textsc{ctan}, \url{https://www.ctan.org/pkg/xparse}, 2024.
-%
-% \bibitem{xsim} \textsc{Niederberger, Clemens}. \enquote{\textsf{xsim} – eXercise
-% Sheets IMproved}. Available from
-% \textsc{ctan}, \url{https://www.ctan.org/pkg/xsim}, 2023.
-%
-% \bibitem{fancyvrb} \textsc{Van Zandt, Timothy}. \enquote{The \textsf{fancyvrb}
-% package - Fancy Verbatims in \hologo{LaTeX}}. Available from
-% \textsc{ctan}, \url{https://www.ctan.org/pkg/fancyvrb}, 2026.
-%
-% \bibitem{listings} \textsc{Hoffmann, Jobst}. \enquote{The \textsf{listings}
-% package}. Available from
-% \textsc{ctan}, \url{https://www.ctan.org/pkg/listings}, 2025.
-%
-% \bibitem{fvextra} \textsc{Poore, Geoffrey M}. \enquote{The \textsf{fvextra}
-% package - Extensions and patches for \textsf{fancyvrb}}. Available from
-% \textsc{ctan}, \url{https://www.ctan.org/pkg/fvextra}, 2026.
-%
-% \bibitem{minted} \textsc{Poore, Geoffrey M}. \enquote{The \textsf{minted}
-% package - Highlighted source code in \hologo{LaTeX}}. Available from
-% \textsc{ctan}, \url{https://www.ctan.org/pkg/minted}, 2026.
-%
-% \bibitem{inter3} The \hologo{LaTeX} Project. \enquote{The \hologo{LaTeX}3
-% Interfaces}. Available from
-% \textsc{ctan}, \url{https://www.ctan.org/pkg/l3kernel}, 2026.
-%
-% \bibitem{latex2e} The \hologo{LaTeX} Project. \enquote{The \hologo{LaTeX2e}
-% sources}. Available from
-% \textsc{ctan}, \url{https://ctan.org/tex-archive/macros/latex/base}, 2026.
-%
-% \bibitem{userguide} The \hologo{LaTeX} Project. \enquote{\hologo{LaTeX} for authors
-% current version}. Available from
-% \textsc{ctan}, \url{https://ctan.org/pkg/latex-base}, 2026.
-%
-% \bibitem{tagpdf} \textsc{Fischer, Ulrike}. \enquote{\textsf{tagpdf} – \hologo{LaTeX}
-% kernel code for PDF tagging}. Available from
-% \textsc{ctan}, \url{https://www.ctan.org/pkg/tagpdf}, 2026.
-%
-% \bibitem{latexlab} The \hologo{LaTeX} Project. \enquote{\textsf{latex-lab} – \hologo{LaTeX}
-% laboratory}. Available from
-% \textsc{ctan}, \url{https://www.ctan.org/pkg/latex-lab}, 2026.
-%
-% \bibitem{tcolorbox} \textsc{F. Sturm, Thomas}. \enquote{\textsf{tcolorbox} – Coloured boxes,
-% for \hologo{LaTeX} examples and theorems, etc}. Available from
-% \textsc{ctan}, \url{https://ctan.org/pkg/tcolorbox}, 2026.
-%
-% \bibitem{verbatim} The \hologo{LaTeX} Project. \enquote{\textsf{verbatim} – Reimplementation
-% of and extensions to \hologo{LaTeX} \textsf{verbatim}}. Available from
-% \textsc{ctan}, \url{https://www.ctan.org/pkg/verbatim}, 2023.
-%
-% \bibitem{keyval} \textsc{Wright, Joseph}. \enquote{Programming
-% \textsf{key–value} in \textsf{expl3}}. Available from
-% \textsc{TUGboat},
-% \url{https://www.tug.org/TUGboat/tb31-1/tb97wright-l3keys.pdf}, 2010.
-%
-% \bibitem{answers} \textsc{Wright, Joseph}. \enquote{\textsf{answers} – Setting
-% questions (or exercises) and answers}. Available from
-% \textsc{ctan},
-% \url{https://ctan.org/pkg/answers}, 2014.
-% \end{thebibliography}
-%
-% \let\section\stdsection
 %
 % \newpage
 %
@@ -1974,12 +2025,14 @@ $ pdfdetach -saveall scontents.pdf
 % \section{Implementation}\label{sec:implementation}
 % \addtocontents{toc}{\protect\setcounter{tocdepth}{0}}
 %
-% The most recent publicly released version of \mypkg*[no-index]{scontents} is available at
-% \textsc{ctan}: \url{https://www.ctan.org/pkg/scontents}. Historical and
-% developmental versions are available at \textcolor{gray}{\scriptsize\faIcon[regular]{github}}
-% \url{https://github.com/pablgonz/scontents}. While general feedback via email is
-% welcomed, specific bugs or feature requests should be reported through the issue
-% tracker: \url{https://github.com/pablgonz/scontents/issues}.
+% The most recent publicly released version of \mypkg*[no-index]{scontents}
+% is available at \textsc{ctan}: \url{https://www.ctan.org/pkg/scontents}.
+% Historical and developmental versions are available at
+% \textcolor{gray}{\scriptsize\faIcon[regular]{github}}
+% \url{https://github.com/pablgonz/scontents}. While general feedback via
+% email is welcomed, specific bugs or feature requests should be reported
+% through the issue tracker:
+% \url{https://github.com/pablgonz/scontents/issues}.
 %
 % \begin{important}*
 % All variables and functions defined in this package are private and
@@ -2037,25 +2090,35 @@ $ pdfdetach -saveall scontents.pdf
 %
 % \subsubsection{Load \texttt{expl3-generic} and \texttt{xparse-generic} in \hologo{plainTeX} and \hologo{ConTeXt}}\label{subsubsec:generic-layer}
 %
-% \begin{macro}[int]{\c_@@_version_str, \l_@@_char_value_int}
+% \begin{macro}[int]
+%   {
+%     \c_@@_version_str,
+%     \l_@@_char_value_int,
+%   }
 %   The \hologo{plainTeX} and \hologo{ConTeXt} loaders are similar. We
 %   define the constant string \myhlc|\c_@@_version_str| with the version
 %   info and add |\ExplSyntaxOn| to be able to load the frozen
-%   \mypkg{xparse}\cite{xparse}.
+%   \mypkg{xparse}\cite{xparse}. In \hologo{ConTeXt} the module is loaded
+%   after \myhlc|\unprotect|, which makes `|!|' a letter, but
+%   \mypkg{expl3} and \myfile{xparse-generic.tex} use `|!|' in boolean
+%   expressions and \myfile{expl3-generic.tex} does not set its category
+%   code, so `|!|' is set to \emph{other} before loading it and is a
+%   letter again at the end (\S\ref{subsec:finish}).
 %    \begin{macrocode}
 %<*!latex>
 %<context>\writestatus{loading}{User Module scontents v\ScontentsFileVersion}
 %<context>\unprotect
+%<context>\catcode`\!=12\relax
 \input expl3-generic.tex
 \ExplSyntaxOn
 \str_const:ce { c_@@_version_str } { \ScontentsFileDate\space
   v\ScontentsFileVersion\space \ScontentsFileDescription }
 \iow_log:e { Package: ~ scontents ~ \str_use:c { c_@@_version_str } }
 %    \end{macrocode}
-%   Outside of \LaTeX{} we can't use \mypkg{ltcmd}\cite{latex2e}, part of
-%   the \LaTeX{} kernel, but the old \mypkg{xparse}\cite{xparse} provides
-%   \myfile{xparse-generic.tex}, which is loadable in any format. The
-%   integer variable \myhlc|\l_@@_char_value_int| saves the category code
+%   Outside of \LaTeX{} we can't use \mypkg{ltcmd}\cite{latex2e,userguide},
+%   part of the \LaTeX{} kernel, but the old \mypkg{xparse}\cite{xparse}
+%   provides \myfile{xparse-generic.tex}, which is loadable in any format.
+%   The integer variable \myhlc|\l_@@_char_value_int| saves the category code
 %   of `|@|' while it is loaded.
 %    \begin{macrocode}
 \int_new:N  \l_@@_char_value_int
@@ -2180,6 +2243,33 @@ $ pdfdetach -saveall scontents.pdf
 %    \end{macrocode}
 % \end{macro}
 %
+% \begin{macro}[int,TF]{\@@_file_if_exist:n}
+%   The conditional \myhlc|\@@_file_if_exist:nTF| tests if the
+%   \mymeta{output file} passed in |#1| exists in the working directory.
+%   In \hologo{LaTeX} and \hologo{plainTeX} it is
+%   \myhlc|\file_if_exist:nTF|. In \hologo{ConTeXt} the file search keeps
+%   the result found at the start of the run, so a file written by the
+%   package in the same run is not found; there the test is done with
+%   |lfs.isfile| of \hologo{LuaTeX}, the \mymeta{output file} is always
+%   in the working directory.
+%    \begin{macrocode}
+%<!context>\cs_new_eq:NN \@@_file_if_exist:nTF \file_if_exist:nTF
+%<*context>
+\prg_new_conditional:Npnn \@@_file_if_exist:n #1 { TF }
+  {
+    \str_if_eq:eeTF
+      {
+        \lua_now:e
+          { tex.write(lfs.isfile("\lua_escape:e {#1}")~and~"1"~or~"0") }
+      }
+      { 1 }
+      { \prg_return_true: }
+      { \prg_return_false: }
+  }
+%</context>
+%    \end{macrocode}
+% \end{macro}
+%
 % \begin{macro}[int]{\c_@@_newline_tl}
 %   The constant token list \myhlc|\c_@@_newline_tl| stores the character
 %   `|^^J|' used as end of line in the \mymeta{stored content}.
@@ -2210,7 +2300,12 @@ $ pdfdetach -saveall scontents.pdf
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}[int]{\g_@@_end_verbatimsc_tl, \c_@@_end_env_tl, \l_@@_env_name_tl}
+% \begin{macro}[int]
+%   {
+%     \g_@@_end_verbatimsc_tl,
+%     \c_@@_end_env_tl,
+%     \l_@@_env_name_tl,
+%   }
 %   The global token list \myhlc|\g_@@_end_verbatimsc_tl| matches the end of
 %   the |verbatimsc| environment (\S\ref{env:verbatimsc}) in each format.
 %    \begin{macrocode}
@@ -2255,11 +2350,10 @@ $ pdfdetach -saveall scontents.pdf
 %
 % \subsection{Some kernel variants}
 %
-% \begin{macro}[int]{\tl_if_empty:fTF, \tl_replace_all:NeV, \tl_retokenize:e}
+% \begin{macro}[int]{\tl_replace_all:NeV, \tl_retokenize:e}
 %   Some nonstandard kernel variants.
 %    \begin{macrocode}
 %<*core>
-\prg_generate_conditional_variant:Nnn \tl_if_empty:n { f } { p, TF }
 \cs_generate_variant:Nn \tl_replace_all:Nnn { NeV }
 \cs_generate_variant:Nn \tl_retokenize:n { e }
 %    \end{macrocode}
@@ -2312,8 +2406,8 @@ $ pdfdetach -saveall scontents.pdf
 \iow_new:N  \l_@@_file_write_iow
 \bool_new:N \l_@@_writing_bool
 \bool_new:N \l_@@_storing_bool
-\bool_set_true:N \l_@@_storing_bool
 \bool_new:N \l_@@_writable_bool
+\bool_set_true:N \l_@@_storing_bool
 %    \end{macrocode}
 % \end{macro}
 %
@@ -2367,7 +2461,8 @@ $ pdfdetach -saveall scontents.pdf
 %   The \enquote{error} |undefined-storage| is raised when the
 %   \emph{sequence} passed to |\getstored|, |\foreachsc|, |\typestored|,
 %   |\meaningsc|, |\mergesc| or |\countsc| does not exist
-%   (\S\ref{fun:sequences},~\S\ref{cmd:foreachsc},~\S\ref{cmd:mergesc},~\S\ref{cmd:countsc})
+%   (\S\ref{fun:sequences},~\S\ref{cmd:foreachsc},~\S\ref{cmd:mergesc},
+%   ~\S\ref{cmd:countsc})
 %   and the \enquote{error} |index-out-of-range| is raised when the
 %   \mymeta{index} is zero or its absolute value is greater than the
 %   number of \mymeta{stored contents}
@@ -2444,17 +2539,19 @@ $ pdfdetach -saveall scontents.pdf
 %   |positive-integer| naming the \mymeta{key} passed in |#2| and the
 %   value is ignored. It is used by the \mykey{width-tab} key and by the
 %   \mykey{start}, \mykey{step} and \mykey{stop} keys of |\foreachsc|
-%   (\S\ref{key:foreachsc}).
+%   (\S\ref{key:foreachsc}). The core code does not use `|!|' in boolean
+%   expressions, so it does not depend on the category code of `|!|' in
+%   \hologo{ConTeXt} (\S\ref{subsubsec:generic-layer}).
 %    \begin{macrocode}
 %<*core>
 \int_new:N \l_@@_tab_width_int
 \cs_new_protected:Npn \@@_set_positive_int:Nnn #1 #2 #3
   {
-    \bool_lazy_and:nnTF
-      { ! \tl_if_blank_p:n {#3} }
-      { \int_compare_p:nNn {#3} > { 0 } }
-      { \int_set:Nn #1 {#3} }
+    \bool_lazy_or:nnTF
+      { \tl_if_blank_p:n {#3} }
+      { \int_compare_p:nNn {#3} < { 1 } }
       { \msg_error:nnnn { scontents } { positive-integer } {#2} {#3} }
+      { \int_set:Nn #1 {#3} }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -2472,9 +2569,15 @@ $ pdfdetach -saveall scontents.pdf
 %     print-all,
 %     store-all,
 %     debug-var,
+%     unknown,
 %   }
 %   We define the common \mymeta{keys} used by the options passed to the
-%   package, by |\setupsc| and by the environments and commands.
+%   package, by |\setupsc| and by the environments and commands. The
+%   unknown \mymeta{keys} are passed to \myhlc|\@@_unknown_keys_cmd:n|
+%   (\S\ref{key:unknown-keys}), which names the command from
+%   \myhlc|\l_@@_cmd_name_tl|: |\usepackage| for the options of the
+%   package, |\setupsc| or |\newenvsc| for the \mymeta{initial keys} of
+%   an environment.
 %    \begin{macrocode}
 \keys_define:nn { scontents }
   {
@@ -2509,6 +2612,7 @@ $ pdfdetach -saveall scontents.pdf
     debug-var .bool_set:N       = \l_@@_debug_var_bool,
     debug-var .initial:n        = true,
     debug-var .default:n        = true,
+    unknown   .code:n           = { \@@_unknown_keys_cmd:n {#1} },
   }
 %</core>
 %    \end{macrocode}
@@ -2522,6 +2626,7 @@ $ pdfdetach -saveall scontents.pdf
 %   processed and an unknown \mymeta{key} returns an \enquote{error}.
 %    \begin{macrocode}
 %<*latex>
+\tl_set:Nn \l_@@_cmd_name_tl { usepackage }
 \ProcessKeyOptions [ scontents ]
 %</latex>
 %    \end{macrocode}
@@ -2567,8 +2672,10 @@ $ pdfdetach -saveall scontents.pdf
 %   The \enquote{errors} |cmd-key-unknown| and |cmd-key-value-unknown|
 %   are raised when an unknown \mymeta{key}, without or with value, is
 %   passed to the commands |\Scontents|, |\foreachsc|, |\typestored|,
-%   |\meaningsc| or |\mergesc|
-%   (\S\ref{key:Scontents},~\S\ref{key:foreachsc},~\S\ref{key:typemeaning}).
+%   |\meaningsc|, |\mergesc| or |\setupsc|, to the \mymeta{initial keys}
+%   of |\newenvsc| or as an option of the package
+%   (\S\ref{key:package},~\S\ref{key:Scontents},~\S\ref{key:foreachsc},
+%   ~\S\ref{key:typemeaning}).
 %    \begin{macrocode}
 \msg_new:nnnn { scontents } { cmd-key-unknown }
   {
@@ -2604,7 +2711,7 @@ $ pdfdetach -saveall scontents.pdf
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_unknown_keys_env:n #1
   { \exp_args:NV \@@_unknown_keys_env:nn \l_keys_key_str {#1} }
-\cs_new_protected:Npn \@@_unknown_keys_env:nn #1#2
+\cs_new_protected:Npn \@@_unknown_keys_env:nn #1 #2
   {
     \tl_if_blank:nTF {#2}
       { \msg_error:nnn { scontents } { env-key-unknown } {#1} }
@@ -2616,11 +2723,12 @@ $ pdfdetach -saveall scontents.pdf
 % \begin{macro}[int]{\@@_unknown_keys_cmd:n, \@@_unknown_keys_cmd:nn}
 %   The function \myhlc|\@@_unknown_keys_cmd:n| raises the
 %   \enquote{error} for an unknown \mymeta{key} passed to the commands
-%   |\Scontents| and |\foreachsc|.
+%   |\Scontents|, |\foreachsc| and |\setupsc|, to the
+%   \mymeta{initial keys} of |\newenvsc| and to the package.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_unknown_keys_cmd:n #1
   { \exp_args:NV \@@_unknown_keys_cmd:nn \l_keys_key_str {#1} }
-\cs_new_protected:Npn \@@_unknown_keys_cmd:nn #1#2
+\cs_new_protected:Npn \@@_unknown_keys_cmd:nn #1 #2
   {
     \tl_if_blank:nTF {#2}
       { \msg_error:nnn { scontents } { cmd-key-unknown } {#1} }
@@ -2653,7 +2761,7 @@ $ pdfdetach -saveall scontents.pdf
 %   of the token list is \myhlc|\q_@@_mark|.
 %    \begin{macrocode}
 \prg_new_protected_conditional:Npnn \@@_tl_if_head_is_q_mark:n #1
-  { T, F, TF }
+  { F, TF }
   {
     \exp_after:w \if_meaning:w
       \exp_after:w
@@ -2697,13 +2805,14 @@ $ pdfdetach -saveall scontents.pdf
 %   \mymeta{output file} passed in |#1| can be written, according to the
 %   \mykey{write-env}, \mykey{write-cmd}, \mykey{write-out} and
 %   \mykey{overwrite} keys, and issues the messages for writing files
-%   (\S\ref{subsec:general-messages}).
+%   (\S\ref{subsec:general-messages}). The \mymeta{output file} is
+%   searched with \myhlc|\@@_file_if_exist:nTF|.
 %    \begin{macrocode}
-\prg_new_protected_conditional:Npnn \@@_file_if_writable:n #1 { T, F, TF }
+\prg_new_protected_conditional:Npnn \@@_file_if_writable:n #1 { T, TF }
   {
     \bool_if:NTF \l_@@_writing_bool
       {
-        \file_if_exist:nTF {#1}
+        \@@_file_if_exist:nTF {#1}
           {
             \bool_if:NTF \l_@@_overwrite_bool
               {
@@ -2730,7 +2839,7 @@ $ pdfdetach -saveall scontents.pdf
 %   in |#2| to the \mymeta{output file} passed in |#1|, it is used by the
 %   commands.
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_file_write_cmd:nn #1#2
+\cs_new_protected:Npn \@@_file_write_cmd:nn #1 #2
   {
     \@@_file_if_writable:nT {#1}
       {
@@ -2740,6 +2849,28 @@ $ pdfdetach -saveall scontents.pdf
       }
   }
 \cs_generate_variant:Nn \@@_file_write_cmd:nn { VV }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[int]{\@@_set_write_out:n, \@@_set_write_store:n}
+%   The function \myhlc|\@@_set_write_out:n| sets the name of the
+%   \mymeta{output file} passed in |#1| and only writes the content, it is
+%   used by the \mykey{write-out} key. The function
+%   \myhlc|\@@_set_write_store:n| also stores the content, it is used by
+%   the \mykey{write-env} and \mykey{write-cmd} keys
+%   (\S\ref{key:newenvsc},~\S\ref{key:Scontents},~\S\ref{key:typemeaning}).
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_set_write_out:n #1
+  {
+    \bool_set_false:N \l_@@_storing_bool
+    \bool_set_true:N \l_@@_writing_bool
+    \tl_set:Nn \l_@@_file_name_tl {#1}
+  }
+\cs_new_protected:Npn \@@_set_write_store:n #1
+  {
+    \@@_set_write_out:n {#1}
+    \bool_set_true:N \l_@@_storing_bool
+  }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -2895,7 +3026,7 @@ $ pdfdetach -saveall scontents.pdf
 %   |#2|, to the right of the \emph{sequence}.
 %    \begin{macrocode}
 %<*core>
-\cs_new_protected:Npn \@@_append_contents:nn #1#2
+\cs_new_protected:Npn \@@_append_contents:nn #1 #2
   {
     \seq_if_exist:cF { g_@@_name_#1_seq }
       { \seq_new:c { g_@@_name_#1_seq } }
@@ -2910,7 +3041,7 @@ $ pdfdetach -saveall scontents.pdf
 %   in |#1| to the \texttt{.log} file if \mykey{debug-var} is true and
 %   stores it in the \emph{sequence} named by |#2|.
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_store_to_seq:NN #1#2
+\cs_new_protected:Npn \@@_store_to_seq:NN #1 #2
   {
     \bool_if:NT \l_@@_debug_var_bool
       {
@@ -2968,7 +3099,7 @@ $ pdfdetach -saveall scontents.pdf
 %   passed in |#1|. Both raise the \enquote{errors} |undefined-storage|
 %   and |index-out-of-range| (\S\ref{subsec:general-messages}).
 %    \begin{macrocode}
-\cs_new:Npn \@@_getfrom_seq:Nn #1#2
+\cs_new:Npn \@@_getfrom_seq:Nn #1 #2
   {
     \seq_if_exist:cTF { g_@@_name_#2_seq }
       {
@@ -2986,7 +3117,7 @@ $ pdfdetach -saveall scontents.pdf
     \exp_args:Nnf \use:n
       { \@@_getfrom_seq:nnn {#1} } { \int_eval:n {#3} } {#2}
   }
-\cs_new:Npn \@@_getfrom_seq:nn #1#2
+\cs_new:Npn \@@_getfrom_seq:nn #1 #2
   {
     \seq_if_exist:cTF { g_@@_name_#2_seq }
       {
@@ -2996,7 +3127,7 @@ $ pdfdetach -saveall scontents.pdf
       }
       { \msg_expandable_error:nnn { scontents } { undefined-storage } {#2} }
   }
-\cs_new:Npn \@@_getfrom_seq:nnn #1#2#3
+\cs_new:Npn \@@_getfrom_seq:nnn #1 #2 #3
   {
     \bool_lazy_or:nnTF
       { \int_compare_p:nNn {#2} = { 0 } }
@@ -3073,10 +3204,36 @@ $ pdfdetach -saveall scontents.pdf
 %
 % \subsubsection{Definition of error messages for \cs[no-index]{newenvsc}}
 %
+% \begin{macro}[int]{\@@_env_begin_str:n, \@@_env_end_str:n}
+%   The functions \myhlc|\@@_env_begin_str:n| and
+%   \myhlc|\@@_env_end_str:n| return the start and the end of the
+%   environment named by |#1| as they are written in each format:
+%   |\begin{#1}| and |\end{#1}| in \LaTeX, |\#1| and |\end#1| in
+%   \hologo{plainTeX} and |\start#1| and |\stop#1| in \hologo{ConTeXt}.
+%   They are used in the messages of the environments.
+%    \begin{macrocode}
+\cs_new:Npn \@@_env_begin_str:n #1
+  {
+    \@@_format_case:nnn
+      { \c_backslash_str begin \c_left_brace_str #1 \c_right_brace_str }
+      { \c_backslash_str #1 }
+      { \c_backslash_str start #1 }
+  }
+\cs_new:Npn \@@_env_end_str:n #1
+  {
+    \@@_format_case:nnn
+      { \c_backslash_str end \c_left_brace_str #1 \c_right_brace_str }
+      { \c_backslash_str end #1 }
+      { \c_backslash_str stop #1 }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
 % \begin{macro}[int]{junk-after-begin, env-already-defined}
 %   The \enquote{error} |junk-after-begin| is raised when there are
-%   characters after |\begin{scontents}| or its \emph{optional argument}
-%   on the same line and the \enquote{error} |env-already-defined| is
+%   characters after the start of the environment or its
+%   \emph{optional argument} on the same line and the \enquote{error}
+%   |env-already-defined| is
 %   raised when |\newenvsc| is used with the name of an environment that
 %   already exists.
 %    \begin{macrocode}
@@ -3105,16 +3262,24 @@ $ pdfdetach -saveall scontents.pdf
 % \begin{macro}[int]{empty-environment, rescanning-text, multiple-begin}
 %   The \enquote{warning} |empty-environment| is issued when the
 %   environment is empty, the \enquote{warning} |rescanning-text| when
-%   there are characters after |\end{scontents}| on the same line and the
-%   \enquote{warning} |multiple-begin| when there is more than one
-%   |\begin{scontents}| on the same line.
+%   there are characters after the end of the environment on the same line
+%   and the \enquote{warning} |multiple-begin| when the environment starts
+%   more than once on the same line. The start and the end of the
+%   environment are written with \myhlc|\@@_env_begin_str:n| and
+%   \myhlc|\@@_env_end_str:n|.
 %    \begin{macrocode}
 \msg_new:nnn { scontents } { empty-environment }
   { Environment~'#1'~is~empty~\msg_line_context:. }
 \msg_new:nnn { scontents } { rescanning-text }
-  { Rescanning~text~'#1'~after~\c_backslash_str end{#2}~\msg_line_context:. }
+  {
+    Rescanning~text~'#1'~after~\@@_env_end_str:n {#2}~
+    \msg_line_context:.
+  }
 \msg_new:nnn { scontents } { multiple-begin }
-  { Multiple~\c_backslash_str begin{ \l_@@_env_name_tl }~\msg_line_context:. }
+  {
+    Multiple~\@@_env_begin_str:n { \l_@@_env_name_tl }~
+    \msg_line_context:.
+  }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -3136,16 +3301,8 @@ $ pdfdetach -saveall scontents.pdf
 %    \begin{macrocode}
 \keys_define:nn { scontents / scontents }
   {
-    write-env .code:n           = {
-                                    \bool_set_true:N \l_@@_storing_bool
-                                    \bool_set_true:N \l_@@_writing_bool
-                                    \tl_set:Nn \l_@@_file_name_tl {#1}
-                                  },
-    write-out .code:n           = {
-                                    \bool_set_false:N \l_@@_storing_bool
-                                    \bool_set_true:N  \l_@@_writing_bool
-                                    \tl_set:Nn \l_@@_file_name_tl {#1}
-                                  },
+    write-env .code:n           = { \@@_set_write_store:n {#1} },
+    write-out .code:n           = { \@@_set_write_out:n {#1} },
     write-env .value_required:n = true,
     write-out .value_required:n = true,
     print-env .meta:nn          = { scontents } { print-env = #1 },
@@ -3238,7 +3395,7 @@ $ pdfdetach -saveall scontents.pdf
       \tl_if_blank:nF {#2}
         {
           \msg_error:nnee { scontents } { junk-after-begin }
-            { after~\c_backslash_str begin { \l_@@_env_name_tl } #1 } {#2}
+            { after~ \@@_env_begin_str:n { \l_@@_env_name_tl } #1 } {#2}
         }
       \@@_make_control_chars_active:
       \@@_file_tl_write_start:V \l_@@_file_name_tl
@@ -3599,6 +3756,7 @@ $ pdfdetach -saveall scontents.pdf
     \cs_new_protected:cpn { @@_#1_begin: }
       {
         \tl_set:Nn \l_@@_env_name_tl {#1}
+        \tl_set:Nn \l_@@_cmd_name_tl { newenvsc }
         \keys_set:nn { scontents } {#2}
         \@@_setup_verb_processor:
         \@@_generic_begin:
@@ -3640,7 +3798,7 @@ $ pdfdetach -saveall scontents.pdf
 %    \begin{macrocode}
 \NewDocumentCommand \newenvsc { m O{} }
   {
-%<latex|plain>    \cs_if_exist:cTF { #1 }
+%<latex|plain>    \cs_if_exist:cTF {#1}
 %<context>    \cs_if_exist:cTF { start #1 }
       { \msg_error:nnn { scontents } { env-already-defined } {#1} }
       { \@@_setting_env:nn {#1} {#2} }
@@ -3789,14 +3947,34 @@ $ pdfdetach -saveall scontents.pdf
 %    \end{macrocode}
 % \end{macro}
 %
+% \begin{macro}[int]{\@@_verbatimsc_line:w}
+%   The function \myhlc|\@@_verbatimsc_line:w| discards the rest of the
+%   line of |\verbatimsc| up to the active end of line. When |\typestored|
+%   rescans the \mymeta{stored content} a space follows |\verbatimsc| and,
+%   once the spaces are active, it would start an empty line at the top of
+%   the environment.
+%    \begin{macrocode}
+\group_begin:
+  \char_set_catcode_active:N \^^M
+  \cs_new_protected:Npn \@@_verbatimsc_line:w #1 ^^M
+    {
+      \@@_verbatimsc_aux: \frenchspacing \@@_vobeyspaces:
+      \@@_xverb:
+    }
+\group_end:
+%    \end{macrocode}
+% \end{macro}
+%
 % \begin{macro}{\verbatimsc, \endverbatimsc}
 %   Defines the environment \myenv*{verbatimsc} for \hologo{plainTeX}.
+%   As in the environments of \hologo{ConTeXt}, the rest of the line of
+%   |\verbatimsc| is ignored.
 %    \begin{macrocode}
 \cs_new_protected:Npn \verbatimsc
   {
     \group_begin:
-      \@@_verbatimsc_aux: \frenchspacing \@@_vobeyspaces:
-      \@@_xverb:
+      \char_set_catcode_active:N \^^M
+      \@@_verbatimsc_line:w
   }
 \cs_new_protected:Npn \endverbatimsc
   { \group_end: }
@@ -3823,8 +4001,9 @@ $ pdfdetach -saveall scontents.pdf
 %   module of the \LaTeX{} kernel and the \texttt{blocks-code} of
 %   \mypkg{latex-lab}\cite{latexlab}. The function
 %   \myhlc|\@@_verbatimsc_instance:| declares the instance of
-%   \texttt{blockenv} used by the environment. This code is adapted from
-%   the answer of Ulrike Fischer to
+%   \texttt{blockenv} used by the environment, only once at the beginning
+%   of the document and only if \emph{tagged} \texttt{PDF} is active.
+%   This code is adapted from the answer of Ulrike Fischer to
 %   \href{https://tex.stackexchange.com/a/741178/7832}{New verbatim environment with block code (tagged-pdf)}.
 %    \begin{macrocode}
 %<*loader>
@@ -3833,14 +4012,18 @@ $ pdfdetach -saveall scontents.pdf
   {
     \DeclareInstance{blockenv}{verbatimsc}{std}
       {
-        name           = verbatimsc,
-        tag-name       = \UseStructureName{block/verbatim},
-        tagging-recipe = standard,
+        name                   = verbatimsc,
+        tag-name               = \UseStructureName{block/verbatim},
+        tagging-recipe         = standard,
         tagging-suppress-paras = true,
-        block-instance = verbatim,
-        para-instance  = justify ,
-        final-code     = \legacyverbatimsetup{invisible},
+        block-instance         = verbatim,
+        para-instance          = justify,
+        final-code             = \legacyverbatimsetup{invisible},
       }
+  }
+\hook_gput_code:nnn { begindocument } { scontents }
+  {
+    \IfDocumentMetadataTF { \@@_verbatimsc_instance: } { }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -3854,7 +4037,6 @@ $ pdfdetach -saveall scontents.pdf
   {
     \IfDocumentMetadataTF
       {
-        \@@_verbatimsc_instance:
         \UseInstance{blockenv}{verbatimsc}{}
         \@setupverbinvisiblespace\frenchspacing\@vobeyspaces
         \@@_xverb:
@@ -3928,16 +4110,8 @@ $ pdfdetach -saveall scontents.pdf
 %    \begin{macrocode}
 \keys_define:nn { scontents / Scontents }
   {
-    write-cmd .code:n           = {
-                                    \bool_set_true:N \l_@@_storing_bool
-                                    \bool_set_true:N \l_@@_writing_bool
-                                    \tl_set:Nn \l_@@_file_name_tl {#1}
-                                  },
-    write-out .code:n           = {
-                                    \bool_set_false:N \l_@@_storing_bool
-                                    \bool_set_true:N  \l_@@_writing_bool
-                                    \tl_set:Nn \l_@@_file_name_tl {#1}
-                                  },
+    write-cmd .code:n           = { \@@_set_write_store:n {#1} },
+    write-out .code:n           = { \@@_set_write_out:n {#1} },
     write-cmd .value_required:n = true,
     write-out .value_required:n = true,
     print-cmd .meta:nn          = { scontents } { print-cmd = #1 },
@@ -4185,7 +4359,7 @@ $ pdfdetach -saveall scontents.pdf
     wrapper .code:n           = {
                                   \bool_set_true:N \l_@@_foreach_wrapper_bool
                                   \cs_set_protected:Npn
-                                  \@@_foreach_wrapper:n ##1 {#1}
+                                    \@@_foreach_wrapper:n ##1 {#1}
                                 },
     wrapper .value_required:n = true,
     sep     .tl_set:N         = \l_@@_foreach_sep_tl,
@@ -4286,7 +4460,7 @@ $ pdfdetach -saveall scontents.pdf
 % \mymeta{keys}, this avoids the awkward
 % |\typestored[...]|\myoarg{keys}|{...}| syntax. The \mymeta{indexes} and
 % ranges are processed as unknown \mymeta{keys} of
-% \mypkg{l3keys}\cite{inter3}.
+% \mypkg{l3keys}\cite{inter3,keyval}.
 %
 % \subsubsection{Definition of variables for the optional argument}
 %
@@ -4324,11 +4498,7 @@ $ pdfdetach -saveall scontents.pdf
 \keys_define:nn { scontents / typemeaning }
   {
     width-tab .meta:nn          = { scontents } { width-tab = #1 },
-    write-out .code:n           = {
-                                    \bool_set_false:N \l_@@_storing_bool
-                                    \bool_set_true:N  \l_@@_writing_bool
-                                    \tl_set:Nn \l_@@_file_name_tl {#1}
-                                  },
+    write-out .code:n           = { \@@_set_write_out:n {#1} },
     write-out .value_required:n = true,
     overwrite .meta:nn          = { scontents } { overwrite = #1 },
     overwrite .default:n        = true,
@@ -4379,7 +4549,7 @@ $ pdfdetach -saveall scontents.pdf
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_parse_type_meaning_key:n #1
   { \exp_args:NV \@@_parse_type_meaning_key:nn \l_keys_key_str {#1} }
-\cs_new_protected:Npn \@@_parse_type_meaning_key:nn #1#2
+\cs_new_protected:Npn \@@_parse_type_meaning_key:nn #1 #2
   {
     \tl_if_blank:nTF {#2}
       {
@@ -4400,11 +4570,13 @@ $ pdfdetach -saveall scontents.pdf
     \str_set:Ne \l_@@_index_str { \tl_trim_spaces:n {#1} }
     \clist_map_inline:nn { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }
       { \str_remove_all:Nn \l_@@_index_str {##1} }
-    \bool_lazy_or:nnTF
-      { \tl_if_blank_p:n {#1} }
-      { ! \str_if_empty_p:N \l_@@_index_str }
+    \tl_if_blank:nTF {#1}
       { \prg_return_false: }
-      { \prg_return_true: }
+      {
+        \str_if_empty:NTF \l_@@_index_str
+          { \prg_return_true: }
+          { \prg_return_false: }
+      }
   }
 \prg_generate_conditional_variant:Nnn \@@_if_digits:n { V } { TF }
 \cs_new_protected:Npn \@@_range_parser:nnn #1 #2 #3
@@ -4466,6 +4638,25 @@ $ pdfdetach -saveall scontents.pdf
 % \end{macro}
 % \end{macro}
 %
+% \begin{macro}[int]{\@@_typemeaning_setup:nn}
+%   The function \myhlc|\@@_typemeaning_setup:nn| is the common start of
+%   |\typestored| and |\meaningsc|, it saves the name of the
+%   \emph{sequence} passed in |#2|, sets the \mymeta{keys} and the
+%   \mymeta{indexes} passed in |#1| and uses the first
+%   \mymeta{stored content} if no \mymeta{index} was given.
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_typemeaning_setup:nn #1 #2
+  {
+    \seq_clear:N \l_@@_seq_item_seq
+    \str_set:Ne \l_@@_current_seq_name_str {#2}
+    \tl_if_novalue:nF {#1}
+      { \keys_set:nn { scontents / typemeaning } {#1} }
+    \seq_if_empty:NT \l_@@_seq_item_seq
+      { \seq_set_from_clist:Nn \l_@@_seq_item_seq { 1 } }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
 % \subsection{The command \cs{typestored}}\label{cmd:typestored}
 %
 % The user-level command |\typestored| prints the \mymeta{stored contents}
@@ -4503,22 +4694,17 @@ $ pdfdetach -saveall scontents.pdf
 %
 % \begin{macro}[int]{\@@_typestored:nn}
 %   The function \myhlc|\@@_typestored:nn| sets the \mymeta{keys} and the
-%   \mymeta{indexes} passed in |#1|, the first \mymeta{stored content} by
-%   default, gets the \mymeta{stored contents} of the \emph{sequence} named
-%   by |#2|, writes them to the \texttt{.log} file if \mykey{debug-var} is
-%   true and prints them with \myhlc|\@@_typestored:N| and writes them
-%   with \myhlc|\@@_file_write_cmd:VV|.
+%   \mymeta{indexes} passed in |#1| with \myhlc|\@@_typemeaning_setup:nn|,
+%   gets the \mymeta{stored contents} of the \emph{sequence} named by |#2|,
+%   writes them to the \texttt{.log} file if \mykey{debug-var} is true and
+%   prints them with \myhlc|\@@_typestored:N| and writes them with
+%   \myhlc|\@@_file_write_cmd:VV|.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_typestored:nn #1 #2
   {
     \@@_bsphack:
     \group_begin:
-      \seq_clear:N \l_@@_seq_item_seq
-      \str_set:Ne \l_@@_current_seq_name_str {#2}
-      \tl_if_novalue:nF {#1}
-        { \keys_set:nn { scontents / typemeaning } {#1} }
-      \seq_if_empty:NT \l_@@_seq_item_seq
-        { \seq_set_from_clist:Nn \l_@@_seq_item_seq { 1 } }
+      \@@_typemeaning_setup:nn {#1} {#2}
       \tl_set:Ne \l_@@_typestored_arg_tl
         { \@@_getfrom_seq:Nn \l_@@_seq_item_seq {#2} }
       \@@_remove_trailing_eol:N \l_@@_typestored_arg_tl
@@ -4609,20 +4795,15 @@ $ pdfdetach -saveall scontents.pdf
 %
 % \begin{macro}[int]{\@@_meaningsc:nn}
 %   The function \myhlc|\@@_meaningsc:nn| sets the \mymeta{keys} and the
-%   \mymeta{indexes} passed in |#1|, the first \mymeta{stored content} by
-%   default, and calls \myhlc|\@@_meaningsc:n| with the \emph{sequence}
-%   named by |#2|.
+%   \mymeta{indexes} passed in |#1| with \myhlc|\@@_typemeaning_setup:nn|
+%   and calls \myhlc|\@@_meaningsc:n| with the \emph{sequence} named by
+%   |#2|.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_meaningsc:nn #1 #2
   {
     \@@_bsphack:
     \group_begin:
-      \seq_clear:N \l_@@_seq_item_seq
-      \str_set:Ne \l_@@_current_seq_name_str {#2}
-      \tl_if_novalue:nF {#1}
-        { \keys_set:nn { scontents / typemeaning } {#1} }
-      \seq_if_empty:NT \l_@@_seq_item_seq
-        { \seq_set_from_clist:Nn \l_@@_seq_item_seq { 1 } }
+      \@@_typemeaning_setup:nn {#1} {#2}
       \@@_meaningsc:n {#2}
       \use:e
         {
@@ -4885,6 +5066,7 @@ $ pdfdetach -saveall scontents.pdf
 %    \begin{macrocode}
 \NewDocumentCommand \setupsc { +m }
   {
+    \tl_set:Nn \l_@@_cmd_name_tl { setupsc }
     \keys_set:nn { scontents } {#1}
   }
 %    \end{macrocode}
@@ -4924,11 +5106,13 @@ $ pdfdetach -saveall scontents.pdf
 %    \end{macrocode}
 % \end{macro}
 %
-% \subsection{Finish package}
+% \subsection{Finish package}\label{subsec:finish}
 %
-% Finish package implementation.
+% Finish package implementation, in \hologo{ConTeXt} `|!|' is a letter
+% again (\S\ref{subsubsec:generic-layer}).
 %
 %    \begin{macrocode}
+%<context>\char_set_catcode_letter:N \!
 %<plain|context>\ExplSyntaxOff
 %<plain|context>\endinput
 %<latex|core>\file_input_stop:

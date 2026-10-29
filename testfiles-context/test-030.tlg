@@ -1,0 +1,179 @@
+This is a generated file for the l3build validation system.
+Don't change this file in any respect.
+=== A. Guardar ===
+============================================================
+TEST 1: [1] scontents sin claves
+============================================================
+> \l__scontents_processed_body_lines_tl=Uno dos tres.%^^Ascheol%.
+Defining \g__scontents_name_contents_seq on line ...
+countsc{contents}=1
+============================================================
+============================================================
+TEST 2: [2] store-env y print-env
+============================================================
+> \l__scontents_processed_body_lines_tl=Texto impreso por el pseudo
+entorno.%^^Ascheol%.
+Defining \g__scontents_name_envuno_seq on line ...
+box: 8.32343pt+ 2.32672ptx 250.0pt
+countsc{envuno}=1
+============================================================
+============================================================
+TEST 3: [3] force-eol
+============================================================
+> \l__scontents_processed_body_lines_tl=Sin%^^Ascheol%.
+Defining \g__scontents_name_eol_seq on line ...
+> \l__scontents_processed_body_lines_tl=Con.
+box: 22.917pt+ 0.25186ptx 250.0pt
+============================================================
+============================================================
+TEST 4: [4] pseudo entornos anidados
+============================================================
+> \l__scontents_processed_body_lines_tl=Antes.
+\startscontents[store-env=inner]
+Dentro.
+\stopscontents
+Despues.%^^Ascheol%.
+Defining \g__scontents_name_outer_seq on line ...
+> \l__scontents_processed_body_lines_tl=Dentro.%^^Ascheol%.
+Defining \g__scontents_name_inner_seq on line ...
+box: 8.5633pt+ 2.32672ptx 250.0pt
+countsc{inner}=1
+============================================================
+============================================================
+TEST 5: [5] Scontents y Scontents*
+============================================================
+> \l__scontents_Scontents_arg_tl=Con llaves.%^^Ascheol%.
+Defining \g__scontents_name_cmd_seq on line ...
+Package LaTeX/xparse Info: Redefining command \obeyedline with sig. '' on line
+(LaTeX/xparse)             129.
+> \l__scontents_Scontents_arg_tl=Con barras y 50\%.%^^Ascheol%.
+box: 8.99506pt+ 2.44666ptx 250.0pt
+countsc{cmd}=2
+============================================================
+============================================================
+TEST 6: [6] setupsc store-all y print-all
+============================================================
+> \l__scontents_processed_body_lines_tl=Entorno en todo.%^^Ascheol%.
+Defining \g__scontents_name_todo_seq on line ...
+> \l__scontents_Scontents_arg_tl=Comando en todo.%^^Ascheol%.
+box: 8.44336pt+ 0.25186ptx 250.0pt
+countsc{todo}=2
+============================================================
+============================================================
+TEST 7: [7] newenvsc
+============================================================
+> \l__scontents_processed_body_lines_tl=Antes.
+\startpenv[store-env=penvin]
+Dentro.
+\stoppenv
+Despues.%^^Ascheol%.
+Defining \g__scontents_name_penv_seq on line ...
+> \l__scontents_processed_body_lines_tl=Dentro.%^^Ascheol%.
+Defining \g__scontents_name_penvin_seq on line ...
+box: 23.03694pt+ 0.11993ptx 250.0pt
+============================================================
+=== B. Recuperar ===
+============================================================
+TEST 8: [8] getstored
+============================================================
+box: 37.07883pt+ 0.11993ptx 250.0pt
+============================================================
+============================================================
+TEST 9: [9] foreachsc
+============================================================
+box: 51.61244pt+ 3.01035ptx 250.0pt
+============================================================
+============================================================
+TEST 10: [10] typestored
+============================================================
+> \l__scontents_typestored_arg_tl=Uno.
+> \l__scontents_typestored_arg_tl=Tres.
+> \l__scontents_typestored_arg_tl=Dos
+Tres.
+> \l__scontents_typestored_arg_tl=A^^IB^^I^^IC
+^^ILinea con un TAB
+^^I^^ILinea con dos TAB.
+box: 155.59166pt+ 0.0ptx 250.0pt
+============================================================
+============================================================
+TEST 11: [11] meaningsc
+============================================================
+> \l__scontents_meaningsc_arg_tl=Uno Dos Tres .
+> \l__scontents_meaningsc_arg_tl=A^^IB^^I^^IC ^^ILinea con un TAB ^^I^^ILinea con dos TAB
+.
+box: 37.1388pt+ 0.11993ptx 250.0pt
+============================================================
+============================================================
+TEST 12: [12] mergesc
+============================================================
+> \l__scontents_typestored_arg_tl=Tres
+A^^IB^^I^^IC.
+> \l__scontents_meaningsc_arg_tl=Uno Dos Tres Tres.
+box: 61.07878pt+ 0.14392ptx 250.0pt
+============================================================
+============================================================
+TEST 13: [13] countsc y cleanseqsc
+============================================================
+countsc{cmd}=2
+countsc{cmd}=0
+============================================================
+=== C. Archivos ===
+============================================================
+TEST 14: [14] archivos
+============================================================
+Package scontents Info: Writing file 'test-030-a.tsc'.
+> \l__scontents_processed_body_lines_tl=Primera linea.
+^^ISegunda linea con TAB.%^^Ascheol%.
+Defining \g__scontents_name_file_seq on line ...
+--- begin file test-030-a.tsc ---
+|Primera linea.|
+|^^ISegunda linea con TAB.|
+--- end file test-030-a.tsc ---
+Package scontents Info: Writing file 'test-030-b.tsc'.
+> \l__scontents_Scontents_arg_tl=Comando escrito.%^^Ascheol%.
+--- begin file test-030-b.tsc ---
+|Comando escrito.|
+--- end file test-030-b.tsc ---
+> \l__scontents_typestored_arg_tl=Uno
+Dos
+Tres.
+Package scontents Info: Overwriting file 'test-030-b.tsc'.
+--- begin file test-030-b.tsc ---
+|Uno|
+|Dos|
+|Tres|
+--- end file test-030-b.tsc ---
+Package scontents Warning: File 'test-030-a.tsc' already exists. Not writing
+(scontents)                on line ....
+--- begin file test-030-a.tsc ---
+|Primera linea.|
+|^^ISegunda linea con TAB.|
+--- end file test-030-a.tsc ---
+countsc{file}=1
+============================================================
+=== D. Avisos ===
+============================================================
+TEST 15: [15] entorno vacio
+============================================================
+Package scontents Warning: Environment 'scontents' is empty on line ....
+> \l__scontents_processed_body_lines_tl=%^^Ascheol%.
+Defining \g__scontents_name_vacio_seq on line ...
+============================================================
+============================================================
+TEST 16: [16] mas de un inicio en la misma linea
+============================================================
+Package scontents Warning: Multiple \startscontents on line ....
+> \l__scontents_processed_body_lines_tl=\startscontents \startscontents
+x
+\stopscontents
+\stopscontents%^^Ascheol%.
+Defining \g__scontents_name_mult_seq on line ...
+============================================================
+============================================================
+TEST 17: [17] caracteres despues del final
+============================================================
+> \l__scontents_processed_body_lines_tl=x%^^Ascheol%.
+Defining \g__scontents_name_resc_seq on line ...
+Package scontents Warning: Rescanning text ' Texto despues.' after
+(scontents)                \stopscontents on line ....
+============================================================

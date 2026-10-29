@@ -94,11 +94,11 @@ Check that you have spelled the key name correctly.
 > \l__scontents_processed_body_lines_tl=x%^^Ascheol%.
 Defining \g__scontents_name_nuevo_seq on line ...
 [A12]
-! LaTeX Error: The key 'scontents/clavefalsa' is unknown and is being ignored.
+! Package scontents Error: The key 'clavefalsa' is unknown by command \setupsc and is being ignored on line ....
 For immediate help type H <return>.
  ...                                              
 l. ...    \setupsc{clavefalsa}
-The module 'scontents' does not have a key called 'scontents/clavefalsa'.
+The command \setupsc does not have a key called 'clavefalsa'.
 Check that you have spelled the key name correctly.
 [A13]
 ! Package scontents Error: Empty sequence name for storing content on line ....
@@ -122,11 +122,11 @@ Check that you have spelled the key name correctly.
 [A15]
 Defining \__scontents_envmal_begin: on line ...
 Defining \__scontents_envmal_end: on line ...
-! LaTeX Error: The key 'scontents/write-env' is unknown and is being ignored.
+! Package scontents Error: The key 'write-env=\jobname -c.tsc' is unknown by command \newenvsc and is being ignored on line ....
 For immediate help type H <return>.
  ...                                              
 l. ...\begin{envmal}
-The module 'scontents' does not have a key called 'scontents/write-env'.
+The command \newenvsc does not have a key called 'write-env'.
 Check that you have spelled the key name correctly.
 > \l__scontents_processed_body_lines_tl=x%^^Ascheol%.
 === B. Enteros positivos ===

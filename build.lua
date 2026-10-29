@@ -15,10 +15,14 @@
    * upload     : Upload the package to ctan, you must add
                   -F ctan.ann in conjunction with [--debug]
    * tagcheck   : Check version and date in files
-   * check      : Run the regression tests in /testfiles (LuaTeX, latex-dev,
-                  one run); l3build check test-001 runs only that test
+   * check      : Run the regression tests: /testfiles (LuaTeX, latex-dev),
+                  /testfiles-plain (pdfTeX, plain) and /testfiles-context
+                  (ConTeXt MkIV); l3build check test-001 runs only that test
+                  and -c config-plain or -c config-context only that set
    * save       : Save the reference (.tlg) of a test after reviewing its
-                  output: l3build save test-001
+                  output: l3build save test-001, l3build save -c
+                  config-plain test-020, l3build save -c config-context
+                  test-030
    * testSE     : Compile and validate the files in /test-pkg with plain TeX,
                   LaTeX (latex>dvips>ps2pdf, pdflatex and tagged lualatex)
                   and ConTeXt, PDFs copied there
@@ -70,9 +74,14 @@ stdengine    = "luatex"
 checkformat  = "latex-dev"
 checkruns    = 1
 
--- test-003 and test-100 write files with the write-* keys; they are removed
--- before each test so that the messages (writing / not writing /
--- overwriting) are always the same.
+-- The same package is also tested in plain TeX and in ConTeXt, each set of
+-- tests has its own directory and its configuration file (config-plain.lua
+-- and config-context.lua), loaded after this file.
+checkconfigs = { "build", "config-plain", "config-context" }
+
+-- test-003, test-020, test-030 and test-100 write files with the write-*
+-- keys; they are removed before each test so that the messages (writing /
+-- not writing / overwriting) are always the same.
 dynamicfiles = { "test-*-*.tsc" }
 
 -- The structure elements of the tagged tests carry sequential ids

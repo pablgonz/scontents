@@ -1,0 +1,262 @@
+% test-030.lvt -- scontents en ConTeXt
+%
+% Pablo González L. <pablgonz@yahoo.com>
+%
+% Regresion:  l3build save -c config-context test-030
+%             l3build check -c config-context test-030
+%
+% Test de regresion de scontents cargado con \usemodule[scontents] en
+% ConTeXt MkIV (context --luatex): el pseudo entorno \startscontents ...
+% \stopscontents, \Scontents, \Scontents*, \getstored, \foreachsc,
+% \typestored y el entorno verbatimsc de ConTeXt (\definetyping),
+% \meaningsc, \mergesc, \newenvsc, \setupsc, \countsc, \cleanseqsc, la
+% escritura de archivos y algunos mensajes. Es el mismo test que test-020
+% (plain TeX), salvo dos cosas: ConTeXt detiene la compilacion en el primer
+% error, y \showbox cuenta como error ("! OK"), por eso aqui las cajas solo
+% escriben sus medidas en el log y la seccion de mensajes solo tiene los
+% avisos (warnings); los errores estan en test-020 y test-100. Las lineas
+% de la secuencia tab llevan caracteres TAB reales.
+%
+% Hecho con cariño por Pablo González L.
+\input regression-test.tex
+\input expl3-generic.tex
+% xparse-generic.tex, que scontents carga en plain TeX y ConTeXt, usa
+% \cs_argument_spec:N, que esta obsoleto: con la depuracion de obsoletos
+% activa su carga da errores, por eso se desactiva solo esa parte.
+\ExplSyntaxOn
+\debug_on:n { all }
+\debug_off:n { deprecation }
+\ExplSyntaxOff
+\usemodule[scontents]
+\starttext
+
+% \BOXSTART y \BOXEND componen lo impreso en una caja y escriben sus
+% medidas en el log (\showbox detendria ConTeXt). \SHOWTSC escribe en el
+% log las lineas de un archivo y \COUNT el numero de contenidos guardados.
+\def\BOXSTART{\setbox0=\vbox\bgroup\hsize=250pt \parindent=0pt\relax}
+\def\BOXEND
+  {\par\egroup\TYPE{box: \the\ht0\space+\space\the\dp0\space x \the\wd0}}
+% \SHOWTSC lee el archivo con Lua: el buscador de archivos de ConTeXt no
+% encuentra los .tsc con \ior_open:Nn. La barra se escribe con
+% string.char(124) porque en ConTeXt `|' puede estar activo.
+\def\SHOWTSC#1{%
+  \directlua{
+    local name = "\luaescapestring{#1}"
+    local bar = string.char(124)
+    texio.write_nl("log", "--- begin file " .. name .. " ---")
+    local f = io.open(name, "r")
+    if f then
+      for line in f:lines() do
+        texio.write_nl("log", bar .. line .. bar)
+      end
+      f:close()
+    else
+      texio.write_nl("log", "file not found: " .. name)
+    end
+    texio.write_nl("log", "--- end file " .. name .. " ---")
+  }%
+}
+\def\COUNT#1{\TYPE{countsc{#1}=\countsc{#1}}}
+
+% Contenido para \getstored, \foreachsc, \typestored, \meaningsc y \mergesc.
+\Scontents[store-cmd=data]{Uno}
+\Scontents[store-cmd=data]{Dos}
+\Scontents[store-cmd=data]{Tres}
+\Scontents*[store-cmd=tab]|A	B		C|
+\startscontents[store-env=tab]
+	Linea con un TAB
+		Linea con dos TAB
+\stopscontents
+
+% \newenvsc define el pseudo entorno \startpenv ... \stoppenv.
+\newenvsc{penv}[store-env=penv]
+
+\START
+
+\TYPE{=== A. Guardar ===}
+
+% 1. Pseudo entorno sin claves: se guarda en contents.
+\BEGINTEST{[1] scontents sin claves}
+\startscontents
+Uno dos tres.
+\stopscontents
+\COUNT{contents}
+\ENDTEST
+
+% 2. store-env y print-env.
+\BEGINTEST{[2] store-env y print-env}
+\BOXSTART
+\startscontents[store-env=envuno, print-env]
+Texto impreso por el pseudo entorno.
+\stopscontents
+\BOXEND
+\COUNT{envuno}
+\ENDTEST
+
+% 3. force-eol.
+\BEGINTEST{[3] force-eol}
+\startscontents[store-env=eol]
+Sin
+\stopscontents
+\startscontents[store-env=eol, force-eol]
+Con
+\stopscontents
+\BOXSTART
+X\getstored[1]{eol}Y\par
+X\getstored[2]{eol}Y
+\BOXEND
+\ENDTEST
+
+% 4. Pseudo entornos anidados.
+\BEGINTEST{[4] pseudo entornos anidados}
+\startscontents[store-env=outer]
+Antes.
+\startscontents[store-env=inner]
+Dentro.
+\stopscontents
+Despues.
+\stopscontents
+\BOXSTART
+\getstored{outer}
+\BOXEND
+\COUNT{inner}
+\ENDTEST
+
+% 5. \Scontents y \Scontents* con print-cmd.
+\BEGINTEST{[5] Scontents y Scontents*}
+\BOXSTART
+\Scontents[store-cmd=cmd, print-cmd]{Con llaves.}
+\Scontents*[store-cmd=cmd, print-cmd]|Con barras y 50\%.|
+\BOXEND
+\COUNT{cmd}
+\ENDTEST
+
+% 6. store-all y print-all con \setupsc.
+\BEGINTEST{[6] setupsc store-all y print-all}
+\setupsc{store-all=todo, print-all}
+\BOXSTART
+\startscontents
+Entorno en todo.
+\stopscontents
+\Scontents{Comando en todo.}
+\BOXEND
+\COUNT{todo}
+\ENDTEST
+
+% 7. Entorno de \newenvsc, tambien anidado y con claves.
+\BEGINTEST{[7] newenvsc}
+\startpenv
+Antes.
+\startpenv[store-env=penvin]
+Dentro.
+\stoppenv
+Despues.
+\stoppenv
+\BOXSTART
+\getstored{penv}\par
+\getstored{penvin}
+\BOXEND
+\ENDTEST
+
+\TYPE{=== B. Recuperar ===}
+
+% 8. \getstored con indices.
+\BEGINTEST{[8] getstored}
+\BOXSTART
+\getstored{data}\par
+\getstored[1]{data}\par
+\getstored[-2]{data}
+\BOXEND
+\ENDTEST
+
+% 9. \foreachsc con sep, before, after, start, stop y wrapper.
+\BEGINTEST{[9] foreachsc}
+\BOXSTART
+\foreachsc[sep={, }]{data}\par
+\foreachsc[before={<}, after={>}, start=2]{data}\par
+\foreachsc[wrapper={(#1)}, stop=2, sep={\par}]{data}
+\BOXEND
+\ENDTEST
+
+% 10. \typestored y verbatimsc de ConTeXt: indices, rangos y TAB.
+\BEGINTEST{[10] typestored}
+\BOXSTART
+\typestored{data}
+\typestored[-1]{data}
+\typestored[2-end]{data}
+\typestored[1-end, width-tab=2]{tab}
+\BOXEND
+\ENDTEST
+
+% 11. \meaningsc y verb-font.
+\BEGINTEST{[11] meaningsc}
+\setupsc{verb-font=\it}
+\BOXSTART
+\meaningsc[1-end]{data}\par
+\meaningsc[1-end, width-tab=3]{tab}
+\BOXEND
+\ENDTEST
+
+% 12. \mergesc con typestored y meaningsc.
+\BEGINTEST{[12] mergesc}
+\BOXSTART
+\mergesc[typestored]{ {data}[3], {tab}[1] }
+\mergesc[meaningsc]{ {data}, {data}[-1] }
+\BOXEND
+\ENDTEST
+
+% 13. \countsc y \cleanseqsc.
+\BEGINTEST{[13] countsc y cleanseqsc}
+\COUNT{cmd}
+\cleanseqsc{cmd}
+\COUNT{cmd}
+\ENDTEST
+
+\TYPE{=== C. Archivos ===}
+
+% 14. write-env, write-cmd, write-out y overwrite; un archivo escrito en la
+% misma compilacion ya existe para la escritura siguiente.
+\BEGINTEST{[14] archivos}
+\startscontents[store-env=file, write-env=\jobname-a.tsc]
+Primera linea.
+	Segunda linea con TAB.
+\stopscontents
+\SHOWTSC{\jobname-a.tsc}
+\Scontents[write-cmd=\jobname-b.tsc]{Comando escrito.}
+\SHOWTSC{\jobname-b.tsc}
+\typestored[1-end, write-out=\jobname-b.tsc, overwrite, print-cmd=false]{data}
+\SHOWTSC{\jobname-b.tsc}
+\Scontents[write-out=\jobname-a.tsc]{No se escribe: el archivo ya existe.}
+\SHOWTSC{\jobname-a.tsc}
+\COUNT{file}
+\ENDTEST
+
+\TYPE{=== D. Avisos ===}
+
+% Avisos de ConTeXt: deben nombrar \startscontents y \stopscontents, no
+% \begin{scontents}. Cada caso va en su propio grupo.
+
+% 15. Entorno vacio.
+\BEGINTEST{[15] entorno vacio}
+\startscontents[store-env=vacio]
+\stopscontents
+\ENDTEST
+
+% 16. Mas de un inicio en la misma linea.
+\BEGINTEST{[16] mas de un inicio en la misma linea}
+\startscontents[store-env=mult]
+\startscontents \startscontents
+x
+\stopscontents
+\stopscontents
+\stopscontents
+\ENDTEST
+
+% 17. Caracteres despues del final: se vuelven a leer.
+\BEGINTEST{[17] caracteres despues del final}
+\startscontents[store-env=resc]
+x
+\stopscontents Texto despues.
+\ENDTEST
+
+\END
