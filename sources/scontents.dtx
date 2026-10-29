@@ -1117,6 +1117,7 @@ push @generated_exts, 'sct';
 %  \mykey{write-out}  & \xmark  & \xmark  &  \cmark  & \cmark  & \cmark  & \cmark  & \cmark & \cmark \\
 %  \mykey{typestored} & \xmark  & \xmark  &  \xmark  & \xmark  & \xmark  & \xmark  & \xmark & \cmark \\
 %  \mykey{meaningsc}  & \xmark  & \xmark  &  \xmark  & \xmark  & \xmark  & \xmark  & \xmark & \cmark \\
+%  \mykey{getstored}  & \xmark  & \xmark  &  \xmark  & \xmark  & \xmark  & \xmark  & \xmark & \cmark \\
 % \bottomrule
 % \end{tabular}
 % \end{center}
@@ -1416,12 +1417,25 @@ This text is in the outer environment (after nested).
 % The command \ics*{foreachsc} takes the optional argument
 % \myoarg{key \textnormal{\textcolor{gray}{=}} val} and the mandatory argument \mymarg{seq name},
 % and executes the command |\getstored| on each \mymeta{stored content}
-% in the \emph{sequence} \mymarg{seq name}. If the \emph{optional
-% argument} is not passed, |\getstored| is executed on all the
-% \mymeta{stored content} in the \emph{sequence} \mymarg{seq name}.
+% in the \emph{sequence} \mymarg{seq name}, or |\typestored| or
+% |\meaningsc| with the \mykey{typestored} or \mykey{meaningsc} key. If the
+% \emph{optional argument} is not passed, |\getstored| is executed on all
+% the \mymeta{stored content} in the \emph{sequence} \mymarg{seq name}.
 % \end{function}
 %
 % \subsubsection*{Options for command}
+%
+% \keyexampcmd*{getstored}{without value}{active}[foreachsc]
+% Executes |\getstored| on each \mymeta{stored content}, as without
+% \mymeta{keys}.
+%
+% \keyexampcmd*{typestored}{without value}{not active}[foreachsc]
+% Executes |\typestored| on each \mymeta{stored content}, which is shown in
+% \emph{verbatim style} (\S\ref{subsec:typestored}).
+%
+% \keyexampcmd*{meaningsc}{without value}{not active}[foreachsc]
+% Executes |\meaningsc| on each \mymeta{stored content}
+% (\S\ref{subsec:meaningsc}).
 %
 % \keyexampcmd{sep}{code}{empty}[foreachsc]
 % Establishes the \emph{separation} between each \mymeta{stored content}
@@ -1525,27 +1539,30 @@ This text is in the outer environment (after nested).
 %
 % \begin{function}{\mergesc}
 %   \begin{syntax}
-%      \cmdexamp{mergesc}[typestored \textnormal{\textcolor{lightgray}{\textbar}} meaningsc\textcolor{lightgray}{, }keys]{\usebox{\argmergesc}}
+%      \cmdexamp{mergesc}[typestored \textnormal{\textcolor{lightgray}{\textbar}} meaningsc \textnormal{\textcolor{lightgray}{\textbar}} getstored\textcolor{lightgray}{, }keys]{\usebox{\argmergesc}}
 %   \end{syntax}
 % The command \ics*{mergesc} takes the optional argument with the
-% \mymeta{keys}, one of them \mykey{typestored} or \mykey{meaningsc}, and
-% the mandatory argument with a \emph{comma separated list} of
-% \emph{sequences}, and assembles the \mymeta{stored content} in them, as
-% \mymarg{seq A}|[1]|, \mymarg{seq B}|[2-5]| and
-% \mymarg{seq C}|[1-|\mykey{end}|]| in the syntax, and then executes
-% |\typestored| (\S\ref{subsec:typestored}) if the \mykey{typestored} key is
-% active or |\meaningsc| (\S\ref{subsec:meaningsc}) if the \mykey{meaningsc}
-% key is active.
+% \mymeta{keys}, one of them \mykey{typestored}, \mykey{meaningsc} or
+% \mykey{getstored}, and the mandatory argument with a
+% \emph{comma separated list} of \emph{sequences}, and assembles the
+% \mymeta{stored content} in them, as \mymarg{seq A}|[1]|,
+% \mymarg{seq B}|[2-5]| and \mymarg{seq C}|[1-|\mykey{end}|]| in the
+% syntax, and then executes |\typestored| (\S\ref{subsec:typestored}) if
+% the \mykey{typestored} key is active, |\meaningsc|
+% (\S\ref{subsec:meaningsc}) if the \mykey{meaningsc} key is active, or
+% rescans it as |\getstored| (\S\ref{subsec:getstored}) does if the
+% \mykey{getstored} key is active.
 % \end{function}
 %
 % The \mymarg{argument} taken by this command is a \emph{comma separated list}
 % of the form \mymarg{seq name} followed by either \myoarg{index},
 % \myoarg{start-stop} or \myoarg{1-end}, a \mymarg{seq name} alone
 % assembles all its \mymeta{stored content}.
-% The use of the keys \mykey{typestored} or \mykey{meaningsc} are
-% \emph{\enquote{mandatory}} and disjoint from each other, the rest of the
-% accepted \mymeta{keys} are \mykey{print-cmd}, \mykey{write-out},
-% \mykey{width-tab} and \mykey{overwrite}.
+% The use of the keys \mykey{typestored}, \mykey{meaningsc} or
+% \mykey{getstored} are \emph{\enquote{mandatory}} and disjoint from each
+% other, the rest of the accepted \mymeta{keys} are \mykey{print-cmd},
+% \mykey{write-out}, \mykey{width-tab} and \mykey{overwrite}, which are not
+% accepted with the \mykey{getstored} key.
 %
 % The use of the \mykey{write-out} key with this command follows the same
 % rules already described, the main advantage is that allows joining
@@ -1798,7 +1815,7 @@ $ pdfdetach -saveall scontents.pdf
 % \myattachfile*{scontents-exa-10}
 % \lstinputlisting[language=scontents-doc,numbers=left]{scontents-exa-10.tex}
 %
-% \subsection{Stored contents used before storing them}\label{exa:remember}
+% \subsection{Stored contents before storing them}\label{exa:remember}
 %
 % The \mykey{remember} key in action: the \mymeta{stored contents} of the
 % \emph{sequence} |objectives| are used in the section
@@ -1931,6 +1948,7 @@ $ pdfdetach -saveall scontents.pdf
 %        \item Unknown \mymeta{keys} in the package options, |\setupsc| and the \mymeta{initial keys} of |\newenvsc| return an \enquote{error} that names the command.
 %        \item Added regression tests for \hologo{LaTeX}, \hologo{plainTeX} and \hologo{ConTeXt}, run with |l3build check|.
 %        \item New \mykey{remember} key to use the \mymeta{stored contents} before they are stored, only in \hologo{LaTeX} (GitHub issue \#1).
+%        \item New \mykey{getstored} key for |\mergesc| and \mykey{getstored}, \mykey{typestored} and \mykey{meaningsc} keys for |\foreachsc| (GitHub issue \#10).
 %    \end{itemize}
 % \item [v2.7 (ctan), 2026-06-01]
 %    \begin{itemize}
@@ -4664,13 +4682,16 @@ $ pdfdetach -saveall scontents.pdf
 %     \l_@@_foreach_stop_bool,
 %     \l_@@_foreach_wrapper_bool,
 %     \l_@@_foreach_body_tl,
+%     \l_@@_foreach_cmd_tl,
 %   }
 %   The token list \myhlc|\l_@@_foreachsc_arg_tl| saves the
 %   \mymarg{seq name}, the sequence \myhlc|\l_@@_foreach_print_seq|
 %   collects the code for each \mymeta{stored content}, built in the token
 %   list \myhlc|\l_@@_foreach_body_tl|, and the token list
 %   \myhlc|\g_@@_foreach_exec_tl| executes it outside the group. The
-%   other variables are set by the \mymeta{keys} of |\foreachsc|.
+%   token list \myhlc|\l_@@_foreach_cmd_tl| saves the command executed on
+%   each \mymeta{stored content}, |\getstored| by default. The other
+%   variables are set by the \mymeta{keys} of |\foreachsc|.
 %    \begin{macrocode}
 \tl_new:N   \l_@@_foreachsc_arg_tl
 \seq_new:N  \l_@@_foreach_print_seq
@@ -4685,6 +4706,8 @@ $ pdfdetach -saveall scontents.pdf
 \bool_new:N \l_@@_foreach_stop_bool
 \bool_new:N \l_@@_foreach_wrapper_bool
 \tl_new:N   \l_@@_foreach_body_tl
+\tl_new:N   \l_@@_foreach_cmd_tl
+\tl_set:Nn  \l_@@_foreach_cmd_tl { \getstored }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -4754,6 +4777,26 @@ $ pdfdetach -saveall scontents.pdf
 %    \end{macrocode}
 % \end{macro}
 %
+% \begin{macro}[int]{getstored, typestored, meaningsc}
+%   The \mymeta{keys} \mykey{getstored}, \mykey{typestored} and
+%   \mykey{meaningsc} set the command saved in
+%   \myhlc|\l_@@_foreach_cmd_tl|.
+%    \begin{macrocode}
+\keys_define:nn { scontents / foreachsc }
+  {
+    getstored  .code:n            =
+      { \tl_set:Nn \l_@@_foreach_cmd_tl { \getstored } },
+    getstored  .value_forbidden:n = true,
+    typestored .code:n            =
+      { \tl_set:Nn \l_@@_foreach_cmd_tl { \typestored } },
+    typestored .value_forbidden:n = true,
+    meaningsc  .code:n            =
+      { \tl_set:Nn \l_@@_foreach_cmd_tl { \meaningsc } },
+    meaningsc  .value_forbidden:n = true,
+  }
+%    \end{macrocode}
+% \end{macro}
+%
 % \subsubsection{Internal functions for \cs[no-index]{foreachsc}}
 %
 % \begin{macro}[int]
@@ -4766,7 +4809,8 @@ $ pdfdetach -saveall scontents.pdf
 %   The function \myhlc|\@@_foreachsc:nn| sets the \mymeta{keys} passed in
 %   |#1| and steps from \mykey{start} to \mykey{stop}, the number of
 %   \mymeta{stored contents} by default, with \myhlc|\@@_foreach_add_body:n|,
-%   which adds |\getstored|, with the code of the \mykey{before},
+%   which adds the command saved in \myhlc|\l_@@_foreach_cmd_tl|, with the
+%   code of the \mykey{before},
 %   \mykey{after} and \mykey{wrapper} keys, to
 %   \myhlc|\l_@@_foreach_print_seq|. The result, separated by \mykey{sep},
 %   is executed after the group. The function \myhlc|\@@_foreach_wrap:n|
@@ -4804,7 +4848,10 @@ $ pdfdetach -saveall scontents.pdf
 \cs_new_protected:Npn \@@_foreach_add_body:n #1
   {
     \tl_set:Ne \l_@@_foreach_body_tl
-      { \exp_not:N \getstored [#1] { \exp_not:V \l_@@_foreachsc_arg_tl } }
+      {
+        \exp_not:V \l_@@_foreach_cmd_tl [#1]
+          { \exp_not:V \l_@@_foreachsc_arg_tl }
+      }
     \bool_if:NT \l_@@_foreach_wrapper_bool
       { \@@_foreach_wrap:V \l_@@_foreach_body_tl }
     \seq_put_right:Ne \l_@@_foreach_print_seq
@@ -5261,7 +5308,8 @@ $ pdfdetach -saveall scontents.pdf
 % \mymeta{keys} and a mandatory argument with a \emph{comma separated
 % list} of \mymarg{seq name} followed by an optional \mymeta{index} or
 % range. It assembles the \mymeta{stored contents} in a temporary
-% \emph{internal sequence} and passes it to |\typestored| or |\meaningsc|.
+% \emph{internal sequence} and passes it to |\typestored| or |\meaningsc|,
+% or rescans it as |\getstored| does.
 %
 % \subsubsection{Definition of variables for \cs[no-index]{mergesc}}
 %
@@ -5279,18 +5327,18 @@ $ pdfdetach -saveall scontents.pdf
 % \subsubsection{Definition of error messages for \cs[no-index]{mergesc}}
 %
 % \begin{macro}[int]{mergesc-missing-key}
-%   The \enquote{error} |mergesc-missing-key| is raised when neither the
-%   \mykey{typestored} key nor the \mykey{meaningsc} key is passed to
-%   |\mergesc|.
+%   The \enquote{error} |mergesc-missing-key| is raised when none of the
+%   \mykey{typestored}, \mykey{meaningsc} and \mykey{getstored} keys is
+%   passed to |\mergesc|.
 %    \begin{macrocode}
 \msg_new:nnnn { scontents } { mergesc-missing-key }
   {
-    Missing~mandatory~key~'typestored'~or~'meaningsc'~for~
-    \c_backslash_str mergesc~\msg_line_context:.
+    Missing~mandatory~key~'typestored',~'meaningsc'~or~'getstored'~
+    for~\c_backslash_str mergesc~\msg_line_context:.
   }
   {
     The~command~\c_backslash_str mergesc~needs~one~of~the~keys~
-    'typestored'~or~'meaningsc'.\\
+    'typestored',~'meaningsc'~or~'getstored'.\\
     Check~that~you~have~spelled~the~key~name~correctly.
   }
 %    \end{macrocode}
@@ -5298,9 +5346,9 @@ $ pdfdetach -saveall scontents.pdf
 %
 % \subsubsection{Definition of keys for \cs[no-index]{mergesc}}
 %
-% \begin{macro}[int]{typestored, meaningsc, \@@_mergesc_cmd:nn}
-%   The \mymeta{keys} \mykey{typestored} and \mykey{meaningsc} are
-%   \emph{mandatory}, they set the function
+% \begin{macro}[int]{typestored, meaningsc, getstored, \@@_mergesc_cmd:nn}
+%   The \mymeta{keys} \mykey{typestored}, \mykey{meaningsc} and
+%   \mykey{getstored} are \emph{mandatory}, they set the function
 %   \myhlc|\@@_mergesc_cmd:nn|, which by default raises the
 %   \enquote{error} |mergesc-missing-key|.
 %    \begin{macrocode}
@@ -5316,6 +5364,11 @@ $ pdfdetach -saveall scontents.pdf
         \cs_set_eq:NN \@@_mergesc_cmd:nn \@@_meaningsc:nn
       },
     meaningsc  .value_forbidden:n = true,
+    getstored  .code:n            =
+      {
+        \cs_set_eq:NN \@@_mergesc_cmd:nn \@@_mergesc_getstored:nn
+      },
+    getstored  .value_forbidden:n = true,
   }
 \cs_new_protected:Npn \@@_mergesc_cmd:nn #1 #2
   {
@@ -5442,6 +5495,41 @@ $ pdfdetach -saveall scontents.pdf
               { \@@_seq_item:nn {#1} {#2} }
           }
       }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[int]{\@@_mergesc_getstored:nn}
+%   The function \myhlc|\@@_mergesc_getstored:nn|, set by the
+%   \mykey{getstored} key, joins the \mymeta{stored contents} of the
+%   \emph{internal sequence} passed in |#2| in
+%   \myhlc|\g_@@_last_stored_tl| separated by an end of line, adds
+%   \myhlc|\c_@@_hidden_space_str| at the end, because the last one has
+%   no end of line, and rescans them with \myhlc|\tl_retokenize:V| after
+%   the group of |\mergesc|, as
+%   \myhlc|\@@_lastfrom_seq:n| does (\S\ref{fun:sequences}). The result
+%   is the same as using |\getstored| on each \mymeta{stored content}. The
+%   \mymeta{indexes} passed in |#1| are always |1-end| and the other
+%   \mymeta{keys}, saved in \myhlc|\l_@@_mergesc_keys_tl|, are unknown for
+%   it and raise the \enquote{errors} of the unknown \mymeta{keys}
+%   (\S\ref{key:unknown-keys}).
+%    \begin{macrocode}
+\keys_define:nn { scontents / getstored }
+  {
+    unknown .code:n = { \@@_unknown_keys_cmd:n {#1} },
+  }
+\cs_new_protected:Npn \@@_mergesc_getstored:nn #1 #2
+  {
+    \keys_set:nV { scontents / getstored } \l_@@_mergesc_keys_tl
+    \tl_gset:Ne \g_@@_last_stored_tl
+      {
+        \exp_args:NnV \seq_use:cn { g_@@_name_#2_seq } \c_@@_newline_tl
+        \c_@@_hidden_space_str
+      }
+    \group_insert_after:N \tl_retokenize:V
+    \group_insert_after:N \g_@@_last_stored_tl
+    \group_insert_after:N \tl_gclear:N
+    \group_insert_after:N \g_@@_last_stored_tl
   }
 %    \end{macrocode}
 % \end{macro}

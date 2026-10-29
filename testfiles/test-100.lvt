@@ -303,7 +303,7 @@ x
     \Scontents*||
   }
 
-\TYPE{=== H. mergesc sin typestored ni meaningsc ===}
+\TYPE{=== H. Claves obligatorias de mergesc y getstored ===}
 
 \CASE{H1}
   {
@@ -313,6 +313,11 @@ x
 \CASE{H2}
   {
     \mergesc[print-cmd=false]{ {data}[1] }
+  }
+
+\CASE{H3}
+  {
+    \mergesc[getstored, print-cmd=false]{ {data}[1] }
   }
 
 \TYPE{=== I. Archivos ===}

@@ -113,11 +113,11 @@ For immediate help type H <return>.
 l. ...    \mergesc[typestored=valor]{ {data}[1] }
 The key 'scontents/mergesc/typestored' should be given without a value.
 The value 'valor' was present: the key will be ignored.
-! Package scontents Error: Missing mandatory key 'typestored' or 'meaningsc' for \mergesc on line ....
+! Package scontents Error: Missing mandatory key 'typestored', 'meaningsc' or 'getstored' for \mergesc on line ....
 For immediate help type H <return>.
  ...                                              
 l. ...    \mergesc[typestored=valor]{ {data}[1] }
-The command \mergesc needs one of the keys 'typestored' or 'meaningsc'.
+The command \mergesc needs one of the keys 'typestored', 'meaningsc' or 'getstored'.
 Check that you have spelled the key name correctly.
 [A15]
 Defining \__scontents_envmal_begin: on line ...
@@ -442,20 +442,27 @@ Package scontents Warning: Empty argument for \Scontents on line ....
 [G3]
 Package scontents Warning: Empty argument for \Scontents on line ....
 > \l__scontents_Scontents_arg_tl=%^^Ascheol%.
-=== H. mergesc sin typestored ni meaningsc ===
+=== H. Claves obligatorias de mergesc y getstored ===
 [H1]
-! Package scontents Error: Missing mandatory key 'typestored' or 'meaningsc' for \mergesc on line ....
+! Package scontents Error: Missing mandatory key 'typestored', 'meaningsc' or 'getstored' for \mergesc on line ....
 For immediate help type H <return>.
  ...                                              
 l. ...    \mergesc{ {data}[1] }
-The command \mergesc needs one of the keys 'typestored' or 'meaningsc'.
+The command \mergesc needs one of the keys 'typestored', 'meaningsc' or 'getstored'.
 Check that you have spelled the key name correctly.
 [H2]
-! Package scontents Error: Missing mandatory key 'typestored' or 'meaningsc' for \mergesc on line ....
+! Package scontents Error: Missing mandatory key 'typestored', 'meaningsc' or 'getstored' for \mergesc on line ....
 For immediate help type H <return>.
  ...                                              
 l. ...    \mergesc[print-cmd=false]{ {data}[1] }
-The command \mergesc needs one of the keys 'typestored' or 'meaningsc'.
+The command \mergesc needs one of the keys 'typestored', 'meaningsc' or 'getstored'.
+Check that you have spelled the key name correctly.
+[H3]
+! Package scontents Error: The key 'print-cmd=false' is unknown by command \mergesc and is being ignored on line ....
+For immediate help type H <return>.
+ ...                                              
+l. ......[getstored, print-cmd=false]{ {data}[1] }
+The command \mergesc does not have a key called 'print-cmd'.
 Check that you have spelled the key name correctly.
 === I. Archivos ===
 [I1]

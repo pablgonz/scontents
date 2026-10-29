@@ -7,8 +7,9 @@
 %
 % Test de regresion de \getstored, \foreachsc (before, after, start, step,
 % stop, wrapper, sep), \typestored y \meaningsc (indice, rango, lista de
-% indices, width-tab, print-cmd, verb-font) y \mergesc (typestored,
-% meaningsc). El contenido se guarda antes de \START, asi el log solo
+% indices, width-tab, print-cmd, verb-font), \mergesc (typestored,
+% meaningsc, getstored) y las claves typestored, meaningsc y getstored de
+% \foreachsc. El contenido se guarda antes de \START, asi el log solo
 % guarda lo que hace cada caso: la caja con lo impreso y, con debug-var
 % (activa por defecto), el contenido que pasan \typestored y \meaningsc.
 % Las lineas de la secuencia tab llevan caracteres TAB reales.
@@ -283,6 +284,26 @@
   {
     {mce}[1], {mce-1}[1], {mce}[2], {mce-1}[2], {mce}[3]
   }
+\BOXEND
+\ENDTEST
+
+% 26. getstored: los contenidos se vuelven a leer como codigo, igual que
+% con \getstored en cada uno.
+\BEGINTEST{[26] mergesc getstored}
+\BOXSTART
+\mergesc[getstored]{ {data}[1], {data}[3] }\par
+\mergesc[getstored]{ {data}[end-2], {code}[1] }
+\BOXEND
+\ENDTEST
+
+\TYPE{=== F. Comando de \string\foreachsc\space ===}
+
+% 27. typestored, meaningsc y getstored en cada contenido.
+\BEGINTEST{[27] foreachsc typestored, meaningsc y getstored}
+\BOXSTART
+\foreachsc[typestored, stop=2]{data}
+\foreachsc[meaningsc, sep={; }]{data}\par
+\foreachsc[typestored, getstored, sep={, }]{data}
 \BOXEND
 \ENDTEST
 

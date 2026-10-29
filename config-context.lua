@@ -16,3 +16,16 @@ specialformats = {
     luatex = { binary = "context", format = "", options = "--luatex --once" },
   },
 }
+
+-- ConTeXt writes to the log the fonts it loads and caches the first time
+-- they are used: with an empty cache (as in GitHub Actions) the lines
+-- 'fonts > otf loading ...' and 'otf reader > ...' appear in the middle of
+-- the test, with a warm cache they do not. They are removed, the hook of
+-- build.lua is kept for the rest of the lines.
+local build_normalize_log_hook = normalize_log_hook
+function normalize_log_hook(line)
+  if string.match(line, "^fonts%s+>") or string.match(line, "^otf reader%s+>") then
+    return ""
+  end
+  return build_normalize_log_hook(line)
+end
