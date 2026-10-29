@@ -1,0 +1,94 @@
+% test-006.lvt -- interfaz de programacion para expl3
+%
+% Pablo González L. <pablgonz@yahoo.com>
+%
+% Regresion:  l3build save test-006
+%             l3build check test-006
+%
+% Test de regresion de las funciones publicas para expl3 (GitHub issue
+% #10): \scontents_if_exist:n (p, TF), \scontents_count:n,
+% \scontents_get:nnN (indice positivo, negativo y expresion entera) y
+% \scontents_map_inline:nn (tambien anidada). Los contenidos se muestran
+% con \tl_show:N y \tl_show:n: sin la marca del ultimo fin de linea, el
+% del entorno y el de \Scontents* como cadenas y el de \Scontents con sus
+% tokens. Los errores de secuencia que no existe e indice fuera de rango
+% estan al final.
+%
+% Hecho con cariño por Pablo González L.
+\input{regression-test}
+
+\documentclass{article}
+\ExplSyntaxOn
+\debug_on:n { all }
+\ExplSyntaxOff
+\usepackage{scontents}
+\begin{document}
+
+\begin{scontents}[store-env=api]
+Primera linea.
+Segunda linea.
+\end{scontents}
+\Scontents*[store-cmd=api]+Con barras y 50%.+
+\Scontents[store-cmd=api]{Con \textbf{tokens}}
+
+\ExplSyntaxOn
+\tl_new:N \l_test_tl
+\ExplSyntaxOff
+
+\START
+
+\ExplSyntaxOn
+
+\TYPE{===~A.~Existencia~y~numero~===}
+
+\BEGINTEST{[1]~scontents_if_exist~y~scontents_count}
+\TYPE{api:~\scontents_if_exist:nTF { api } { si } { no }}
+\TYPE{noexiste:~\scontents_if_exist:nTF { noexiste } { si } { no }}
+\TYPE{predicado:~\bool_if:nTF { \scontents_if_exist_p:n { api } } { si } { no }}
+\TYPE{count~api=\scontents_count:n { api }}
+\TYPE{count~noexiste=\scontents_count:n { noexiste }}
+\TYPE{expresion=\int_eval:n { \scontents_count:n { api } * 2 }}
+\ENDTEST
+
+\TYPE{===~B.~scontents_get~===}
+
+\BEGINTEST{[2]~indices}
+\scontents_get:nnN { api } { 1 } \l_test_tl
+\tl_show:N \l_test_tl
+\scontents_get:nnN { api } { -1 } \l_test_tl
+\tl_show:N \l_test_tl
+\scontents_get:nnN { api } { 1 + 1 } \l_test_tl
+\tl_show:N \l_test_tl
+\ENDTEST
+
+\TYPE{===~C.~scontents_map_inline~===}
+
+\BEGINTEST{[3]~recorrido}
+\scontents_map_inline:nn { api } { \tl_show:n {#1} }
+\ENDTEST
+
+\BEGINTEST{[4]~recorrido~anidado}
+\scontents_map_inline:nn { api }
+  {
+    \TYPE{exterior:~\tl_to_str:n {#1}}
+    \scontents_map_inline:nn { api } { \TYPE{~interior:~\tl_to_str:n {##1}} }
+  }
+\ENDTEST
+
+\TYPE{===~D.~Errores~===}
+
+\BEGINTEST{[5]~secuencia~que~no~existe}
+\scontents_get:nnN { noexiste } { 1 } \l_test_tl
+\tl_show:N \l_test_tl
+\scontents_map_inline:nn { noexiste } { \tl_show:n {#1} }
+\ENDTEST
+
+\BEGINTEST{[6]~indice~fuera~de~rango}
+\scontents_get:nnN { api } { 4 } \l_test_tl
+\tl_show:N \l_test_tl
+\scontents_get:nnN { api } { 0 } \l_test_tl
+\ENDTEST
+
+\ExplSyntaxOff
+
+\end{document}

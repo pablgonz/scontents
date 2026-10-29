@@ -1,0 +1,99 @@
+This is a generated file for the l3build validation system.
+Don't change this file in any respect.
+=== A. Existencia y numero ===
+============================================================
+TEST 1: [1] scontents_if_exist y scontents_count
+============================================================
+api: si
+noexiste: no
+predicado: si
+count api=3
+count noexiste=0
+expresion=6
+============================================================
+=== B. scontents_get ===
+============================================================
+TEST 2: [2] indices
+============================================================
+> \l_test_tl=Primera linea.
+Segunda linea..
+<recently read> }
+l. ...\tl_show:N \l_test_tl
+> \l_test_tl=Con \textbf {tokens}.
+<recently read> }
+l. ...\tl_show:N \l_test_tl
+> \l_test_tl=Con barras y 50%..
+<recently read> }
+l. ...\tl_show:N \l_test_tl
+============================================================
+=== C. scontents_map_inline ===
+============================================================
+TEST 3: [3] recorrido
+============================================================
+> Primera linea.
+Segunda linea..
+<recently read> }
+l. ......_map_inline:nn { api } { \tl_show:n {#1} }
+> Con barras y 50%..
+<recently read> }
+l. ......_map_inline:nn { api } { \tl_show:n {#1} }
+> Con \textbf {tokens}.
+<recently read> }
+l. ......_map_inline:nn { api } { \tl_show:n {#1} }
+============================================================
+============================================================
+TEST 4: [4] recorrido anidado
+============================================================
+exterior: Primera linea.
+Segunda linea.
+ interior: Primera linea.
+Segunda linea.
+ interior: Con barras y 50%.
+ interior: Con \textbf {tokens}
+exterior: Con barras y 50%.
+ interior: Primera linea.
+Segunda linea.
+ interior: Con barras y 50%.
+ interior: Con \textbf {tokens}
+exterior: Con \textbf {tokens}
+ interior: Primera linea.
+Segunda linea.
+ interior: Con barras y 50%.
+ interior: Con \textbf {tokens}
+============================================================
+=== D. Errores ===
+============================================================
+TEST 5: [5] secuencia que no existe
+============================================================
+! Package scontents Error: Storage named 'noexiste' is not defined.
+For immediate help type H <return>.
+ ...                                              
+l. ......ents_get:nnN { noexiste } { 1 } \l_test_tl
+No content has been stored in a sequence named 'noexiste'.
+> \l_test_tl=.
+<recently read> }
+l. ...\tl_show:N \l_test_tl
+! Package scontents Error: Storage named 'noexiste' is not defined.
+For immediate help type H <return>.
+ ...                                              
+l. ......inline:nn { noexiste } { \tl_show:n {#1} }
+No content has been stored in a sequence named 'noexiste'.
+============================================================
+============================================================
+TEST 6: [6] indice fuera de rango
+============================================================
+! Package scontents Error: Index '4' out of range for 'api', the maximum is 3.
+For immediate help type H <return>.
+ ...                                              
+l. ...\scontents_get:nnN { api } { 4 } \l_test_tl
+The sequence 'api' has 3 stored contents, use an index from 1 to 3 or from -3 to -1.
+> \l_test_tl=.
+<recently read> }
+l. ...\tl_show:N \l_test_tl
+! Package scontents Error: Index of sequence 'api' cannot be zero.
+For immediate help type H <return>.
+ ...                                              
+l. ...\scontents_get:nnN { api } { 0 } \l_test_tl
+The sequence 'api' has 3 stored contents, use an index from 1 to 3 or from -3 to -1.
+============================================================
+(test-006.aux)
