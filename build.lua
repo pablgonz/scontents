@@ -28,7 +28,8 @@
    * testSE     : Compile and validate the files in /test-pkg with plain TeX,
                   LaTeX (latex>dvips>ps2pdf, pdflatex and tagged lualatex)
                   and ConTeXt, PDFs copied there
-   * example    : Compile (one run) the files in /samples, PDFs copied there
+   * example    : Compile the files in /samples (one run, two for
+                  scontents-exa-12), PDFs copied there
    The targets testSE and example accept file names (with or without .tex)
    to run only those files: l3build example scontents-exa-2
    * release    : It performs the checks before generating a public
@@ -434,11 +435,18 @@ local function run_commands(sample, cmds, logname, ignore)
   end
 end
 
+-- The files of sources/samples that need more than one run: the key
+-- remember of scontents-exa-12 uses the stored contents before they are
+-- stored, they are read from the .sct file written by the first run
+local example_runs = {
+  ["scontents-exa-12"] = 2,
+}
+
 -- Custom target: l3build example
--- Compiles once with lualatex-dev the files in sources/samples; the PDFs
--- are left there
+-- Compiles with lualatex-dev the files in sources/samples, once or as many
+-- times as example_runs says; the PDFs are left there
 target_list.example = {
-  desc = "Compile (one run) the files in /samples",
+  desc = "Compile the files in /samples (one run, two for scontents-exa-12)",
   help = "Accepts file names, with or without .tex: l3build example scontents-exa-2",
   func = function()
     local srcdir = sourcefiledir .. "/samples"
@@ -449,7 +457,11 @@ target_list.example = {
     end
     os_message("Copied example files from " .. srcdir .. " to " .. tmpdir)
     for _, sample in ipairs(samples) do
-      run_commands(sample .. ".tex", { "lualatex-dev -interaction=nonstopmode" }, sample)
+      local cmds = {}
+      for _ = 1, example_runs[sample] or 1 do
+        table.insert(cmds, "lualatex-dev -interaction=nonstopmode")
+      end
+      run_commands(sample .. ".tex", cmds, sample)
       if cp(sample .. ".pdf", tmpdir, srcdir) ~= 0 then
         fail("** Error!!: Failed to copy " .. sample .. ".pdf to " .. srcdir)
       end
