@@ -1,0 +1,545 @@
+This is a generated file for the l3build validation system.
+Don't change this file in any respect.
+=== A. Antes de guardar ===
+============================================================
+TEST 1: [1] getstored antes de guardar
+============================================================
+> \box...=
+\vbox(7.5+2.5)x250.0, direction TLT
+.\hbox(7.5+2.5)x250.0, glue set 49.58998fil, direction TLT
+..\localpar
+...\localinterlinepenalty=0
+...\localbrokenpenalty=0
+...\localleftbox=null
+...\localrightbox=null
+..\hbox(0.0+0.0)x0.0, direction TLT
+..\TU/lmr/m/n/10 [
+..\TU/lmr/m/n/10 P
+..\TU/lmr/m/n/10 r
+..\TU/lmr/m/n/10 i
+..\TU/lmr/m/n/10 m
+..\TU/lmr/m/n/10 e
+..\TU/lmr/m/n/10 r
+..\TU/lmr/m/n/10 o
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 c
+..\TU/lmr/m/n/10 o
+..\TU/lmr/m/n/10 n
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 l
+..\TU/lmr/m/n/10 l
+..\TU/lmr/m/n/10 a
+..\kern-0.28 (font)
+..\TU/lmr/m/n/10 v
+..\kern-0.28 (font)
+..\TU/lmr/m/n/10 e
+..\TU/lmr/m/n/10 s
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 y
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 5
+..\TU/lmr/m/n/10 0
+..\TU/lmr/m/n/10 %
+..\TU/lmr/m/n/10 .
+..\TU/lmr/m/n/10 ]
+..\glue(\spaceskip) 4.44 plus 4.99498 minus 0.37
+..\TU/lmr/m/n/10 [
+..\TU/lmr/m/n/10 T
+..\kern-0.83 (font)
+..\TU/lmr/m/n/10 e
+..\TU/lmr/m/n/10 r
+..\discretionary (penalty 50)
+...< \TU/lmr/m/n/10 -
+..\TU/lmr/m/n/10 c
+..\TU/lmr/m/n/10 e
+..\TU/lmr/m/n/10 r
+..\TU/lmr/m/n/10 o
+..\kern0.0 (italic)
+..\glue 3.33 plus 1.665 minus 1.11
+..\TU/lmr/bx/n/10 n
+..\TU/lmr/bx/n/10 e
+..\TU/lmr/bx/n/10 g
+..\TU/lmr/bx/n/10 r
+..\TU/lmr/bx/n/10 i
+..\TU/lmr/bx/n/10 t
+..\TU/lmr/bx/n/10 a
+..\kern0.0 (italic)
+..\TU/lmr/m/n/10 ]
+..\penalty 10000
+..\glue(\parfillskip) 0.0 plus 1.0fil
+..\glue(\rightskip) 0.0
+! OK.
+\BOXEND ->\par \egroup \showbox 0 
+l. ...\BOXEND
+countsc{obj}=3
+============================================================
+============================================================
+TEST 2: [2] foreachsc antes de guardar
+============================================================
+> \box...=
+\vbox(19.5+2.01)x250.0, direction TLT
+.\hbox(7.5+2.06)x250.0, glue set 0.67621, direction TLT
+..\localpar
+...\localinterlinepenalty=0
+...\localbrokenpenalty=0
+...\localleftbox=null
+...\localrightbox=null
+..\hbox(0.0+0.0)x0.0, direction TLT
+..\TU/lmr/m/n/10 P
+..\TU/lmr/m/n/10 r
+..\TU/lmr/m/n/10 i
+..\TU/lmr/m/n/10 m
+..\TU/lmr/m/n/10 e
+..\TU/lmr/m/n/10 r
+..\TU/lmr/m/n/10 o
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 c
+..\TU/lmr/m/n/10 o
+..\TU/lmr/m/n/10 n
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 l
+..\TU/lmr/m/n/10 l
+..\TU/lmr/m/n/10 a
+..\kern-0.28 (font)
+..\TU/lmr/m/n/10 v
+..\kern-0.28 (font)
+..\TU/lmr/m/n/10 e
+..\TU/lmr/m/n/10 s
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 y
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 5
+..\TU/lmr/m/n/10 0
+..\TU/lmr/m/n/10 %
+..\TU/lmr/m/n/10 .
+..\TU/lmr/m/n/10 ,
+..\glue(\spaceskip) 3.33 plus 2.08124 minus 0.888
+..\TU/lmr/m/n/10 S
+..\TU/lmr/m/n/10 e
+..\discretionary (penalty 50)
+...< \TU/lmr/m/n/10 -
+..\TU/lmr/m/n/10 g
+..\TU/lmr/m/n/10 u
+..\TU/lmr/m/n/10 n
+..\TU/lmr/m/n/10 d
+..\TU/lmr/m/n/10 o
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 c
+..\TU/lmr/m/n/10 o
+..\TU/lmr/m/n/10 n
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 T
+..\kern-0.83 (font)
+..\TU/lmr/m/n/10 A
+..\TU/lmr/m/n/10 B
+..\TU/lmr/m/n/10 .
+..\TU/lmr/m/n/10 ,
+..\glue(\spaceskip) 3.33 plus 2.08124 minus 0.888
+..\TU/lmr/m/n/10 T
+..\kern-0.83 (font)
+..\TU/lmr/m/n/10 e
+..\TU/lmr/m/n/10 r
+..\discretionary (penalty 50)
+...< \TU/lmr/m/n/10 -
+..\TU/lmr/m/n/10 c
+..\TU/lmr/m/n/10 e
+..\TU/lmr/m/n/10 r
+..\TU/lmr/m/n/10 o
+..\kern0.0 (italic)
+..\glue(\rightskip) 0.0
+.\penalty 300
+.\glue(\baselineskip) 3.09
+.\hbox(6.85+2.01)x250.0, glue set 214.59999fil, direction TLT
+..\TU/lmr/bx/n/10 n
+..\TU/lmr/bx/n/10 e
+..\TU/lmr/bx/n/10 g
+..\TU/lmr/bx/n/10 r
+..\TU/lmr/bx/n/10 i
+..\TU/lmr/bx/n/10 t
+..\TU/lmr/bx/n/10 a
+..\kern0.0 (italic)
+..\penalty 10000
+..\glue(\parfillskip) 0.0 plus 1.0fil
+..\glue(\rightskip) 0.0
+! OK.
+\BOXEND ->\par \egroup \showbox 0 
+l. ...\BOXEND
+============================================================
+============================================================
+TEST 3: [3] typestored, meaningsc y mergesc antes de guardar
+============================================================
+> \l__scontents_typestored_arg_tl=Segundo^^Icon TAB..
+> \l__scontents_meaningsc_arg_tl=Primero {con llaves} y 50\%. Segundo^^Icon TAB. Tercero \textbf {negrita} .
+> \l__scontents_meaningsc_arg_tl=Tercero \textbf {negrita}.
+Overfull \hbox (28.25pt too wide) in paragraph at lines ...
+\TU/lmtt/m/n/10 Primero {con llaves} y 50\%. Segundo con TAB. Tercero
+\hbox(6.94+2.29)x250.0, direction TLT
+.\localpar
+..\localinterlinepenalty=0
+..\localbrokenpenalty=0
+..\localleftbox=null
+..\localrightbox=null
+.\TU/lmtt/m/n/10 P
+.\TU/lmtt/m/n/10 r
+.\TU/lmtt/m/n/10 i
+.\TU/lmtt/m/n/10 m
+.\TU/lmtt/m/n/10 e
+.\TU/lmtt/m/n/10 r
+.\TU/lmtt/m/n/10 o
+.\glue(\spaceskip) 5.25
+.\TU/lmtt/m/n/10 {
+.\TU/lmtt/m/n/10 c
+.\TU/lmtt/m/n/10 o
+.\TU/lmtt/m/n/10 n
+.\glue(\spaceskip) 5.25
+.\TU/lmtt/m/n/10 l
+.\TU/lmtt/m/n/10 l
+.\TU/lmtt/m/n/10 a
+.\TU/lmtt/m/n/10 v
+.\TU/lmtt/m/n/10 e
+.\TU/lmtt/m/n/10 s
+.\TU/lmtt/m/n/10 }
+.\glue(\spaceskip) 5.25
+.\TU/lmtt/m/n/10 y
+.\glue(\spaceskip) 5.25
+.\TU/lmtt/m/n/10 5
+.\TU/lmtt/m/n/10 0
+.\TU/lmtt/m/n/10 \
+.\TU/lmtt/m/n/10 %
+.\TU/lmtt/m/n/10 .
+.\glue(\spaceskip) 5.25
+.\TU/lmtt/m/n/10 S
+.\TU/lmtt/m/n/10 e
+.\TU/lmtt/m/n/10 g
+.\TU/lmtt/m/n/10 u
+.\TU/lmtt/m/n/10 n
+.\TU/lmtt/m/n/10 d
+.\TU/lmtt/m/n/10 o
+.\glue(\spaceskip) 5.25
+.\TU/lmtt/m/n/10 c
+.\TU/lmtt/m/n/10 o
+.\TU/lmtt/m/n/10 n
+.\glue(\spaceskip) 5.25
+.\TU/lmtt/m/n/10 T
+.\TU/lmtt/m/n/10 A
+.\TU/lmtt/m/n/10 B
+.\TU/lmtt/m/n/10 .
+.\glue(\spaceskip) 5.25
+.\TU/lmtt/m/n/10 T
+.\TU/lmtt/m/n/10 e
+.\TU/lmtt/m/n/10 r
+.\TU/lmtt/m/n/10 c
+.\TU/lmtt/m/n/10 e
+.\TU/lmtt/m/n/10 r
+.\TU/lmtt/m/n/10 o
+.\glue(\rightskip) 0.0
+> \box...=
+\vbox(50.23+2.29)x250.0, direction TLT
+.\penalty -51
+.\glue 10.0 plus 4.0 minus 5.0
+.\glue 0.0 plus 1.0
+.\glue(\parskip) 0.0
+.\glue(\parskip) 0.0
+.\hbox(6.23+2.29)x250.0, glue set 166.0fil, direction TLT
+..\localpar
+...\localinterlinepenalty=0
+...\localbrokenpenalty=0
+...\localleftbox=null
+...\localrightbox=null
+..\hbox(0.0+0.0)x0.0, direction TLT
+...\glue 0.0
+...\glue 0.0
+...\glue -5.0
+...\hbox(0.0+0.0)x0.0, direction TLT
+...\glue 5.0
+..\TU/lmtt/m/n/10 S
+..\TU/lmtt/m/n/10 e
+..\TU/lmtt/m/n/10 g
+..\TU/lmtt/m/n/10 u
+..\TU/lmtt/m/n/10 n
+..\TU/lmtt/m/n/10 d
+..\TU/lmtt/m/n/10 o
+..\penalty 10000
+..\glue(\spaceskip) 5.25
+..\TU/lmtt/m/n/10 c
+..\TU/lmtt/m/n/10 o
+..\TU/lmtt/m/n/10 n
+..\penalty 10000
+..\glue(\spaceskip) 5.25
+..\TU/lmtt/m/n/10 T
+..\TU/lmtt/m/n/10 A
+..\TU/lmtt/m/n/10 B
+..\TU/lmtt/m/n/10 .
+..\hbox(0.0+0.0)x0.0, direction TLT
+..\penalty 10000
+..\glue(\parfillskip) 0.0 plus 1.0fil
+..\glue(\rightskip) 0.0
+.\penalty 0
+.\penalty -51
+.\glue 10.0 plus 3.0 minus 5.0
+.\glue(\parskip) 0.0 plus 1.0
+.\glue(\parskip) 0.0
+.\glue(\baselineskip) 2.77
+.\hbox(6.94+2.29)x250.0, direction TLT
+..\localpar
+...\localinterlinepenalty=0
+...\localbrokenpenalty=0
+...\localleftbox=null
+...\localrightbox=null
+..\TU/lmtt/m/n/10 P
+..\TU/lmtt/m/n/10 r
+..\TU/lmtt/m/n/10 i
+..\TU/lmtt/m/n/10 m
+..\TU/lmtt/m/n/10 e
+..\TU/lmtt/m/n/10 r
+..\TU/lmtt/m/n/10 o
+..\glue(\spaceskip) 5.25
+..\TU/lmtt/m/n/10 {
+..\TU/lmtt/m/n/10 c
+..\TU/lmtt/m/n/10 o
+..\TU/lmtt/m/n/10 n
+..\glue(\spaceskip) 5.25
+..\TU/lmtt/m/n/10 l
+..\TU/lmtt/m/n/10 l
+..\TU/lmtt/m/n/10 a
+..\TU/lmtt/m/n/10 v
+..\TU/lmtt/m/n/10 e
+..\TU/lmtt/m/n/10 s
+..\TU/lmtt/m/n/10 }
+..\glue(\spaceskip) 5.25
+..\TU/lmtt/m/n/10 y
+..\glue(\spaceskip) 5.25
+..\TU/lmtt/m/n/10 5
+..\TU/lmtt/m/n/10 0
+..\TU/lmtt/m/n/10 \
+..\TU/lmtt/m/n/10 %
+..\TU/lmtt/m/n/10 .
+..\glue(\spaceskip) 5.25
+..\TU/lmtt/m/n/10 S
+..\TU/lmtt/m/n/10 e
+..\TU/lmtt/m/n/10 g
+..\TU/lmtt/m/n/10 u
+..\TU/lmtt/m/n/10 n
+..\TU/lmtt/m/n/10 d
+..\TU/lmtt/m/n/10 o
+..\glue(\spaceskip) 5.25
+..\TU/lmtt/m/n/10 c
+..\TU/lmtt/m/n/10 o
+..\TU/lmtt/m/n/10 n
+..\glue(\spaceskip) 5.25
+..\TU/lmtt/m/n/10 T
+..\TU/lmtt/m/n/10 A
+..\TU/lmtt/m/n/10 B
+..\TU/lmtt/m/n/10 .
+..\glue(\spaceskip) 5.25
+..\TU/lmtt/m/n/10 T
+..\TU/lmtt/m/n/10 e
+..\TU/lmtt/m/n/10 r
+..\TU/lmtt/m/n/10 c
+..\TU/lmtt/m/n/10 e
+..\TU/lmtt/m/n/10 r
+..\TU/lmtt/m/n/10 o
+..\glue(\rightskip) 0.0
+.\penalty 300
+.\glue(\baselineskip) 2.77
+.\hbox(6.94+2.29)x250.0, glue set 20.92fil, direction TLT
+..\TU/lmtt/m/n/10 \
+..\TU/lmtt/m/n/10 t
+..\TU/lmtt/m/n/10 e
+..\TU/lmtt/m/n/10 x
+..\TU/lmtt/m/n/10 t
+..\TU/lmtt/m/n/10 b
+..\TU/lmtt/m/n/10 f
+..\glue(\spaceskip) 5.25
+..\TU/lmtt/m/n/10 {
+..\TU/lmtt/m/n/10 n
+..\TU/lmtt/m/n/10 e
+..\TU/lmtt/m/n/10 g
+..\TU/lmtt/m/n/10 r
+..\TU/lmtt/m/n/10 i
+..\TU/lmtt/m/n/10 t
+..\TU/lmtt/m/n/10 a
+..\TU/lmtt/m/n/10 }
+..\glue(\spaceskip) 5.25
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmtt/m/n/10 T
+..\TU/lmtt/m/n/10 e
+..\TU/lmtt/m/n/10 r
+..\TU/lmtt/m/n/10 c
+..\TU/lmtt/m/n/10 e
+..\TU/lmtt/m/n/10 r
+..\TU/lmtt/m/n/10 o
+..\glue(\spaceskip) 5.25
+..\TU/lmtt/m/n/10 \
+..\TU/lmtt/m/n/10 t
+..\TU/lmtt/m/n/10 e
+..\TU/lmtt/m/n/10 x
+..\TU/lmtt/m/n/10 t
+..\TU/lmtt/m/n/10 b
+..\TU/lmtt/m/n/10 f
+..\glue(\spaceskip) 5.25
+..\TU/lmtt/m/n/10 {
+..\TU/lmtt/m/n/10 n
+..\TU/lmtt/m/n/10 e
+..\TU/lmtt/m/n/10 g
+..\TU/lmtt/m/n/10 r
+..\TU/lmtt/m/n/10 i
+..\TU/lmtt/m/n/10 t
+..\TU/lmtt/m/n/10 a
+..\TU/lmtt/m/n/10 }
+..\penalty 10000
+..\glue(\parfillskip) 0.0 plus 1.0fil
+..\glue(\rightskip) 0.0
+! OK.
+\BOXEND ->\par \egroup \showbox 0 
+l. ...\BOXEND
+============================================================
+============================================================
+TEST 4: [4] contenidos no disponibles
+============================================================
+> \box...=
+\vbox(7.5+2.5)x250.0, direction TLT
+.\hbox(7.5+2.5)x250.0, glue set 226.66fil, direction TLT
+..\localpar
+...\localinterlinepenalty=0
+...\localbrokenpenalty=0
+...\localleftbox=null
+...\localrightbox=null
+..\hbox(0.0+0.0)x0.0, direction TLT
+..\TU/lmr/m/n/10 [
+..\TU/lmr/m/n/10 ]
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 [
+..\TU/lmr/m/n/10 ]
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 [
+..\TU/lmr/m/n/10 ]
+..\penalty 10000
+..\glue(\parfillskip) 0.0 plus 1.0fil
+..\glue(\rightskip) 0.0
+! OK.
+\BOXEND ->\par \egroup \showbox 0 
+l. ...\BOXEND
+countsc{nunca}=0
+============================================================
+============================================================
+TEST 5: [5] secuencia no recordada
+============================================================
+! Use of \??? doesn't match its definition.
+<argument> \???  
+                 ! Package scontents Error: Storage named 'otra' is not defi...
+l. ...\getstored{otra}
+If you say, e.g., `\def\a1{...}', then you must always
+put `1' after `\a', since control sequence names are
+made up of letters only. The macro here has not been
+followed by the required stuff, so I'm ignoring it.
+============================================================
+=== B. Guardar ===
+============================================================
+TEST 6: [6] guardar en obj
+============================================================
+> \l__scontents_processed_body_lines_tl=Primero {con llaves} y 50\%.%^^Ascheol%.
+Defining \g__scontents_name_obj_seq on line ...
+> \l__scontents_Scontents_arg_tl=Segundo^^Icon TAB.%^^Ascheol%.
+> \l__scontents_Scontents_arg_tl=Tercero \textbf {negrita}%^^Ascheol%.
+> \l__scontents_Scontents_arg_tl=Otra%^^Ascheol%.
+Defining \g__scontents_name_otra_seq on line ...
+============================================================
+=== C. Despues de guardar ===
+============================================================
+TEST 7: [7] getstored y meaningsc despues de guardar
+============================================================
+> \l__scontents_meaningsc_arg_tl=Segundo^^Icon TAB. .
+> \box...=
+\vbox(19.5+0.06)x250.0, direction TLT
+.\hbox(7.5+2.5)x250.0, glue set 0.63463, direction TLT
+..\localpar
+...\localinterlinepenalty=0
+...\localbrokenpenalty=0
+...\localleftbox=null
+...\localrightbox=null
+..\hbox(0.0+0.0)x0.0, direction TLT
+..\TU/lmr/m/n/10 [
+..\TU/lmr/m/n/10 P
+..\TU/lmr/m/n/10 r
+..\TU/lmr/m/n/10 i
+..\TU/lmr/m/n/10 m
+..\TU/lmr/m/n/10 e
+..\TU/lmr/m/n/10 r
+..\TU/lmr/m/n/10 o
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 c
+..\TU/lmr/m/n/10 o
+..\TU/lmr/m/n/10 n
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 l
+..\TU/lmr/m/n/10 l
+..\TU/lmr/m/n/10 a
+..\kern-0.28 (font)
+..\TU/lmr/m/n/10 v
+..\kern-0.28 (font)
+..\TU/lmr/m/n/10 e
+..\TU/lmr/m/n/10 s
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 y
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmr/m/n/10 5
+..\TU/lmr/m/n/10 0
+..\TU/lmr/m/n/10 %
+..\TU/lmr/m/n/10 .
+..\TU/lmr/m/n/10 ]
+..\glue(\spaceskip) 4.44 plus 4.99498 minus 0.37
+..\TU/lmr/m/n/10 [
+..\TU/lmr/m/n/10 T
+..\kern-0.83 (font)
+..\TU/lmr/m/n/10 e
+..\TU/lmr/m/n/10 r
+..\discretionary (penalty 50)
+...< \TU/lmr/m/n/10 -
+..\TU/lmr/m/n/10 c
+..\TU/lmr/m/n/10 e
+..\TU/lmr/m/n/10 r
+..\TU/lmr/m/n/10 o
+..\kern0.0 (italic)
+..\glue 3.33 plus 1.665 minus 1.11
+..\TU/lmr/bx/n/10 n
+..\TU/lmr/bx/n/10 e
+..\TU/lmr/bx/n/10 g
+..\TU/lmr/bx/n/10 r
+..\TU/lmr/bx/n/10 i
+..\TU/lmr/bx/n/10 t
+..\TU/lmr/bx/n/10 a
+..\kern0.0 (italic)
+..\TU/lmr/m/n/10 ]
+..\glue(\spaceskip) 3.33 plus 1.665 minus 1.11
+..\TU/lmtt/m/n/10 S
+..\TU/lmtt/m/n/10 e
+..\TU/lmtt/m/n/10 g
+..\TU/lmtt/m/n/10 u
+..\TU/lmtt/m/n/10 n
+..\TU/lmtt/m/n/10 d
+..\TU/lmtt/m/n/10 o
+..\glue(\rightskip) 0.0
+.\penalty 300
+.\glue(\baselineskip) 3.27
+.\hbox(6.23+0.06)x250.0, glue set 202.75fil, direction TLT
+..\TU/lmtt/m/n/10 c
+..\TU/lmtt/m/n/10 o
+..\TU/lmtt/m/n/10 n
+..\glue(\spaceskip) 5.25
+..\TU/lmtt/m/n/10 T
+..\TU/lmtt/m/n/10 A
+..\TU/lmtt/m/n/10 B
+..\TU/lmtt/m/n/10 .
+..\glue(\spaceskip) 5.25
+..\penalty 10000
+..\glue(\parfillskip) 0.0 plus 1.0fil
+..\glue(\rightskip) 0.0
+! OK.
+\BOXEND ->\par \egroup \showbox 0 
+l. ...\BOXEND
+countsc{obj}=3
+============================================================
+\g__scontents_remember_iow=\write...
+Package scontents Warning: There were undefined stored contents.
+(test-040.aux)

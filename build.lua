@@ -16,13 +16,15 @@
                   -F ctan.ann in conjunction with [--debug]
    * tagcheck   : Check version and date in files
    * check      : Run the regression tests: /testfiles (LuaTeX, latex-dev),
+                  /testfiles-remember (two runs, key remember),
                   /testfiles-plain (pdfTeX, plain) and /testfiles-context
                   (ConTeXt MkIV); l3build check test-001 runs only that test
-                  and -c config-plain or -c config-context only that set
+                  and -c config-plain, -c config-remember or -c
+                  config-context only that set
    * save       : Save the reference (.tlg) of a test after reviewing its
                   output: l3build save test-001, l3build save -c
-                  config-plain test-020, l3build save -c config-context
-                  test-030
+                  config-remember test-040, l3build save -c config-plain
+                  test-020, l3build save -c config-context test-030
    * testSE     : Compile and validate the files in /test-pkg with plain TeX,
                   LaTeX (latex>dvips>ps2pdf, pdflatex and tagged lualatex)
                   and ConTeXt, PDFs copied there
@@ -74,10 +76,11 @@ stdengine    = "luatex"
 checkformat  = "latex-dev"
 checkruns    = 1
 
--- The same package is also tested in plain TeX and in ConTeXt, each set of
--- tests has its own directory and its configuration file (config-plain.lua
--- and config-context.lua), loaded after this file.
-checkconfigs = { "build", "config-plain", "config-context" }
+-- The same package is also tested in plain TeX and in ConTeXt, and the key
+-- remember with two runs, each set of tests has its own directory and its
+-- configuration file (config-remember.lua, config-plain.lua and
+-- config-context.lua), loaded after this file.
+checkconfigs = { "build", "config-remember", "config-plain", "config-context" }
 
 -- test-003, test-020, test-030 and test-100 write files with the write-*
 -- keys; they are removed before each test so that the messages (writing /

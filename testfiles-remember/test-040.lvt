@@ -1,0 +1,100 @@
+% test-040.lvt -- contenidos usados antes de guardarlos (clave remember)
+%
+% Pablo González L. <pablgonz@yahoo.com>
+%
+% Regresion:  l3build save -c config-remember test-040
+%             l3build check -c config-remember test-040
+%
+% Test de regresion de la clave remember (GitHub issue #1). Se compila dos
+% veces (config-remember.lua) y se compara el log de la segunda: los
+% contenidos de la secuencia obj se usan antes de guardarlos con
+% \getstored, \countsc, \foreachsc, \typestored, \meaningsc y \mergesc,
+% tomados del archivo test-040.sct escrito en la primera compilacion. Un
+% indice que no existe y una secuencia recordada que nunca se guarda no
+% imprimen nada y al final dan el aviso remember-undefined; una secuencia
+% que no se recuerda da el error de siempre.
+%
+% Hecho con cariño por Pablo González L.
+\input{regression-test}
+
+\documentclass{article}
+\ExplSyntaxOn
+\debug_on:n { all }
+\ExplSyntaxOff
+\usepackage[remember=obj]{scontents}
+\setupsc{remember={nunca, obj}}
+\begin{document}
+
+% \BOXSTART y \BOXEND componen lo impreso en una caja y la muestran en el
+% log.
+\newcommand\BOXSTART{\setbox0=\vbox\bgroup\hsize=250pt \parindent=0pt\relax}
+\newcommand\BOXEND{\par\egroup\showbox0 }
+\newcommand\COUNT[1]{\TYPE{countsc{#1}=\countsc{#1}}}
+
+\START
+
+\TYPE{=== A. Antes de guardar ===}
+
+% 1. \getstored con indice y sin indice (el ultimo).
+\BEGINTEST{[1] getstored antes de guardar}
+\BOXSTART
+[\getstored[1]{obj}] [\getstored{obj}]
+\BOXEND
+\COUNT{obj}
+\ENDTEST
+
+% 2. \foreachsc recorre todos los contenidos de la compilacion anterior.
+\BEGINTEST{[2] foreachsc antes de guardar}
+\BOXSTART
+\foreachsc[sep={, }]{obj}
+\BOXEND
+\ENDTEST
+
+% 3. \typestored, \meaningsc y \mergesc: con debug-var el contenido va al
+% log; el TAB del segundo contenido se lee del archivo.
+\BEGINTEST{[3] typestored, meaningsc y mergesc antes de guardar}
+\BOXSTART
+\typestored[2]{obj}
+\meaningsc[1-end]{obj}
+\mergesc[meaningsc]{ {obj}[3] }
+\BOXEND
+\ENDTEST
+
+% 4. Un indice que no existe y una secuencia recordada que nunca se guarda
+% no imprimen nada: el aviso sale al final del documento.
+\BEGINTEST{[4] contenidos no disponibles}
+\BOXSTART
+[\getstored[5]{obj}] [\getstored{nunca}] [\typestored[4]{obj}]
+\BOXEND
+\COUNT{nunca}
+\ENDTEST
+
+% 5. Una secuencia que no se recuerda da el error de siempre.
+\BEGINTEST{[5] secuencia no recordada}
+\getstored{otra}
+\ENDTEST
+
+\TYPE{=== B. Guardar ===}
+
+% 6. Los contenidos de obj, con caracteres especiales y un TAB.
+\BEGINTEST{[6] guardar en obj}
+\begin{scontents}[store-env=obj]
+Primero {con llaves} y 50\%.
+\end{scontents}
+\Scontents*[store-cmd=obj]+Segundo	con TAB.+
+\Scontents[store-cmd=obj]{Tercero \textbf{negrita}}
+\Scontents[store-cmd=otra]{Otra}
+\ENDTEST
+
+\TYPE{=== C. Despues de guardar ===}
+
+% 7. Los mismos contenidos despues de guardarlos.
+\BEGINTEST{[7] getstored y meaningsc despues de guardar}
+\BOXSTART
+[\getstored[1]{obj}] [\getstored{obj}]
+\meaningsc[2]{obj}
+\BOXEND
+\COUNT{obj}
+\ENDTEST
+
+\end{document}
