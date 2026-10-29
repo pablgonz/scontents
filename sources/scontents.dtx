@@ -1670,6 +1670,76 @@ This text is in the outer environment (after nested).
 % exist, it is created empty.
 % \end{function}
 %
+% \subsection{Programming interface}\label{subsec:api}
+%
+% For other packages and for the code written with \mypkg{expl3}, the
+% \mymeta{stored contents} can be read without printing them with the
+% following functions. They work in \hologo{LaTeX}, \hologo{plainTeX} and
+% \hologo{ConTeXt} and also read the \emph{sequences} set by the
+% \mykey{remember} key.
+%
+% The \mymeta{stored contents} are given as they were stored, without the
+% mark that \mypkg*[no-index]{scontents} adds to hide the last end of line:
+% the content of an environment is a string whose lines are separated by
+% the end of line character |^^J|, the content of |\Scontents*| is also a
+% string and the content of |\Scontents| keeps its tokens.
+%
+% \begin{function}[EXP,pTF]{\scontents_if_exist:n}
+%   \begin{syntax}
+%     \cs{scontents_if_exist_p:n} \mymarg{seq name}
+%     \cs{scontents_if_exist:nTF} \mymarg{seq name} \mymarg{true code} \mymarg{false code}
+%   \end{syntax}
+% Tests if the \emph{sequence} \mymarg{seq name} exists.
+% \end{function}
+%
+% \begin{function}[EXP]{\scontents_count:n}
+%   \begin{syntax}
+%     \cs{scontents_count:n} \mymarg{seq name}
+%   \end{syntax}
+% Leaves the number of \mymeta{stored contents} in the \emph{sequence}
+% \mymarg{seq name} in the input stream, or |0| if it does not exist,
+% without an \enquote{error}. It can be used in an \emph{integer
+% expression}.
+% \end{function}
+%
+% \begin{function}{\scontents_get:nnN}
+%   \begin{syntax}
+%     \cs{scontents_get:nnN} \mymarg{seq name} \mymarg{index} \mymeta{tl var}
+%   \end{syntax}
+% Sets the \mymeta{tl var}, locally, to the \mymeta{stored content} at the
+% position \mymarg{index} of the \emph{sequence} \mymarg{seq name}. The
+% \mymarg{index} is an \emph{integer expression}, a negative one counts
+% from the end. If the \emph{sequence} does not exist or the
+% \mymarg{index} is out of range, the \mymeta{tl var} is empty and an
+% \enquote{error} is returned.
+% \end{function}
+%
+% \begin{function}{\scontents_map_inline:nn}
+%   \begin{syntax}
+%     \cs{scontents_map_inline:nn} \mymarg{seq name} \mymarg{inline function}
+%   \end{syntax}
+% Applies the \mymarg{inline function} to each \mymeta{stored content} of
+% the \emph{sequence} \mymarg{seq name}, in order, the
+% \mymeta{stored content} is |#1|. The \mymarg{inline function} can use
+% the other functions and \myhlc|\scontents_map_inline:nn| again. If the
+% \emph{sequence} does not exist an \enquote{error} is returned. For
+% example, this shows in the \texttt{.log} file each
+% \mymeta{stored content} of the \emph{sequence} |data| converted to
+% uppercase:
+% \iffalse
+%<*example>
+% \fi
+\begin{examplecode}[frame=single]
+\ExplSyntaxOn
+\scontents_map_inline:nn { data }
+  { \iow_log:e { \text_uppercase:n {#1} } }
+\ExplSyntaxOff
+\end{examplecode}
+% \iffalse
+%</example>
+% \fi
+% \end{function}
+%
 % \section[The \textnormal{\texttt{scontents}} package in action]{The \mypkg*[no-index]{scontents} package in action}
 %
 % Remember the abstract on the first page? This is it:
@@ -1949,6 +2019,7 @@ $ pdfdetach -saveall scontents.pdf
 %        \item Added regression tests for \hologo{LaTeX}, \hologo{plainTeX} and \hologo{ConTeXt}, run with |l3build check|.
 %        \item New \mykey{remember} key to use the \mymeta{stored contents} before they are stored, only in \hologo{LaTeX} (GitHub issue \#1).
 %        \item New \mykey{getstored} key for |\mergesc| and \mykey{getstored}, \mykey{typestored} and \mykey{meaningsc} keys for |\foreachsc| (GitHub issue \#10).
+%        \item New programming interface for \mypkg{expl3}: \myhlc|\scontents_if_exist:nTF|, \myhlc|\scontents_count:n|, \myhlc|\scontents_get:nnN| and \myhlc|\scontents_map_inline:nn| (GitHub issue \#10).
 %    \end{itemize}
 % \item [v2.7 (ctan), 2026-06-01]
 %    \begin{itemize}
@@ -5591,6 +5662,122 @@ $ pdfdetach -saveall scontents.pdf
   }
 %</core>
 %    \end{macrocode}
+% \end{macro}
+%
+% \subsection{Programming interface}\label{fun:api}
+%
+% The public functions of \mypkg*[no-index]{scontents} for \mypkg{expl3}
+% (\S\ref{subsec:api}), they use the functions for sequences
+% (\S\ref{fun:sequences}).
+%
+% \subsubsection{Definition of variables for the programming interface}
+%
+% \begin{macro}[int]{\g_@@_map_int, \l_@@_map_item_tl}
+%   The integer variable \myhlc|\g_@@_map_int| is the nesting level of
+%   \myhlc|\scontents_map_inline:nn|, used in the name of the function that
+%   saves each \mymarg{inline function}, and the token list
+%   \myhlc|\l_@@_map_item_tl| saves each \mymeta{stored content}.
+%    \begin{macrocode}
+%<*core>
+\int_new:N \g_@@_map_int
+\tl_new:N \l_@@_map_item_tl
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsubsection{Public functions of the programming interface}
+%
+% \begin{macro}[EXP,pTF]{\scontents_if_exist:n}
+% \begin{macro}[EXP]{\scontents_count:n}
+%   The conditional \myhlc|\scontents_if_exist:nTF| and the function
+%   \myhlc|\scontents_count:n| use \myhlc|\@@_seq_if_exist:nTF| and
+%   \myhlc|\@@_seq_count:n|.
+%    \begin{macrocode}
+\prg_new_conditional:Npnn \scontents_if_exist:n #1 { p, T, F, TF }
+  {
+    \@@_seq_if_exist:nTF {#1}
+      { \prg_return_true: }
+      { \prg_return_false: }
+  }
+\cs_new:Npn \scontents_count:n #1 { \@@_seq_count:n {#1} }
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\scontents_get:nnN}
+% \begin{macro}[int]{\@@_get:nnN}
+%   The function \myhlc|\scontents_get:nnN| evaluates the \mymeta{index} and
+%   passes it to \myhlc|\@@_get:nnN|, which sets the token list passed in
+%   |#3| to the \mymeta{stored content} given by \myhlc|\@@_seq_item:nn|
+%   and removes \myhlc|\c_@@_hidden_space_str| from its end with
+%   \myhlc|\@@_remove_trailing_eol:N|. Otherwise the token list is empty
+%   and the \enquote{errors} |undefined-storage| or |index-out-of-range|
+%   are raised, except for a \mymeta{stored content} that is not available
+%   yet in a remembered \emph{sequence} (\S\ref{subsec:remember}).
+%    \begin{macrocode}
+\cs_new_protected:Npn \scontents_get:nnN #1 #2 #3
+  { \exp_args:Nne \@@_get:nnN {#1} { \int_eval:n {#2} } #3 }
+\cs_new_protected:Npn \@@_get:nnN #1 #2 #3
+  {
+    \tl_clear:N #3
+    \@@_seq_if_exist:nTF {#1}
+      {
+        \@@_if_pending:nnF {#1} {#2}
+          {
+            \bool_lazy_or:nnTF
+              { \int_compare_p:nNn {#2} = { 0 } }
+              {
+                \int_compare_p:nNn { \int_abs:n {#2} }
+                  > { \@@_seq_count:n {#1} }
+              }
+              {
+                \msg_error:nneee { scontents } { index-out-of-range }
+                  {#2} {#1} { \@@_seq_count:n {#1} }
+              }
+              {
+                \tl_set:Ne #3 { \@@_seq_item:nn {#1} {#2} }
+                \@@_remove_trailing_eol:N #3
+              }
+          }
+      }
+      { \msg_error:nnn { scontents } { undefined-storage } {#1} }
+  }
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\scontents_map_inline:nn}
+% \begin{macro}[int]{\@@_map_inline:nn}
+%   The function \myhlc|\scontents_map_inline:nn| increases
+%   \myhlc|\g_@@_map_int|, defines with the \mymarg{inline function}
+%   passed in |#2| a function whose name has the nesting level and calls
+%   \myhlc|\@@_map_inline:nn|, which gets each \mymeta{stored content}
+%   with \myhlc|\@@_get:nnN| and passes it to that function. Each nesting
+%   level has its own function, so the \mymarg{inline function} can use
+%   \myhlc|\scontents_map_inline:nn| again.
+%    \begin{macrocode}
+\cs_new_protected:Npn \scontents_map_inline:nn #1 #2
+  {
+    \@@_seq_if_exist:nTF {#1}
+      {
+        \int_gincr:N \g_@@_map_int
+        \cs_gset_protected:cpn { @@_map_ \int_use:N \g_@@_map_int :n }
+          ##1 {#2}
+        \exp_args:Nne \@@_map_inline:nn {#1} { \int_use:N \g_@@_map_int }
+        \int_gdecr:N \g_@@_map_int
+      }
+      { \msg_error:nnn { scontents } { undefined-storage } {#1} }
+  }
+\cs_new_protected:Npn \@@_map_inline:nn #1 #2
+  {
+    \int_step_inline:nn { \@@_seq_count:n {#1} }
+      {
+        \@@_get:nnN {#1} {##1} \l_@@_map_item_tl
+        \exp_args:Nc \exp_args:NV { @@_map_ #2 :n } \l_@@_map_item_tl
+      }
+  }
+%</core>
+%    \end{macrocode}
+% \end{macro}
 % \end{macro}
 %
 % \subsection{Finish package}\label{subsec:finish}

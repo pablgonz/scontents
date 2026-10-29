@@ -90,8 +90,15 @@ dynamicfiles = { "test-*-*.tsc" }
 
 -- The structure elements of the tagged tests carry sequential ids
 -- (ID.00012, ...): one node more or less would shift all the following ones
--- and flood the diff, so the ids are not compared.
+-- and flood the diff, so the ids are not compared. The count, skip and dimen
+-- registers allocated by the package (\l__scontents_..._int=\count...) are
+-- only written when it is loaded after \START (test-005): they are internal
+-- and change when the package adds one, so they are removed.
 function normalize_log_hook(line)
+  local register = string.match(line, "^\\[lgc]__scontents_[%w_]+=\\(%a+)[%d.]+$")
+  if register == "count" or register == "skip" or register == "dimen" then
+    return ""
+  end
   return (string.gsub(line, 'id="ID%.%d+"', 'id="ID.NN"'))
 end
 
