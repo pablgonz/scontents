@@ -46,6 +46,7 @@
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
 \writestatus{loading}{User Module scontents v\ScontentsFileVersion}
 \unprotect
+\catcode`\!=12\relax
 \input expl3-generic.tex
 \ExplSyntaxOn
 \str_const:ce { c__scontents_version_str } { \ScontentsFileDate\space
@@ -70,14 +71,24 @@
   }
 \cs_new:Npn \__scontents_format_case:nnn #1 #2 #3
   {#3} % ConTeXt
+\prg_new_conditional:Npnn \__scontents_file_if_exist:n #1 { TF }
+  {
+    \str_if_eq:eeTF
+      {
+        \lua_now:e
+          { tex.write(lfs.isfile("\lua_escape:e {#1}")~and~"1"~or~"0") }
+      }
+      { 1 }
+      { \prg_return_true: }
+      { \prg_return_false: }
+  }
 \bool_if:NTF \contextlmtxmode
   {
     \msg_new:nnn { scontents } { luametatex }
       {
         The~'scontents'~package~doesn't~work~under~LMTX.
       }
-    \msg_error:nn { scontents } { luametatex }
-    % \tl_const:Ne \c__scontents_newline_tl { \syst_obeyed_line }
+    \msg_fatal:nn { scontents } { luametatex }
   }
   {
     \tl_const:Ne \c__scontents_newline_tl { \iow_char:N \^^J }
@@ -130,6 +141,7 @@
       { \seq_map_function:NN \l_char_special_seq \do }
   }
 \definetyping[verbatimsc]
+\char_set_catcode_letter:N \!
 \ExplSyntaxOff
 \endinput
 %% 

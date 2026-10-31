@@ -1,2 +1,11 @@
 Changes in v2.8 2026-11-01:
+– New key remember to use stored contents before storing them.
+– New key getstored for \mergesc and new keys for \foreachsc.
+– New programming interface for expl3.
+– Unknown keys and package options raise an error.
+– Check positive integers in start, step, stop and width-tab.
+– Fix negative index in \typestored, \meaningsc and \mergesc.
+– Fix \mergesc with undefined sequences and index out of range.
+– Fix loading and file checks in ConTeXt and plain TeX.
+– Add regression tests for LaTeX, plain TeX and ConTeXt.
 – Update requirement to LaTeX release 2026-11-01.

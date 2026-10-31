@@ -11,7 +11,7 @@ or show it in <code>&langle;verbatim style&rangle;</code>. This package is fully
 
 ## Requirements
 
-The minimum required is LaTeX release 2026-06-01.
+The minimum required is LaTeX release 2026-11-01.
 
 ## Installation
 

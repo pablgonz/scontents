@@ -136,6 +136,7 @@
         meaningsc, mergesc, countsc, cleanseqsc, scontents, endscontents,
         startscontents, stopscontents, verbatimsc, endverbatimsc,
         stopverbatimsc },
+    key-path = {typemeaning,},
   }
 % Colors
 \definecolor{newlinkcolor}{HTML}{0A602C}
@@ -185,18 +186,18 @@
 \tl_new:N \l_userdoc_meta_font_tl
 \keys_define:nn { userdoc / mymeta }
   {
-    type .choice:,
-    type / tt .code:n = \tl_set:Nn \l_userdoc_meta_font_tl { \ttfamily },
-    type / rm .code:n = \tl_set:Nn \l_userdoc_meta_font_tl { \rmfamily },
-    type .initial:n = tt,
-    cf   .tl_set:N = \l_userdoc_meta_color_tl,
-    cf   .initial:n = keyname,
-    ac   .tl_set:N = \l_userdoc_meta_anglecolor_tl,
-    ac   .initial:n = lightgray,
-    sbc  .tl_set:N = \l_userdoc_meta_brackcolor_tl,
-    sbc  .initial:n = gray,
-    cbc  .tl_set:N = \l_userdoc_meta_bracecolor_tl,
-    cbc  .initial:n = gray,
+    type      .choice:,
+    type / tt .code:n    = \tl_set:Nn \l_userdoc_meta_font_tl { \ttfamily },
+    type / rm .code:n    = \tl_set:Nn \l_userdoc_meta_font_tl { \rmfamily },
+    type      .initial:n = tt,
+    cf        .tl_set:N  = \l_userdoc_meta_color_tl,
+    cf        .initial:n = keyname,
+    ac        .tl_set:N  = \l_userdoc_meta_anglecolor_tl,
+    ac        .initial:n = lightgray,
+    sbc       .tl_set:N  = \l_userdoc_meta_brackcolor_tl,
+    sbc       .initial:n = gray,
+    cbc       .tl_set:N  = \l_userdoc_meta_bracecolor_tl,
+    cbc       .initial:n = gray,
   }
 % Internal commands
 \cs_new_protected:Npn \__mydoc_meta_generic:Nnn #1 #2 #3
@@ -562,7 +563,7 @@
                     meaning, definetyping, lstset, small, ttfamily, tiny, color, scantokens,%
                     setlength, pagestyle, definecolor, obeyedline, item, par, parindent,%
                     newtheorem, newenvironment, DefineVerbatimEnvironment, lstnewenvironment,%
-                    newminted, VerbatimEnvironment, dospecials, char, jobname,%
+                    newminted, VerbatimEnvironment, dospecials, char, jobname, setuptyping,%
                     peek_charcode_ignore_spaces, cs_argument_spec, cs_parameter_spec,%
                     regex_replace_all, tl_replace_all, tex_scantokens, tex_endinput,%
                     file_input_stop, peek_charcode, cs_undefine, tl_rescan, int_to_roman,%
@@ -579,7 +580,7 @@
     keywords      = [7]{scontents, Scontents, getstored, typestored, verbatimsc, mergesc,%
                     endverbatimsc, countsc, meaningsc, foreachsc, newenvsc, setupsc, cleanseqsc,%
                     endverbatim, endscontents, startscontents, stopscontents, scontents.tex,%
-                    myenvstore},%
+                    startverbatimsc, stopverbatimsc, myenvstore},%
 % Reserved words 8 (keyname) KEYS
     keywordstyle  = [8]{\color{keyname}},%
     keywords      = [8]{store-cmd, store-env, print-env, print-cmd, write-env, verb-font,%
@@ -851,7 +852,7 @@
 % \begin{important}*
 % Starting with version 2.3 the \mypkg*[no-index]{scontents} package is fully
 % compatible with \emph{tagged} \texttt{PDF}\cite{tagpdf} and will have \LaTeX{}
-% release 2026-06-01 (\TeX{} Live 2026) and update \mypkg{expl3} release as a minimum requirement.
+% release 2026-11-01 (\TeX{} Live 2026) and update \mypkg{expl3} release as a minimum requirement.
 % \end{important}
 %
 % \thispagestyle{plain}
@@ -865,7 +866,7 @@
 % \enquote{maintained}.
 %
 % The package \mypkg*[no-index]{scontents} requires an updated version of \LaTeX{} to work
-% (minimum required to \LaTeX{} release 2026-06-01 and \mypkg{expl3} update).
+% (minimum required to \LaTeX{} release 2026-11-01 and \mypkg{expl3} update).
 % This package can be used with |plain|, |context|, |xelatex|, |lualatex|, |pdflatex|
 % and the classical workflow |latex>dvips>ps2pdf|.
 %
@@ -967,7 +968,7 @@
 % With a \hologo{TeX} Live distribution, the \texttt{TAB} character is \emph{printable}
 % for |latex|, |pdflatex| and |lualatex|, but if you use |xelatex| you
 % must add the |-8bit| option on the command
-% line, otherwise you will get \hologo{TeX} character \texttt{TAB} `|^^I|'
+% line, otherwise you will get \hologo{TeX} character \texttt{TAB} `\myhlc|^^I|'
 % in the \mymeta{output file}.
 %
 % As a general recommendation \emph{\enquote{Do not use \texttt{TAB} character unless strictly
@@ -980,7 +981,7 @@
 %
 % Most of the options can be passed directly to the package or using the
 % command |\setupsc|. All boolean keys can be passed using the
-% equal sign `\textnormal{\textcolor{gray}{=}}' or just the
+% equal sign `|=|' or just the
 % name of the key, all unknown \mymeta{keys} will return an error. In this section
 % are described some of the options, a summary of all options is shown in \S\ref{subsec:optover}.
 %
@@ -1077,7 +1078,7 @@ push @generated_exts, 'sct';
 % This \mymeta{key} is necessary only if the \emph{last line} is the closing of some
 % environment defined by \mypkg{fancyvrb}\cite{fancyvrb} or \mypkg{fvextra}\cite{fvextra}
 % packages as |\end{Verbatim}| or another environment that does not support
-% a comments `\texttt{\textcolor{gray}{\%}}' after closing |\end{<env>}%|.
+% a comments `|%|' after closing |\end{<env>}%|.
 % This \mymeta{key} is available for the base environment \myenv*[no-index]{scontents},
 % the |\Scontents| and |\Scontents*| commands and all environments
 % created using |\newenvsc|.
@@ -1150,10 +1151,10 @@ push @generated_exts, 'sct';
 % environment.
 % \end{function}
 %
-% Comments `\texttt{\textcolor{gray}{\%}}' or \emph{any character} after
+% Comments `|%|' or \emph{any character} after
 % |\begin{scontents}| or \myoarg{key \textnormal{\textcolor{gray}{=}} val} on
 % the \emph{same line} are NOT supported, the package will return an \enquote{error} message if this happens.
-% In a similar way comments `\texttt{\textcolor{gray}{\%}}' or \emph{any character}
+% In a similar way comments `|%|' or \emph{any character}
 % after |\end{scontents}| on the \emph{same line} the package will return a \enquote{warning} message.
 %
 % The environment can be \emph{\enquote{nested}} if it is properly balanced and
@@ -1253,7 +1254,7 @@ This text is in the outer environment (after nested).
 % relative or absolute paths are not supported. \hologo{XeLaTeX} users
 % using character \texttt{TAB} must add |-8bit|
 % at the command line, otherwise you will get \hologo{TeX} character
-% \texttt{TAB} `|^^I|' in \mymeta{file.ext}.
+% \texttt{TAB} `\myhlc|^^I|' in \mymeta{file.ext}.
 % \end{important}
 %
 % \subsection{The command \cs{newenvsc}}\label{subsec:newenvsc}
@@ -1318,7 +1319,7 @@ This text is in the outer environment (after nested).
 % by the key \mykey{store-cmd} at the time it is executed. It is not
 % possible to pass \emph{verbatim things}, but it is possible to use
 % the implementation of |\Verb| delimited by \emph{braces}
-% `\texttt{\textcolor{gray}{\{}} \texttt{\textcolor{gray}{\}}}'
+% `|{ }|'
 % provided by the \mypkg{fvextra}\cite{fvextra} package for \emph{verbatim one line}
 % and |\lstinline| from \mypkg{listings}\cite{listings} package, but it
 % is preferable to use the \emph{starred argument} `|*|'.
@@ -1326,12 +1327,12 @@ This text is in the outer environment (after nested).
 % The |\Scontents*| command reads the \mymarg{argument} under \emph{verbatim catcode}
 % regimen and \emph{\enquote{stores}} it in the \emph{sequence} set
 % by the key \mykey{store-cmd} at the time it is executed. If its \emph{\enquote{first}}
-% delimiter is a \emph{brace} `\texttt{\textcolor{gray}{\{}}', it will be
+% delimiter is a \emph{brace} `|{|', it will be
 % assumed that the \mymarg{argument} is nested within \emph{braces}. Otherwise it
 % will be assumed that \mymarg{argument} is delimited by that
 % first delimiter \mymeta[cf=star]{del} like command |\verb|.
-% Blank lines are preserved, escaped braces `\texttt{\textcolor{gray}{\textbackslash\{}}' and
-% `\texttt{\textcolor{gray}{\textbackslash\}}}' must also be
+% Blank lines are preserved, escaped braces `|\{|' and
+% `|\}|' must also be
 % balanced if the \mymarg{argument} is used with \emph{braces} and character \texttt{TAB} typed
 % from the keyboard are converted into spaces.
 %
@@ -1387,7 +1388,7 @@ This text is in the outer environment (after nested).
 % \texttt{TAB} will be written in \mymeta{file.ext}, relative or absolute
 % paths are not supported. \hologo{XeLaTeX} users using character \texttt{TAB}
 % must add |-8bit| at the command line, otherwise
-% you will get \hologo{TeX} character \texttt{TAB} `|^^I|' in \mymeta{file.ext}.
+% you will get \hologo{TeX} character \texttt{TAB} `\myhlc|^^I|' in \mymeta{file.ext}.
 % \end{important}
 %
 % \subsection{The command \cs{getstored}}\label{subsec:getstored}
@@ -1461,12 +1462,12 @@ This text is in the outer environment (after nested).
 % \keyexampcmd{before}{code}{empty}[foreachsc]
 % Sets the \mymarg{code} that will be executed \emph{before} each \mymeta{stored content}
 % within the \emph{sequence} \mymarg{seq name}. The \mymarg{code} must
-% be passed \emph{between braces} `\texttt{\textcolor{gray}{\{}} \texttt{\textcolor{gray}{\}}}'.
+% be passed \emph{between braces} `|{ }|'.
 %
 % \keyexampcmd{after}{code}{empty}[foreachsc]
 % Sets the \mymarg{code} that will be executed \emph{after} each \mymeta{stored content}
 % within the \emph{sequence} \mymarg{seq name}. The \mymarg{code} must
-% be passed \emph{between braces} `\texttt{\textcolor{gray}{\{}} \texttt{\textcolor{gray}{\}}}'.
+% be passed \emph{between braces} `|{ }|'.
 %
 % \newsavebox{\hashbox}
 % \begin{lrbox}{\hashbox}
@@ -1476,7 +1477,7 @@ This text is in the outer environment (after nested).
 % \keyexampcmd{wrapper}{code{} \space\usebox{\hashbox} more code}{empty}[foreachsc]
 % Wraps the \mymeta{stored content} within the \emph{sequence} \mymarg{seq name}
 % referenced by |{#1}|. The \mymarg{code} must be passed \emph{between braces}
-% `\texttt{\textcolor{gray}{\{}} \texttt{\textcolor{gray}{\}}}'.
+% `|{ }|'.
 % For example |\foreachsc[wrapper={\makebox[1em][l]{#1}}]{contents}|.
 %
 % \subsection{The command \cs{typestored}}\label{subsec:typestored}
@@ -1511,7 +1512,7 @@ This text is in the outer environment (after nested).
 % in \mymeta{file.ext}, relative or absolute paths are not supported.
 % \hologo{XeLaTeX} users using character \texttt{TAB} must add |-8bit|
 % at the command line, otherwise you will get \hologo{TeX} character
-% \texttt{TAB} `|^^I|' in \mymeta{file.ext}.
+% \texttt{TAB} `\myhlc|^^I|' in \mymeta{file.ext}.
 % \end{important}
 %
 % \subsection{The command \cs{meaningsc}}\label{subsec:meaningsc}
@@ -1638,6 +1639,13 @@ This text is in the outer environment (after nested).
 %</example>
 % \fi
 %
+% \begin{function}{\startverbatimsc, \stopverbatimsc}
+% In \hologo{plainTeX} the environment is |\verbatimsc|\,\dots\,|\endverbatimsc|
+% and in \hologo{ConTeXt} it is |\startverbatimsc|\,\dots\,|\stopverbatimsc|,
+% defined with |\definetyping|, so there it can be customized with
+% |\setuptyping[verbatimsc][...]|.
+% \end{function}
+%
 % \begin{important}*
 % At the moment, the \mypkg{fvextra}\cite{fvextra} and \mypkg{fancyvrb}\cite{fancyvrb}
 % packages partially support \emph{tagged} \texttt{PDF}.
@@ -1670,7 +1678,7 @@ This text is in the outer environment (after nested).
 % exist, it is created empty.
 % \end{function}
 %
-% \subsection{Programming interface}\label{subsec:api}
+% \section{Programming interface}\label{sec:api}
 %
 % For other packages and for the code written with \mypkg{expl3}, the
 % \mymeta{stored contents} can be read without printing them with the
@@ -1681,20 +1689,20 @@ This text is in the outer environment (after nested).
 % The \mymeta{stored contents} are given as they were stored, without the
 % mark that \mypkg*[no-index]{scontents} adds to hide the last end of line:
 % the content of an environment is a string whose lines are separated by
-% the end of line character |^^J|, the content of |\Scontents*| is also a
+% the end of line character \myhlc|^^J|, the content of |\Scontents*| is also a
 % string and the content of |\Scontents| keeps its tokens.
 %
 % \begin{function}[EXP,pTF]{\scontents_if_exist:n}
 %   \begin{syntax}
-%     \cs{scontents_if_exist_p:n} \mymarg{seq name}
-%     \cs{scontents_if_exist:nTF} \mymarg{seq name} \mymarg{true code} \mymarg{false code}
+%     \myhlc|\scontents_if_exist_p:n| \mymarg{seq name}
+%     \myhlc|\scontents_if_exist:nTF| \mymarg{seq name} \mymarg{true code} \mymarg{false code}
 %   \end{syntax}
 % Tests if the \emph{sequence} \mymarg{seq name} exists.
 % \end{function}
 %
 % \begin{function}[EXP]{\scontents_count:n}
 %   \begin{syntax}
-%     \cs{scontents_count:n} \mymarg{seq name}
+%     \myhlc|\scontents_count:n| \mymarg{seq name}
 %   \end{syntax}
 % Leaves the number of \mymeta{stored contents} in the \emph{sequence}
 % \mymarg{seq name} in the input stream, or |0| if it does not exist,
@@ -1704,7 +1712,7 @@ This text is in the outer environment (after nested).
 %
 % \begin{function}{\scontents_get:nnN}
 %   \begin{syntax}
-%     \cs{scontents_get:nnN} \mymarg{seq name} \mymarg{index} \mymeta{tl var}
+%     \myhlc|\scontents_get:nnN| \mymarg{seq name} \mymarg{index} \mymeta{tl var}
 %   \end{syntax}
 % Sets the \mymeta{tl var}, locally, to the \mymeta{stored content} at the
 % position \mymarg{index} of the \emph{sequence} \mymarg{seq name}. The
@@ -1716,7 +1724,7 @@ This text is in the outer environment (after nested).
 %
 % \begin{function}{\scontents_map_inline:nn}
 %   \begin{syntax}
-%     \cs{scontents_map_inline:nn} \mymarg{seq name} \mymarg{inline function}
+%     \myhlc|\scontents_map_inline:nn| \mymarg{seq name} \mymarg{inline function}
 %   \end{syntax}
 % Applies the \mymarg{inline function} to each \mymeta{stored content} of
 % the \emph{sequence} \mymarg{seq name}, in order, the
@@ -2002,6 +2010,7 @@ $ pdfdetach -saveall scontents.pdf
 % \begin{description}[font=\small\sffamily,wide=0pt,style=multiline,leftmargin=1.1\descrwidth,nosep,noitemsep]
 % \item [\fileversion{} (ctan), \filedate]
 %    \begin{itemize}
+%        \item Update requirement to \hologo{LaTeX} release 2026-11-01.
 %        \item Fix warning for empty argument in |\Scontents| and |\Scontents*|.
 %        \item Add error for empty sequence names and undefined sequences.
 %        \item Check positive integers in \mykey{start}, \mykey{step}, \mykey{stop} and \mykey{width-tab} keys.
@@ -2183,7 +2192,8 @@ $ pdfdetach -saveall scontents.pdf
 %
 % \begin{important}*
 % All variables and functions defined in this package are private and
-% are NOT intended to work or be used by another package or module.
+% are NOT intended to work or be used by another package or module,
+% except the functions of the programming interface (\S\ref{sec:api}).
 % \end{important}
 %
 % \subsection{General conventions}\label{subsec:conventions}
@@ -2198,7 +2208,7 @@ $ pdfdetach -saveall scontents.pdf
 % Since the core runs in \hologo{plainTeX} and \hologo{ConTeXt}, where
 % the names of some primitives may be redefined by the format, the core
 % uses the \myhlc|\tex_...:D| names for the primitives that have no
-% \pkg{expl3} interface, such as \myhlc|\tex_kern:D|,
+% \mypkg{expl3} interface, such as \myhlc|\tex_kern:D|,
 % \myhlc|\tex_lastskip:D| or \myhlc|\tex_spacefactor:D|.
 %
 % Each command and environment is implemented in the same order: its
@@ -2207,7 +2217,8 @@ $ pdfdetach -saveall scontents.pdf
 %
 % \subsection{Declaration of the package}
 %
-% First we set up the module name for \pkg{DocStrip} \pkg{l3doc} class:
+% First we set up the module name for \mypkg{docstrip} and the \mypkg{l3doc}
+% class:
 %    \begin{macrocode}
 %<@@=scontents>
 %    \end{macrocode}
@@ -2222,13 +2233,13 @@ $ pdfdetach -saveall scontents.pdf
 %
 % The \LaTeX{} loader is quite simple, we just need to make sure of the
 % minimum version for correct operation and then set interfaces up.
-% The choice of \LaTeX{} release 2026-06-01 is the latest available in
+% The choice of \LaTeX{} release 2026-11-01 is the latest available in
 % \TeX{} Live 2026 and is necessary to be able to implement
 % the package's full compatibility with \emph{tagged} \texttt{PDF}.
 %
 %    \begin{macrocode}
 %<*latex>
-\NeedsTeXFormat{LaTeX2e}[2026-06-01]
+\NeedsTeXFormat{LaTeX2e}[2026-11-01]
 \ProvidesExplPackage
   {scontents} {\ScontentsFileDate} {\ScontentsFileVersion}
   {\ScontentsFileDescription}
@@ -2419,7 +2430,7 @@ $ pdfdetach -saveall scontents.pdf
 %
 % \begin{macro}[int]{\c_@@_newline_tl}
 %   The constant token list \myhlc|\c_@@_newline_tl| stores the character
-%   `|^^J|' used as end of line in the \mymeta{stored content}.
+%   `\myhlc|^^J|' used as end of line in the \mymeta{stored content}.
 %    \begin{macrocode}
 %<*!context>
 \tl_const:Ne \c_@@_newline_tl { \iow_char:N \^^J }
@@ -2520,9 +2531,10 @@ $ pdfdetach -saveall scontents.pdf
 %
 % \begin{macro}[int]{\l_@@_cmd_name_tl}
 %   The token list \myhlc|\l_@@_cmd_name_tl| stores the \emph{name} of the
-%   commands |\Scontents|, |\foreachsc|, |\typestored|, |\meaningsc| and
-%   |\mergesc|, it is used in the messages for unknown \mymeta{keys}
-%   (\S\ref{key:unknown-keys}).
+%   command that receives the \mymeta{keys}: |\Scontents|, |\foreachsc|,
+%   |\typestored|, |\meaningsc|, |\mergesc|, |\setupsc|, |\newenvsc| or
+%   |\usepackage| for the options of the package. It is used in the
+%   messages for unknown \mymeta{keys} (\S\ref{key:unknown-keys}).
 %    \begin{macrocode}
 \tl_new:N \l_@@_cmd_name_tl
 %    \end{macrocode}
@@ -2607,13 +2619,13 @@ $ pdfdetach -saveall scontents.pdf
 % \begin{macro}[int]{undefined-storage, index-out-of-range}
 %   The \enquote{error} |undefined-storage| is raised when the
 %   \emph{sequence} passed to |\getstored|, |\foreachsc|, |\typestored|,
-%   |\meaningsc|, |\mergesc| or |\countsc| does not exist
-%   (\S\ref{fun:sequences},~\S\ref{cmd:foreachsc},~\S\ref{cmd:mergesc},
-%   ~\S\ref{cmd:countsc})
-%   and the \enquote{error} |index-out-of-range| is raised when the
-%   \mymeta{index} is zero or its absolute value is greater than the
-%   number of \mymeta{stored contents}
-%   (\S\ref{fun:sequences},~\S\ref{cmd:mergesc}).
+%   |\meaningsc|, |\mergesc|, |\countsc| or to the functions of the
+%   programming interface does not exist
+%   (\S\ref{fun:sequences}, \S\ref{cmd:foreachsc}, \S\ref{cmd:mergesc},
+%   \S\ref{cmd:countsc}, \S\ref{fun:api}) and the \enquote{error}
+%   |index-out-of-range| is raised when the \mymeta{index} is zero or its
+%   absolute value is greater than the number of \mymeta{stored contents}
+%   (\S\ref{fun:sequences}, \S\ref{cmd:mergesc}, \S\ref{fun:api}).
 %    \begin{macrocode}
 \msg_new:nnnn { scontents } { undefined-storage }
   { Storage~named~'#1'~is~not~defined. }
@@ -2825,8 +2837,8 @@ $ pdfdetach -saveall scontents.pdf
 %   passed to the commands |\Scontents|, |\foreachsc|, |\typestored|,
 %   |\meaningsc|, |\mergesc| or |\setupsc|, to the \mymeta{initial keys}
 %   of |\newenvsc| or as an option of the package
-%   (\S\ref{key:package},~\S\ref{key:Scontents},~\S\ref{key:foreachsc},
-%   ~\S\ref{key:typemeaning}).
+%   (\S\ref{key:package}, \S\ref{key:Scontents}, \S\ref{key:foreachsc},
+%   \S\ref{key:typemeaning}).
 %    \begin{macrocode}
 \msg_new:nnnn { scontents } { cmd-key-unknown }
   {
@@ -2874,7 +2886,7 @@ $ pdfdetach -saveall scontents.pdf
 % \begin{macro}[int]{\@@_unknown_keys_cmd:n, \@@_unknown_keys_cmd:nn}
 %   The function \myhlc|\@@_unknown_keys_cmd:n| raises the
 %   \enquote{error} for an unknown \mymeta{key} passed to the commands
-%   |\Scontents|, |\foreachsc| and |\setupsc|, to the
+%   |\Scontents|, |\foreachsc|, |\mergesc| and |\setupsc|, to the
 %   \mymeta{initial keys} of |\newenvsc| and to the package.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_unknown_keys_cmd:n #1
@@ -3028,7 +3040,7 @@ $ pdfdetach -saveall scontents.pdf
 % \subsubsection{Functions for \texttt{TAB} and \texttt{verbatimsc}}
 %
 % \begin{macro}[int]{\@@_tab:, \@@_par:}
-%   Control sequences to replace the tab `|^^I|' and form feed `|^^L|'
+%   Control sequences to replace the tab `\myhlc|^^I|' and form feed `\myhlc|^^L|'
 %   characters.
 %    \begin{macrocode}
 \cs_new:Ne \@@_tab: { \c_space_tl }
@@ -3044,7 +3056,7 @@ $ pdfdetach -saveall scontents.pdf
 %   space token at the beginning of a line would be dropped in vertical
 %   mode and the \texttt{TAB} that indent a line would be lost. The
 %   \emph{active} space is made with \myhlc|\tex_lowercase:D| from the
-%   \emph{active} character `|^^@|', since \myhlc|\char_generate:nn|
+%   \emph{active} character `\myhlc|^^@|', since \myhlc|\char_generate:nn|
 %   would expand it while defining the function.
 %    \begin{macrocode}
 \group_begin:
@@ -3086,7 +3098,7 @@ $ pdfdetach -saveall scontents.pdf
 %     \@@_plain_disable_outer_par:,
 %     \@@_make_control_chars_active:,
 %   }
-%   Shortcut definitions for common catcode changes. The `|^^L|' needs a
+%   Shortcut definitions for common catcode changes. The `\myhlc|^^L|' needs a
 %   special treatment in \hologo{plainTeX} because it is an
 %   \myhlc|\outer| token there.
 %    \begin{macrocode}
@@ -3393,7 +3405,7 @@ $ pdfdetach -saveall scontents.pdf
 %   available yet.
 %    \begin{macrocode}
 %<*core>
-\seq_new:N \g_@@_remember_seq
+\seq_new:N  \g_@@_remember_seq
 \bool_new:N \g_@@_remember_pending_bool
 %</core>
 %    \end{macrocode}
@@ -3491,15 +3503,15 @@ $ pdfdetach -saveall scontents.pdf
 %
 % \begin{macro}[int,TF]{\@@_if_pending:n}
 % \begin{macro}[int]{\@@_if_pending:neF}
-%   The conditional \myhlc|\@@_if_pending:nnTF| tests if the
-%   \mymeta{stored content} at the \mymeta{index} passed in |#2| of the
-%   remembered \emph{sequence} named by |#1| is not available yet, that
-%   is, if its absolute value is greater than the number of
-%   \mymeta{stored contents} of both copies. In that case
-%   \myhlc|\g_@@_remember_pending_bool| is set to true and the commands
-%   print nothing. For the \emph{sequences} that are not remembered it is
-%   always false and the \enquote{errors} of the commands are raised as
-%   usual.
+%   The conditionals \myhlc|\@@_if_pending:nnT| and
+%   \myhlc|\@@_if_pending:nnF| test if the \mymeta{stored content} at the
+%   \mymeta{index} passed in |#2| of the remembered \emph{sequence} named
+%   by |#1| is not available yet, that is, if its absolute value is
+%   greater than the number of \mymeta{stored contents} of both copies. In
+%   that case \myhlc|\g_@@_remember_pending_bool| is set to true and the
+%   commands print nothing. For the \emph{sequences} that are not
+%   remembered it is always false and the \enquote{errors} of the commands
+%   are raised as usual.
 %    \begin{macrocode}
 \prg_new_protected_conditional:Npnn \@@_if_pending:nn #1 #2 { T, F }
   {
@@ -3798,9 +3810,9 @@ $ pdfdetach -saveall scontents.pdf
     \@@_grab_opt_arg:n {#1}
   }
 %    \end{macrocode}
-%   The function \myhlc|\@@_grab_opt_arg:n| is called where `|^^M|' is
+%   The function \myhlc|\@@_grab_opt_arg:n| is called where `\myhlc|^^M|' is
 %   active, so \myhlc|\@@_normalise_line_ends:N| replaces the active
-%   `|^^M|' characters by spaces before setting the \mymeta{keys}.
+%   `\myhlc|^^M|' characters by spaces before setting the \mymeta{keys}.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_grab_opt_arg:n #1
   {
@@ -3820,7 +3832,7 @@ $ pdfdetach -saveall scontents.pdf
 %     \@@_check_line_process:nn,
 %     \@@_stop_environment:,
 %   }
-%   Here `|^^I|', `|^^L|' and `|^^M|' are active characters, so that the
+%   Here `\myhlc|^^I|', `\myhlc|^^L|' and `\myhlc|^^M|' are active characters, so that the
 %   end of line can be used as a delimiter and \hologo{TeX} does not
 %   remove the space-like characters.
 %
@@ -3898,10 +3910,10 @@ $ pdfdetach -saveall scontents.pdf
 %   This is the main function to collect the \mymarg{body env} of the
 %   environment. The function \myhlc|\@@_file_tl_write_start:n| starts a
 %   \emph{group}, opens the \mymeta{output file} if necessary, sets the
-%   \emph{verbatim catcodes} and then issues `|^^M|', set equal to
+%   \emph{verbatim catcodes} and then issues `\myhlc|^^M|', set equal to
 %   \myhlc|\@@_ret:w|, to read the \mymarg{body env} line by line until
 %   its end. Each line read is appended to the output token list after an
-%   active `|^^J|' and written to the \mymeta{output file}, if any.
+%   active `\myhlc|^^J|' and written to the \mymeta{output file}, if any.
 %
 %   The function \myhlc|\@@_setup_verb_processor:| defines
 %   \myhlc|\@@_verb_processor_iterate:w|, delimited by the end of the
@@ -3914,8 +3926,8 @@ $ pdfdetach -saveall scontents.pdf
 %   At the end of the environment, the function
 %   \myhlc|\@@_file_write_stop:N| closes the \mymeta{output file}, if it
 %   was opened, and smuggles the output token list out of the group. The
-%   leading `|^^J|' is removed with \myhlc|\@@_remove_leading_nl:n|, which
-%   expects an active `|^^J|' at the head of the token list, otherwise a
+%   leading `\myhlc|^^J|' is removed with \myhlc|\@@_remove_leading_nl:n|, which
+%   expects an active `\myhlc|^^J|' at the head of the token list, otherwise a
 %   low level \hologo{TeX} \enquote{error} is raised.
 %    \begin{macrocode}
   \cs_new_protected:Npn \@@_file_tl_write_start:n #1
@@ -4186,7 +4198,7 @@ $ pdfdetach -saveall scontents.pdf
 % \end{macro}
 %
 % \begin{macro}[int]{\@@_generic_begin:, \@@_generic_end:}
-%   The function \myhlc|\@@_generic_begin:| leaves the `|^^M|' character
+%   The function \myhlc|\@@_generic_begin:| leaves the `\myhlc|^^M|' character
 %   active and calls \myhlc|\@@_start_environment:w|. The function
 %   \myhlc|\@@_generic_end:| calls \myhlc|\@@_stop_environment:| and then
 %   \myhlc|\@@_finish_storing:NNN|, which stores the \mymarg{body env} in
@@ -4621,8 +4633,8 @@ $ pdfdetach -saveall scontents.pdf
 %   The function \myhlc|\@@_Scontents_verb_arg:w| saves the
 %   \mymarg{argument} under the \emph{verbatim catcode} regimen, using a
 %   |v|-type argument of \mypkg{ltcmd}, in \myhlc|\l_@@_Scontents_arg_tl|
-%   and replaces every `|^^M|' and |\obeyedline|, added in \hologo{LaTeX}
-%   release 2024-06-01, by `|^^J|'. The command |\obeyedline| is redefined
+%   and replaces every `\myhlc|^^M|' and |\obeyedline|, added in \hologo{LaTeX}
+%   release 2024-06-01, by `\myhlc|^^J|'. The command |\obeyedline| is redefined
 %   with |\RenewDocumentCommand| because it can be modified by the user,
 %   which would return a low-level error.
 %    \begin{macrocode}
@@ -4881,8 +4893,7 @@ $ pdfdetach -saveall scontents.pdf
 %   |#1| and steps from \mykey{start} to \mykey{stop}, the number of
 %   \mymeta{stored contents} by default, with \myhlc|\@@_foreach_add_body:n|,
 %   which adds the command saved in \myhlc|\l_@@_foreach_cmd_tl|, with the
-%   code of the \mykey{before},
-%   \mykey{after} and \mykey{wrapper} keys, to
+%   code of the \mykey{before}, \mykey{after} and \mykey{wrapper} keys, to
 %   \myhlc|\l_@@_foreach_print_seq|. The result, separated by \mykey{sep},
 %   is executed after the group. The function \myhlc|\@@_foreach_wrap:n|
 %   expands \myhlc|\@@_foreach_wrapper:n| once inside the group, so the
@@ -5426,19 +5437,13 @@ $ pdfdetach -saveall scontents.pdf
 \keys_define:nn { scontents / mergesc }
   {
     typestored .code:n            =
-      {
-        \cs_set_eq:NN \@@_mergesc_cmd:nn \@@_typestored:nn
-      },
+      { \cs_set_eq:NN \@@_mergesc_cmd:nn \@@_typestored:nn },
     typestored .value_forbidden:n = true,
     meaningsc  .code:n            =
-      {
-        \cs_set_eq:NN \@@_mergesc_cmd:nn \@@_meaningsc:nn
-      },
+      { \cs_set_eq:NN \@@_mergesc_cmd:nn \@@_meaningsc:nn },
     meaningsc  .value_forbidden:n = true,
     getstored  .code:n            =
-      {
-        \cs_set_eq:NN \@@_mergesc_cmd:nn \@@_mergesc_getstored:nn
-      },
+      { \cs_set_eq:NN \@@_mergesc_cmd:nn \@@_mergesc_getstored:nn },
     getstored  .value_forbidden:n = true,
   }
 \cs_new_protected:Npn \@@_mergesc_cmd:nn #1 #2
@@ -5577,9 +5582,9 @@ $ pdfdetach -saveall scontents.pdf
 %   \myhlc|\g_@@_last_stored_tl| separated by an end of line, adds
 %   \myhlc|\c_@@_hidden_space_str| at the end, because the last one has
 %   no end of line, and rescans them with \myhlc|\tl_retokenize:V| after
-%   the group of |\mergesc|, as
-%   \myhlc|\@@_lastfrom_seq:n| does (\S\ref{fun:sequences}). The result
-%   is the same as using |\getstored| on each \mymeta{stored content}. The
+%   the group of |\mergesc|, as \myhlc|\@@_lastfrom_seq:n| does
+%   (\S\ref{fun:sequences}). The result is the same as using |\getstored|
+%   on each \mymeta{stored content}. The
 %   \mymeta{indexes} passed in |#1| are always |1-end| and the other
 %   \mymeta{keys}, saved in \myhlc|\l_@@_mergesc_keys_tl|, are unknown for
 %   it and raise the \enquote{errors} of the unknown \mymeta{keys}
@@ -5667,7 +5672,7 @@ $ pdfdetach -saveall scontents.pdf
 % \subsection{Programming interface}\label{fun:api}
 %
 % The public functions of \mypkg*[no-index]{scontents} for \mypkg{expl3}
-% (\S\ref{subsec:api}), they use the functions for sequences
+% (\S\ref{sec:api}), they use the functions for sequences
 % (\S\ref{fun:sequences}).
 %
 % \subsubsection{Definition of variables for the programming interface}
@@ -5680,7 +5685,7 @@ $ pdfdetach -saveall scontents.pdf
 %    \begin{macrocode}
 %<*core>
 \int_new:N \g_@@_map_int
-\tl_new:N \l_@@_map_item_tl
+\tl_new:N  \l_@@_map_item_tl
 %    \end{macrocode}
 % \end{macro}
 %
