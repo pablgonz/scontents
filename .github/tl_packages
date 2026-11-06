@@ -8,6 +8,7 @@ latex-lab-dev
 l3kernel
 l3packages
 l3experimental
+nameref
 xelatex-dev
 minted
 collection-context
