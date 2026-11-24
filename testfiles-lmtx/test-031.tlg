@@ -111,7 +111,6 @@ countsc{cmd}=0
 TEST 14: [14] archivos
 ============================================================
 Package scontents Info: Writing file 'test-031-a.tsc'.
-csname overload > warning, protection level 3, control sequence 'l__scontents_file_write_iow', properties 'permanent', file './test-031.lvt', line 215
 > \l__scontents_processed_body_lines_tl=Primera linea.
 ^^ISegunda linea con TAB.%^^Ascheol%.
 --- begin file test-031-a.tsc ---
