@@ -44,8 +44,6 @@ TEST 5: [5] Scontents y Scontents*
 ============================================================
 > \l__scontents_Scontents_arg_tl=Con llaves.%^^Ascheol%.
 Defining \g__scontents_name_cmd_seq on line ...
-Package LaTeX/xparse Info: Redefining command \obeyedline with sig. '' on line
-(LaTeX/xparse)             129.
 > \l__scontents_Scontents_arg_tl=Con barras y 50\%.%^^Ascheol%.
 box: 8.99506pt+ 2.44666ptx 250.0pt
 countsc{cmd}=2
