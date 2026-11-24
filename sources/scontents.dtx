@@ -1076,9 +1076,9 @@ push @generated_exts, 'sct';
 % used both in the preamble and in the body of the document.
 %
 % For the correct operation |\begin{scontents}| and |\end{scontents}| must
-% be in \emph{different lines}, all \mymeta{keys} must be passed separated by
-% commas and \emph{without spaces} `\verb*+ +' of the start of the
-% environment.
+% be in \emph{different lines} and all \mymeta{keys} must be passed separated
+% by commas. The spaces `\verb*+ +' between |\begin{scontents}| and the
+% \myoarg{key \textnormal{\textcolor{gray}{=}} val} are ignored.
 % \end{function}
 %
 % Comments `|%|' or \emph{any character} after
@@ -1180,11 +1180,13 @@ This text is in the outer environment (after nested).
 %
 % \begin{important}*
 % In the keys \mykey{write-env} and \mykey{write-out} the character
-% \texttt{TAB} will be written in \mymeta{file.ext},
-% relative or absolute paths are not supported. \hologo{XeLaTeX} users
-% using character \texttt{TAB} must add |-8bit|
-% at the command line, otherwise you will get \hologo{TeX} character
-% \texttt{TAB} `\myhlc|^^I|' in \mymeta{file.ext}.
+% \texttt{TAB} will be written in \mymeta{file.ext}. The \mymeta{file.ext}
+% can be in a subdirectory of the working directory, as |sub/file.ext|, if
+% the subdirectory already exists, \hologo{TeX} does not create it. Absolute
+% paths and paths with |..| depend on the |openout_any| setting of the
+% \hologo{TeX} distribution. \hologo{XeLaTeX} users using character
+% \texttt{TAB} must add |-8bit| at the command line, otherwise you will get
+% \hologo{TeX} character \texttt{TAB} `\myhlc|^^I|' in \mymeta{file.ext}.
 % \end{important}
 %
 % \subsection{The command \cs{newenvsc}}\label{subsec:newenvsc}
@@ -1268,8 +1270,9 @@ This text is in the outer environment (after nested).
 %
 % The \emph{starred argument} `|*|' and \myoarg{key \textnormal{\textcolor{gray}{=}} val}
 % must NOT be separated by \emph{spaces} `\verb*+ +' between them and the command.
-% Both versions can be used anywhere in the document and cannot be used
-% as an \mymarg{argument} for other command.
+% Both versions can be used anywhere in the document. The command
+% |\Scontents| can also be used in the \mymarg{argument} of another command,
+% |\Scontents*| cannot, as it happens with |\verb|.
 %
 % \subsection*{Options for command}
 %
@@ -1315,10 +1318,13 @@ This text is in the outer environment (after nested).
 %
 % \begin{important}*
 % In the keys \mykey{write-cmd} and \mykey{write-out} the character
-% \texttt{TAB} will be written in \mymeta{file.ext}, relative or absolute
-% paths are not supported. \hologo{XeLaTeX} users using character \texttt{TAB}
-% must add |-8bit| at the command line, otherwise
-% you will get \hologo{TeX} character \texttt{TAB} `\myhlc|^^I|' in \mymeta{file.ext}.
+% \texttt{TAB} will be written in \mymeta{file.ext}. The \mymeta{file.ext}
+% can be in a subdirectory of the working directory, as |sub/file.ext|, if
+% the subdirectory already exists, \hologo{TeX} does not create it. Absolute
+% paths and paths with |..| depend on the |openout_any| setting of the
+% \hologo{TeX} distribution. \hologo{XeLaTeX} users using character
+% \texttt{TAB} must add |-8bit| at the command line, otherwise you will get
+% \hologo{TeX} character \texttt{TAB} `\myhlc|^^I|' in \mymeta{file.ext}.
 % \end{important}
 %
 % \subsection{The command \cs{getstored}}\label{subsec:getstored}
@@ -1439,9 +1445,12 @@ This text is in the outer environment (after nested).
 %
 % \begin{important}*
 % In the key \mykey{write-out} the character \texttt{TAB} will be written
-% in \mymeta{file.ext}, relative or absolute paths are not supported.
-% \hologo{XeLaTeX} users using character \texttt{TAB} must add |-8bit|
-% at the command line, otherwise you will get \hologo{TeX} character
+% in \mymeta{file.ext}. The \mymeta{file.ext} can be in a subdirectory of
+% the working directory, as |sub/file.ext|, if the subdirectory already
+% exists, \hologo{TeX} does not create it. Absolute paths and paths with
+% |..| depend on the |openout_any| setting of the \hologo{TeX} distribution.
+% \hologo{XeLaTeX} users using character \texttt{TAB} must add |-8bit| at
+% the command line, otherwise you will get \hologo{TeX} character
 % \texttt{TAB} `\myhlc|^^I|' in \mymeta{file.ext}.
 % \end{important}
 %
@@ -1939,6 +1948,11 @@ $ pdfdetach -saveall scontents.pdf
 %
 % \begin{description}[font=\small\sffamily,leftmargin=1.1\descrwidth,labelwidth=1.1\descrwidth,labelsep=0pt,itemindent=0pt,nosep,noitemsep]
 % \item [\fileversion{} (ctan), \filedate]
+%    \begin{itemize}
+%        \item Spaces between |\begin{scontents}| and its optional argument are ignored.
+%        \item Documented that \mymeta{output files} can be written in existing subdirectories and that |\Scontents| can be used in the argument of another command.
+%    \end{itemize}
+% \item [v2.8 (ctan), 2026-11-01]
 %    \begin{itemize}
 %        \item Update requirement to \hologo{LaTeX} release 2026-11-01.
 %        \item Fix warning for empty argument in |\Scontents| and |\Scontents*|.
@@ -3758,6 +3772,7 @@ $ pdfdetach -saveall scontents.pdf
 %   {
 %     \@@_normalise_line_ends:N,
 %     \@@_start_environment:w,
+%     \@@_start_environment:n,
 %     \@@_start_after_option:w,
 %     \@@_check_line_process:nn,
 %     \@@_stop_environment:,
@@ -3766,8 +3781,10 @@ $ pdfdetach -saveall scontents.pdf
 %   end of line can be used as a delimiter and \hologo{TeX} does not
 %   remove the space-like characters.
 %
-%   The function \myhlc|\@@_start_environment:w| checks if the next token
-%   after |\begin{scontents}| is a `|[|', in that case
+%   The function \myhlc|\@@_start_environment:w| removes the spaces at the
+%   beginning and at the end of the rest of the line of |\begin{scontents}|
+%   and \myhlc|\@@_start_environment:n| checks if it starts with a `|[|',
+%   in that case
 %   \myhlc|\@@_grab_opt_arg:w| processes the \emph{optional argument} and
 %   calls \myhlc|\@@_start_after_option:w|. In all cases the function
 %   \myhlc|\@@_check_line_process:nn| raises the \enquote{error}
@@ -3789,6 +3806,8 @@ $ pdfdetach -saveall scontents.pdf
   \cs_new_protected:Npn \@@_normalise_line_ends:N #1
     { \tl_replace_all:Nnn #1 { ^^M } { ~ } }
   \cs_new_protected:Npn \@@_start_environment:w #1 ^^M
+    { \tl_trim_spaces_apply:nN {#1} \@@_start_environment:n }
+  \cs_new_protected:Npn \@@_start_environment:n #1
     {
       \tl_if_head_is_N_type:nTF {#1}
         {

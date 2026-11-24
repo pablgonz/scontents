@@ -1,0 +1,96 @@
+% test-007.lvt -- espacios antes de las opciones, \Scontents en argumentos
+%                 y archivos con ruta
+%
+% Pablo González L. <pablgonz@yahoo.com>
+%
+% Regresion:  l3build save test-007
+%             l3build check test-007
+%
+% Test de regresion de tres casos: [1] los espacios entre
+% \begin{scontents} y su argumento opcional se ignoran (sin espacios,
+% con uno y con varios); [2] \Scontents sin asterisco dentro del
+% argumento de \textbf, \fbox y \footnote guarda su contenido; [3]
+% write-out y write-env aceptan un nombre de archivo con ruta relativa al
+% directorio de trabajo (./). Los contenidos se muestran con \tl_show:N y
+% los archivos escritos se leen de nuevo con \ior_str_get:NN.
+%
+% Hecho con cariño por Pablo González L.
+\input{regression-test}
+
+\documentclass{article}
+\ExplSyntaxOn
+\debug_on:n { all }
+\tl_new:N \l_test_tl
+\ior_new:N \g_test_ior
+\ExplSyntaxOff
+\usepackage{scontents}
+\setupsc{debug-var=false}
+\begin{document}
+% Fonts used by \footnote, loaded before \START
+\sbox0{\footnotesize $x$}\sbox0{\scriptsize $x$}
+
+\START
+
+\TYPE{=== A. Espacios antes de las opciones ===}
+
+\BEGINTEST{[1] begin{scontents} con espacios}
+\begin{scontents}[store-env=espacios]
+Sin espacios.
+\end{scontents}
+\begin{scontents} [store-env=espacios]
+Con un espacio.
+\end{scontents}
+\begin{scontents}    [store-env=espacios]
+Con varios espacios.
+\end{scontents}
+\ExplSyntaxOn
+\TYPE{count~espacios=\scontents_count:n { espacios }}
+\scontents_get:nnN { espacios } { 1 } \l_test_tl
+\tl_show:N \l_test_tl
+\scontents_get:nnN { espacios } { 2 } \l_test_tl
+\tl_show:N \l_test_tl
+\scontents_get:nnN { espacios } { 3 } \l_test_tl
+\tl_show:N \l_test_tl
+\ExplSyntaxOff
+\ENDTEST
+
+\TYPE{=== B. Scontents en argumentos ===}
+
+\BEGINTEST{[2] Scontents dentro de textbf, fbox y footnote}
+\textbf{\Scontents[store-cmd=argumento]{En textbf}}
+\fbox{\Scontents[store-cmd=argumento]{En \emph{fbox}}}
+Texto\footnote{\Scontents[store-cmd=argumento]{En footnote}}
+\ExplSyntaxOn
+\TYPE{count~argumento=\scontents_count:n { argumento }}
+\scontents_map_inline:nn { argumento } { \tl_show:n {#1} }
+\ExplSyntaxOff
+\ENDTEST
+
+\TYPE{=== C. Archivos con ruta ===}
+
+\BEGINTEST{[3] write-out y write-env con ./}
+\begin{scontents}[write-out=./test-007-a.tsc]
+Escrito con write-out.
+\end{scontents}
+\begin{scontents}[write-env=./test-007-b.tsc,store-env=ruta]
+Escrito con write-env.
+\end{scontents}
+\Scontents*[write-cmd=./test-007-c.tsc,store-cmd=ruta]|Escrito con write-cmd.|
+\ExplSyntaxOn
+\ior_open:Nn \g_test_ior { ./test-007-a.tsc }
+\ior_str_get:NN \g_test_ior \l_test_tl
+\ior_close:N \g_test_ior
+\tl_show:N \l_test_tl
+\ior_open:Nn \g_test_ior { ./test-007-b.tsc }
+\ior_str_get:NN \g_test_ior \l_test_tl
+\ior_close:N \g_test_ior
+\tl_show:N \l_test_tl
+\ior_open:Nn \g_test_ior { ./test-007-c.tsc }
+\ior_str_get:NN \g_test_ior \l_test_tl
+\ior_close:N \g_test_ior
+\tl_show:N \l_test_tl
+\TYPE{count~ruta=\scontents_count:n { ruta }}
+\ExplSyntaxOff
+\ENDTEST
+
+\end{document}
