@@ -20,17 +20,19 @@
                   sources/
    * check      : Run the regression tests: /testfiles (LuaTeX, latex-dev),
                   /testfiles-remember (two runs, key remember),
-                  /testfiles-plain (pdfTeX, plain) and /testfiles-context
-                  (ConTeXt MkIV); l3build check test-001 runs only that test
-                  and -c config-plain, -c config-remember or -c
-                  config-context only that set
+                  /testfiles-plain (pdfTeX, plain), /testfiles-context
+                  (ConTeXt MkIV) and /testfiles-lmtx (ConTeXt LMTX);
+                  l3build check test-001 runs only that test and -c
+                  config-plain, -c config-remember, -c config-context or
+                  -c config-lmtx only that set
    * save       : Save the reference (.tlg) of a test after reviewing its
                   output: l3build save test-001, l3build save -c
                   config-remember test-040, l3build save -c config-plain
-                  test-020, l3build save -c config-context test-030
+                  test-020, l3build save -c config-context test-030,
+                  l3build save -c config-lmtx test-031
    * testSE     : Compile and validate the files in /test-pkg with plain TeX,
                   LaTeX (latex>dvips>ps2pdf, pdflatex and tagged lualatex)
-                  and ConTeXt, PDFs copied there
+                  and ConTeXt (MkIV and LMTX), PDFs copied there
    * example    : Compile the files in /samples (one run, two for
                   scontents-exa-12), PDFs copied there
    The targets testSE and example accept file names (with or without .tex)
@@ -83,9 +85,11 @@ checkruns    = 1
 
 -- The same package is also tested in plain TeX and in ConTeXt, and the key
 -- remember with two runs, each set of tests has its own directory and its
--- configuration file (config-remember.lua, config-plain.lua and
--- config-context.lua), loaded after this file.
-checkconfigs = { "build", "config-remember", "config-plain", "config-context" }
+-- configuration file (config-remember.lua, config-plain.lua,
+-- config-context.lua for MkIV and config-lmtx.lua for LMTX), loaded after
+-- this file.
+checkconfigs = { "build", "config-remember", "config-plain", "config-context",
+                 "config-lmtx" }
 
 -- test-003, test-020, test-030 and test-100 write files with the write-*
 -- keys; they are removed before each test so that the messages (writing /
@@ -589,7 +593,8 @@ target_list.example = {
 -- The files of sources/test-pkg are compiled according to their name:
 --   test-format.plain.tex   : pdftex (plain TeX)
 --   test-format.latex.tex   : latex-dev > dvips > ps2pdf
---   test-format.context.tex : context --luatex
+--   test-format.context.tex : context --luatex (MkIV)
+--   test-format.context.lmtx.tex : context (LMTX)
 --   test-tagged-pdf.tex     : lualatex-dev (two runs) and validated
 --   test-pkg-current.tex    : pdflatex-dev, its errors are not checked
 -- The other files in sources/test-pkg are not compiled.
@@ -598,6 +603,7 @@ local testse_files = {
   ["test-format.latex"]   = { cmds = { "latex-dev -interaction=nonstopmode" },
                               post = { "dvips -q", "ps2pdf" } },
   ["test-format.context"] = { cmds = { "context --luatex --nonstopmode" } },
+  ["test-format.context.lmtx"] = { cmds = { "context --nonstopmode" } },
   ["test-tagged-pdf"]     = { cmds = { "lualatex-dev -interaction=nonstopmode",
                                        "lualatex-dev -interaction=nonstopmode" },
                               validate = true },

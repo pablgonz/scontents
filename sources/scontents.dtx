@@ -529,7 +529,7 @@
                     empty-argument-command, empty-environment, empty-store-name,%
                     empty-variable, env-already-defined, env-key-unknown,%
                     env-key-value-unknown, expl-too-old, index-out-of-range,%
-                    junk-after-begin, luametatex, mergesc-missing-key, multiple-begin,%
+                    junk-after-begin, mergesc-missing-key, multiple-begin,%
                     not-writing, overwrite-file, positive-integer, remember-latex-only,%
                     remember-rerun, remember-undefined, rescanning-text,%
                     undefined-storage, writing-file},%
@@ -872,8 +872,8 @@
 % \begin{important}*
 % The package options are not available for \hologo{plainTeX} and
 % \hologo{ConTeXt} and must be passed using |\setupsc| (\S\ref{subsec:confopt}).
-% \hologo{ConTeXt} users should use |-luatex|, the implementation does
-% not support LuaMetaTeX.
+% The module works in \hologo{ConTeXt} MkIV (|context --luatex|) and in
+% \hologo{ConTeXt} LMTX (|context|, with LuaMetaTeX).
 % \end{important}
 %
 % \subsection{The TAB character}\label{subsec:tabcharacter}
@@ -1951,6 +1951,7 @@ $ pdfdetach -saveall scontents.pdf
 %    \begin{itemize}
 %        \item Spaces between |\begin{scontents}| and its optional argument are ignored.
 %        \item Documented that \mymeta{output files} can be written in existing subdirectories and that |\Scontents| can be used in the argument of another command.
+%        \item Support for \hologo{ConTeXt} LMTX (LuaMetaTeX).
 %    \end{itemize}
 % \item [v2.8 (ctan), 2026-11-01]
 %    \begin{itemize}
@@ -2376,28 +2377,47 @@ $ pdfdetach -saveall scontents.pdf
 %   The constant token list \myhlc|\c_@@_newline_tl| stores the character
 %   `\myhlc|^^J|' used as end of line in the \mymeta{stored content}.
 %    \begin{macrocode}
-%<*!context>
 \tl_const:Ne \c_@@_newline_tl { \iow_char:N \^^J }
-%</!context>
 %    \end{macrocode}
-%   In \hologo{ConTeXt} the package does not work under LMTX, so loading
-%   is aborted there. The test with \myhlc|\contextlmtxmode| is adapted
-%   from the file \myfile{t-lua-widow-control.mkxl} of Max Chernoff's
+% \end{macro}
+%
+% \begin{macro}[int]{\@@_retokenize:n}
+%   The function \myhlc|\@@_retokenize:n| rescans the
+%   \mymeta{stored content} passed in |#1|. In \hologo{LaTeX},
+%   \hologo{plainTeX} and \hologo{ConTeXt} MkIV it is
+%   \myhlc|\tl_retokenize:n|.
+%    \begin{macrocode}
+%<!context>\cs_new_eq:NN \@@_retokenize:n \tl_retokenize:n
+%    \end{macrocode}
+%   In \hologo{ConTeXt} LMTX the primitive |\scantokens| of LuaMetaTeX
+%   does not split its argument into lines at the |\newlinechar|, so all
+%   the lines of the \mymeta{stored content} would be rescanned as a
+%   single line. There the lines are passed one by one to |tex.print|,
+%   which ends each of them with the |\endlinechar|, as |\scantokens| does.
+%   The test with \myhlc|\contextlmtxmode| is adapted from the file
+%   \myfile{t-lua-widow-control.mkxl} of Max Chernoff's
 %   \mypkg{lua-widow-control} package, \myhlc|\contextlmtxmode| is
 %   described in \url{https://source.contextgarden.net/tex/context/base/mkxl/context.mkxl}.
 %    \begin{macrocode}
 %<*context>
 \bool_if:NTF \contextlmtxmode
   {
-    \msg_new:nnn { scontents } { luametatex }
+    \lua_now:n
       {
-        The~'scontents'~package~doesn't~work~under~LMTX.
+        function~scontents_retokenize(s)~
+          local~nl~=~string.char(10)~
+          for~line~in~(s~..~nl):gmatch("(.-)"~..~nl)~do~
+            tex.print(line)~
+          end~
+        end
       }
-    \msg_fatal:nn { scontents } { luametatex }
+    \cs_new_protected:Npn \@@_retokenize:n #1
+      {
+        \lua_now:e
+          { scontents_retokenize("\lua_escape:e { \tl_to_str:n {#1} }") }
+      }
   }
-  {
-    \tl_const:Ne \c_@@_newline_tl { \iow_char:N \^^J }
-  }
+  { \cs_new_eq:NN \@@_retokenize:n \tl_retokenize:n }
 %</context>
 %    \end{macrocode}
 % \end{macro}
@@ -2452,12 +2472,13 @@ $ pdfdetach -saveall scontents.pdf
 %
 % \subsection{Some kernel variants}
 %
-% \begin{macro}[int]{\tl_replace_all:NeV, \tl_retokenize:e}
-%   Some nonstandard kernel variants.
+% \begin{macro}[int]{\tl_replace_all:NeV, \@@_retokenize:V, \@@_retokenize:e}
+%   Some nonstandard kernel variants and the variants of
+%   \myhlc|\@@_retokenize:n| (\S\ref{subsec:format}).
 %    \begin{macrocode}
 %<*core>
 \cs_generate_variant:Nn \tl_replace_all:Nnn { NeV }
-\cs_generate_variant:Nn \tl_retokenize:n { e }
+\cs_generate_variant:Nn \@@_retokenize:n { V, e }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -3305,7 +3326,7 @@ $ pdfdetach -saveall scontents.pdf
 %   The function \myhlc|\@@_lastfrom_seq:n| saves the last
 %   \mymeta{stored content} of the \emph{sequence} named by |#1| in
 %   \myhlc|\g_@@_last_stored_tl| and rescans it with
-%   \myhlc|\tl_retokenize:V| after the group, when the keys
+%   \myhlc|\@@_retokenize:V| after the group, when the keys
 %   \mykey{print-env} or \mykey{print-cmd} are active.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_lastfrom_seq:n #1
@@ -3314,7 +3335,7 @@ $ pdfdetach -saveall scontents.pdf
       {
         \seq_item:cn { g_@@_name_#1_seq } { -1 }
       }
-    \group_insert_after:N \tl_retokenize:V
+    \group_insert_after:N \@@_retokenize:V
     \group_insert_after:N \g_@@_last_stored_tl
     \group_insert_after:N \tl_gclear:N
     \group_insert_after:N \g_@@_last_stored_tl
@@ -3940,7 +3961,7 @@ $ pdfdetach -saveall scontents.pdf
                           \msg_warning:nnnn { scontents } { rescanning-text }
                             {#2} { \tl_use:N \l_@@_env_name_tl }
                         }
-                      \tl_retokenize:n {#2}
+                      \@@_retokenize:n {#2}
                     }
                 }
               \char_set_active_eq:NN ^^M \@@_ret:w
@@ -4582,20 +4603,27 @@ $ pdfdetach -saveall scontents.pdf
 %   The function \myhlc|\@@_Scontents_verb_arg:w| saves the
 %   \mymarg{argument} under the \emph{verbatim catcode} regimen, using a
 %   |v|-type argument of \mypkg{ltcmd}, in \myhlc|\l_@@_Scontents_arg_tl|
-%   and replaces every `\myhlc|^^M|' and |\obeyedline|, added in \hologo{LaTeX}
-%   release 2024-06-01, by `\myhlc|^^J|'. The command |\obeyedline| is redefined
-%   with |\RenewDocumentCommand| because it can be modified by the user,
-%   which would return a low-level error.
+%   and replaces every `\myhlc|^^M|' by `\myhlc|^^J|'. In \hologo{LaTeX} it
+%   also replaces |\obeyedline|, added in \hologo{LaTeX} release 2024-06-01.
+%   The command |\obeyedline| is redefined with |\RenewDocumentCommand|
+%   because it can be modified by the user, which would return a low-level
+%   error. In \hologo{ConTeXt} |\obeyedline| is a command of the format,
+%   protected in LMTX, and is not changed.
 %    \begin{macrocode}
 \NewDocumentCommand \@@_Scontents_verb_arg:w { +v }
   {
     \tl_set:Nn \l_@@_Scontents_arg_tl {#1}
-    \cs_if_exist:NT \obeyedline
+    \@@_format_case:nnn
       {
-        \RenewDocumentCommand \obeyedline { } { \iow_char:N \^^M }
-        \tl_replace_all:Nee \l_@@_Scontents_arg_tl
-          { \obeyedline } { \iow_char:N \^^M }
+        \cs_if_exist:NT \obeyedline
+          {
+            \RenewDocumentCommand \obeyedline { } { \iow_char:N \^^M }
+            \tl_replace_all:Nee \l_@@_Scontents_arg_tl
+              { \obeyedline } { \iow_char:N \^^M }
+          }
       }
+      { }
+      { }
     \tl_replace_all:NeV \l_@@_Scontents_arg_tl
       { \iow_char:N \^^M } \c_@@_newline_tl
     \@@_Scontents_finish:
@@ -4660,7 +4688,7 @@ $ pdfdetach -saveall scontents.pdf
 %
 % \begin{macro}[int]{\@@_getstored:nn}
 %   The function \myhlc|\@@_getstored:nn| rescans with
-%   \myhlc|\tl_retokenize:e| the \mymeta{stored content} at the
+%   \myhlc|\@@_retokenize:e| the \mymeta{stored content} at the
 %   \mymeta{index} passed in |#1| in the \emph{sequence} named by |#2|,
 %   given by \myhlc|\@@_getfrom_seq:nn| (\S\ref{fun:sequences}), unless
 %   it is not available yet in a remembered \emph{sequence}
@@ -4670,7 +4698,7 @@ $ pdfdetach -saveall scontents.pdf
   {
     \@@_if_pending:neF {#2} { \int_eval:n {#1} }
       {
-        \tl_retokenize:e
+        \@@_retokenize:e
           {
             \@@_getfrom_seq:nn {#1} {#2}
           }
@@ -5201,7 +5229,7 @@ $ pdfdetach -saveall scontents.pdf
 %   return characters to mimic an actual |verbatim| environment
 %   \enquote{on the loose}. The content of the token list passed in |#1|
 %   is placed in a |verbatimsc| environment and rescanned with
-%   \myhlc|\tl_retokenize:e|.
+%   \myhlc|\@@_retokenize:e|.
 %    \begin{macrocode}
 \group_begin:
   \char_set_catcode_active:N \^^M
@@ -5213,7 +5241,7 @@ $ pdfdetach -saveall scontents.pdf
       \cs_set_eq:NN ^^M \scan_stop:
       \cs_set_eq:cN { do@noligs } \@@_do_noligs:N
       \int_set:Nn \tex_newlinechar:D { `\^^J }
-      \tl_retokenize:e
+      \@@_retokenize:e
         {
           \@@_format_case:nnn
             { \exp_not:N \begin{verbatimsc} } % LaTeX
@@ -5285,9 +5313,12 @@ $ pdfdetach -saveall scontents.pdf
 %   ends of line and \myhlc|\c_@@_hidden_space_str| by spaces and each
 %   \texttt{TAB} character, active or read from a remembered
 %   \emph{sequence} (\S\ref{subsec:remember}), by as many spaces as the
-%   \mykey{width-tab} key was set to, prints them with
-%   \myhlc|\cs_replacement_spec:N| and writes them with
-%   \myhlc|\@@_file_write_cmd:VV|.
+%   \mykey{width-tab} key was set to, prints them as a string with
+%   \myhlc|\tl_to_str:N| and writes them with
+%   \myhlc|\@@_file_write_cmd:VV|. The string is made with
+%   \myhlc|\tl_to_str:N| and not with \myhlc|\cs_replacement_spec:N|
+%   because in \hologo{ConTeXt} LMTX the |\meaning| of LuaMetaTeX writes
+%   one space for several consecutive spaces.
 %    \begin{macrocode}
 \group_begin:
   \char_set_catcode_active:N \^^I
@@ -5313,7 +5344,7 @@ $ pdfdetach -saveall scontents.pdf
         {
           \bool_if:NT \l_@@_print_verb_style_bool
             {
-              \cs_replacement_spec:N \l_@@_meaningsc_arg_tl
+              \tl_to_str:N \l_@@_meaningsc_arg_tl
             }
         }
       \@@_file_write_cmd:VV \l_@@_file_name_tl \l_@@_meaningsc_arg_tl
@@ -5530,7 +5561,7 @@ $ pdfdetach -saveall scontents.pdf
 %   \emph{internal sequence} passed in |#2| in
 %   \myhlc|\g_@@_last_stored_tl| separated by an end of line, adds
 %   \myhlc|\c_@@_hidden_space_str| at the end, because the last one has
-%   no end of line, and rescans them with \myhlc|\tl_retokenize:V| after
+%   no end of line, and rescans them with \myhlc|\@@_retokenize:V| after
 %   the group of |\mergesc|, as \myhlc|\@@_lastfrom_seq:n| does
 %   (\S\ref{fun:sequences}). The result is the same as using |\getstored|
 %   on each \mymeta{stored content}. The
@@ -5551,7 +5582,7 @@ $ pdfdetach -saveall scontents.pdf
         \exp_args:NnV \seq_use:cn { g_@@_name_#2_seq } \c_@@_newline_tl
         \c_@@_hidden_space_str
       }
-    \group_insert_after:N \tl_retokenize:V
+    \group_insert_after:N \@@_retokenize:V
     \group_insert_after:N \g_@@_last_stored_tl
     \group_insert_after:N \tl_gclear:N
     \group_insert_after:N \g_@@_last_stored_tl
