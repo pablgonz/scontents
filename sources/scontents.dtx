@@ -150,23 +150,6 @@
     attach-color      = newlinkcolor,
     meta/angle-font   = { \fontfamily{lmrotf}\fontshape{n}\selectfont },
   }
-% Tagging: the l3doc structures (function, macro and their names) are mapped
-% to the elements that the LaTeX RelaxNG schemas of latex3/pdf_structure
-% accept inside sections and paragraphs; the names of a function are typeset
-% in a tabular, whose rows and cells become inline text.
-\IfDocumentMetadataT
-  {
-    \AssignStructureRole{doc/function}{semantic-para}
-    \AssignStructureRole{doc/functionnames}{text-block}
-    \AssignStructureRole{doc/syntax}{semantic-para}
-    \AssignStructureRole{doc/macro}{Div}
-    \AssignStructureRole{doc/macronames}{text-block}
-    \AssignStructureRole{doc/macroname}{Span}
-    \AssignStructureRole{layouttable}{text-fragment}
-    \AssignStructureRole{layouttable/row}{text-fragment}
-    \AssignStructureRole{layouttable/cell}{text-fragment}
-    \AssignStructureRole{layouttable/pcell}{text-fragment}
-  }
 % Colors
 \definecolor{newlinkcolor}{HTML}{0A602C}
 \definecolor{rulecolor}{rgb}{0.96,0.96,0.96}
