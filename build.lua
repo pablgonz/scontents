@@ -130,9 +130,13 @@ end
 
 function typeset(file)
   local file = jobname(sourcefiledir.."/scontents.dtx")
+  -- The manual is a tagged PDF: the labels of the annotations (@tag@objr@page)
+  -- written in draft mode are not the final ones, so two runs without
+  -- -draftmode are needed to get them right
   local runs = {
     "lualatex-dev -draftmode -interaction=batchmode ",
     "lualatex-dev -draftmode -interaction=batchmode ",
+    "lualatex-dev -interaction=batchmode ",
     "lualatex-dev -interaction=batchmode ",
   }
   for _, cmd in ipairs(runs) do
