@@ -455,7 +455,8 @@
 \lstnewenvironment{verbatimsc}
   {
     \lstset{
-       language   =,%
+       language   = scontents-doc,%
+       deletekeywords = [1]{document},%
        basicstyle = \ttfamily\small,
        gobble     = 2,%
            }
@@ -493,10 +494,15 @@
                     regex_replace_all, tl_replace_all, tex_scantokens, tex_endinput,%
                     file_input_stop, peek_charcode, cs_undefine, tl_rescan, int_to_roman,%
                     tl_retokenize, int_step_tokens, keys_set, l_keys_key_str, tl_gset_rescan,%
-                    contextlmtxmode},%
+                    contextlmtxmode, texttt, textbackslash, textbf, emph,%
+                    enquote, hologo, mymeta, mypkg, LaTeX, leavevmode, scriptsize,%
+                    ensuremath, rfloor, neq, matrix, node, rightarrowfill, VerbatimInput,%
+                    hypersetup, iow_log, text_uppercase, jobname.sct, jobname.tsc,%
+                    jobname.txt, NSA, foo, bar, baz},%
 % Other words 5 (package name)
     keywordstyle  = [5]{\bfseries\color{pkgname}},%
-    keywords      = [5]{listings, minted, fancyvrb, fvextra, tcolorbox},%
+    keywords      = [5]{listings, minted, fancyvrb, fvextra, tcolorbox, xcolor, tikz,%
+                    amsmath, hyperref, unicode-math, inputenc, l3seq, expl3, filecontentsdef},%
 % Reserved words 6 (document class)
     keywordstyle  = [6]{\bfseries\color{clsname}},%
     keywords      = [6]{article},%
@@ -505,24 +511,39 @@
     keywords      = [7]{scontents, Scontents, getstored, typestored, verbatimsc, mergesc,%
                     endverbatimsc, countsc, meaningsc, foreachsc, newenvsc, setupsc, cleanseqsc,%
                     endverbatim, endscontents, startscontents, stopscontents, scontents.tex,%
-                    startverbatimsc, stopverbatimsc, myenvstore},%
+                    startverbatimsc, stopverbatimsc, myenvstore, myenv, endmyenv, startmyenv,%
+                    stopmyenv, scontents_if_exist, scontents_if_exist_p, scontents_count,%
+                    scontents_get, scontents_map_inline},%
 % Reserved words 8 (keyname) KEYS
     keywordstyle  = [8]{\color{keyname}},%
     keywords      = [8]{store-cmd, store-env, print-env, print-cmd, write-env, verb-font,%
                     start, stop, wrapper, sep, step, before, after, write-out, write-cmd,%
                     overwrite, width-tab, force-eol, store-all, print-all, debug-var, 1-end, remember,%
-                    I, J, M, L, Ascheol, lang, pdfversion, pdfstandard, testphase, tagging},%
+                    I, J, M, L, Ascheol, lang, pdfversion, pdfstandard, testphase, tagging,%
+                    basicstyle, columns, language, numbers, numberstyle, keywordstyle,%
+                    numbersep, breaklines, breakafter, breaksymbolsep, breakaftersymbolpre,%
+                    fontsize, obeytabs, showtabs, tab, tabcolor, linenos, colback, boxsep,%
+                    arc, boxrule, ampersand, replacement, pdftitle, no-index},%
 % Reserved words 9 (values)
     keywordstyle  = [9]{\color{ltcmd_arg}},%
-    keywords      = [9]{true, false, myseq, inner, outer, env, Verbatim, en-US, ua-2, on},%
+    keywords      = [9]{true, false, myseq, inner, outer, env, Verbatim, en-US, ua-2, on,%
+                    left, fullflexible, gray, red, mygray, utf8, align, flalign, itemize,%
+                    description, tikzpicture, abstract, texcode, defexercise, forshort},%
 % Reserved words 10 (signature)
     keywordstyle  = [10]{\color{sigargs}},%
-    keywords      = [10]{NTF, N, x, e, n, nn, nnn, D, Nnn},%
+    keywords      = [10]{NTF, N, x, e, n, nn, nnn, D, Nnn, nTF, nnN, TF},%
+% Other words 11 (programs)
+    keywordstyle  = [11]{\color{support}},%
+    keywords      = [11]{plain, context, xelatex, lualatex, pdflatex, latex, luatex, dvips,%
+                    ps2pdf, mktexlsr, latexmk, l3build},%
 % Reserved words 12 (plain TeX or internal)
     keywordstyle  = [12]{\color{danger}},%
     keywords      = [12]{let, @undefined, def, @bsphack, @esphack, @ifpackagelater,%
                     ver@xparse.sty, ver@scontents.sty, l__scontents_ver_str, do@noligs,%
                     MakeFile},%
+% Other words 14 (units)
+    keywordstyle  = [14]{\color{unit}},%
+    keywords      = [14]{pt, em},%
 % Reserved words 13 (message names)
     keywordstyle  = [13]{\color{red}},%
     keywords      = [13]{already-loaded, cmd-key-unknown, cmd-key-value-unknown,%
@@ -797,8 +818,8 @@
 %
 % The package \mypkg*[no-index]{scontents} requires an updated version of \LaTeX{} to work
 % (minimum required to \LaTeX{} release 2026-11-01 and \mypkg{expl3} update).
-% This package can be used with |plain|, |context|, |xelatex|, |lualatex|, |pdflatex|
-% and the classical workflow |latex>dvips>ps2pdf|.
+% This package can be used with |plain|, |context| (MkIV and LMTX), |xelatex|,
+% |lualatex|, |pdflatex| and the classical workflow |latex>dvips>ps2pdf|.
 %
 % \section{The \texttt{scontents} package}\label{sec:pkgscontents}
 %
