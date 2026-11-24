@@ -1,0 +1,56 @@
+This is a generated file for the l3build validation system.
+Don't change this file in any respect.
+=== A. Espacios antes de las opciones ===
+============================================================
+TEST 1: [1] begin{scontents} con espacios
+============================================================
+Defining \g__scontents_name_espacios_seq on line ...
+count espacios=3
+> \l_test_tl=Sin espacios..
+<recently read> }
+l. ...\tl_show:N \l_test_tl
+> \l_test_tl=Con un espacio..
+<recently read> }
+l. ...\tl_show:N \l_test_tl
+> \l_test_tl=Con varios espacios..
+<recently read> }
+l. ...\tl_show:N \l_test_tl
+============================================================
+=== B. Scontents en argumentos ===
+============================================================
+TEST 2: [2] Scontents dentro de textbf, fbox y footnote
+============================================================
+Defining \g__scontents_name_argumento_seq on line ...
+count argumento=3
+> En textbf.
+<recently read> }
+l. ......nline:nn { argumento } { \tl_show:n {#1} }
+> En \emph {fbox}.
+<recently read> }
+l. ......nline:nn { argumento } { \tl_show:n {#1} }
+> En footnote.
+<recently read> }
+l. ......nline:nn { argumento } { \tl_show:n {#1} }
+============================================================
+=== C. Archivos con ruta ===
+============================================================
+TEST 3: [3] write-out y write-env con ./
+============================================================
+Package scontents Info: Writing file './test-007-a.tsc'.
+\l__scontents_file_write_iow=\write...
+Package scontents Info: Writing file './test-007-b.tsc'.
+Defining \g__scontents_name_ruta_seq on line ...
+Package scontents Info: Writing file './test-007-c.tsc'.
+> \l_test_tl=Escrito con write-out..
+<recently read> }
+l. ...\tl_show:N \l_test_tl
+> \l_test_tl=Escrito con write-env..
+<recently read> }
+l. ...\tl_show:N \l_test_tl
+> \l_test_tl=Escrito con write-cmd..
+<recently read> }
+l. ...\tl_show:N \l_test_tl
+count ruta=2
+============================================================
+[1
+] (test-007.aux)

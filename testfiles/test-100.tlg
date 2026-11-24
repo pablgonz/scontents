@@ -508,7 +508,7 @@ Defining \g__scontents_name_vacio_seq on line ...
 [K2]
 ! Package scontents Error: Junk characters after \begin{scontents} on line ...:
 (scontents)                
-(scontents)                 basura
+(scontents)                basura
 For immediate help type H <return>.
  ...                                              
 l. ...\begin{scontents} basura
@@ -525,14 +525,8 @@ Nothing is allowed after the start of the environment on the same line. These ch
 > \l__scontents_processed_body_lines_tl=x%^^Ascheol%.
 Defining \g__scontents_name_k3_seq on line ...
 [K4]
-! Package scontents Error: Junk characters after \begin{scontents} on line ...:
-(scontents)                
-(scontents)                 [store-env=k4]
-For immediate help type H <return>.
- ...                                              
-l. ...\begin{scontents} [store-env=k4]
-Nothing is allowed after the start of the environment on the same line. These characters are ignored.
 > \l__scontents_processed_body_lines_tl=x%^^Ascheol%.
+Defining \g__scontents_name_k4_seq on line ...
 [K5]
 > \l__scontents_processed_body_lines_tl=x%^^Ascheol%.
 Defining \g__scontents_name_k5_seq on line ...
