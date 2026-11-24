@@ -181,7 +181,7 @@ uploadconfig = {
     .. "compatible with tagged PDF. "
     .. "The contents of a sequence can be used before they are stored, as with \\label and "
     .. "\\ref, and expl3 code can read them with a programming interface. "
-    .. "It works with LaTeX, plain TeX and ConTeXt MkIV.",
+    .. "It works with LaTeX, plain TeX and ConTeXt (MkIV and LMTX).",
   topic        = { "file-mgmt", "tagged-pdf" },
   ctanPath     = "/macros/latex/contrib/" .. ctanpkg,
   repository   = "https://github.com/pablgonz/" .. module,
@@ -815,15 +815,16 @@ local function release_target()
     run_l3build("ctan", " (" .. ctanzip .. ".zip)")
   end
 
-  -- 7. Perform CTAN upload dry run. With --debug l3build posts the form to
-  -- httpbin.org and always exits with status 1, so the check looks at the
-  -- echoed form (package and version) instead of the exit status.
-  os_message("Running dry-run upload check")
-  local dryrun = os_capture("l3build upload -F ctan.ann --debug 2>&1", true)
-  local okpkg = string.find(dryrun, '"pkg": "' .. ctanpkg .. '"', 1, true)
-  local okver = string.find(dryrun, '"version": "' .. uploadconfig.version .. '"', 1, true)
-  if not (okpkg and okver) then
-    error("** Error!!: dry-run upload check failed; nothing was tagged or pushed")
+  -- 7. Validate the upload at CTAN without uploading (--dry-run posts the
+  -- form and the zip to https://ctan.org/submit/validate). --debug is not
+  -- used: httpbin.org rejects bodies over 1 MB and the zip is larger. Any
+  -- answer other than a clean validation (errors or warnings) is shown and
+  -- stops the release.
+  os_message("Running dry-run upload check (CTAN validation)")
+  local dryrun = os_capture("l3build upload --dry-run -F ctan.ann 2>&1", true)
+  if not string.find(dryrun, "CTAN validation successful", 1, true) then
+    print(dryrun)
+    error("** Error!!: CTAN validation failed or gave warnings; nothing was tagged or pushed")
   end
 
   -- 8. Commit what the steps above regenerated (the PDFs versioned in git),
