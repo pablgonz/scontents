@@ -45,8 +45,8 @@
 
 -- General package identification
 module     = "scontents"
-pkgversion = "2.8"
-pkgdate    = "2026-11-01"
+pkgversion = "2.9"
+pkgdate    = "2026-11-24"
 ltxrelease = "2026-11-01"
 
 -- Configuration of files for build and installation

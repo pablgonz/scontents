@@ -1,4 +1,4 @@
-Changes in v2.8 2026-11-01:
+Changes in v2.9 2026-11-24:
 – New key remember to use stored contents before storing them.
 – New key getstored for \mergesc and new keys for \foreachsc.
 – New programming interface for expl3.

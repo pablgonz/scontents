@@ -33,16 +33,16 @@
 %% scontents.dtx  (with options: `loader,context')
 %D  \module
 %D    [     file=t-scontents,
-%D       version=2.8,
+%D       version=2.9,
 %D         title=\CONTEXT\ User Module,
 %D      subtitle=Storing Contents,
 %D        author=Pablo González,
-%D          date=2026-11-01,
+%D          date=2026-11-24,
 %D     copyright=Pablo González,
 %D         email=pablgonz@educarchile.cl,
 %D       license=LPPL]
-\def\ScontentsFileDate{2026-11-01}%
-\def\ScontentsFileVersion{2.8}%
+\def\ScontentsFileDate{2026-11-24}%
+\def\ScontentsFileVersion{2.9}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
 \writestatus{loading}{User Module scontents v\ScontentsFileVersion}
 \unprotect
@@ -82,17 +82,25 @@
       { \prg_return_true: }
       { \prg_return_false: }
   }
+\tl_const:Ne \c__scontents_newline_tl { \iow_char:N \^^J }
 \bool_if:NTF \contextlmtxmode
   {
-    \msg_new:nnn { scontents } { luametatex }
+    \lua_now:n
       {
-        The~'scontents'~package~doesn't~work~under~LMTX.
+        function~scontents_retokenize(s)~
+          local~nl~=~string.char(10)~
+          for~line~in~(s~..~nl):gmatch("(.-)"~..~nl)~do~
+            tex.print(line)~
+          end~
+        end
       }
-    \msg_fatal:nn { scontents } { luametatex }
+    \cs_new_protected:Npn \__scontents_retokenize:n #1
+      {
+        \lua_now:e
+          { scontents_retokenize("\lua_escape:e { \tl_to_str:n {#1} }") }
+      }
   }
-  {
-    \tl_const:Ne \c__scontents_newline_tl { \iow_char:N \^^J }
-  }
+  { \cs_new_eq:NN \__scontents_retokenize:n \tl_retokenize:n }
 \tl_new:N \g__scontents_end_verbatimsc_tl
 \tl_gset_rescan:Nnn \g__scontents_end_verbatimsc_tl
   {
