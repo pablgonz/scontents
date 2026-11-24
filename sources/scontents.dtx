@@ -2443,6 +2443,35 @@ $ pdfdetach -saveall scontents.pdf
 %    \end{macrocode}
 % \end{macro}
 %
+% \begin{macro}[int]{\@@_iow_open:Nn}
+%   The function \myhlc|\@@_iow_open:Nn| opens the \mymeta{output file}
+%   passed in |#2| in the stream |#1|. In \hologo{LaTeX},
+%   \hologo{plainTeX} and \hologo{ConTeXt} MkIV it is \myhlc|\iow_open:Nn|.
+%    \begin{macrocode}
+%<!context>\cs_new_eq:NN \@@_iow_open:Nn \iow_open:Nn
+%    \end{macrocode}
+%   In \hologo{ConTeXt} LMTX the first \myhlc|\iow_open:Nn| allocates the
+%   stream with |\newwrite|, which defines it as |\permanent|, and then
+%   assigns it again, so LuaMetaTeX writes the warning
+%   \enquote{csname overload}. The warning is harmless and is avoided
+%   with |\pushoverloadmode| and |\popoverloadmode|, as suggested by
+%   Max Chernoff.
+%    \begin{macrocode}
+%<*context>
+\bool_if:NTF \contextlmtxmode
+  {
+    \cs_new_protected:Npn \@@_iow_open:Nn #1#2
+      {
+        \pushoverloadmode
+        \iow_open:Nn #1 {#2}
+        \popoverloadmode
+      }
+  }
+  { \cs_new_eq:NN \@@_iow_open:Nn \iow_open:Nn }
+%</context>
+%    \end{macrocode}
+% \end{macro}
+%
 % \begin{macro}[int]
 %   {
 %     \g_@@_end_verbatimsc_tl,
@@ -2992,7 +3021,7 @@ $ pdfdetach -saveall scontents.pdf
   {
     \@@_file_if_writable:nT {#1}
       {
-        \iow_open:Nn \l_@@_file_write_iow {#1}
+        \@@_iow_open:Nn \l_@@_file_write_iow {#1}
         \iow_now:Nn  \l_@@_file_write_iow {#2}
         \iow_close:N \l_@@_file_write_iow
       }
@@ -3927,7 +3956,7 @@ $ pdfdetach -saveall scontents.pdf
         \@@_file_if_writable:nTF {#1}
           {
             \bool_set_true:N \l_@@_writable_bool
-            \iow_open:Nn \l_@@_file_write_iow {#1}
+            \@@_iow_open:Nn \l_@@_file_write_iow {#1}
           }
           { \bool_set_false:N \l_@@_writable_bool }
         \tl_clear:N \l_@@_save_every_body_lines_tl
