@@ -15,6 +15,7 @@ TEST 2: [2] store-env y print-env
 entorno.%^^Ascheol%.
 Defining \g__scontents_name_envuno_seq on line ...
 box: 8.32343pt+ 2.32672ptx 250.0pt
+|Texto impreso por el pseudo entorno.|
 countsc{envuno}=1
 ============================================================
 ============================================================
@@ -24,6 +25,8 @@ TEST 3: [3] force-eol
 Defining \g__scontents_name_eol_seq on line ...
 > \l__scontents_processed_body_lines_tl=Con.
 box: 22.917pt+ 0.25186ptx 250.0pt
+|XSinY|
+|XCon Y|
 sin force-eol, sin espacio: si
 con force-eol, con espacio: si
 ============================================================
@@ -39,6 +42,7 @@ Defining \g__scontents_name_outer_seq on line ...
 > \l__scontents_processed_body_lines_tl=Dentro.%^^Ascheol%.
 Defining \g__scontents_name_inner_seq on line ...
 box: 8.5633pt+ 2.32672ptx 250.0pt
+|Antes. Despues.|
 countsc{inner}=1
 ============================================================
 ============================================================
@@ -48,6 +52,7 @@ TEST 5: [5] Scontents y Scontents*
 Defining \g__scontents_name_cmd_seq on line ...
 > \l__scontents_Scontents_arg_tl=Con barras y 50\%.%^^Ascheol%.
 box: 8.99506pt+ 2.44666ptx 250.0pt
+|Con llaves. Con barras y 50%.|
 countsc{cmd}=2
 ============================================================
 ============================================================
@@ -57,6 +62,7 @@ TEST 6: [6] setupsc store-all y print-all
 Defining \g__scontents_name_todo_seq on line ...
 > \l__scontents_Scontents_arg_tl=Comando en todo.%^^Ascheol%.
 box: 8.44336pt+ 0.25186ptx 250.0pt
+|Entorno en todo.Comando en todo.|
 countsc{todo}=2
 ============================================================
 ============================================================
@@ -71,17 +77,26 @@ Defining \g__scontents_name_penv_seq on line ...
 > \l__scontents_processed_body_lines_tl=Dentro.%^^Ascheol%.
 Defining \g__scontents_name_penvin_seq on line ...
 box: 23.03694pt+ 0.11993ptx 250.0pt
+|Antes. Despues.|
+|Dentro.|
 ============================================================
 === B. Recuperar ===
 ============================================================
 TEST 8: [8] getstored
 ============================================================
 box: 37.07883pt+ 0.11993ptx 250.0pt
+|Tres|
+|Uno|
+|Dos|
 ============================================================
 ============================================================
 TEST 9: [9] foreachsc
 ============================================================
 box: 51.61244pt+ 3.01035ptx 250.0pt
+|Uno, Dos, Tres|
+|<Dos><Tres>|
+|(Uno)|
+|(Dos)|
 ============================================================
 ============================================================
 TEST 10: [10] typestored
@@ -94,6 +109,13 @@ Tres.
 ^^ILinea con un TAB
 ^^I^^ILinea con dos TAB.
 box: 155.59166pt+ 0.0ptx 250.0pt
+|Uno|
+|Tres|
+|Dos|
+|Tres|
+|A      B             C|
+|Linea con un TAB|
+|Linea con dos TAB|
 ============================================================
 ============================================================
 TEST 11: [11] meaningsc
@@ -102,6 +124,9 @@ TEST 11: [11] meaningsc
 > \l__scontents_meaningsc_arg_tl=A^^IB^^I^^IC ^^ILinea con un TAB ^^I^^ILinea con dos TAB
 .
 box: 37.1388pt+ 0.11993ptx 250.0pt
+|Uno Dos Tres|
+|A   B      C    Linea con un TAB       Linea con|
+|dos TAB|
 ============================================================
 ============================================================
 TEST 12: [12] mergesc
@@ -110,6 +135,9 @@ TEST 12: [12] mergesc
 A^^IB^^I^^IC.
 > \l__scontents_meaningsc_arg_tl=Uno Dos Tres Tres.
 box: 61.07878pt+ 0.14392ptx 250.0pt
+|Tres|
+|A      B             C|
+|Uno Dos Tres Tres|
 ============================================================
 ============================================================
 TEST 13: [13] countsc y cleanseqsc
