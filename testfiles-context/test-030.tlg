@@ -247,3 +247,21 @@ box: 37.10281pt+ 0.0ptx 250.0pt
 |B|
 countsc{vacia}=1
 ============================================================
+============================================================
+TEST 21: [21] expand
+============================================================
+> \l__scontents_processed_body_lines_tl=Valor UNO{} en {\bf negrita},
+50segunda linea con # y #1%^^Ascheol%.
+Defining \g__scontents_name_exp_seq on line ...
+> \l__scontents_Scontents_arg_tl=Cmd UNO%^^Ascheol%.
+> \l__scontents_Scontents_arg_tl=Star UNO%^^Ascheol%.
+> \l__scontents_Scontents_arg_tl=Setup UNO%^^Ascheol%.
+> \l__scontents_Scontents_arg_tl=Sin expandir \valor%^^Ascheol%.
+|Valor UNO{} en {\bf negrita}, 50segunda linea con # y #1|
+|Cmd UNO|
+|Star UNO|
+|Setup UNO|
+|Sin expandir \valor|
+box: 8.44336pt+ 2.32672ptx 250.0pt
+|Sin expandir DOS|
+============================================================
