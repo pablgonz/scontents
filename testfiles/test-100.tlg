@@ -506,23 +506,11 @@ Package scontents Warning: Environment 'scontents' is empty on line ....
 > \l__scontents_processed_body_lines_tl=%^^Ascheol%.
 Defining \g__scontents_name_vacio_seq on line ...
 [K2]
-! Package scontents Error: Junk characters after \begin{scontents} on line ...:
-(scontents)                
-(scontents)                basura
-For immediate help type H <return>.
- ...                                              
-l. ...\begin{scontents} basura
-Nothing is allowed after the start of the environment on the same line. These characters are ignored.
-> \l__scontents_processed_body_lines_tl=x%^^Ascheol%.
+> \l__scontents_processed_body_lines_tl=basura
+x%^^Ascheol%.
 [K3]
-! Package scontents Error: Junk characters after \begin{scontents}[...] on line ...:
-(scontents)                
-(scontents)                 basura
-For immediate help type H <return>.
- ...                                              
-l. ...\begin{scontents}[store-env=k3] basura
-Nothing is allowed after the start of the environment on the same line. These characters are ignored.
-> \l__scontents_processed_body_lines_tl=x%^^Ascheol%.
+> \l__scontents_processed_body_lines_tl=basura
+x%^^Ascheol%.
 Defining \g__scontents_name_k3_seq on line ...
 [K4]
 > \l__scontents_processed_body_lines_tl=x%^^Ascheol%.
@@ -532,7 +520,6 @@ Defining \g__scontents_name_k4_seq on line ...
 Defining \g__scontents_name_k5_seq on line ...
 Package scontents Warning: Rescanning text 'Texto despues.' after \end{scontents} on line ....
 [K6]
-Package scontents Warning: Multiple \begin{scontents} on line ....
 > \l__scontents_processed_body_lines_tl=\begin{scontents} \begin{scontents}
 x
 \end{scontents}

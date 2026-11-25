@@ -800,20 +800,12 @@ No content has been stored in a sequence named 'noexiste'.
 ============================================================
 TEST 17: [17] caracteres despues del inicio
 ============================================================
-! Package scontents Error: Junk characters after \scontents on line ...:
-(scontents)                
-(scontents)                basura
-For immediate help type H <return>.
- ...                                              
-l. ...\scontents basura
-Nothing is allowed after the start of the environment on the same line. These
-characters are ignored.
-> \l__scontents_processed_body_lines_tl=x%^^Ascheol%.
+> \l__scontents_processed_body_lines_tl=basura
+x%^^Ascheol%.
 ============================================================
 ============================================================
 TEST 18: [18] mas de un inicio en la misma linea
 ============================================================
-Package scontents Warning: Multiple \scontents on line ....
 > \l__scontents_processed_body_lines_tl=\scontents \scontents
 x
 \endscontents

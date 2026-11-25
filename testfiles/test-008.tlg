@@ -1,0 +1,151 @@
+This is a generated file for the l3build validation system.
+Don't change this file in any respect.
+=== A. Una linea ===
+============================================================
+TEST 1: [1] todo en una linea
+============================================================
+Defining \g__scontents_name_uno_seq on line ...
+Defining \g__scontents_name_contents_seq on line ...
+> \l_test_tl=Hola \textbf{mundo}..
+<recently read> }
+l. ...\SHOW { uno } { 1 }
+> \l_test_tl=Sin opciones..
+<recently read> }
+l. ...\SHOW { contents } { 1 }
+============================================================
+============================================================
+TEST 2: [2] espacios junto al inicio y al final
+============================================================
+Defining \g__scontents_name_esp_seq on line ...
+> \l_test_tl=Con espacios..
+<recently read> }
+l. ...\SHOW { esp } { 1 }
+> \l_test_tl=Ultima linea con espacios..
+<recently read> }
+l. ...\SHOW { esp } { 2 }
+> \l_test_tl=Final con sangria..
+<recently read> }
+l. ...\SHOW { esp } { 3 }
+============================================================
+============================================================
+TEST 3: [3] contenido desde la primera linea
+============================================================
+Defining \g__scontents_name_primera_seq on line ...
+> \l_test_tl=Primera linea,
+  segunda linea con sangria,
+tercera linea..
+<recently read> }
+l. ...\SHOW { primera } { 1 }
+============================================================
+=== B. Primer caracter del contenido ===
+============================================================
+TEST 4: [4] llave, orden, dolar, numeral y porcentaje
+============================================================
+Defining \g__scontents_name_car_seq on line ...
+> \l_test_tl={entre llaves}.
+<recently read> }
+l. ...\SHOW { car } { 1 }
+> \l_test_tl=}llave de cierre.
+<recently read> }
+l. ...\SHOW { car } { 2 }
+> \l_test_tl=\textit{orden} al inicio.
+<recently read> }
+l. ...\SHOW { car } { 3 }
+> \l_test_tl=$x^2$ y #1.
+<recently read> }
+l. ...\SHOW { car } { 4 }
+> \l_test_tl=50% de algo, % comentario.
+<recently read> }
+l. ...\SHOW { car } { 5 }
+============================================================
+=== C. Anidados y vacio ===
+============================================================
+TEST 5: [5] entornos anidados en una linea
+============================================================
+Defining \g__scontents_name_fuera_seq on line ...
+> \l_test_tl=A \begin{scontents}[store-env=dentro] B \end{scontents} C.
+<recently read> }
+l. ...\SHOW { fuera } { 1 }
+countsc dentro antes=0
+Defining \g__scontents_name_dentro_seq on line ...
+Package scontents Warning: Rescanning text ' C' after \end{scontents} on line ....
+> \box...=
+\vbox(7.16+0.22)x250.0, direction TLT
+.\hbox(7.16+0.22)x250.0, glue set 231.95fil, direction TLT
+..\localpar
+...\localinterlinepenalty=0
+...\localbrokenpenalty=0
+...\localleftbox=null
+...\localrightbox=null
+..\hbox(0.0+0.0)x0.0, direction TLT
+..\TU/lmr/m/n/10 A
+..\glue(\spaceskip) 3.33 plus 1.66331 minus 1.1111
+..\TU/lmr/m/n/10 C
+..\penalty 10000
+..\glue(\parfillskip) 0.0 plus 1.0fil
+..\glue(\rightskip) 0.0
+! OK.
+\BOXEND ->\par \egroup \showbox 0 
+l. ...\BOXEND
+> \l_test_tl=B.
+<recently read> }
+l. ...\SHOW { dentro } { 1 }
+============================================================
+============================================================
+TEST 6: [6] entorno vacio en una linea
+============================================================
+Package scontents Warning: Environment 'scontents' is empty on line ....
+Defining \g__scontents_name_vacio_seq on line ...
+Package scontents Warning: Environment 'scontents' is empty on line ....
+countsc vacio=2
+============================================================
+=== D. Archivos e impresion ===
+============================================================
+TEST 7: [7] write-env y print-env en una linea
+============================================================
+Package scontents Info: Writing file 'test-008-a.tsc'.
+\l__scontents_file_write_iow=\write...
+Defining \g__scontents_name_arch_seq on line ...
+|Una linea al archivo.|
+> \l_test_tl=Una linea al archivo..
+<recently read> }
+l. ...\SHOW { arch } { 1 }
+Defining \g__scontents_name_impr_seq on line ...
+Package scontents Warning: Rescanning text 'Y' after \end{scontents} on line ....
+> \box...=
+\vbox(6.83+1.94)x250.0, direction TLT
+.\hbox(6.83+1.94)x250.0, glue set 201.03fil, direction TLT
+..\localpar
+...\localinterlinepenalty=0
+...\localbrokenpenalty=0
+...\localleftbox=null
+...\localrightbox=null
+..\hbox(0.0+0.0)x0.0, direction TLT
+..\TU/lmr/m/n/10 X
+..\TU/lmr/m/n/10 i
+..\TU/lmr/m/n/10 m
+..\discretionary (penalty 50)
+...< \TU/lmr/m/n/10 -
+..\TU/lmr/m/n/10 p
+..\TU/lmr/m/n/10 r
+..\TU/lmr/m/n/10 e
+..\discretionary (penalty 50)
+...< \TU/lmr/m/n/10 -
+..\TU/lmr/m/n/10 s
+..\TU/lmr/m/n/10 o
+..\TU/lmr/m/n/10 Y
+..\penalty 10000
+..\glue(\parfillskip) 0.0 plus 1.0fil
+..\glue(\rightskip) 0.0
+! OK.
+\BOXEND ->\par \egroup \showbox 0 
+l. ...\BOXEND
+============================================================
+============================================================
+TEST 8: [8] texto despues del final
+============================================================
+Defining \g__scontents_name_desp_seq on line ...
+Package scontents Warning: Rescanning text ' Texto despues.' after \end{scontents} on line ....
+============================================================
+[1
+] (test-008.aux)
