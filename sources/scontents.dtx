@@ -2415,6 +2415,10 @@ $ pdfdetach -saveall scontents.pdf
 %   the lines of the \mymeta{stored content} would be rescanned as a
 %   single line. There the lines are passed one by one to |tex.print|,
 %   which ends each of them with the |\endlinechar|, as |\scantokens| does.
+%   The last string printed by |tex.print| in a |\directlua| gets no
+%   |\endlinechar|, so an empty string is printed at the end: the last
+%   line of the \mymeta{stored content} keeps its end of line, which is
+%   needed by the key \mykey{force-eol}.
 %   The test with \myhlc|\contextlmtxmode| is adapted from the file
 %   \myfile{t-lua-widow-control.mkxl} of Max Chernoff's
 %   \mypkg{lua-widow-control} package, \myhlc|\contextlmtxmode| is
@@ -2430,6 +2434,7 @@ $ pdfdetach -saveall scontents.pdf
           for~line~in~(s~..~nl):gmatch("(.-)"~..~nl)~do~
             tex.print(line)~
           end~
+          tex.print("")~
         end
       }
     \cs_new_protected:Npn \@@_retokenize:n #1

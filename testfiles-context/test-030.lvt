@@ -105,6 +105,11 @@ Con
 X\getstored[1]{eol}Y\par
 X\getstored[2]{eol}Y
 \BOXEND
+% Sin force-eol no hay espacio despues del contenido, con force-eol si.
+\setbox0=\hbox{X\getstored[1]{eol}Y}\setbox2=\hbox{XSinY}
+\TYPE{sin force-eol, sin espacio: \ifdim\wd0=\wd2 si\else no\fi}
+\setbox0=\hbox{X\getstored[2]{eol}Y}\setbox2=\hbox{XCon Y}
+\TYPE{con force-eol, con espacio: \ifdim\wd0=\wd2 si\else no\fi}
 \ENDTEST
 
 % 4. Pseudo entornos anidados.
