@@ -12,8 +12,8 @@
 % \meaningsc, \mergesc, \newenvsc, \setupsc, \countsc, \cleanseqsc, la
 % escritura de archivos y algunos mensajes. Es el mismo test que test-020
 % (plain TeX), salvo dos cosas: ConTeXt detiene la compilacion en el primer
-% error, y \showbox cuenta como error ("! OK"), por eso aqui las cajas solo
-% escriben sus medidas en el log y la seccion de mensajes solo tiene los
+% error, y \showbox cuenta como error ("! OK"), por eso aqui las cajas
+% escriben sus medidas y su texto en el log y la seccion de mensajes solo tiene los
 % avisos (warnings); los errores estan en test-020 y test-100. Las lineas
 % de la secuencia tab llevan caracteres TAB reales.
 %
@@ -31,11 +31,62 @@
 \starttext
 
 % \BOXSTART y \BOXEND componen lo impreso en una caja y escriben sus
-% medidas en el log (\showbox detendria ConTeXt). \SHOWTSC escribe en el
+% medidas y su texto en el log (\showbox detendria ConTeXt). \SHOWTSC escribe en el
 % log las lineas de un archivo y \COUNT el numero de contenidos guardados.
 \def\BOXSTART{\setbox0=\vbox\bgroup\hsize=250pt \parindent=0pt\relax}
 \def\BOXEND
-  {\par\egroup\TYPE{box: \the\ht0\space+\space\the\dp0\space x \the\wd0}}
+  {\par\egroup\TYPE{box: \the\ht0\space+\space\the\dp0\space x \the\wd0}%
+   \ctxlua{userdata.showboxtext(tex.box[0])}}
+% userdata.showboxtext escribe en el log el texto de la caja, una linea por
+% cada linea compuesta y entre barras: los caracteres de los glyph y un
+% espacio por cada glue entre ellos (los glue de los extremos de la linea,
+% como leftskip, rightskip y parfillskip, no se escriben). Asi el log
+% muestra los espacios, que las medidas de la caja no muestran.
+\startluacode
+  userdata = userdata or { }
+  local glyph = node.id("glyph")
+  local glue  = node.id("glue")
+  local disc  = node.id("disc")
+  local hlist = node.id("hlist")
+  local vlist = node.id("vlist")
+  local bar   = string.char(124)
+  local function inline(head, t)
+    local n = head
+    while n do
+      local id = n.id
+      if id == glyph then
+        t[#t+1] = utf8.char(n.char)
+      elseif id == glue then
+        t[#t+1] = " "
+      elseif id == disc then
+        inline(n.replace, t)
+      elseif id == hlist or id == vlist then
+        inline(n.list, t)
+      end
+      n = n.next
+    end
+    return t
+  end
+  local function lines(head)
+    local n = head
+    while n do
+      if n.id == hlist then
+        local s = table.concat(inline(n.list, { }))
+        s = string.gsub(s, "^ +", "")
+        s = string.gsub(s, " +$", "")
+        texio.write_nl(bar .. s .. bar)
+      elseif n.id == vlist then
+        lines(n.list)
+      end
+      n = n.next
+    end
+  end
+  function userdata.showboxtext(box)
+    if box then
+      lines(box.list)
+    end
+  end
+\stopluacode
 % \SHOWTSC lee el archivo con Lua: el buscador de archivos de ConTeXt no
 % encuentra los .tsc con \ior_open:Nn. La barra se escribe con
 % string.char(124) porque en ConTeXt `|' puede estar activo.
