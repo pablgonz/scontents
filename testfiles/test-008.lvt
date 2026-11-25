@@ -1,0 +1,142 @@
+% test-008.lvt -- contenido en la misma linea que \begin{scontents} y
+%                 \end{scontents}
+%
+% Pablo González L. <pablgonz@yahoo.com>
+%
+% Regresion:  l3build save test-008
+%             l3build check test-008
+%
+% Test de regresion del entorno scontents escrito en una sola linea o con
+% el contenido en la linea de \begin{scontents} o de \end{scontents}: [1]
+% todo en una linea, con y sin opciones; [2] los espacios junto al inicio
+% y al final se quitan, tambien una ultima linea con solo espacios; [3]
+% el contenido empieza en la primera linea y sigue en las siguientes; [4]
+% el primer caracter del contenido es una llave, una orden, `$' o `#' y
+% un `%' en medio del texto se guarda; [5] entornos anidados en una linea;
+% [6] entorno vacio en una linea; [7] write-env y print-env en una linea;
+% [8] texto despues del final. Los contenidos se muestran con \tl_show:N,
+% los archivos se leen de nuevo con \ior_str_get:NN y lo impreso con
+% \showbox.
+%
+% Hecho con cariño por Pablo González L.
+\input{regression-test}
+
+\documentclass{article}
+\ExplSyntaxOn
+\debug_on:n { all }
+\tl_new:N \l_test_tl
+\ior_new:N \g_test_ior
+\cs_new_protected:Npn \SHOW #1#2
+  {
+    \scontents_get:nnN {#1} {#2} \l_test_tl
+    \tl_show:N \l_test_tl
+  }
+\cs_new_protected:Npn \SHOWFILE #1
+  {
+    \ior_open:Nn \g_test_ior {#1}
+    \ior_str_map_inline:Nn \g_test_ior { \TYPE { |##1| } }
+    \ior_close:N \g_test_ior
+  }
+\ExplSyntaxOff
+\usepackage{scontents}
+\setupsc{debug-var=false}
+\newcommand\BOXSTART{\setbox0=\vbox\bgroup\hsize=250pt \parindent=0pt\relax}
+\newcommand\BOXEND{\par\egroup\showbox0 }
+\begin{document}
+
+\START
+
+\TYPE{=== A. Una linea ===}
+
+\BEGINTEST{[1] todo en una linea}
+\begin{scontents}[store-env=uno]Hola \textbf{mundo}.\end{scontents}
+\begin{scontents} Sin opciones. \end{scontents}
+\ExplSyntaxOn
+\SHOW { uno } { 1 }
+\SHOW { contents } { 1 }
+\ExplSyntaxOff
+\ENDTEST
+
+\BEGINTEST{[2] espacios junto al inicio y al final}
+\begin{scontents}[store-env=esp]    Con espacios.    \end{scontents}
+\begin{scontents}[store-env=esp]
+Ultima linea con espacios.   \end{scontents}
+\begin{scontents}[store-env=esp]
+Final con sangria.
+    \end{scontents}
+\ExplSyntaxOn
+\SHOW { esp } { 1 }
+\SHOW { esp } { 2 }
+\SHOW { esp } { 3 }
+\ExplSyntaxOff
+\ENDTEST
+
+\BEGINTEST{[3] contenido desde la primera linea}
+\begin{scontents}[store-env=primera] Primera linea,
+  segunda linea con sangria,
+tercera linea.
+\end{scontents}
+\ExplSyntaxOn
+\SHOW { primera } { 1 }
+\ExplSyntaxOff
+\ENDTEST
+
+\TYPE{=== B. Primer caracter del contenido ===}
+
+\BEGINTEST{[4] llave, orden, dolar, numeral y porcentaje}
+\begin{scontents}[store-env=car]{entre llaves}\end{scontents}
+\begin{scontents}[store-env=car]}llave de cierre\end{scontents}
+\begin{scontents}[store-env=car]\textit{orden} al inicio\end{scontents}
+\begin{scontents}[store-env=car]$x^2$ y #1\end{scontents}
+\begin{scontents}[store-env=car]50% de algo, % comentario\end{scontents}
+\ExplSyntaxOn
+\SHOW { car } { 1 }
+\SHOW { car } { 2 }
+\SHOW { car } { 3 }
+\SHOW { car } { 4 }
+\SHOW { car } { 5 }
+\ExplSyntaxOff
+\ENDTEST
+
+\TYPE{=== C. Anidados y vacio ===}
+
+\BEGINTEST{[5] entornos anidados en una linea}
+\begin{scontents}[store-env=fuera] A \begin{scontents}[store-env=dentro] B \end{scontents} C \end{scontents}
+\ExplSyntaxOn
+\SHOW { fuera } { 1 }
+\TYPE { countsc~dentro~antes=\scontents_count:n { dentro } }
+\ExplSyntaxOff
+\BOXSTART
+\getstored{fuera}
+\BOXEND
+\ExplSyntaxOn
+\SHOW { dentro } { 1 }
+\ExplSyntaxOff
+\ENDTEST
+
+\BEGINTEST{[6] entorno vacio en una linea}
+\begin{scontents}[store-env=vacio]\end{scontents}
+\begin{scontents}[store-env=vacio]    \end{scontents}
+\ExplSyntaxOn
+\TYPE { countsc~vacio=\scontents_count:n { vacio } }
+\ExplSyntaxOff
+\ENDTEST
+
+\TYPE{=== D. Archivos e impresion ===}
+
+\BEGINTEST{[7] write-env y print-env en una linea}
+\begin{scontents}[write-env=\jobname-a.tsc, store-env=arch] Una linea al archivo. \end{scontents}
+\ExplSyntaxOn
+\SHOWFILE { \jobname-a.tsc }
+\SHOW { arch } { 1 }
+\ExplSyntaxOff
+\BOXSTART
+X\begin{scontents}[print-env, store-env=impr]impreso\end{scontents}Y
+\BOXEND
+\ENDTEST
+
+\BEGINTEST{[8] texto despues del final}
+\begin{scontents}[store-env=desp] x \end{scontents} Texto despues.
+\ENDTEST
+
+\end{document}

@@ -315,4 +315,38 @@ x
 \stopscontents Texto despues.
 \ENDTEST
 
+\TYPE{=== E. Una linea ===}
+
+% 18. Todo en una linea, con espacios junto al inicio y al final.
+\BEGINTEST{[18] todo en una linea}
+\startscontents[store-env=linea]   Hola {\bf mundo}.   \stopscontents
+\BOXSTART
+X\getstored{linea}Y
+\BOXEND
+\COUNT{linea}
+\ENDTEST
+
+% 19. Contenido desde la primera linea y ultima linea con sangria.
+\BEGINTEST{[19] contenido desde la primera linea}
+\startscontents[store-env=primera] Primera linea,
+  segunda linea.
+    \stopscontents
+\BOXSTART
+\typestored{primera}
+\BOXEND
+\ENDTEST
+
+% 20. Orden al inicio, entorno vacio y anidados en una linea.
+\BEGINTEST{[20] orden al inicio, vacio y anidados}
+\startscontents[store-env=orden]\bf negrita\stopscontents
+\startscontents[store-env=vacia]\stopscontents
+\startscontents[store-env=fuera] A \startscontents[store-env=dentro] B \stopscontents C \stopscontents
+\BOXSTART
+\getstored{orden}\par
+\getstored{fuera}\par
+\getstored{dentro}
+\BOXEND
+\COUNT{vacia}
+\ENDTEST
+
 \END

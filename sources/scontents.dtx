@@ -550,7 +550,7 @@
                     empty-argument-command, empty-environment, empty-store-name,%
                     empty-variable, env-already-defined, env-key-unknown,%
                     env-key-value-unknown, expl-too-old, index-out-of-range,%
-                    junk-after-begin, mergesc-missing-key, multiple-begin,%
+                    mergesc-missing-key,%
                     not-writing, overwrite-file, positive-integer, remember-latex-only,%
                     remember-rerun, remember-undefined, rescanning-text,%
                     undefined-storage, writing-file},%
@@ -1096,17 +1096,23 @@ push @generated_exts, 'sct';
 % material}. After the package has been loaded, the environment can be
 % used both in the preamble and in the body of the document.
 %
-% For the correct operation |\begin{scontents}| and |\end{scontents}| must
-% be in \emph{different lines} and all \mymeta{keys} must be passed separated
-% by commas. The spaces `\verb*+ +' between |\begin{scontents}| and the
+% All \mymeta{keys} must be passed separated by commas. The spaces
+% `\verb*+ +' between |\begin{scontents}| and the
 % \myoarg{key \textnormal{\textcolor{gray}{=}} val} are ignored.
 % \end{function}
 %
-% Comments `|%|' or \emph{any character} after
-% |\begin{scontents}| or \myoarg{key \textnormal{\textcolor{gray}{=}} val} on
-% the \emph{same line} are NOT supported, the package will return an \enquote{error} message if this happens.
-% In a similar way comments `|%|' or \emph{any character}
-% after |\end{scontents}| on the \emph{same line} the package will return a \enquote{warning} message.
+% The \mymarg{body env} can start on the same line as |\begin{scontents}|
+% or its \myoarg{key \textnormal{\textcolor{gray}{=}} val} and end on the
+% same line as |\end{scontents}|, so the whole environment can be written
+% on a single line. A comment `|%|' right after |\begin{scontents}| (or
+% its \myoarg{key \textnormal{\textcolor{gray}{=}} val}) is a comment, so
+% the \myoarg{key \textnormal{\textcolor{gray}{=}} val} can be written on
+% the next line. The spaces after |\begin{scontents}| (or its
+% \myoarg{key \textnormal{\textcolor{gray}{=}} val}) and before
+% |\end{scontents}| are removed, as well as a last line that only has
+% spaces. Comments `|%|' or \emph{any character} after |\end{scontents}|
+% on the \emph{same line} are rescanned and the package will return a
+% \enquote{warning} message.
 %
 % The environment can be \emph{\enquote{nested}} if it is properly balanced and
 % does not appear \emph{\enquote{literally}} in commented lines or in some \emph{verbatim}
@@ -3682,23 +3688,21 @@ $ pdfdetach -saveall scontents.pdf
 %     \l_@@_processed_body_lines_tl,
 %     \l_@@_environment_keys_tl,
 %     \l_@@_nesting_env_int,
-%     \l_@@_nesting_aux_int,
 %   }
 %   The token list \myhlc|\l_@@_save_every_body_lines_tl| holds the
 %   \mymarg{body env} of the environment while it is being read and the
 %   token list \myhlc|\l_@@_processed_body_lines_tl| saves it once the
 %   environment is closed. The token list
 %   \myhlc|\l_@@_environment_keys_tl| saves the \mymeta{keys} passed to the
-%   \emph{optional argument} and the integer variables
-%   \myhlc|\l_@@_nesting_env_int| and \myhlc|\l_@@_nesting_aux_int| are
-%   used to analyze the nesting of the environment.
+%   \emph{optional argument} and the integer variable
+%   \myhlc|\l_@@_nesting_env_int| is used to analyze the nesting of the
+%   environment.
 %    \begin{macrocode}
 %<*core>
 \tl_new:N  \l_@@_save_every_body_lines_tl
 \tl_new:N  \l_@@_processed_body_lines_tl
 \tl_new:N  \l_@@_environment_keys_tl
 \int_new:N \l_@@_nesting_env_int
-\int_new:N \l_@@_nesting_aux_int
 %    \end{macrocode}
 % \end{macro}
 %
@@ -3729,24 +3733,10 @@ $ pdfdetach -saveall scontents.pdf
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}[int]{junk-after-begin, env-already-defined}
-%   The \enquote{error} |junk-after-begin| is raised when there are
-%   characters after the start of the environment or its
-%   \emph{optional argument} on the same line and the \enquote{error}
-%   |env-already-defined| is
-%   raised when |\newenvsc| is used with the name of an environment that
-%   already exists.
+% \begin{macro}[int]{env-already-defined}
+%   The \enquote{error} |env-already-defined| is raised when |\newenvsc|
+%   is used with the name of an environment that already exists.
 %    \begin{macrocode}
-\msg_new:nnnn { scontents } { junk-after-begin }
-  {
-    Junk~characters~#1~\msg_line_context: :
-    \\ \\
-    #2
-  }
-  {
-    Nothing~is~allowed~after~the~start~of~the~environment~on~the~same~
-    line.~These~characters~are~ignored.
-  }
 \msg_new:nnnn { scontents } { env-already-defined }
   { Environment~'#1'~already~defined! }
   {
@@ -3759,13 +3749,11 @@ $ pdfdetach -saveall scontents.pdf
 %
 % \subsubsection{Definition of messages for \cs[no-index]{newenvsc}}
 %
-% \begin{macro}[int]{empty-environment, rescanning-text, multiple-begin}
+% \begin{macro}[int]{empty-environment, rescanning-text}
 %   The \enquote{warning} |empty-environment| is issued when the
-%   environment is empty, the \enquote{warning} |rescanning-text| when
-%   there are characters after the end of the environment on the same line
-%   and the \enquote{warning} |multiple-begin| when the environment starts
-%   more than once on the same line. The start and the end of the
-%   environment are written with \myhlc|\@@_env_begin_str:n| and
+%   environment is empty and the \enquote{warning} |rescanning-text| when
+%   there are characters after the end of the environment on the same
+%   line. The end of the environment is written with
 %   \myhlc|\@@_env_end_str:n|.
 %    \begin{macrocode}
 \msg_new:nnn { scontents } { empty-environment }
@@ -3773,11 +3761,6 @@ $ pdfdetach -saveall scontents.pdf
 \msg_new:nnn { scontents } { rescanning-text }
   {
     Rescanning~text~'#1'~after~\@@_env_end_str:n {#2}~
-    \msg_line_context:.
-  }
-\msg_new:nnn { scontents } { multiple-begin }
-  {
-    Multiple~\@@_env_begin_str:n { \l_@@_env_name_tl }~
     \msg_line_context:.
   }
 %    \end{macrocode}
@@ -3839,34 +3822,59 @@ $ pdfdetach -saveall scontents.pdf
     \tl_set:Nn \l_@@_environment_keys_tl {#1}
     \@@_normalise_line_ends:N \l_@@_environment_keys_tl
     \keys_set:nV { scontents / scontents } \l_@@_environment_keys_tl
-    \@@_start_after_option:w
+    \@@_start_body:
   }
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}[int]
 %   {
+%     \l_@@_tmp_token,
+%     \l_@@_first_token_tl,
+%     \l_@@_rest_str,
+%     \c_@@_other_space_tl,
+%   }
+%   The token \myhlc|\l_@@_tmp_token| receives a brace that starts the
+%   \mymarg{body env}, the token list \myhlc|\l_@@_first_token_tl| holds
+%   the first token of the \mymarg{body env} as a string, the string
+%   \myhlc|\l_@@_rest_str| the text after the end of the environment
+%   without the hidden end of line and the constant token list
+%   \myhlc|\c_@@_other_space_tl| a space with \emph{catcode} 12, as the
+%   spaces of the \mymarg{body env}.
+%    \begin{macrocode}
+\cs_new_eq:NN \l_@@_tmp_token \scan_stop:
+\tl_new:N  \l_@@_first_token_tl
+\str_new:N \l_@@_rest_str
+\tl_const:Ne \c_@@_other_space_tl { \char_generate:nn { 32 } { 12 } }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[int]
+%   {
 %     \@@_normalise_line_ends:N,
-%     \@@_start_environment:w,
-%     \@@_start_environment:n,
-%     \@@_start_after_option:w,
-%     \@@_check_line_process:nn,
+%     \@@_start_body:,
+%     \@@_start_body:N,
+%     \@@_start_body_brace:n,
+%     \@@_body_start:n,
+%     \@@_body_start:V,
 %     \@@_stop_environment:,
 %   }
 %   Here `\myhlc|^^I|', `\myhlc|^^L|' and `\myhlc|^^M|' are active characters, so that the
 %   end of line can be used as a delimiter and \hologo{TeX} does not
 %   remove the space-like characters.
 %
-%   The function \myhlc|\@@_start_environment:w| removes the spaces at the
-%   beginning and at the end of the rest of the line of |\begin{scontents}|
-%   and \myhlc|\@@_start_environment:n| checks if it starts with a `|[|',
-%   in that case
-%   \myhlc|\@@_grab_opt_arg:w| processes the \emph{optional argument} and
-%   calls \myhlc|\@@_start_after_option:w|. In all cases the function
-%   \myhlc|\@@_check_line_process:nn| raises the \enquote{error}
-%   |junk-after-begin| if there is something else on the line and then
-%   calls \myhlc|\@@_file_tl_write_start:V|, which reads the content of
-%   the environment and stores it in a token list or writes it to an
+%   The \mymarg{body env} can start on the same line as
+%   |\begin{scontents}| or its \emph{optional argument}. The function
+%   \myhlc|\@@_start_body:| removes the spaces and looks at the first
+%   token of the
+%   \mymarg{body env}, which has already been read with the
+%   \emph{catcodes} of the document. The function \myhlc|\@@_start_body:N|
+%   keeps an active `\myhlc|^^M|' (the \mymarg{body env} starts on the next
+%   line) or turns the token into a string, and
+%   \myhlc|\@@_start_body_brace:n| removes a brace with |\let| and keeps it
+%   as a string. In all cases \myhlc|\@@_body_start:n| passes this first
+%   token to \myhlc|\@@_file_tl_write_start:nn|, which reads the
+%   \mymarg{body env} and stores it in a token list or writes it to an
 %   \mymeta{external file}.
 %
 %   At the end of the environment, the function
@@ -3881,29 +3889,38 @@ $ pdfdetach -saveall scontents.pdf
   \char_set_catcode_active:N \^^M
   \cs_new_protected:Npn \@@_normalise_line_ends:N #1
     { \tl_replace_all:Nnn #1 { ^^M } { ~ } }
-  \cs_new_protected:Npn \@@_start_environment:w #1 ^^M
-    { \tl_trim_spaces_apply:nN {#1} \@@_start_environment:n }
-  \cs_new_protected:Npn \@@_start_environment:n #1
+  \cs_new_protected:Npn \@@_start_body:
     {
-      \tl_if_head_is_N_type:nTF {#1}
+      \peek_remove_spaces:n
         {
-          \str_if_eq:eeTF { \tl_head:n {#1} } { [ }
-            { \@@_grab_opt_arg:w #1 ^^M }
-            { \@@_check_line_process:nn { } {#1} }
+          \peek_N_type:TF
+            { \@@_start_body:N }
+            {
+              \peek_catcode:NTF \c_group_begin_token
+                { \@@_start_body_brace:n { \c_left_brace_str } }
+                { \@@_start_body_brace:n { \c_right_brace_str } }
+            }
         }
-        { \@@_check_line_process:nn { } {#1} }
     }
-  \cs_new_protected:Npn \@@_start_after_option:w #1 ^^M
-    { \@@_check_line_process:nn { [...] } {#1} }
-  \cs_new_protected:Npn \@@_check_line_process:nn #1 #2
+  \cs_new_protected:Npn \@@_start_body:N #1
     {
-      \tl_if_blank:nF {#2}
-        {
-          \msg_error:nnee { scontents } { junk-after-begin }
-            { after~ \@@_env_begin_str:n { \l_@@_env_name_tl } #1 } {#2}
-        }
+      \str_if_eq:nnTF {#1} { ^^M }
+        { \tl_set:Nn \l_@@_first_token_tl { ^^M } }
+        { \tl_set:Ne \l_@@_first_token_tl { \token_to_str:N #1 } }
+      \@@_body_start:V \l_@@_first_token_tl
+    }
+  \cs_new_protected:Npn \@@_start_body_brace:n #1
+    {
+      \tl_set:Ne \l_@@_first_token_tl {#1}
+      \tex_afterassignment:D \@@_body_start_brace:
+      \tex_let:D \l_@@_tmp_token =~
+    }
+  \cs_new_protected:Npn \@@_body_start_brace:
+    { \@@_body_start:V \l_@@_first_token_tl }
+  \cs_new_protected:Npn \@@_body_start:n #1
+    {
       \@@_make_control_chars_active:
-      \@@_file_tl_write_start:V \l_@@_file_name_tl
+      \@@_file_tl_write_start:Vn \l_@@_file_name_tl {#1}
     }
   \cs_new_protected:Nn \@@_stop_environment:
     {
@@ -3921,41 +3938,56 @@ $ pdfdetach -saveall scontents.pdf
 %
 % \begin{macro}[int]
 %   {
-%     \@@_file_tl_write_start:n,
-%     \@@_file_tl_write_start:V,
+%     \@@_file_tl_write_start:nn,
+%     \@@_file_tl_write_start:Vn,
 %     \@@_setup_verb_processor:,
-%     \@@_verb_processor_iterate:w,
-%     \@@_verb_processor_iterate:nnn,
+%     \@@_grab_body:w,
+%     \@@_grab_body:n,
+%     \@@_grab_end_line:w,
+%     \@@_body_finish:,
+%     \@@_body_remove_first_eol:,
+%     \@@_body_trim_end:,
+%     \@@_body_trim_space:w,
+%     \@@_body_trim_eol:w,
 %     \@@_env_end_function:,
 %     \@@_file_write_stop:N,
-%     \@@_remove_leading_nl:n,
-%     \@@_remove_leading_nl:nn,
-%     \@@_remove_leading_nl:w,
 %   }
 %   This is the main function to collect the \mymarg{body env} of the
-%   environment. The function \myhlc|\@@_file_tl_write_start:n| starts a
+%   environment. The function \myhlc|\@@_file_tl_write_start:nn| starts a
 %   \emph{group}, opens the \mymeta{output file} if necessary, sets the
-%   \emph{verbatim catcodes} and then issues `\myhlc|^^M|', set equal to
-%   \myhlc|\@@_ret:w|, to read the \mymarg{body env} line by line until
-%   its end. Each line read is appended to the output token list after an
-%   active `\myhlc|^^J|' and written to the \mymeta{output file}, if any.
+%   \emph{verbatim catcodes}, takes the first token of the
+%   \mymarg{body env} in |#2| with these \emph{catcodes} and calls
+%   \myhlc|\@@_grab_body:w|.
 %
 %   The function \myhlc|\@@_setup_verb_processor:| defines
-%   \myhlc|\@@_verb_processor_iterate:w|, delimited by the end of the
-%   current environment, and \myhlc|\@@_verb_processor_iterate:nnn|
-%   decides if the line is a nested |\end{scontents}| or the end of the
-%   environment, in which case \myhlc|\@@_env_end_function:| leaves the
-%   closing command for the current format and the characters after it
-%   are rescanned with the \enquote{warning} |rescanning-text|.
+%   \myhlc|\@@_grab_body:w|, delimited by the end of the current
+%   environment. It reads in one step all the text up to the next end of
+%   the environment, whatever the number of lines, and
+%   \myhlc|\@@_grab_body:n| counts the nested environments that start in
+%   this text: if there are open environments, the end belongs to one of
+%   them and the text is read up to the next end. Otherwise the
+%   \mymarg{body env} is complete and \myhlc|\@@_grab_end_line:w| reads
+%   the rest of the line.
+%
+%   The function \myhlc|\@@_body_finish:| works on the whole
+%   \mymarg{body env}, without splitting it in lines. If it starts on the
+%   next line, the first end of line is removed by
+%   \myhlc|\@@_body_remove_first_eol:|. The function
+%   \myhlc|\@@_body_trim_end:| removes the spaces at the end of the last
+%   line, one by one with \myhlc|\@@_body_trim_space:w|, and then its end
+%   of line with \myhlc|\@@_body_trim_eol:w| if the last line is empty.
+%   The active `\myhlc|^^M|' characters are replaced by `\myhlc|^^J|' in the
+%   output token list, which is written in one step to the
+%   \mymeta{output file}, if any, with `\myhlc|^^J|' as |\newlinechar|. Then
+%   \myhlc|\@@_env_end_function:| leaves the closing command for the
+%   current format and the characters after it are rescanned with the
+%   \enquote{warning} |rescanning-text|.
 %
 %   At the end of the environment, the function
 %   \myhlc|\@@_file_write_stop:N| closes the \mymeta{output file}, if it
-%   was opened, and smuggles the output token list out of the group. The
-%   leading `\myhlc|^^J|' is removed with \myhlc|\@@_remove_leading_nl:n|, which
-%   expects an active `\myhlc|^^J|' at the head of the token list, otherwise a
-%   low level \hologo{TeX} \enquote{error} is raised.
+%   was opened, and smuggles the output token list out of the group.
 %    \begin{macrocode}
-  \cs_new_protected:Npn \@@_file_tl_write_start:n #1
+  \cs_new_protected:Npn \@@_file_tl_write_start:nn #1 #2
     {
       \group_begin:
         \@@_file_if_writable:nTF {#1}
@@ -3967,62 +3999,114 @@ $ pdfdetach -saveall scontents.pdf
         \tl_clear:N \l_@@_save_every_body_lines_tl
         \seq_map_function:NN \l_char_special_seq \char_set_catcode_other:N
         \int_step_function:nnnN { 128 } { 1 } { 255 } \char_set_catcode_letter:n
-        \cs_set_protected:Npe \@@_ret:w ##1 ^^M
-          {
-            \exp_not:N \@@_verb_processor_iterate:w
-            ##1 \c_@@_end_env_tl
-                \c_@@_end_env_tl
-                \exp_not:N \q_@@_stop
-          }
+        \cs_set_protected:Npn \@@_ret:w { }
         \@@_make_control_chars_active:
-        \@@_ret:w
+        \tl_if_eq:nnTF {#2} { ^^M }
+          { \tl_set:Nn \l_@@_first_token_tl { ^^M } }
+          { \tl_set_rescan:Nnn \l_@@_first_token_tl { } {#2} }
+        \exp_after:w \@@_grab_body:w \l_@@_first_token_tl
     }
   \cs_new_protected:Nn \@@_setup_verb_processor:
     {
       \use:e
         {
-          \cs_set_protected:Npn \exp_not:N \@@_verb_processor_iterate:w
+          \cs_set_protected:Npn \exp_not:N \@@_grab_body:w
             ##1 \c_@@_end_env_tl
-            ##2 \c_@@_end_env_tl
-            ##3 \exp_not:N \q_@@_stop
-        }   { \@@_verb_processor_iterate:nnn {##1} {##2} {##3} }
+        }   { \@@_grab_body:n {##1} }
     }
-  \cs_new_protected:Npn \@@_verb_processor_iterate:nnn #1 #2 #3
+  \cs_new_protected:Npn \@@_grab_body:n #1
     {
-      \tl_if_blank:nTF {#3}
+      \@@_analyse_nesting_format:n {#1}
+      \tl_put_right:Nn \l_@@_save_every_body_lines_tl {#1}
+      \@@_if_nested:TF
         {
-          \@@_analyse_nesting:n {#1}
-          \@@_verb_processor_output:n {#1}
+          \@@_nesting_decr:
+          \tl_put_right:Ne \l_@@_save_every_body_lines_tl
+            { \c_@@_end_env_tl }
+          \@@_grab_body:w
         }
+        { \@@_grab_end_line:w }
+    }
+  \cs_new_protected:Npn \@@_grab_end_line:w #1 ^^M
+    {
+      \@@_body_finish:
+      \str_set:Nn \l_@@_rest_str {#1}
+      \exp_args:NNV \str_remove_all:Nn \l_@@_rest_str
+        \c_@@_hidden_space_str
+      \cs_set_protected:Npe \@@_ret:w
         {
-          \@@_if_nested:TF
+          \@@_env_end_function:
+          \bool_lazy_or:nnF
+            { \tl_if_blank_p:n {#1} }
+            { \str_if_eq_p:ee {#1} { \c_percent_str } }
             {
-              \@@_nesting_decr:
-              \@@_verb_processor_output:e
-                { \exp_not:n {#1} \c_@@_end_env_tl \exp_not:n {#2} }
-            }
-            {
-              \tl_if_blank:nF {#1}
-                { \@@_verb_processor_output:n {#1} }
-              \cs_set_protected:Npe \@@_ret:w
+              \tl_if_blank:VF \l_@@_rest_str
                 {
-                  \@@_env_end_function:
-                  \bool_lazy_or:nnF
-                    { \tl_if_blank_p:n {#2} }
-                    { \str_if_eq_p:ee {#2} { \c_percent_str } }
-                    {
-                      \str_if_eq:VnF \c_@@_hidden_space_str {#2}
-                        {
-                          \msg_warning:nnnn { scontents } { rescanning-text }
-                            {#2} { \tl_use:N \l_@@_env_name_tl }
-                        }
-                      \@@_retokenize:n {#2}
-                    }
+                  \msg_warning:nnnn { scontents } { rescanning-text }
+                    { \l_@@_rest_str }
+                    { \tl_use:N \l_@@_env_name_tl }
                 }
-              \char_set_active_eq:NN ^^M \@@_ret:w
+              \@@_retokenize:n {#1}
             }
         }
-      ^^M
+      \@@_ret:w
+    }
+  \cs_new_protected:Nn \@@_body_finish:
+    {
+      \@@_body_remove_first_eol:
+      \@@_body_trim_end:
+      \tl_replace_all:Nnn \l_@@_save_every_body_lines_tl { ^^M } { ^^J }
+      \bool_lazy_and:nnT
+        { \l_@@_writable_bool }
+        { ! \tl_if_empty_p:N \l_@@_save_every_body_lines_tl }
+        {
+          \group_begin:
+            \int_set:Nn \tex_newlinechar:D { `\^^J }
+            \exp_args:NNV \iow_now:Nn \l_@@_file_write_iow
+              \l_@@_save_every_body_lines_tl
+          \group_end:
+        }
+    }
+  \cs_new_protected:Nn \@@_body_trim_end:
+    {
+      \use:e
+        {
+          \exp_not:N \@@_body_trim_space:w
+          \exp_not:V \l_@@_save_every_body_lines_tl
+          \exp_not:N \q_@@_mark \c_@@_other_space_tl
+          \exp_not:N \q_@@_mark \exp_not:N \q_@@_stop
+        }
+      \exp_after:w \@@_body_trim_eol:w
+        \l_@@_save_every_body_lines_tl
+        \q_@@_mark ^^M \q_@@_mark \q_@@_stop
+    }
+  \use:e
+    {
+      \cs_new_protected:Npn \exp_not:N \@@_body_trim_space:w
+        #1 \c_@@_other_space_tl \exp_not:N \q_@@_mark #2
+        \exp_not:N \q_@@_stop
+    }
+    {
+      \tl_if_empty:nF {#2}
+        {
+          \tl_set:Nn \l_@@_save_every_body_lines_tl {#1}
+          \@@_body_trim_end:
+        }
+    }
+  \cs_new_protected:Npn \@@_body_trim_eol:w
+    #1 ^^M \q_@@_mark #2 \q_@@_stop
+    {
+      \tl_if_empty:nF {#2}
+        { \tl_set:Nn \l_@@_save_every_body_lines_tl {#1} }
+    }
+  \cs_new_protected:Nn \@@_body_remove_first_eol:
+    {
+      \str_if_eq:eeT
+        { \tl_head:N \l_@@_save_every_body_lines_tl } { \exp_not:N ^^M }
+        {
+          \tl_set:Ne \l_@@_save_every_body_lines_tl
+            { \tl_tail:N \l_@@_save_every_body_lines_tl }
+        }
     }
   \cs_new:Nn \@@_env_end_function:
     {
@@ -4046,78 +4130,32 @@ $ pdfdetach -saveall scontents.pdf
           \bool_if:NT \l_@@_storing_bool
             {
               \tl_set:Nn \exp_not:N #1
-                {
-                  \exp_args:NV
-                    \@@_remove_leading_nl:n \l_@@_save_every_body_lines_tl
-                }
+                { \exp_not:V \l_@@_save_every_body_lines_tl }
             }
         }
     }
-  \cs_new:Npn \@@_remove_leading_nl:n #1
-    {
-      \tl_if_head_is_N_type:nTF {#1}
-        {
-          \exp_args:Nf
-            \@@_remove_leading_nl:nn
-              { \tl_head:n {#1} } {#1}
-        }
-        { \exp_not:n {#1} }
-    }
-  \cs_new:Npn \@@_remove_leading_nl:nn #1 #2
-    {
-      \token_if_eq_meaning:NNTF ^^J #1
-        { \exp_not:o { \@@_remove_leading_nl:w #2 } }
-        { \exp_not:n {#2} }
-    }
-  \cs_new:Npn \@@_remove_leading_nl:w ^^J { }
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}[int]{\@@_verb_processor_output:n, \@@_verb_processor_output:e}
-%   The function \myhlc|\@@_verb_processor_output:n| does the output of
-%   each line read, to the token list and to the \mymeta{output file},
-%   according to the booleans \myhlc|\l_@@_writable_bool| and
-%   \myhlc|\l_@@_storing_bool|.
-%    \begin{macrocode}
-  \cs_new_protected:Npn \@@_verb_processor_output:n #1
-    {
-      \bool_if:NT \l_@@_writable_bool
-        { \iow_now:Nn \l_@@_file_write_iow {#1} }
-      \bool_if:NT \l_@@_storing_bool
-        { \tl_put_right:Nn \l_@@_save_every_body_lines_tl { ^^J #1 } }
-    }
 \group_end:
-\cs_generate_variant:Nn \@@_verb_processor_output:n { e }
-\cs_generate_variant:Nn \@@_file_tl_write_start:n { V }
+\cs_generate_variant:Nn \@@_body_start:n { V }
+\cs_generate_variant:Nn \@@_file_tl_write_start:nn { Vn }
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}[int]
 %   {
-%     \@@_analyse_nesting:n,
 %     \@@_nesting_incr:,
 %     \@@_nesting_decr:,
 %   }
 % \begin{macro}[int,TF]{\@@_if_nested:}
-%   The function \myhlc|\@@_analyse_nesting:n| scans the nested
-%   |\begin{scontents}| in a line and steps the counter
-%   \myhlc|\l_@@_nesting_env_int|, issuing the \enquote{warning}
-%   |multiple-begin| if there is more than one. The conditional
+%   The function \myhlc|\@@_nesting_incr:| steps the counter
+%   \myhlc|\l_@@_nesting_env_int| for each nested |\begin{scontents}|
+%   found by \myhlc|\@@_analyse_nesting_format:n|. The conditional
 %   \myhlc|\@@_if_nested:TF| tests if we are in a nested environment and
 %   \myhlc|\@@_nesting_decr:| reduces the nesting level when an
 %   |\end{scontents}| is found.
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_analyse_nesting:n #1
-  {
-    \int_zero:N \l_@@_nesting_aux_int
-    \@@_analyse_nesting_format:n {#1}
-    \int_compare:nNnT { \l_@@_nesting_aux_int } > { 1 }
-      { \msg_warning:nn { scontents } { multiple-begin } }
-  }
 \cs_new_protected:Nn \@@_nesting_incr:
   {
     \int_incr:N \l_@@_nesting_env_int
-    \int_incr:N \l_@@_nesting_aux_int
   }
 \cs_new_protected:Nn \@@_nesting_decr:
   {
@@ -4132,10 +4170,6 @@ $ pdfdetach -saveall scontents.pdf
 %    \end{macrocode}
 % \end{macro}
 % \end{macro}
-%
-% \begin{important}*
-%   Multiple |\end{scontents}| on the same line are NOT supported.
-% \end{important}
 %
 % \begin{macro}[int]
 %   {
@@ -4224,7 +4258,12 @@ $ pdfdetach -saveall scontents.pdf
 %
 % \begin{macro}[int]{\@@_generic_begin:, \@@_generic_end:}
 %   The function \myhlc|\@@_generic_begin:| leaves the `\myhlc|^^M|' character
-%   active and calls \myhlc|\@@_start_environment:w|. The function
+%   active and removes the spaces. If the next character is a `|[|',
+%   \myhlc|\@@_grab_opt_arg:w| reads the \emph{optional argument},
+%   otherwise \myhlc|\@@_start_body:| starts reading the
+%   \mymarg{body env}. A comment `\myhlc|%|' right after the start of the
+%   environment is a comment, so the \emph{optional argument} can be
+%   written on the next line. The function
 %   \myhlc|\@@_generic_end:| calls \myhlc|\@@_stop_environment:| and then
 %   \myhlc|\@@_finish_storing:NNN|, which stores the \mymarg{body env} in
 %   the \emph{sequence} and prints it if the \mykey{print-env} key is
@@ -4234,7 +4273,12 @@ $ pdfdetach -saveall scontents.pdf
 \cs_new_protected:Npn \@@_generic_begin:
   {
     \char_set_catcode_active:N \^^M
-    \@@_start_environment:w
+    \peek_remove_spaces:n
+      {
+        \peek_charcode:NTF [
+          { \@@_grab_opt_arg:w }
+          { \@@_start_body: }
+      }
   }
 \cs_new_protected:Npn \@@_generic_end:
   {
