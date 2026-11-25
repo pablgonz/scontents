@@ -1,0 +1,31 @@
+This is a generated file for the l3build validation system.
+Don't change this file in any respect.
+============================================================
+TEST 1: [1] verbatimsc no existe
+============================================================
+verbatimsc no existe
+============================================================
+============================================================
+TEST 2: [2] typestored y mergesc sin verbatimsc
+============================================================
+! Package scontents Error: Environment 'verbatimsc' undefined on line ....
+For immediate help type H <return>.
+ ...                                              
+l. ...\typestored{data}
+The key 'verb-env' is false, so the environment 'verbatimsc' must be defined in the preamble. Nothing is printed in verbatim style.
+! Package scontents Error: Environment 'verbatimsc' undefined on line ....
+For immediate help type H <return>.
+ ...                                              
+l. ...\mergesc[typestored]{ {data}[1] }
+The key 'verb-env' is false, so the environment 'verbatimsc' must be defined in the preamble. Nothing is printed in verbatim style.
+============================================================
+============================================================
+TEST 3: [3] verb-env en el documento
+============================================================
+! LaTeX Error: Key "verb-env" may only be used in the preamble.
+For immediate help type H <return>.
+ ...                                              
+l. ...\setupsc{verb-env=true}
+LaTeX was asked to set a key called "verb-env", but this is only allowed before \begin {document}. You will need to set the key earlier.
+============================================================
+(test-101.aux)
