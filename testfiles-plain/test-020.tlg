@@ -800,7 +800,7 @@ No content has been stored in a sequence named 'noexiste'.
 ============================================================
 TEST 17: [17] caracteres despues del inicio
 ============================================================
-> \l__scontents_processed_body_lines_tl=basura
+> \l__scontents_processed_body_lines_tl= basura
 x%^^Ascheol%.
 ============================================================
 ============================================================

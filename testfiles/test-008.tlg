@@ -9,7 +9,7 @@ Defining \g__scontents_name_contents_seq on line ...
 > \l_test_tl=Hola \textbf{mundo}..
 <recently read> }
 l. ...\SHOW { uno } { 1 }
-> \l_test_tl=Sin opciones..
+> \l_test_tl= Sin opciones. .
 <recently read> }
 l. ...\SHOW { contents } { 1 }
 ============================================================
@@ -17,21 +17,27 @@ l. ...\SHOW { contents } { 1 }
 TEST 2: [2] espacios junto al inicio y al final
 ============================================================
 Defining \g__scontents_name_esp_seq on line ...
-> \l_test_tl=Con espacios..
+> \l_test_tl=    Con espacios.    .
 <recently read> }
 l. ...\SHOW { esp } { 1 }
-> \l_test_tl=Ultima linea con espacios..
+> \l_test_tl=Ultima linea con espacios.   .
 <recently read> }
 l. ...\SHOW { esp } { 2 }
 > \l_test_tl=Final con sangria..
 <recently read> }
 l. ...\SHOW { esp } { 3 }
+> \l_test_tl=^^ICon TAB.^^I.
+<recently read> }
+l. ...\SHOW { esp } { 4 }
+> \l_test_tl=Final con TAB y espacios..
+<recently read> }
+l. ...\SHOW { esp } { 5 }
 ============================================================
 ============================================================
 TEST 3: [3] contenido desde la primera linea
 ============================================================
 Defining \g__scontents_name_primera_seq on line ...
-> \l_test_tl=Primera linea,
+> \l_test_tl= Primera linea,
   segunda linea con sangria,
 tercera linea..
 <recently read> }
@@ -57,21 +63,24 @@ l. ...\SHOW { car } { 4 }
 > \l_test_tl=50% de algo, % comentario.
 <recently read> }
 l. ...\SHOW { car } { 5 }
+> \l_test_tl=%no es comentario.
+<recently read> }
+l. ...\SHOW { car } { 6 }
 ============================================================
 === C. Anidados y vacio ===
 ============================================================
 TEST 5: [5] entornos anidados en una linea
 ============================================================
 Defining \g__scontents_name_fuera_seq on line ...
-> \l_test_tl=A \begin{scontents}[store-env=dentro] B \end{scontents} C.
+> \l_test_tl= A \begin{scontents}[store-env=dentro] B \end{scontents} C .
 <recently read> }
 l. ...\SHOW { fuera } { 1 }
 countsc dentro antes=0
 Defining \g__scontents_name_dentro_seq on line ...
-Package scontents Warning: Rescanning text ' C' after \end{scontents} on line ....
+Package scontents Warning: Rescanning text ' C ' after \end{scontents} on line ....
 > \box...=
 \vbox(7.16+0.22)x250.0, direction TLT
-.\hbox(7.16+0.22)x250.0, glue set 231.95fil, direction TLT
+.\hbox(7.16+0.22)x250.0, glue set 228.62fil, direction TLT
 ..\localpar
 ...\localinterlinepenalty=0
 ...\localbrokenpenalty=0
@@ -81,13 +90,14 @@ Package scontents Warning: Rescanning text ' C' after \end{scontents} on line ..
 ..\TU/lmr/m/n/10 A
 ..\glue(\spaceskip) 3.33 plus 1.66331 minus 1.1111
 ..\TU/lmr/m/n/10 C
+..\glue(\spaceskip) 3.33 plus 1.66331 minus 1.1111
 ..\penalty 10000
 ..\glue(\parfillskip) 0.0 plus 1.0fil
 ..\glue(\rightskip) 0.0
 ! OK.
 \BOXEND ->\par \egroup \showbox 0 
 l. ...\BOXEND
-> \l_test_tl=B.
+> \l_test_tl= B .
 <recently read> }
 l. ...\SHOW { dentro } { 1 }
 ============================================================
@@ -96,7 +106,6 @@ TEST 6: [6] entorno vacio en una linea
 ============================================================
 Package scontents Warning: Environment 'scontents' is empty on line ....
 Defining \g__scontents_name_vacio_seq on line ...
-Package scontents Warning: Environment 'scontents' is empty on line ....
 countsc vacio=2
 ============================================================
 === D. Archivos e impresion ===
@@ -106,8 +115,8 @@ TEST 7: [7] write-env y print-env en una linea
 Package scontents Info: Writing file 'test-008-a.tsc'.
 \l__scontents_file_write_iow=\write...
 Defining \g__scontents_name_arch_seq on line ...
-|Una linea al archivo.|
-> \l_test_tl=Una linea al archivo..
+| Una linea al archivo.|
+> \l_test_tl= Una linea al archivo. .
 <recently read> }
 l. ...\SHOW { arch } { 1 }
 Defining \g__scontents_name_impr_seq on line ...
@@ -146,6 +155,17 @@ TEST 8: [8] texto despues del final
 ============================================================
 Defining \g__scontents_name_desp_seq on line ...
 Package scontents Warning: Rescanning text ' Texto despues.' after \end{scontents} on line ....
+============================================================
+============================================================
+TEST 9: [9] comentario despues de begin
+============================================================
+Defining \g__scontents_name_coment_seq on line ...
+> \l_test_tl=  Contenido con sangria..
+<recently read> }
+l. ...\SHOW { contents } { 2 }
+> \l_test_tl=Opciones en la linea siguiente..
+<recently read> }
+l. ...\SHOW { coment } { 1 }
 ============================================================
 [1
 ] (test-008.aux)

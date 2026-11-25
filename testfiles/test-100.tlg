@@ -506,10 +506,10 @@ Package scontents Warning: Environment 'scontents' is empty on line ....
 > \l__scontents_processed_body_lines_tl=%^^Ascheol%.
 Defining \g__scontents_name_vacio_seq on line ...
 [K2]
-> \l__scontents_processed_body_lines_tl=basura
+> \l__scontents_processed_body_lines_tl= basura
 x%^^Ascheol%.
 [K3]
-> \l__scontents_processed_body_lines_tl=basura
+> \l__scontents_processed_body_lines_tl= basura
 x%^^Ascheol%.
 Defining \g__scontents_name_k3_seq on line ...
 [K4]
