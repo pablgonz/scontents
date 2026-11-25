@@ -1104,13 +1104,17 @@ push @generated_exts, 'sct';
 % The \mymarg{body env} can start on the same line as |\begin{scontents}|
 % or its \myoarg{key \textnormal{\textcolor{gray}{=}} val} and end on the
 % same line as |\end{scontents}|, so the whole environment can be written
-% on a single line. A comment `|%|' right after |\begin{scontents}| (or
-% its \myoarg{key \textnormal{\textcolor{gray}{=}} val}) is a comment, so
-% the \myoarg{key \textnormal{\textcolor{gray}{=}} val} can be written on
-% the next line. The spaces after |\begin{scontents}| (or its
+% on a single line. The \mymarg{body env} is kept as written, also the
+% spaces and \texttt{TAB} characters after |\begin{scontents}| (or its
 % \myoarg{key \textnormal{\textcolor{gray}{=}} val}) and before
-% |\end{scontents}| are removed, as well as a last line that only has
-% spaces. Comments `|%|' or \emph{any character} after |\end{scontents}|
+% |\end{scontents}|, as with |\Scontents*|. Only a last line that has
+% nothing but spaces or \texttt{TAB} characters, as the line of an
+% indented |\end{scontents}|, is removed. A comment `|%|' right after
+% |\begin{scontents}| is a comment, so the
+% \myoarg{key \textnormal{\textcolor{gray}{=}} val} can be written on the
+% next line, but after the
+% \myoarg{key \textnormal{\textcolor{gray}{=}} val} a `|%|' is part of the
+% \mymarg{body env}. Comments `|%|' or \emph{any character} after |\end{scontents}|
 % on the \emph{same line} are rescanned and the package will return a
 % \enquote{warning} message.
 %
@@ -3830,21 +3834,41 @@ $ pdfdetach -saveall scontents.pdf
 % \begin{macro}[int]
 %   {
 %     \l_@@_tmp_token,
+%     \l_@@_leading_tl,
 %     \l_@@_first_token_tl,
+%     \l_@@_body_tmp_tl,
 %     \l_@@_rest_str,
+%     \l_@@_options_allowed_bool,
+%     \l_@@_space_catcode_int,
+%     \l_@@_tab_catcode_int,
+%     \l_@@_percent_catcode_int,
 %     \c_@@_other_space_tl,
 %   }
 %   The token \myhlc|\l_@@_tmp_token| receives a brace that starts the
-%   \mymarg{body env}, the token list \myhlc|\l_@@_first_token_tl| holds
-%   the first token of the \mymarg{body env} as a string, the string
-%   \myhlc|\l_@@_rest_str| the text after the end of the environment
-%   without the hidden end of line and the constant token list
-%   \myhlc|\c_@@_other_space_tl| a space with \emph{catcode} 12, as the
+%   \mymarg{body env}, the token list \myhlc|\l_@@_leading_tl| holds the
+%   spaces and \texttt{TAB} characters before it, the token list
+%   \myhlc|\l_@@_first_token_tl| holds these characters and the first
+%   token of the \mymarg{body env} as a string, the token list
+%   \myhlc|\l_@@_body_tmp_tl| keeps a copy of the \mymarg{body env} while
+%   its end is analyzed and the string \myhlc|\l_@@_rest_str| the text
+%   after the end of the environment without the hidden end of line. The
+%   boolean \myhlc|\l_@@_options_allowed_bool| is true while the
+%   \emph{optional argument} can still be found, the integer variables
+%   \myhlc|\l_@@_space_catcode_int|, \myhlc|\l_@@_tab_catcode_int| and
+%   \myhlc|\l_@@_percent_catcode_int| save the \emph{catcodes} of the
+%   space, the \texttt{TAB} and `\myhlc|%|' and the constant token list
+%   \myhlc|\c_@@_other_space_tl| is a space with \emph{catcode} 12, as the
 %   spaces of the \mymarg{body env}.
 %    \begin{macrocode}
 \cs_new_eq:NN \l_@@_tmp_token \scan_stop:
-\tl_new:N  \l_@@_first_token_tl
-\str_new:N \l_@@_rest_str
+\tl_new:N   \l_@@_leading_tl
+\tl_new:N   \l_@@_first_token_tl
+\tl_new:N   \l_@@_body_tmp_tl
+\str_new:N  \l_@@_rest_str
+\bool_new:N \l_@@_options_allowed_bool
+\int_new:N  \l_@@_space_catcode_int
+\int_new:N  \l_@@_tab_catcode_int
+\int_new:N  \l_@@_percent_catcode_int
 \tl_const:Ne \c_@@_other_space_tl { \char_generate:nn { 32 } { 12 } }
 %    \end{macrocode}
 % \end{macro}
@@ -3853,8 +3877,16 @@ $ pdfdetach -saveall scontents.pdf
 %   {
 %     \@@_normalise_line_ends:N,
 %     \@@_start_body:,
-%     \@@_start_body:N,
+%     \@@_peek_start:,
+%     \@@_peek_next:,
+%     \@@_peek_token:N,
+%     \@@_first_token:N,
+%     \@@_first_token_str:N,
+%     \@@_restore_catcodes:,
+%     \@@_skip_comment:,
+%     \@@_skip_comment:w,
 %     \@@_start_body_brace:n,
+%     \@@_body_start_brace:,
 %     \@@_body_start:n,
 %     \@@_body_start:V,
 %     \@@_stop_environment:,
@@ -3865,16 +3897,26 @@ $ pdfdetach -saveall scontents.pdf
 %
 %   The \mymarg{body env} can start on the same line as
 %   |\begin{scontents}| or its \emph{optional argument}. The function
-%   \myhlc|\@@_start_body:| removes the spaces and looks at the first
-%   token of the
-%   \mymarg{body env}, which has already been read with the
-%   \emph{catcodes} of the document. The function \myhlc|\@@_start_body:N|
-%   keeps an active `\myhlc|^^M|' (the \mymarg{body env} starts on the next
-%   line) or turns the token into a string, and
-%   \myhlc|\@@_start_body_brace:n| removes a brace with |\let| and keeps it
-%   as a string. In all cases \myhlc|\@@_body_start:n| passes this first
-%   token to \myhlc|\@@_file_tl_write_start:nn|, which reads the
-%   \mymarg{body env} and stores it in a token list or writes it to an
+%   \myhlc|\@@_peek_start:| makes the space, the \texttt{TAB} and
+%   `\myhlc|%|' \enquote{other} characters and \myhlc|\@@_peek_token:N|
+%   collects the spaces and \texttt{TAB} characters, which are kept as
+%   written. The function \myhlc|\@@_first_token:N| looks at the next
+%   token, already read with the other \emph{catcodes} of the document:
+%   an active `\myhlc|^^M|' means that the \mymarg{body env} starts on the
+%   next line and the spaces before it are dropped. While the
+%   \emph{optional argument} can be found, a `|[|' restores the
+%   \emph{catcodes} with \myhlc|\@@_restore_catcodes:| and calls
+%   \myhlc|\@@_grab_opt_arg:w| and a `\myhlc|%|' is a comment:
+%   \myhlc|\@@_skip_comment:| removes the rest of the line and the search
+%   starts again on the next line, so the \emph{optional argument} can be
+%   written there. After the \emph{optional argument}, called from
+%   \myhlc|\@@_start_body:|, `|[|' and `\myhlc|%|' are part of the
+%   \mymarg{body env}. Any other token is turned into a string by
+%   \myhlc|\@@_first_token_str:N| and \myhlc|\@@_start_body_brace:n|
+%   removes a brace with |\let| and keeps it as a string. In all cases
+%   \myhlc|\@@_body_start:n| passes the spaces and this first token to
+%   \myhlc|\@@_file_tl_write_start:nn|, which reads the \mymarg{body env}
+%   and stores it in a token list or writes it to an
 %   \mymeta{external file}.
 %
 %   At the end of the environment, the function
@@ -3889,12 +3931,26 @@ $ pdfdetach -saveall scontents.pdf
   \char_set_catcode_active:N \^^M
   \cs_new_protected:Npn \@@_normalise_line_ends:N #1
     { \tl_replace_all:Nnn #1 { ^^M } { ~ } }
-  \cs_new_protected:Npn \@@_start_body:
+  \cs_new_protected:Nn \@@_start_body:
     {
-      \peek_remove_spaces:n
+      \bool_set_false:N \l_@@_options_allowed_bool
+      \@@_peek_start:
+    }
+  \cs_new_protected:Nn \@@_peek_start:
+    {
+      \tl_clear:N \l_@@_leading_tl
+      \char_set_catcode_other:n { 32 }
+      \char_set_catcode_other:n { 9 }
+      \char_set_catcode_other:N \%
+      \@@_peek_next:
+    }
+  \cs_new_protected:Nn \@@_peek_next:
+    {
+      \peek_N_type:TF
+        { \@@_peek_token:N }
         {
-          \peek_N_type:TF
-            { \@@_start_body:N }
+          \peek_catcode:NTF \c_space_token
+            { \peek_remove_spaces:n { \@@_peek_next: } }
             {
               \peek_catcode:NTF \c_group_begin_token
                 { \@@_start_body_brace:n { \c_left_brace_str } }
@@ -3902,16 +3958,65 @@ $ pdfdetach -saveall scontents.pdf
             }
         }
     }
-  \cs_new_protected:Npn \@@_start_body:N #1
+  \cs_new_protected:Npn \@@_peek_token:N #1
+    {
+      \bool_lazy_or:nnTF
+        { \str_if_eq_p:nn {#1} { ~ } }
+        { \str_if_eq_p:nn {#1} { ^^I } }
+        {
+          \tl_put_right:Nn \l_@@_leading_tl {#1}
+          \@@_peek_next:
+        }
+        { \@@_first_token:N #1 }
+    }
+  \cs_new_protected:Npn \@@_first_token:N #1
     {
       \str_if_eq:nnTF {#1} { ^^M }
-        { \tl_set:Nn \l_@@_first_token_tl { ^^M } }
-        { \tl_set:Ne \l_@@_first_token_tl { \token_to_str:N #1 } }
+        { \@@_body_start:n { ^^M } }
+        {
+          \bool_if:NTF \l_@@_options_allowed_bool
+            {
+              \str_if_eq:nnTF {#1} { [ }
+                {
+                  \@@_restore_catcodes:
+                  \@@_grab_opt_arg:w #1
+                }
+                {
+                  \str_if_eq:eeTF { \tl_to_str:n {#1} } { \c_percent_str }
+                    { \@@_skip_comment: }
+                    { \@@_first_token_str:N #1 }
+                }
+            }
+            { \@@_first_token_str:N #1 }
+        }
+    }
+  \cs_new_protected:Npn \@@_first_token_str:N #1
+    {
+      \tl_set:Ne \l_@@_first_token_tl
+        { \tl_to_str:N \l_@@_leading_tl \token_to_str:N #1 }
       \@@_body_start:V \l_@@_first_token_tl
+    }
+  \cs_new_protected:Nn \@@_restore_catcodes:
+    {
+      \char_set_catcode:nn { 32 } { \l_@@_space_catcode_int }
+      \char_set_catcode:nn { 9 } { \l_@@_tab_catcode_int }
+      \char_set_catcode:nn { 37 } { \l_@@_percent_catcode_int }
+    }
+  \cs_new_protected:Nn \@@_skip_comment:
+    {
+      \group_begin:
+        \seq_map_function:NN \l_char_special_seq \char_set_catcode_other:N
+        \@@_skip_comment:w
+    }
+  \cs_new_protected:Npn \@@_skip_comment:w #1 ^^M
+    {
+      \group_end:
+      \@@_peek_start:
     }
   \cs_new_protected:Npn \@@_start_body_brace:n #1
     {
-      \tl_set:Ne \l_@@_first_token_tl {#1}
+      \tl_set:Ne \l_@@_first_token_tl
+        { \tl_to_str:N \l_@@_leading_tl #1 }
       \tex_afterassignment:D \@@_body_start_brace:
       \tex_let:D \l_@@_tmp_token =~
     }
@@ -3947,7 +4052,9 @@ $ pdfdetach -saveall scontents.pdf
 %     \@@_body_finish:,
 %     \@@_body_remove_first_eol:,
 %     \@@_body_trim_end:,
+%     \@@_body_trim_blanks:,
 %     \@@_body_trim_space:w,
+%     \@@_body_trim_tab:w,
 %     \@@_body_trim_eol:w,
 %     \@@_env_end_function:,
 %     \@@_file_write_stop:N,
@@ -3970,12 +4077,17 @@ $ pdfdetach -saveall scontents.pdf
 %   the rest of the line.
 %
 %   The function \myhlc|\@@_body_finish:| works on the whole
-%   \mymarg{body env}, without splitting it in lines. If it starts on the
-%   next line, the first end of line is removed by
-%   \myhlc|\@@_body_remove_first_eol:|. The function
-%   \myhlc|\@@_body_trim_end:| removes the spaces at the end of the last
-%   line, one by one with \myhlc|\@@_body_trim_space:w|, and then its end
-%   of line with \myhlc|\@@_body_trim_eol:w| if the last line is empty.
+%   \mymarg{body env}, without splitting it in lines. The function
+%   \myhlc|\@@_body_trim_end:| removes a last line that only has spaces
+%   and \texttt{TAB} characters, as the line of an indented
+%   |\end{scontents}|: \myhlc|\@@_body_trim_blanks:| removes these
+%   characters one by one with \myhlc|\@@_body_trim_space:w| and
+%   \myhlc|\@@_body_trim_tab:w| and, if the text then ends with an end of
+%   line, \myhlc|\@@_body_trim_eol:w| removes it, otherwise the copy saved
+%   in \myhlc|\l_@@_body_tmp_tl| is restored, so the spaces before
+%   |\end{scontents}| on a line with other text are kept. If the
+%   \mymarg{body env} starts on the next line, the first end of line is
+%   removed by \myhlc|\@@_body_remove_first_eol:|.
 %   The active `\myhlc|^^M|' characters are replaced by `\myhlc|^^J|' in the
 %   output token list, which is written in one step to the
 %   \mymeta{output file}, if any, with `\myhlc|^^J|' as |\newlinechar|. Then
@@ -4053,8 +4165,8 @@ $ pdfdetach -saveall scontents.pdf
     }
   \cs_new_protected:Nn \@@_body_finish:
     {
-      \@@_body_remove_first_eol:
       \@@_body_trim_end:
+      \@@_body_remove_first_eol:
       \tl_replace_all:Nnn \l_@@_save_every_body_lines_tl { ^^M } { ^^J }
       \bool_lazy_and:nnT
         { \l_@@_writable_bool }
@@ -4069,6 +4181,14 @@ $ pdfdetach -saveall scontents.pdf
     }
   \cs_new_protected:Nn \@@_body_trim_end:
     {
+      \tl_set_eq:NN \l_@@_body_tmp_tl \l_@@_save_every_body_lines_tl
+      \@@_body_trim_blanks:
+      \exp_after:w \@@_body_trim_eol:w
+        \l_@@_save_every_body_lines_tl
+        \q_@@_mark ^^M \q_@@_mark \q_@@_stop
+    }
+  \cs_new_protected:Nn \@@_body_trim_blanks:
+    {
       \use:e
         {
           \exp_not:N \@@_body_trim_space:w
@@ -4076,9 +4196,6 @@ $ pdfdetach -saveall scontents.pdf
           \exp_not:N \q_@@_mark \c_@@_other_space_tl
           \exp_not:N \q_@@_mark \exp_not:N \q_@@_stop
         }
-      \exp_after:w \@@_body_trim_eol:w
-        \l_@@_save_every_body_lines_tl
-        \q_@@_mark ^^M \q_@@_mark \q_@@_stop
     }
   \use:e
     {
@@ -4087,16 +4204,34 @@ $ pdfdetach -saveall scontents.pdf
         \exp_not:N \q_@@_stop
     }
     {
+      \tl_if_empty:nTF {#2}
+        {
+          \exp_after:w \@@_body_trim_tab:w
+            \l_@@_save_every_body_lines_tl
+            \q_@@_mark ^^I \q_@@_mark \q_@@_stop
+        }
+        {
+          \tl_set:Nn \l_@@_save_every_body_lines_tl {#1}
+          \@@_body_trim_blanks:
+        }
+    }
+  \cs_new_protected:Npn \@@_body_trim_tab:w
+    #1 ^^I \q_@@_mark #2 \q_@@_stop
+    {
       \tl_if_empty:nF {#2}
         {
           \tl_set:Nn \l_@@_save_every_body_lines_tl {#1}
-          \@@_body_trim_end:
+          \@@_body_trim_blanks:
         }
     }
   \cs_new_protected:Npn \@@_body_trim_eol:w
     #1 ^^M \q_@@_mark #2 \q_@@_stop
     {
-      \tl_if_empty:nF {#2}
+      \tl_if_empty:nTF {#2}
+        {
+          \tl_set_eq:NN \l_@@_save_every_body_lines_tl
+            \l_@@_body_tmp_tl
+        }
         { \tl_set:Nn \l_@@_save_every_body_lines_tl {#1} }
     }
   \cs_new_protected:Nn \@@_body_remove_first_eol:
@@ -4258,12 +4393,10 @@ $ pdfdetach -saveall scontents.pdf
 %
 % \begin{macro}[int]{\@@_generic_begin:, \@@_generic_end:}
 %   The function \myhlc|\@@_generic_begin:| leaves the `\myhlc|^^M|' character
-%   active and removes the spaces. If the next character is a `|[|',
-%   \myhlc|\@@_grab_opt_arg:w| reads the \emph{optional argument},
-%   otherwise \myhlc|\@@_start_body:| starts reading the
-%   \mymarg{body env}. A comment `\myhlc|%|' right after the start of the
-%   environment is a comment, so the \emph{optional argument} can be
-%   written on the next line. The function
+%   active, saves the \emph{catcodes} of the space, the \texttt{TAB} and
+%   `\myhlc|%|' and calls \myhlc|\@@_peek_start:|, which reads the
+%   \emph{optional argument}, if any, and starts reading the
+%   \mymarg{body env}. The function
 %   \myhlc|\@@_generic_end:| calls \myhlc|\@@_stop_environment:| and then
 %   \myhlc|\@@_finish_storing:NNN|, which stores the \mymarg{body env} in
 %   the \emph{sequence} and prints it if the \mykey{print-env} key is
@@ -4273,12 +4406,11 @@ $ pdfdetach -saveall scontents.pdf
 \cs_new_protected:Npn \@@_generic_begin:
   {
     \char_set_catcode_active:N \^^M
-    \peek_remove_spaces:n
-      {
-        \peek_charcode:NTF [
-          { \@@_grab_opt_arg:w }
-          { \@@_start_body: }
-      }
+    \int_set:Nn \l_@@_space_catcode_int { \char_value_catcode:n { 32 } }
+    \int_set:Nn \l_@@_tab_catcode_int { \char_value_catcode:n { 9 } }
+    \int_set:Nn \l_@@_percent_catcode_int { \char_value_catcode:n { 37 } }
+    \bool_set_true:N \l_@@_options_allowed_bool
+    \@@_peek_start:
   }
 \cs_new_protected:Npn \@@_generic_end:
   {

@@ -8,13 +8,16 @@
 %
 % Test de regresion del entorno scontents escrito en una sola linea o con
 % el contenido en la linea de \begin{scontents} o de \end{scontents}: [1]
-% todo en una linea, con y sin opciones; [2] los espacios junto al inicio
-% y al final se quitan, tambien una ultima linea con solo espacios; [3]
-% el contenido empieza en la primera linea y sigue en las siguientes; [4]
-% el primer caracter del contenido es una llave, una orden, `$' o `#' y
-% un `%' en medio del texto se guarda; [5] entornos anidados en una linea;
-% [6] entorno vacio en una linea; [7] write-env y print-env en una linea;
-% [8] texto despues del final. Los contenidos se muestran con \tl_show:N,
+% todo en una linea, con y sin opciones; [2] los espacios y TAB junto al
+% inicio y al final se conservan, como en \Scontents*, y solo se quita una
+% ultima linea con espacios o TAB; [3] el contenido empieza en la primera
+% linea y sigue en las siguientes; [4] el primer caracter del contenido es
+% una llave, una orden, `$', `#' o `%' (despues de las opciones `%' es
+% contenido) y un `%' en medio del texto se guarda; [5] entornos anidados
+% en una linea; [6] entorno vacio en una linea; [7] write-env y print-env
+% en una linea; [8] texto despues del final; [9] un `%' justo despues de
+% \begin{scontents} es un comentario. Los contenidos se muestran con
+% \tl_show:N,
 % los archivos se leen de nuevo con \ior_str_get:NN y lo impreso con
 % \showbox.
 %
@@ -64,10 +67,16 @@ Ultima linea con espacios.   \end{scontents}
 \begin{scontents}[store-env=esp]
 Final con sangria.
     \end{scontents}
+\begin{scontents}[store-env=esp]	Con TAB.	\end{scontents}
+\begin{scontents}[store-env=esp]
+Final con TAB y espacios.
+	  	\end{scontents}
 \ExplSyntaxOn
 \SHOW { esp } { 1 }
 \SHOW { esp } { 2 }
 \SHOW { esp } { 3 }
+\SHOW { esp } { 4 }
+\SHOW { esp } { 5 }
 \ExplSyntaxOff
 \ENDTEST
 
@@ -89,12 +98,14 @@ tercera linea.
 \begin{scontents}[store-env=car]\textit{orden} al inicio\end{scontents}
 \begin{scontents}[store-env=car]$x^2$ y #1\end{scontents}
 \begin{scontents}[store-env=car]50% de algo, % comentario\end{scontents}
+\begin{scontents}[store-env=car]%no es comentario\end{scontents}
 \ExplSyntaxOn
 \SHOW { car } { 1 }
 \SHOW { car } { 2 }
 \SHOW { car } { 3 }
 \SHOW { car } { 4 }
 \SHOW { car } { 5 }
+\SHOW { car } { 6 }
 \ExplSyntaxOff
 \ENDTEST
 
@@ -137,6 +148,19 @@ X\begin{scontents}[print-env, store-env=impr]impreso\end{scontents}Y
 
 \BEGINTEST{[8] texto despues del final}
 \begin{scontents}[store-env=desp] x \end{scontents} Texto despues.
+\ENDTEST
+
+\BEGINTEST{[9] comentario despues de begin}
+\begin{scontents} % comentario
+  Contenido con sangria.
+\end{scontents}
+\begin{scontents}%
+[store-env=coment]Opciones en la linea siguiente.
+\end{scontents}
+\ExplSyntaxOn
+\SHOW { contents } { 2 }
+\SHOW { coment } { 1 }
+\ExplSyntaxOff
 \ENDTEST
 
 \end{document}
