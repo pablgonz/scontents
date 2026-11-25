@@ -24,6 +24,8 @@ TEST 3: [3] force-eol
 Defining \g__scontents_name_eol_seq on line ...
 > \l__scontents_processed_body_lines_tl=Con.
 box: 22.917pt+ 0.25186ptx 250.0pt
+sin force-eol, sin espacio: si
+con force-eol, con espacio: si
 ============================================================
 ============================================================
 TEST 4: [4] pseudo entornos anidados

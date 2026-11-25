@@ -21,6 +21,8 @@ TEST 3: [3] force-eol
 > \l__scontents_processed_body_lines_tl=Sin%^^Ascheol%.
 > \l__scontents_processed_body_lines_tl=Con.
 box: 22.929pt+ 0.26385ptx 250.0pt
+sin force-eol, sin espacio: si
+con force-eol, con espacio: si
 ============================================================
 ============================================================
 TEST 4: [4] pseudo entornos anidados
