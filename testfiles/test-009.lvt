@@ -1,0 +1,46 @@
+% test-009.lvt -- verb-env=true (valor por defecto) con verbatimsc definido
+%                 por el usuario en el preambulo
+%
+% Pablo González L. <pablgonz@yahoo.com>
+%
+% Regresion:  l3build save test-009
+%             l3build check test-009
+%
+% Test de regresion de la clave verb-env con su valor por defecto: el
+% entorno verbatimsc se define al comenzar el documento y solo si no
+% existe, asi que el usuario puede definirlo en el preambulo, despues de
+% cargar el paquete, sin \cs_undefine:N. Aqui se define con fancyvrb y
+% numeros de linea: [1] \typestored usa el verbatimsc del usuario (la caja
+% tiene los numeros de linea); [2] \mergesc[typestored] tambien.
+%
+% Hecho con cariño por Pablo González L.
+\input{regression-test}
+
+\documentclass{article}
+\ExplSyntaxOn
+\debug_on:n { all }
+\ExplSyntaxOff
+\usepackage{scontents}
+\usepackage{fancyvrb}
+\DefineVerbatimEnvironment{verbatimsc}{Verbatim}{numbers=left}
+\newcommand\BOXSTART{\setbox0=\vbox\bgroup\hsize=250pt \parindent=0pt\relax}
+\newcommand\BOXEND{\par\egroup\showbox0 }
+\begin{document}
+\Scontents[store-cmd=data]{Uno}
+\Scontents[store-cmd=data]{Dos}
+
+\START
+
+\BEGINTEST{[1] typestored con el verbatimsc del usuario}
+\BOXSTART
+\typestored[1-end]{data}
+\BOXEND
+\ENDTEST
+
+\BEGINTEST{[2] mergesc con el verbatimsc del usuario}
+\BOXSTART
+\mergesc[typestored]{ {data}[1], {data}[2] }
+\BOXEND
+\ENDTEST
+
+\end{document}

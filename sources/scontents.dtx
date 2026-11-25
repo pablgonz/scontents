@@ -448,10 +448,6 @@
   }
 \ExplSyntaxOff
 % Custom verbatimsc, used by \typestored in this documentation
-\ExplSyntaxOn
-\cs_undefine:N \verbatimsc
-\cs_undefine:N \endverbatimsc
-\ExplSyntaxOff
 \lstnewenvironment{verbatimsc}
   {
     \lstset{
@@ -518,7 +514,7 @@
     keywordstyle  = [8]{\color{keyname}},%
     keywords      = [8]{store-cmd, store-env, print-env, print-cmd, write-env, verb-font,%
                     start, stop, wrapper, sep, step, before, after, write-out, write-cmd,%
-                    overwrite, width-tab, force-eol, store-all, print-all, debug-var, 1-end, remember,%
+                    overwrite, width-tab, force-eol, store-all, print-all, debug-var, verb-env, 1-end, remember,%
                     I, J, M, L, Ascheol, lang, pdfversion, pdfstandard, testphase, tagging,%
                     basicstyle, columns, language, numbers, numberstyle, keywordstyle,%
                     numbersep, breaklines, breakafter, breaksymbolsep, breakaftersymbolpre,%
@@ -553,7 +549,7 @@
                     mergesc-missing-key,%
                     not-writing, overwrite-file, positive-integer, remember-latex-only,%
                     remember-rerun, remember-undefined, rescanning-text,%
-                    undefined-storage, writing-file},%
+                    undefined-storage, verbatimsc-undefined, writing-file},%
 % literate
     literate      =*{\{}{{{\color{brace}{\char`\{}}}}{1}
                     {\}}{{{\color{brace}{\char`\}}}}}{1}
@@ -953,10 +949,21 @@
 % options in |\newenvsc| and in |\setupsc|.
 % \end{function}
 %
-% \keyexampcmd{debug-var}{true \textnormal{\textcolor{lightgray}{\textbar}} false}{true}[setupsc]
+% \keyexampcmd{debug-var}{true \textnormal{\textcolor{lightgray}{\textbar}} false}{false}[setupsc]
 % Determines whether the \mymeta{argument} passed to commands or the \mymeta{body} passed
 % to provided environments is written to the \texttt{.log} file. This \mymeta{key}
-% is only available as a package option or using |\setupsc|.
+% is only available as a package option or using |\setupsc|. It is false by
+% default because writing large \mymeta{stored contents} to the \texttt{.log}
+% file takes time.
+%
+% \keyexampcmd{verb-env}{true \textnormal{\textcolor{lightgray}{\textbar}} false}{true}[setupsc]
+% Determines whether the package defines the environment
+% \myenv*[no-index]{verbatimsc} (\S\ref{subsec:verbatimsc}) at the beginning
+% of the document. With |true| it is defined only if it does not exist,
+% so it can be defined in the preamble with other packages. With |false|
+% it is never defined and it must be defined before using |\typestored| or
+% |\mergesc|. This \mymeta{key} is only available in \hologo{LaTeX}, in the
+% preamble, as a package option or using |\setupsc|.
 %
 % \keyexampcmd{verb-font}{font family}{\textnormal{\ttfamily\textbackslash{}ttfamily}}[setupsc]
 % Sets the \mymeta{font family} used to display the \mymeta{stored content} for
@@ -1053,6 +1060,7 @@ push @generated_exts, 'sct';
 % \texttt{key} & \texttt{package} &\myhlc|\setupsc| &\myenv*[no-index]{scontents} &\myhlc|\Scontents| &\myhlc|\Scontents*| &\myhlc|\typestored| &\myhlc|\meaningsc| &\myhlc|\mergesc|\\
 % \midrule
 %  \mykey{debug-var}  & \cmark  & \cmark  &  \xmark  & \xmark  & \xmark  & \xmark  & \xmark & \xmark \\
+%  \mykey{verb-env}   & \cmark  & \cmark  &  \xmark  & \xmark  & \xmark  & \xmark  & \xmark & \xmark \\
 %  \mykey{verb-font}  & \cmark  & \cmark  &  \xmark  & \xmark  & \xmark  & \xmark  & \xmark & \xmark \\
 %  \mykey{store-all}  & \cmark  & \cmark  &  \xmark  & \xmark  & \xmark  & \xmark  & \xmark & \xmark \\
 %  \mykey{remember}   & \cmark  & \cmark  &  \xmark  & \xmark  & \xmark  & \xmark  & \xmark & \xmark \\
@@ -1547,9 +1555,11 @@ This text is in the outer environment (after nested).
 % \begin{function}{verbatimsc}
 % The environment used by |\typestored| and |\mergesc| to
 % display the \mymeta{stored content} in \emph{verbatim style}.
-% The environment is compatible with \emph{tagged} \texttt{PDF} and can
-% be customized in the following ways after loading the \mypkg*[no-index]{scontents}
-% package:
+% The environment is compatible with \emph{tagged} \texttt{PDF}. In
+% \hologo{LaTeX} it is defined at the beginning of the document and only if
+% it does not exist, so it can be customized in the preamble, after loading
+% the \mypkg*[no-index]{scontents} package, in the following ways. With the
+% \mykey{verb-env} key set to |false| the package does not define it.
 % \end{function}
 %
 % Using the packages \mypkg{fvextra}\cite{fvextra} or \mypkg{fancyvrb}\cite{fancyvrb}:
@@ -1557,10 +1567,6 @@ This text is in the outer environment (after nested).
 %<*example>
 % \fi
 \begin{examplecode}[frame=single]
-\ExplSyntaxOn
-\cs_undefine:N \verbatimsc
-\cs_undefine:N \endverbatimsc
-\ExplSyntaxOff
 \usepackage{fancyvrb}
 \DefineVerbatimEnvironment{verbatimsc}{Verbatim}{numbers=left}
 \end{examplecode}
@@ -1572,10 +1578,6 @@ This text is in the outer environment (after nested).
 %<*example>
 % \fi
 \begin{examplecode}[frame=single]
-\ExplSyntaxOn
-\cs_undefine:N \verbatimsc
-\cs_undefine:N \endverbatimsc
-\ExplSyntaxOff
 \usepackage{minted}
 \newminted{tex}{linenos}
 \newenvironment{verbatimsc}{\VerbatimEnvironment\begin{texcode}}{\end{texcode}}
@@ -1588,10 +1590,6 @@ This text is in the outer environment (after nested).
 %<*example>
 % \fi
 \begin{examplecode}[frame=single]
-\ExplSyntaxOn
-\cs_undefine:N \verbatimsc
-\cs_undefine:N \endverbatimsc
-\ExplSyntaxOff
 \usepackage{listings}
 \lstnewenvironment{verbatimsc}
   {
@@ -2760,6 +2758,7 @@ $ pdfdetach -saveall scontents.pdf
 %     store-env,
 %     store-cmd,
 %     verb-font,
+%     verb-env,
 %     print-env,
 %     print-cmd,
 %     force-eol,
@@ -2810,7 +2809,7 @@ $ pdfdetach -saveall scontents.pdf
     store-all .meta:n           = { store-env = #1, store-cmd = #1 },
     store-all .value_required:n = true,
     debug-var .bool_set:N       = \l_@@_debug_var_bool,
-    debug-var .initial:n        = true,
+    debug-var .initial:n        = false,
     debug-var .default:n        = true,
     remember  .code:n           = { \@@_remember:n {#1} },
     remember  .value_required:n = true,
@@ -2824,6 +2823,20 @@ $ pdfdetach -saveall scontents.pdf
 %<loader>\keys_define:nn { scontents }
 %<latex>  { verb-font .initial:n = \ttfamily }
 %<plain|context>  { verb-font .initial:n = \tt }
+%    \end{macrocode}
+%   In \LaTeX{} the \mykey{verb-env} key, only for the preamble, sets if
+%   the environment |verbatimsc| is defined at the beginning of the
+%   document.
+%    \begin{macrocode}
+%<*loader&latex>
+\keys_define:nn { scontents }
+  {
+    verb-env .bool_set:N        = \l_@@_verb_env_bool,
+    verb-env .initial:n         = true,
+    verb-env .default:n         = true,
+    verb-env .usage:n           = preamble,
+  }
+%</loader&latex>
 %    \end{macrocode}
 %   In \LaTeX{} the \mymeta{keys} passed as options to the package are
 %   processed and an unknown \mymeta{key} returns an \enquote{error}.
@@ -4693,7 +4706,10 @@ $ pdfdetach -saveall scontents.pdf
 %   \mypkg{latex-lab}\cite{latexlab}. The function
 %   \myhlc|\@@_verbatimsc_instance:| declares the instance of
 %   \texttt{blockenv} used by the environment, only once at the beginning
-%   of the document and only if \emph{tagged} \texttt{PDF} is active.
+%   of the document and only if \emph{tagged} \texttt{PDF} is active. At
+%   the beginning of the document, if the \mykey{verb-env} key is true and
+%   the environment does not exist, the instance is declared and the
+%   environment is defined by \myhlc|\@@_define_verbatimsc:|.
 %   This code is adapted from the answer of Ulrike Fischer to
 %   \href{https://tex.stackexchange.com/a/741178/7832}{New verbatim environment with block code (tagged-pdf)}.
 %    \begin{macrocode}
@@ -4714,16 +4730,26 @@ $ pdfdetach -saveall scontents.pdf
   }
 \hook_gput_code:nnn { begindocument } { scontents }
   {
-    \IfDocumentMetadataTF { \@@_verbatimsc_instance: } { }
+    \bool_lazy_and:nnT
+      { \l_@@_verb_env_bool }
+      { ! \cs_if_exist_p:N \verbatimsc }
+      {
+        \IfDocumentMetadataTF { \@@_verbatimsc_instance: } { }
+        \@@_define_verbatimsc:
+      }
   }
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{verbatimsc}
-%   Defines the environment \myenv*{verbatimsc} for \LaTeX. The
+% \begin{macro}[int]{\@@_define_verbatimsc:}
+%   The function \myhlc|\@@_define_verbatimsc:| defines the environment
+%   \myenv*{verbatimsc} for \LaTeX. The
 %   |\endverbatim| in the second argument is only needed for
 %   compatibility with the \mypkg{verbatim}\cite{verbatim} package.
 %    \begin{macrocode}
+\cs_new_protected:Nn \@@_define_verbatimsc:
+  {
 \NewDocumentEnvironment { verbatimsc } { }
   {
     \IfDocumentMetadataTF
@@ -4744,7 +4770,25 @@ $ pdfdetach -saveall scontents.pdf
       }
       { \endverbatim }
   }
+  }
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}[int,TF]{\@@_if_verbatimsc:}
+%   The conditional \myhlc|\@@_if_verbatimsc:TF| tests if the environment
+%   |verbatimsc| exists. It is always true in \hologo{plainTeX} and
+%   \hologo{ConTeXt}, where the package defines it.
+%    \begin{macrocode}
+\prg_new_conditional:Npnn \@@_if_verbatimsc: { TF }
+  {
+    \cs_if_exist:NTF \verbatimsc
+      { \prg_return_true: }
+      { \prg_return_false: }
+  }
 %</latex>
+%<!latex>\prg_new_conditional:Npnn \@@_if_verbatimsc: { TF }
+%<!latex>  { \prg_return_true: }
 %</loader>
 %    \end{macrocode}
 % \end{macro}
@@ -5434,10 +5478,18 @@ $ pdfdetach -saveall scontents.pdf
 %
 % \subsubsection{Definition of error messages for \cs[no-index]{typestored}}
 %
-% \begin{macro}[int]{empty-variable}
+% \begin{macro}[int]{empty-variable, verbatimsc-undefined}
 %   The \enquote{error} |empty-variable| is raised when the
-%   \mymeta{stored contents} to print are blank.
+%   \mymeta{stored contents} to print are blank and the \enquote{error}
+%   |verbatimsc-undefined| when the environment |verbatimsc| does not
+%   exist, with the \mykey{verb-env} key set to |false|.
 %    \begin{macrocode}
+\msg_new:nnnn { scontents } { verbatimsc-undefined }
+  { Environment~'verbatimsc'~undefined~\msg_line_context:. }
+  {
+    The~key~'verb-env'~is~false,~so~the~environment~'verbatimsc'~must~
+    be~defined~in~the~preamble.~Nothing~is~printed~in~verbatim~style.
+  }
 \msg_new:nnnn { scontents } { empty-variable }
   { Blank~stored~content~to~print~\msg_line_context:. }
   {
@@ -5491,8 +5543,10 @@ $ pdfdetach -saveall scontents.pdf
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}[int]{\@@_typestored:N, \@@_verb_print_EOL:}
-%   The function \myhlc|\@@_typestored:N| is defined with active carriage
+% \begin{macro}[int]{\@@_typestored:N, \@@_typestored_aux:N, \@@_verb_print_EOL:}
+%   The function \myhlc|\@@_typestored:N| raises the \enquote{error}
+%   |verbatimsc-undefined| if the environment |verbatimsc| does not exist
+%   and otherwise calls \myhlc|\@@_typestored_aux:N|, which is defined with active carriage
 %   return characters to mimic an actual |verbatim| environment
 %   \enquote{on the loose}. The content of the token list passed in |#1|
 %   is placed in a |verbatimsc| environment and rescanned with
@@ -5501,6 +5555,12 @@ $ pdfdetach -saveall scontents.pdf
 \group_begin:
   \char_set_catcode_active:N \^^M
   \cs_new_protected:Npn \@@_typestored:N #1
+    {
+      \@@_if_verbatimsc:TF
+        { \@@_typestored_aux:N #1 }
+        { \msg_error:nn { scontents } { verbatimsc-undefined } }
+    }
+  \cs_new_protected:Npn \@@_typestored_aux:N #1
     {
       \tl_if_blank:VT #1
         { \msg_error:nn { scontents } { empty-variable } }

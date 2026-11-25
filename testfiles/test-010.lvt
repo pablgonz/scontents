@@ -27,6 +27,7 @@
 \debug_on:n { all }
 \ExplSyntaxOff
 \usepackage{scontents}
+\setupsc{debug-var=true}
 \usepackage{hyperref}
 \hypersetup
   {

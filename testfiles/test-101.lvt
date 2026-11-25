@@ -1,0 +1,42 @@
+% test-101.lvt -- verb-env=false: mensajes
+%
+% Pablo González L. <pablgonz@yahoo.com>
+%
+% Regresion:  l3build save test-101
+%             l3build check test-101
+%
+% Test de regresion de la clave verb-env=false, pasada como opcion del
+% paquete: el paquete no define verbatimsc. [1] El entorno no existe al
+% comenzar el documento; [2] \typestored y \mergesc[typestored] dan el
+% error verbatimsc-undefined y no imprimen nada; [3] la clave solo se
+% puede usar en el preambulo, despues da el mensaje de l3keys.
+%
+% Hecho con cariño por Pablo González L.
+\input{regression-test}
+
+\documentclass{article}
+\ExplSyntaxOn
+\debug_on:n { all }
+\ExplSyntaxOff
+\usepackage[verb-env=false]{scontents}
+\begin{document}
+\Scontents[store-cmd=data]{Uno}
+
+\START
+
+\BEGINTEST{[1] verbatimsc no existe}
+\ExplSyntaxOn
+\TYPE { verbatimsc~\cs_if_exist:NTF \verbatimsc { existe } { no~existe } }
+\ExplSyntaxOff
+\ENDTEST
+
+\BEGINTEST{[2] typestored y mergesc sin verbatimsc}
+\typestored{data}
+\mergesc[typestored]{ {data}[1] }
+\ENDTEST
+
+\BEGINTEST{[3] verb-env en el documento}
+\setupsc{verb-env=true}
+\ENDTEST
+
+\end{document}

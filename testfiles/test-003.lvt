@@ -24,6 +24,7 @@
 \debug_on:n { all }
 \ExplSyntaxOff
 \usepackage{scontents}
+\setupsc{debug-var=true}
 \begin{document}
 
 % \BOXSTART y \BOXEND componen lo impreso en una caja y la muestran en el

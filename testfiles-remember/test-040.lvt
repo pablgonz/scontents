@@ -22,6 +22,7 @@
 \debug_on:n { all }
 \ExplSyntaxOff
 \usepackage[remember=obj]{scontents}
+\setupsc{debug-var=true}
 \setupsc{remember={nunca, obj}}
 \begin{document}
 

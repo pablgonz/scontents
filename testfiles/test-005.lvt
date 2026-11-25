@@ -18,6 +18,7 @@
 \documentclass{article}
 \START
 \usepackage[clavefalsa, store-env=opcion, valorfalso=algo, width-tab=3]{scontents}
+\setupsc{debug-var=true}
 \OMIT
 \begin{document}
 \TIMO

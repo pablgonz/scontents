@@ -24,6 +24,7 @@
 \debug_off:n { deprecation }
 \ExplSyntaxOff
 \input scontents.tex
+\setupsc{debug-var=true}
 
 % \BOXSTART y \BOXEND componen lo impreso en una caja y la muestran en el
 % log. \SHOWTSC escribe en el log las lineas de un archivo y \COUNT el

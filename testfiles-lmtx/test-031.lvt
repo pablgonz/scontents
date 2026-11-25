@@ -23,6 +23,7 @@
 \input regression-test.tex
 \input expl3-generic.tex
 \usemodule[scontents]
+\setupsc{debug-var=true}
 \starttext
 
 % \BOXSTART y \BOXEND componen lo impreso en una caja y escriben sus

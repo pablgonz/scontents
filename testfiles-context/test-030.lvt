@@ -28,6 +28,7 @@
 \debug_off:n { deprecation }
 \ExplSyntaxOff
 \usemodule[scontents]
+\setupsc{debug-var=true}
 \starttext
 
 % \BOXSTART y \BOXEND componen lo impreso en una caja y escriben sus

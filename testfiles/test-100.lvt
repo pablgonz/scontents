@@ -24,6 +24,7 @@
 \debug_on:n { all }
 \ExplSyntaxOff
 \usepackage{scontents}
+\setupsc{debug-var=true}
 \setlength{\textheight}{16000pt}
 % Los casos con errores pueden dejar cajas anchas: no se vuelcan al log.
 \hfuzz=\maxdimen \vfuzz=\maxdimen \hbadness=10000 \vbadness=10000

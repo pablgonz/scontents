@@ -8,8 +8,8 @@
 % Test de regresion del entorno scontents, de \Scontents, \Scontents*, de
 % las claves para guardar e imprimir (store-env, store-cmd, store-all,
 % print-env, print-cmd, print-all, force-eol, debug-var), de \setupsc, de
-% \newenvsc, de \countsc y de \cleanseqsc. Con debug-var (activa por
-% defecto) cada contenido guardado se escribe en el log; lo impreso se
+% \newenvsc, de \countsc y de \cleanseqsc. Con debug-var (activada
+% con \setupsc) cada contenido guardado se escribe en el log; lo impreso se
 % compone en una caja que tambien va al log (\BOXSTART ... \BOXEND). El
 % documento no usa \DocumentMetadata: el caso con etiquetado esta en
 % test-010.
@@ -26,6 +26,7 @@
 \debug_on:n { all }
 \ExplSyntaxOff
 \usepackage{scontents}
+\setupsc{debug-var=true}
 \begin{document}
 
 % \BOXSTART y \BOXEND componen lo impreso en una caja y la muestran en el

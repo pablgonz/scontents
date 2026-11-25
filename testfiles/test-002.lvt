@@ -22,6 +22,7 @@
 \debug_on:n { all }
 \ExplSyntaxOff
 \usepackage{scontents}
+\setupsc{debug-var=true}
 % \meaningsc deja lineas largas sin cortar: no se vuelcan al log.
 \hfuzz=\maxdimen \hbadness=10000
 \begin{document}

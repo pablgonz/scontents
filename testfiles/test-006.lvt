@@ -22,6 +22,7 @@
 \debug_on:n { all }
 \ExplSyntaxOff
 \usepackage{scontents}
+\setupsc{debug-var=true}
 \begin{document}
 
 \begin{scontents}[store-env=api]
