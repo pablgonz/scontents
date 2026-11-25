@@ -16,7 +16,8 @@
 % contenido) y un `%' en medio del texto se guarda; [5] entornos anidados
 % en una linea; [6] entorno vacio en una linea; [7] write-env y print-env
 % en una linea; [8] texto despues del final; [9] un `%' justo despues de
-% \begin{scontents} es un comentario. Los contenidos se muestran con
+% \begin{scontents} es un comentario; [10] el entorno y \Scontents* guardan
+% los mismos tokens (\tl_analysis_log:N). Los contenidos se muestran con
 % \tl_show:N,
 % los archivos se leen de nuevo con \ior_str_get:NN y lo impreso con
 % \showbox.
@@ -160,6 +161,18 @@ X\begin{scontents}[print-env, store-env=impr]impreso\end{scontents}Y
 \ExplSyntaxOn
 \SHOW { contents } { 2 }
 \SHOW { coment } { 1 }
+\ExplSyntaxOff
+\ENDTEST
+
+\BEGINTEST{[10] tokens guardados}
+\begin{scontents}[store-env=tok]a	b $c$
+d\end{scontents}
+\Scontents*[store-cmd=tok]|a	b $c$|
+\ExplSyntaxOn
+\scontents_get:nnN { tok } { 1 } \l_test_tl
+\tl_analysis_log:N \l_test_tl
+\scontents_get:nnN { tok } { 2 } \l_test_tl
+\tl_analysis_log:N \l_test_tl
 \ExplSyntaxOff
 \ENDTEST
 

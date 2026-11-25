@@ -1657,10 +1657,20 @@ This text is in the outer environment (after nested).
 % \mykey{remember} key.
 %
 % The \mymeta{stored contents} are given as they were stored, without the
-% mark that \mypkg*[no-index]{scontents} adds to hide the last end of line:
-% the content of an environment is a string whose lines are separated by
-% the end of line character \myhlc|^^J|, the content of |\Scontents*| is also a
-% string and the content of |\Scontents| keeps its tokens.
+% mark that \mypkg*[no-index]{scontents} adds to hide the last end of line.
+% The content of the environment \myenv*[no-index]{scontents}, of the
+% environments created with |\newenvsc| and of |\Scontents*| is read with
+% the \emph{verbatim catcodes} and has the same tokens in all formats:
+% \begin{itemize}
+%   \item the letters have \emph{catcode} 11 (letter) and the other
+%     characters, also the space, have \emph{catcode} 12 (other);
+%   \item the \texttt{TAB} and form feed characters, \myhlc|^^I| and
+%     \myhlc|^^L|, are active characters;
+%   \item the lines are separated by the end of line character
+%     \myhlc|^^J| with \emph{catcode} 12.
+% \end{itemize}
+% The content of |\Scontents| keeps the tokens read with the
+% \emph{catcodes} of the document.
 %
 % \begin{function}[EXP,pTF]{\scontents_if_exist:n}
 %   \begin{syntax}
@@ -4830,11 +4840,36 @@ $ pdfdetach -saveall scontents.pdf
 %    \end{macrocode}
 % \end{macro}
 %
+% \begin{macro}[int]{\@@_Scontents_other_spaces:N}
+%   A |v|-type argument of \mypkg{ltcmd} gives the spaces as active
+%   characters. The function \myhlc|\@@_Scontents_other_spaces:N|
+%   replaces them by spaces with \emph{catcode} 12, so the content of
+%   |\Scontents*| has the same tokens as the content of an environment.
+%   The active space is written as `|*|' with the \emph{lccode} of the
+%   space and |\lowercase|.
+%    \begin{macrocode}
+\group_begin:
+  \char_set_lccode:nn { `\* } { 32 }
+  \char_set_catcode_active:N \*
+  \tex_lowercase:D
+    {
+      \group_end:
+      \cs_new_protected:Npn \@@_Scontents_other_spaces:N #1
+        {
+          \exp_args:NNnV \tl_replace_all:Nnn #1 { * }
+            \c_@@_other_space_tl
+        }
+    }
+%    \end{macrocode}
+% \end{macro}
+%
 % \begin{macro}[int]{\@@_Scontents_verb_arg:w}
 %   The function \myhlc|\@@_Scontents_verb_arg:w| saves the
 %   \mymarg{argument} under the \emph{verbatim catcode} regimen, using a
-%   |v|-type argument of \mypkg{ltcmd}, in \myhlc|\l_@@_Scontents_arg_tl|
-%   and replaces every `\myhlc|^^M|' by `\myhlc|^^J|'. In \hologo{LaTeX} it
+%   |v|-type argument of \mypkg{ltcmd}, in \myhlc|\l_@@_Scontents_arg_tl|,
+%   turns its spaces into spaces with \emph{catcode} 12 with
+%   \myhlc|\@@_Scontents_other_spaces:N| and replaces every
+%   `\myhlc|^^M|' by `\myhlc|^^J|'. In \hologo{LaTeX} it
 %   also replaces |\obeyedline|, added in \hologo{LaTeX} release 2024-06-01.
 %   The command |\obeyedline| is redefined with |\RenewDocumentCommand|
 %   because it can be modified by the user, which would return a low-level
@@ -4844,6 +4879,7 @@ $ pdfdetach -saveall scontents.pdf
 \NewDocumentCommand \@@_Scontents_verb_arg:w { +v }
   {
     \tl_set:Nn \l_@@_Scontents_arg_tl {#1}
+    \@@_Scontents_other_spaces:N \l_@@_Scontents_arg_tl
     \@@_format_case:nnn
       {
         \cs_if_exist:NT \obeyedline
