@@ -6,12 +6,13 @@
 %             l3build check -c config-plain test-020
 %
 % Test de regresion de scontents cargado con \input scontents.tex en plain
-% TeX (pdftex): el pseudo entorno \scontents ... \endscontents, \Scontents,
-% \Scontents*, \getstored, \foreachsc, \typestored y el entorno verbatimsc
-% de plain, \meaningsc, \mergesc, \newenvsc, \setupsc, \countsc,
-% \cleanseqsc, la escritura de archivos y algunos mensajes. Los casos con
-% LaTeX estan en testfiles/ y los de ConTeXt en testfiles-context/. Las
-% lineas de la secuencia tab llevan caracteres TAB reales.
+% TeX (pdftex): el pseudo entorno \scontents ... \endscontents,
+% \Scontents, \Scontents*, \getstored, \foreachsc, \typestored y el
+% entorno verbatimsc de plain, \meaningsc, \mergesc, \newenvsc, \setupsc,
+% \countsc, \cleanseqsc, la escritura de archivos, la clave expand y
+% algunos mensajes. Los casos con LaTeX estan en testfiles/ y los de
+% ConTeXt en testfiles-context/. Las lineas de la secuencia tab llevan
+% caracteres TAB reales.
 %
 % Hecho con cariño por Pablo González L.
 \input regression-test.tex
@@ -261,6 +262,33 @@ x
 \scontents[store-env=resc]
 x
 \endscontents Texto despues.
+\ENDTEST
+
+% 21. Contenido expandido al guardar (clave expand): las macros toman el
+% valor al guardar, `%' es un comentario y `#' se guarda.
+\BEGINTEST{[21] expand}
+\def\valor{UNO}
+\scontents[store-env=exp, expand]
+Valor \valor{} en {\bf negrita}, 50% comentario
+segunda   linea con # y #1
+\endscontents
+\Scontents[store-cmd=exp, expand]{Cmd \valor}
+\Scontents*[store-cmd=exp, expand]|Star \valor|
+\setupsc{expand}
+\Scontents*[store-cmd=exp]|Setup \valor|
+\setupsc{expand=false}
+\Scontents*[store-cmd=exp]|Sin expandir \valor|
+\def\valor{DOS}
+\ExplSyntaxOn
+\int_step_inline:nn { 5 }
+  {
+    \scontents_get:nnN { exp } {#1} \l_tmpa_tl
+    \TYPE { |\tl_to_str:N \l_tmpa_tl| }
+  }
+\ExplSyntaxOff
+\BOXSTART
+\getstored{exp}
+\BOXEND
 \ENDTEST
 
 \END

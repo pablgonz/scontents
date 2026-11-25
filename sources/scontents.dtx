@@ -514,7 +514,8 @@
     keywordstyle  = [8]{\color{keyname}},%
     keywords      = [8]{store-cmd, store-env, print-env, print-cmd, write-env, verb-font,%
                     start, stop, wrapper, sep, step, before, after, write-out, write-cmd,%
-                    overwrite, width-tab, force-eol, store-all, print-all, debug-var, verb-env, 1-end, remember,%
+                    overwrite, width-tab, force-eol, store-all, print-all, debug-var, verb-env,%
+                    expand, 1-end, remember,%
                     I, J, M, L, Ascheol, lang, pdfversion, pdfstandard, testphase, tagging,%
                     basicstyle, columns, language, numbers, numberstyle, keywordstyle,%
                     numbersep, breaklines, breakafter, breaksymbolsep, breakaftersymbolpre,%
@@ -1041,6 +1042,40 @@ push @generated_exts, 'sct';
 % the |\Scontents| and |\Scontents*| commands and all environments
 % created using |\newenvsc|.
 %
+% \keyexampcmd{expand}{true \textnormal{\textcolor{lightgray}{\textbar}} false}{false}[setupsc]
+% Sets if the \mymeta{stored content} is \emph{expanded} when it is stored,
+% so the commands take the value they have at that moment and not when the
+% \mymeta{stored content} is used. The content of the environment
+% \myenv*[no-index]{scontents}, of the environments created using
+% |\newenvsc| and of |\Scontents*| is first read again with the
+% \emph{catcodes} of the document, so `|%|' starts a comment, consecutive
+% \mymeta{spaces} become one and those at the beginning of a line are
+% ignored, `|#|' is stored as an ordinary character and the ends of line
+% are kept. In \hologo{LaTeX} the robust commands, such as
+% |\textbf|, are not expanded, as in |\protected@edef|. For example:
+% \iffalse
+%<*example>
+% \fi
+\begin{examplecode}[frame=single]
+\newcommand\version{1.0}
+\begin{scontents}[store-env=notes, expand]
+Notes for version \version.
+\end{scontents}
+\renewcommand\version{2.0}
+\getstored{notes} % Notes for version 1.0.
+\end{examplecode}
+% \iffalse
+%</example>
+% \fi
+% The \mymeta{stored content} must have balanced braces and can not have
+% \emph{verbatim} material, definitions or fragile commands, such as
+% |\section|. The \mymeta{files} written with \mykey{write-env} and
+% \mykey{write-cmd} have the original text, not the expanded one. This
+% \mymeta{key} is available as a package option, for |\setupsc|, for
+% |\Scontents| and |\Scontents*|, for the base environment
+% \myenv*[no-index]{scontents} and all environments created using
+% |\newenvsc|.
+%
 % \keyexampcmd{width-tab}{integer}{1}[setupsc]
 % Sets the equivalence in \mymeta{spaces} for the character \texttt{TAB} `\LKeyTab'
 % used when displaying \mymeta{stored content} in \emph{verbatim style}. The value
@@ -1067,6 +1102,7 @@ push @generated_exts, 'sct';
 %  \mykey{overwrite}  & \cmark  & \cmark  &  \cmark  & \cmark  & \cmark  & \cmark  & \cmark & \cmark \\
 %  \mykey{print-all}  & \cmark  & \cmark  &  \xmark  & \xmark  & \xmark  & \xmark  & \xmark & \xmark \\
 %  \mykey{force-eol}  & \cmark  & \cmark  &  \cmark  & \cmark  & \cmark  & \xmark  & \xmark & \xmark \\
+%  \mykey{expand}     & \cmark  & \cmark  &  \cmark  & \cmark  & \cmark  & \xmark  & \xmark & \xmark \\
 %  \mykey{width-tab}  & \cmark  & \cmark  &  \xmark  & \xmark  & \xmark  & \cmark  & \cmark & \cmark \\
 %  \mykey{store-env}  & \cmark  & \cmark  &  \cmark  & \xmark  & \xmark  & \xmark  & \xmark & \xmark \\
 %  \mykey{store-cmd}  & \cmark  & \cmark  &  \xmark  & \cmark  & \cmark  & \xmark  & \xmark & \xmark \\
@@ -1558,8 +1594,12 @@ This text is in the outer environment (after nested).
 % The environment is compatible with \emph{tagged} \texttt{PDF}. In
 % \hologo{LaTeX} it is defined at the beginning of the document and only if
 % it does not exist, so it can be customized in the preamble, after loading
-% the \mypkg*[no-index]{scontents} package, in the following ways. With the
-% \mykey{verb-env} key set to |false| the package does not define it.
+% the \mypkg*[no-index]{scontents} package, in the following ways, without
+% undefining it first as in versions before 3.0. With the \mykey{verb-env}
+% key set to |false| the package does not define it, for example when
+% another package defines it later, and if it does not exist |\typestored|
+% and |\mergesc| raise an \enquote{error} and print nothing in
+% \emph{verbatim style}.
 % \end{function}
 %
 % Using the packages \mypkg{fvextra}\cite{fvextra} or \mypkg{fancyvrb}\cite{fancyvrb}:
@@ -2466,6 +2506,149 @@ $ pdfdetach -saveall scontents.pdf
 %    \end{macrocode}
 % \end{macro}
 %
+% \begin{macro}[int]
+%   {
+%     \l_@@_verb_content_bool,
+%     \l_@@_eol_catcode_int,
+%     \g_@@_expand_tl,
+%     \@@_save_catcodes:,
+%     \@@_expand_catcodes:,
+%     \@@_expand_tl:N,
+%     \@@_expand_verb:N,
+%     \@@_expand_rescan:N,
+%     \@@_expand_rescan:w,
+%     \@@_remove_last_nl:N,
+%     \@@_remove_last_nl:w,
+%   }
+%   These functions are used by the \mykey{expand} key. The boolean
+%   \myhlc|\l_@@_verb_content_bool| is true when the content was read
+%   with the \emph{verbatim catcodes}, in the environments and in
+%   |\Scontents*|. The function \myhlc|\@@_save_catcodes:| saves the
+%   \emph{catcodes} of the \texttt{TAB}, the end of line, the space and
+%   `\myhlc|%|' before they are changed, the last one in
+%   \myhlc|\l_@@_eol_catcode_int|, and \myhlc|\@@_expand_catcodes:|
+%   restores them to read the content again. There `\myhlc|#|' is an
+%   \enquote{other} character and the |\endlinechar| is `\myhlc|^^J|', also
+%   \enquote{other}, so the ends of line are kept as `\myhlc|^^J|' and are
+%   not expanded.
+%
+%   The function \myhlc|\@@_expand_tl:N| expands the token list passed in
+%   |#1| with \myhlc|\tl_gset:Ne|, which also accepts `\myhlc|#|' in the
+%   content. In \LaTeX{} it is done in a group where |\protect| is
+%   |\@unexpandable@protect|, as in |\protected@edef|, so the robust
+%   commands are not expanded. The function \myhlc|\@@_expand_rescan:N| reads the
+%   content in |#1| again in a group with \myhlc|\@@_expand_catcodes:|,
+%   using |\scantokens| directly, which splits the text at the
+%   |\newlinechar| `\myhlc|^^J|'; the end of the text is marked by
+%   \myhlc|\q_@@_stop| in |\everyeof| and \myhlc|\@@_expand_rescan:w|
+%   saves the result in \myhlc|\g_@@_expand_tl|. The kernel function
+%   \myhlc|\tl_set_rescan:Nnn| is not used because it takes the
+%   |\newlinechar| from the |\endlinechar| before the setup and, in
+%   \hologo{LuaTeX}, a `\myhlc|%|' in the content also removes the end of
+%   the text. The function \myhlc|\@@_expand_verb:N| reads the content
+%   again, removes the last end of line added by this reading with
+%   \myhlc|\@@_remove_last_nl:N| and expands it.
+%    \begin{macrocode}
+\bool_new:N \l_@@_verb_content_bool
+\int_new:N  \l_@@_eol_catcode_int
+\tl_new:N   \g_@@_expand_tl
+\cs_new_protected:Nn \@@_save_catcodes:
+  {
+    \int_set:Nn \l_@@_tab_catcode_int { \char_value_catcode:n { 9 } }
+    \int_set:Nn \l_@@_eol_catcode_int { \char_value_catcode:n { 13 } }
+    \int_set:Nn \l_@@_space_catcode_int { \char_value_catcode:n { 32 } }
+    \int_set:Nn \l_@@_percent_catcode_int { \char_value_catcode:n { 37 } }
+  }
+\cs_new_protected:Nn \@@_expand_catcodes:
+  {
+    \char_set_catcode:nn { 9 } { \l_@@_tab_catcode_int }
+    \char_set_catcode:nn { 13 } { \l_@@_eol_catcode_int }
+    \char_set_catcode:nn { 32 } { \l_@@_space_catcode_int }
+    \char_set_catcode:nn { 37 } { \l_@@_percent_catcode_int }
+    \char_set_catcode_other:n { 10 }
+    \char_set_catcode_other:n { 35 }
+    \int_set:Nn \tex_endlinechar:D { 10 }
+  }
+%<*latex>
+\cs_new_protected:Npn \@@_expand_tl:N #1
+  {
+    \group_begin:
+      \cs_set_eq:NN \protect \@unexpandable@protect
+      \tl_gset:Ne \g_@@_expand_tl {#1}
+    \group_end:
+    \tl_set_eq:NN #1 \g_@@_expand_tl
+    \tl_gclear:N \g_@@_expand_tl
+  }
+%</latex>
+%<!latex>\cs_new_protected:Npn \@@_expand_tl:N #1 { \tl_set:Ne #1 {#1} }
+\cs_new_protected:Npn \@@_expand_rescan:N #1
+  {
+    \group_begin:
+      \@@_expand_catcodes:
+      \int_set:Nn \tex_newlinechar:D { 10 }
+      \tex_everyeof:D { \q_@@_stop }
+      \exp_after:w \@@_expand_rescan:w \tex_scantokens:D \exp_after:w {#1}
+    \group_end:
+    \tl_set_eq:NN #1 \g_@@_expand_tl
+    \tl_gclear:N \g_@@_expand_tl
+  }
+\cs_new_protected:Npn \@@_expand_rescan:w #1 \q_@@_stop
+  { \tl_gset:Nn \g_@@_expand_tl {#1} }
+%<!context>\cs_new_protected:Npn \@@_expand_verb:N #1
+%<!context>  {
+%<!context>    \@@_expand_rescan:N #1
+%<!context>    \@@_remove_last_nl:N #1
+%<!context>    \@@_expand_tl:N #1
+%<!context>  }
+%    \end{macrocode}
+%   In \hologo{ConTeXt} LMTX, where |\scantokens| does not split the text
+%   at the |\newlinechar|, the content is read again line by line with
+%   |scontents_retokenize|, inside \myhlc|\tl_gset:Ne|, so it is read and
+%   expanded in one step.
+%    \begin{macrocode}
+%<*context>
+\bool_if:NTF \contextlmtxmode
+  {
+    \cs_new_protected:Npn \@@_expand_verb:N #1
+      {
+        \group_begin:
+          \@@_expand_catcodes:
+          \tl_gset:Ne \g_@@_expand_tl
+            {
+              \lua_now:e
+                { scontents_retokenize("\lua_escape:e { \tl_to_str:N #1 }") }
+            }
+        \group_end:
+        \tl_set_eq:NN #1 \g_@@_expand_tl
+        \tl_gclear:N \g_@@_expand_tl
+        \@@_remove_last_nl:N #1
+      }
+  }
+  {
+    \cs_new_protected:Npn \@@_expand_verb:N #1
+      {
+        \@@_expand_rescan:N #1
+        \@@_remove_last_nl:N #1
+        \@@_expand_tl:N #1
+      }
+  }
+%</context>
+\cs_new_protected:Npe \@@_remove_last_nl:N #1
+  {
+    \exp_not:N \exp_after:w \exp_not:N \@@_remove_last_nl:w
+      #1 \exp_not:N \q_@@_mark \char_generate:nn { 10 } { 12 }
+      \exp_not:N \q_@@_mark \exp_not:N \q_@@_stop #1
+  }
+\use:e
+  {
+    \cs_new_protected:Npn \exp_not:N \@@_remove_last_nl:w
+      #1 \char_generate:nn { 10 } { 12 } \exp_not:N \q_@@_mark #2
+      \exp_not:N \q_@@_stop #3
+  }
+  { \tl_if_empty:nF {#2} { \tl_set:Nn #3 {#1} } }
+%    \end{macrocode}
+% \end{macro}
+%
 % \begin{macro}[int]{\@@_iow_open:Nn}
 %   The function \myhlc|\@@_iow_open:Nn| opens the \mymeta{output file}
 %   passed in |#2| in the stream |#1|. In \hologo{LaTeX},
@@ -2545,12 +2728,22 @@ $ pdfdetach -saveall scontents.pdf
 %
 % \subsection{Some kernel variants}
 %
-% \begin{macro}[int]{\tl_replace_all:NeV, \@@_retokenize:V, \@@_retokenize:e}
+% \begin{macro}[int]
+%   {
+%     \tl_replace_all:NeV,
+%     \str_remove_all:NV,
+%     \seq_use:NV,
+%     \seq_use:cV,
+%     \@@_retokenize:V,
+%     \@@_retokenize:e,
+%   }
 %   Some nonstandard kernel variants and the variants of
 %   \myhlc|\@@_retokenize:n| (\S\ref{subsec:format}).
 %    \begin{macrocode}
 %<*core>
 \cs_generate_variant:Nn \tl_replace_all:Nnn { NeV }
+\cs_generate_variant:Nn \str_remove_all:Nn { NV }
+\cs_generate_variant:Nn \seq_use:Nn { NV, cV }
 \cs_generate_variant:Nn \@@_retokenize:n { V, e }
 %    \end{macrocode}
 % \end{macro}
@@ -2759,6 +2952,7 @@ $ pdfdetach -saveall scontents.pdf
 %     store-cmd,
 %     verb-font,
 %     verb-env,
+%     expand,
 %     print-env,
 %     print-cmd,
 %     force-eol,
@@ -2808,6 +3002,9 @@ $ pdfdetach -saveall scontents.pdf
     print-all .default:n        = true,
     store-all .meta:n           = { store-env = #1, store-cmd = #1 },
     store-all .value_required:n = true,
+    expand    .bool_set:N       = \l_@@_expand_bool,
+    expand    .initial:n        = false,
+    expand    .default:n        = true,
     debug-var .bool_set:N       = \l_@@_debug_var_bool,
     debug-var .initial:n        = false,
     debug-var .default:n        = true,
@@ -2920,36 +3117,38 @@ $ pdfdetach -saveall scontents.pdf
 %
 % \subsubsection{Internal functions for unknown keys}
 %
-% \begin{macro}[int]{\@@_unknown_keys_env:n, \@@_unknown_keys_env:nn}
+% \begin{macro}[int]{\@@_unknown_keys_env:n, \@@_unknown_keys_env:nn, \@@_unknown_keys_env:Vn}
 %   The function \myhlc|\@@_unknown_keys_env:n| raises the
 %   \enquote{error} for an unknown \mymeta{key} passed to an environment
 %   defined by |\newenvsc|.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_unknown_keys_env:n #1
-  { \exp_args:NV \@@_unknown_keys_env:nn \l_keys_key_str {#1} }
+  { \@@_unknown_keys_env:Vn \l_keys_key_str {#1} }
 \cs_new_protected:Npn \@@_unknown_keys_env:nn #1 #2
   {
     \tl_if_blank:nTF {#2}
       { \msg_error:nnn { scontents } { env-key-unknown } {#1} }
       { \msg_error:nnnn { scontents } { env-key-value-unknown } {#1} {#2} }
   }
+\cs_generate_variant:Nn \@@_unknown_keys_env:nn { V }
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}[int]{\@@_unknown_keys_cmd:n, \@@_unknown_keys_cmd:nn}
+% \begin{macro}[int]{\@@_unknown_keys_cmd:n, \@@_unknown_keys_cmd:nn, \@@_unknown_keys_cmd:Vn}
 %   The function \myhlc|\@@_unknown_keys_cmd:n| raises the
 %   \enquote{error} for an unknown \mymeta{key} passed to the commands
 %   |\Scontents|, |\foreachsc|, |\mergesc| and |\setupsc|, to the
 %   \mymeta{initial keys} of |\newenvsc| and to the package.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_unknown_keys_cmd:n #1
-  { \exp_args:NV \@@_unknown_keys_cmd:nn \l_keys_key_str {#1} }
+  { \@@_unknown_keys_cmd:Vn \l_keys_key_str {#1} }
 \cs_new_protected:Npn \@@_unknown_keys_cmd:nn #1 #2
   {
     \tl_if_blank:nTF {#2}
       { \msg_error:nnn { scontents } { cmd-key-unknown } {#1} }
       { \msg_error:nnnn { scontents } { cmd-key-value-unknown } {#1} {#2} }
   }
+\cs_generate_variant:Nn \@@_unknown_keys_cmd:nn { V }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -3271,6 +3470,9 @@ $ pdfdetach -saveall scontents.pdf
 % \begin{macro}[int]{\@@_finish_storing:NNN}
 %   The function \myhlc|\@@_finish_storing:NNN| works only in the
 %   \emph{storing mode}, when the \mykey{write-out} key is not active. If
+%   the key \mykey{expand} is true, the content is expanded first with
+%   \myhlc|\@@_expand_verb:N|, if it was read with the
+%   \emph{verbatim catcodes}, or with \myhlc|\@@_expand_tl:N|. If
 %   the key \mykey{force-eol} is false, its default value,
 %   \myhlc|\c_@@_hidden_space_str| is added to the end of the token list
 %   passed in |#1|, which contains the \mymarg{body env} of an environment
@@ -3290,6 +3492,12 @@ $ pdfdetach -saveall scontents.pdf
         \tl_if_blank:VTF #2
           { \msg_error:nn { scontents } { empty-store-name } }
           {
+            \bool_if:NT \l_@@_expand_bool
+              {
+                \bool_if:NTF \l_@@_verb_content_bool
+                  { \@@_expand_verb:N #1 }
+                  { \@@_expand_tl:N #1 }
+              }
             \bool_if:NF \l_@@_forced_eol_bool
               { \tl_put_right:Ne #1 { \c_@@_hidden_space_str } }
             \@@_store_to_seq:NN #1 #2
@@ -3356,9 +3564,12 @@ $ pdfdetach -saveall scontents.pdf
 %   {
 %     \@@_getfrom_seq:Nn,
 %     \@@_getfrom_seq:nNn,
+%     \@@_getfrom_seq:fNn,
 %     \@@_getfrom_seq_aux:nnn,
 %     \@@_getfrom_seq:nn,
 %     \@@_getfrom_seq:nnn,
+%     \@@_getfrom_seq:fnn,
+%     \@@_getfrom_seq:nfn,
 %   }
 %   The function \myhlc|\@@_getfrom_seq:Nn| retrieves the
 %   \mymeta{stored contents} whose \mymeta{indexes} are in the sequence
@@ -3372,8 +3583,7 @@ $ pdfdetach -saveall scontents.pdf
   {
     \@@_seq_if_exist:nTF {#2}
       {
-        \exp_args:Nf \@@_getfrom_seq:nNn
-          { \@@_seq_count:n {#2} } #1 {#2}
+        \@@_getfrom_seq:fNn { \@@_seq_count:n {#2} } #1 {#2}
       }
       { \msg_expandable_error:nnn { scontents } { undefined-storage } {#2} }
   }
@@ -3383,16 +3593,13 @@ $ pdfdetach -saveall scontents.pdf
   }
 \cs_new:Npn \@@_getfrom_seq_aux:nnn #1 #2 #3
   {
-    \exp_args:Nnf \use:n
-      { \@@_getfrom_seq:nnn {#1} } { \int_eval:n {#3} } {#2}
+    \@@_getfrom_seq:nfn {#1} { \int_eval:n {#3} } {#2}
   }
 \cs_new:Npn \@@_getfrom_seq:nn #1 #2
   {
     \@@_seq_if_exist:nTF {#2}
       {
-        \exp_args:Nf \@@_getfrom_seq:nnn
-          { \@@_seq_count:n {#2} }
-          {#1} {#2}
+        \@@_getfrom_seq:fnn { \@@_seq_count:n {#2} } {#1} {#2}
       }
       { \msg_expandable_error:nnn { scontents } { undefined-storage } {#2} }
   }
@@ -3407,6 +3614,8 @@ $ pdfdetach -saveall scontents.pdf
       }
       { \@@_seq_item:nn {#3} {#2} }
   }
+\cs_generate_variant:Nn \@@_getfrom_seq:nNn { f }
+\cs_generate_variant:Nn \@@_getfrom_seq:nnn { f, nf }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -3820,6 +4029,8 @@ $ pdfdetach -saveall scontents.pdf
     store-env .meta:nn          = { scontents } { store-env = #1 },
     force-eol .meta:nn          = { scontents } { force-eol = #1 },
     force-eol .default:n        = true,
+    expand    .meta:nn          = { scontents } { expand = #1 },
+    expand    .default:n        = true,
     overwrite .meta:nn          = { scontents } { overwrite = #1 },
     overwrite .default:n        = true,
     unknown   .code:n           = { \@@_unknown_keys_env:n {#1} },
@@ -4166,7 +4377,7 @@ $ pdfdetach -saveall scontents.pdf
     {
       \@@_body_finish:
       \str_set:Nn \l_@@_rest_str {#1}
-      \exp_args:NNV \str_remove_all:Nn \l_@@_rest_str
+      \str_remove_all:NV \l_@@_rest_str
         \c_@@_hidden_space_str
       \cs_set_protected:Npe \@@_ret:w
         {
@@ -4197,7 +4408,7 @@ $ pdfdetach -saveall scontents.pdf
         {
           \group_begin:
             \int_set:Nn \tex_newlinechar:D { `\^^J }
-            \exp_args:NNV \iow_now:Nn \l_@@_file_write_iow
+            \iow_now:NV \l_@@_file_write_iow
               \l_@@_save_every_body_lines_tl
           \group_end:
         }
@@ -4415,9 +4626,10 @@ $ pdfdetach -saveall scontents.pdf
 % \end{macro}
 %
 % \begin{macro}[int]{\@@_generic_begin:, \@@_generic_end:}
-%   The function \myhlc|\@@_generic_begin:| leaves the `\myhlc|^^M|' character
-%   active, saves the \emph{catcodes} of the space, the \texttt{TAB} and
-%   `\myhlc|%|' and calls \myhlc|\@@_peek_start:|, which reads the
+%   The function \myhlc|\@@_generic_begin:| saves the \emph{catcodes} with
+%   \myhlc|\@@_save_catcodes:|, leaves the `\myhlc|^^M|' character
+%   active, notes that the content is read with the
+%   \emph{verbatim catcodes} and calls \myhlc|\@@_peek_start:|, which reads the
 %   \emph{optional argument}, if any, and starts reading the
 %   \mymarg{body env}. The function
 %   \myhlc|\@@_generic_end:| calls \myhlc|\@@_stop_environment:| and then
@@ -4428,10 +4640,9 @@ $ pdfdetach -saveall scontents.pdf
 %<*core>
 \cs_new_protected:Npn \@@_generic_begin:
   {
+    \@@_save_catcodes:
     \char_set_catcode_active:N \^^M
-    \int_set:Nn \l_@@_space_catcode_int { \char_value_catcode:n { 32 } }
-    \int_set:Nn \l_@@_tab_catcode_int { \char_value_catcode:n { 9 } }
-    \int_set:Nn \l_@@_percent_catcode_int { \char_value_catcode:n { 37 } }
+    \bool_set_true:N \l_@@_verb_content_bool
     \bool_set_true:N \l_@@_options_allowed_bool
     \@@_peek_start:
   }
@@ -4446,7 +4657,7 @@ $ pdfdetach -saveall scontents.pdf
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}[int]{\@@_setting_env:nn, \@@_define_env:nnn}
+% \begin{macro}[int]{\@@_setting_env:nn, \@@_define_env:nnn, \@@_define_env:ooo}
 %   The function \myhlc|\@@_setting_env:nn| receives the \emph{name} of
 %   the environment in |#1| and the \mymeta{initial keys} in |#2|. It
 %   creates the functions \cs[no-index]{@@_\#1_begin:} and
@@ -4467,7 +4678,7 @@ $ pdfdetach -saveall scontents.pdf
       }
     \cs_new_protected:cpn { @@_#1_end: }
       { \@@_generic_end: }
-    \exp_args:Nooo \@@_define_env:nnn
+    \@@_define_env:ooo
       { \tl_to_str:n {#1} }
       { \cs:w @@_#1_begin: \cs_end: }
       { \cs:w @@_#1_end: \cs_end: }
@@ -4492,6 +4703,7 @@ $ pdfdetach -saveall scontents.pdf
 %<!latex>        \group_end:
       }
   }
+\cs_generate_variant:Nn \@@_define_env:nnn { ooo }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -4854,6 +5066,8 @@ $ pdfdetach -saveall scontents.pdf
     store-cmd .meta:nn          = { scontents } { store-cmd = #1 },
     force-eol .meta:nn          = { scontents } { force-eol = #1 },
     force-eol .default:n        = true,
+    expand    .meta:nn          = { scontents } { expand = #1 },
+    expand    .default:n        = true,
     overwrite .meta:nn          = { scontents } { overwrite = #1 },
     overwrite .default:n        = true,
     unknown   .code:n           = { \@@_unknown_keys_cmd:n {#1} },
@@ -4866,7 +5080,9 @@ $ pdfdetach -saveall scontents.pdf
 % \begin{macro}[int]{\@@_Scontents_code:nn}
 %   The function \myhlc|\@@_Scontents_code:nn| executes
 %   \myhlc|\@@_bsphack:|, opens a group, sets the \mymeta{keys} passed in
-%   |#2| and leaves the \texttt{TAB} character active. With the
+%   |#2|, saves the \emph{catcodes} with \myhlc|\@@_save_catcodes:|, notes
+%   in \myhlc|\l_@@_verb_content_bool| if the content is read with the
+%   \emph{verbatim catcodes} and leaves the \texttt{TAB} character active. With the
 %   \emph{starred argument} passed in |#1| it calls
 %   \myhlc|\@@_Scontents_verb_arg:w|, otherwise
 %   \myhlc|\@@_Scontents_norm_arg:n|.
@@ -4876,6 +5092,8 @@ $ pdfdetach -saveall scontents.pdf
     \@@_bsphack:
     \group_begin:
       \keys_set:nn { scontents / Scontents } {#2}
+      \@@_save_catcodes:
+      \bool_set_eq:NN \l_@@_verb_content_bool #1
       \char_set_catcode_active:n { 9 }
       \bool_if:NTF #1
         { \@@_Scontents_verb_arg:w }
@@ -4900,8 +5118,7 @@ $ pdfdetach -saveall scontents.pdf
       \group_end:
       \cs_new_protected:Npn \@@_Scontents_other_spaces:N #1
         {
-          \exp_args:NNnV \tl_replace_all:Nnn #1 { * }
-            \c_@@_other_space_tl
+          \tl_replace_all:NnV #1 { * } \c_@@_other_space_tl
         }
     }
 %    \end{macrocode}
@@ -5207,8 +5424,7 @@ $ pdfdetach -saveall scontents.pdf
         \@@_foreach_add_body:n
       \tl_gset:Ne \g_@@_foreach_exec_tl
         {
-          \exp_args:NNV \seq_use:Nn
-            \l_@@_foreach_print_seq \l_@@_foreach_sep_tl
+          \seq_use:NV \l_@@_foreach_print_seq \l_@@_foreach_sep_tl
         }
     \group_end:
     \exp_after:w \tl_gclear:N
@@ -5317,10 +5533,12 @@ $ pdfdetach -saveall scontents.pdf
 %   {
 %     \@@_parse_type_meaning_key:n,
 %     \@@_parse_type_meaning_key:nn,
+%     \@@_parse_type_meaning_key:Vn,
 %     \@@_range_parser:nnn,
 %     \@@_range_parser:nnnw,
 %     \@@_range_limit:nn,
 %     \@@_range_step:nn,
+%     \@@_range_step:VV,
 %   }
 % \begin{macro}[int,TF]{\@@_if_digits:n}
 %   The function \myhlc|\@@_parse_type_meaning_key:n| checks that the
@@ -5346,7 +5564,7 @@ $ pdfdetach -saveall scontents.pdf
 %   |#3|.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_parse_type_meaning_key:n #1
-  { \exp_args:NV \@@_parse_type_meaning_key:nn \l_keys_key_str {#1} }
+  { \@@_parse_type_meaning_key:Vn \l_keys_key_str {#1} }
 \cs_new_protected:Npn \@@_parse_type_meaning_key:nn #1 #2
   {
     \tl_if_blank:nTF {#2}
@@ -5402,7 +5620,7 @@ $ pdfdetach -saveall scontents.pdf
                   {
                     \@@_if_digits:VTF \l_@@_range_stop_tl
                       {
-                        \exp_args:NVV \@@_range_step:nn
+                        \@@_range_step:VV
                           \l_@@_range_start_tl \l_@@_range_stop_tl
                       }
                       { #3 {#1} }
@@ -5426,6 +5644,8 @@ $ pdfdetach -saveall scontents.pdf
       {#2}
       { \seq_put_right:Nn \l_@@_seq_item_seq {##1} }
   }
+\cs_generate_variant:Nn \@@_parse_type_meaning_key:nn { V }
+\cs_generate_variant:Nn \@@_range_step:nn { VV }
 %    \end{macrocode}
 % \end{macro}
 % \end{macro}
@@ -5735,7 +5955,7 @@ $ pdfdetach -saveall scontents.pdf
 %
 % \subsubsection{Definition of keys for \cs[no-index]{mergesc}}
 %
-% \begin{macro}[int]{typestored, meaningsc, getstored, \@@_mergesc_cmd:nn}
+% \begin{macro}[int]{typestored, meaningsc, getstored, \@@_mergesc_cmd:nn, \@@_mergesc_cmd:en}
 %   The \mymeta{keys} \mykey{typestored}, \mykey{meaningsc} and
 %   \mykey{getstored} are \emph{mandatory}, they set the function
 %   \myhlc|\@@_mergesc_cmd:nn|, which by default raises the
@@ -5757,6 +5977,7 @@ $ pdfdetach -saveall scontents.pdf
   {
     \msg_error:nn { scontents } { mergesc-missing-key }
   }
+\cs_generate_variant:Nn \@@_mergesc_cmd:nn { e }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -5781,7 +6002,7 @@ $ pdfdetach -saveall scontents.pdf
       \@@_mergesc_parse_list:n {#2}
       \seq_if_empty:cF { g_@@_name_sc!internal_seq }
         {
-          \exp_args:Ne \@@_mergesc_cmd:nn
+          \@@_mergesc_cmd:en
             { 1-end, \exp_not:V \l_@@_mergesc_keys_tl } { sc!internal }
         }
     \group_end:
@@ -5906,7 +6127,7 @@ $ pdfdetach -saveall scontents.pdf
     \keys_set:nV { scontents / getstored } \l_@@_mergesc_keys_tl
     \tl_gset:Ne \g_@@_last_stored_tl
       {
-        \exp_args:NnV \seq_use:cn { g_@@_name_#2_seq } \c_@@_newline_tl
+        \seq_use:cV { g_@@_name_#2_seq } \c_@@_newline_tl
         \c_@@_hidden_space_str
       }
     \group_insert_after:N \@@_retokenize:V
@@ -6016,7 +6237,7 @@ $ pdfdetach -saveall scontents.pdf
 % \end{macro}
 %
 % \begin{macro}{\scontents_get:nnN}
-% \begin{macro}[int]{\@@_get:nnN}
+% \begin{macro}[int]{\@@_get:nnN, \@@_get:neN}
 %   The function \myhlc|\scontents_get:nnN| evaluates the \mymeta{index} and
 %   passes it to \myhlc|\@@_get:nnN|, which sets the token list passed in
 %   |#3| to the \mymeta{stored content} given by \myhlc|\@@_seq_item:nn|
@@ -6027,7 +6248,7 @@ $ pdfdetach -saveall scontents.pdf
 %   yet in a remembered \emph{sequence} (\S\ref{subsec:remember}).
 %    \begin{macrocode}
 \cs_new_protected:Npn \scontents_get:nnN #1 #2 #3
-  { \exp_args:Nne \@@_get:nnN {#1} { \int_eval:n {#2} } #3 }
+  { \@@_get:neN {#1} { \int_eval:n {#2} } #3 }
 \cs_new_protected:Npn \@@_get:nnN #1 #2 #3
   {
     \tl_clear:N #3
@@ -6053,12 +6274,13 @@ $ pdfdetach -saveall scontents.pdf
       }
       { \msg_error:nnn { scontents } { undefined-storage } {#1} }
   }
+\cs_generate_variant:Nn \@@_get:nnN { ne }
 %    \end{macrocode}
 % \end{macro}
 % \end{macro}
 %
 % \begin{macro}{\scontents_map_inline:nn}
-% \begin{macro}[int]{\@@_map_inline:nn}
+% \begin{macro}[int]{\@@_map_inline:nn, \@@_map_inline:ne}
 %   The function \myhlc|\scontents_map_inline:nn| increases
 %   \myhlc|\g_@@_map_int|, defines with the \mymarg{inline function}
 %   passed in |#2| a function whose name has the nesting level and calls
@@ -6074,7 +6296,7 @@ $ pdfdetach -saveall scontents.pdf
         \int_gincr:N \g_@@_map_int
         \cs_gset_protected:cpn { @@_map_ \int_use:N \g_@@_map_int :n }
           ##1 {#2}
-        \exp_args:Nne \@@_map_inline:nn {#1} { \int_use:N \g_@@_map_int }
+        \@@_map_inline:ne {#1} { \int_use:N \g_@@_map_int }
         \int_gdecr:N \g_@@_map_int
       }
       { \msg_error:nnn { scontents } { undefined-storage } {#1} }
@@ -6087,6 +6309,7 @@ $ pdfdetach -saveall scontents.pdf
         \exp_args:Nc \exp_args:NV { @@_map_ #2 :n } \l_@@_map_item_tl
       }
   }
+\cs_generate_variant:Nn \@@_map_inline:nn { ne }
 %</core>
 %    \end{macrocode}
 % \end{macro}

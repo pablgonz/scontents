@@ -8,16 +8,17 @@
 % Test de regresion de scontents cargado con \usemodule[scontents] en
 % ConTeXt LMTX (context, LuaMetaTeX). Es el mismo test que test-030
 % (ConTeXt MkIV) sin la depuracion de expl3: el archivo l3debug.def no se
-% puede cargar con LuaMetaTeX. Prueba el pseudo entorno \startscontents ...
-% \stopscontents, \Scontents, \Scontents*, \getstored, \foreachsc,
+% puede cargar con LuaMetaTeX. Prueba el pseudo entorno \startscontents
+% ... \stopscontents, \Scontents, \Scontents*, \getstored, \foreachsc,
 % \typestored y el entorno verbatimsc de ConTeXt (\definetyping),
 % \meaningsc, \mergesc, \newenvsc, \setupsc, \countsc, \cleanseqsc, la
-% escritura de archivos y algunos mensajes. Como test-030, es el test de
-% test-020 (plain TeX), salvo dos cosas: ConTeXt detiene la compilacion en
-% el primer error, y \showbox cuenta como error ("! OK"), por eso aqui las
-% cajas escriben sus medidas y su texto en el log y la seccion de mensajes solo
-% tiene los avisos (warnings); los errores estan en test-020 y test-100.
-% Las lineas de la secuencia tab llevan caracteres TAB reales.
+% escritura de archivos, la clave expand y algunos mensajes. Como
+% test-030, es el test de test-020 (plain TeX), salvo dos cosas: ConTeXt
+% detiene la compilacion en el primer error, y \showbox cuenta como error
+% ("! OK"), por eso aqui las cajas escriben sus medidas y su texto en el
+% log y la seccion de mensajes solo tiene los avisos (warnings); los
+% errores estan en test-020 y test-100. Las lineas de la secuencia tab
+% llevan caracteres TAB reales.
 %
 % Hecho con cariño por Pablo González L.
 \input regression-test.tex
@@ -343,6 +344,33 @@ X\getstored{linea}Y
 \getstored{dentro}
 \BOXEND
 \COUNT{vacia}
+\ENDTEST
+
+% 21. Contenido expandido al guardar (clave expand): las macros toman el
+% valor al guardar, `%' es un comentario y `#' se guarda.
+\BEGINTEST{[21] expand}
+\def\valor{UNO}
+\startscontents[store-env=exp, expand]
+Valor \valor{} en {\bf negrita}, 50% comentario
+segunda   linea con # y #1
+\stopscontents
+\Scontents[store-cmd=exp, expand]{Cmd \valor}
+\Scontents*[store-cmd=exp, expand]|Star \valor|
+\setupsc{expand}
+\Scontents*[store-cmd=exp]|Setup \valor|
+\setupsc{expand=false}
+\Scontents*[store-cmd=exp]|Sin expandir \valor|
+\def\valor{DOS}
+\ExplSyntaxOn
+\int_step_inline:nn { 5 }
+  {
+    \scontents_get:nnN { exp } {#1} \l_tmpa_tl
+    \TYPE { |\tl_to_str:N \l_tmpa_tl| }
+  }
+\ExplSyntaxOff
+\BOXSTART
+\getstored{exp}
+\BOXEND
 \ENDTEST
 
 \END

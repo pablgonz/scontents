@@ -1,0 +1,136 @@
+% test-011.lvt -- contenido expandido al guardar (clave expand)
+%
+% Pablo González L. <pablgonz@yahoo.com>
+%
+% Regresion:  l3build save test-011
+%             l3build check test-011
+%
+% Test de regresion de la clave expand: [1] el entorno guarda el contenido
+% expandido con el valor de las macros al guardar, las ordenes robustas
+% no se expanden, `%' es un comentario, `#' se guarda y la linea en blanco
+% se conserva; [2] \Scontents y \Scontents*; [3] \setupsc{expand} y
+% expand=false; [4] \getstored, \typestored y print-env; [5] write-env
+% escribe el texto original; [6] \newenvsc con expand en las claves
+% iniciales; [7] entorno vacio. Los contenidos se muestran con
+% \tl_show:N, los archivos se leen de nuevo con \ior_str_map_inline:Nn y
+% lo impreso con \showbox; en [1] los fines de linea se muestran como
+% <NL>.
+%
+% Hecho con cariño por Pablo González L.
+\input{regression-test}
+
+\documentclass{article}
+\ExplSyntaxOn
+\debug_on:n { all }
+\tl_new:N \l_test_tl
+\ior_new:N \g_test_ior
+\cs_new_protected:Npn \SHOW #1#2
+  {
+    \scontents_get:nnN {#1} {#2} \l_test_tl
+    \tl_show:N \l_test_tl
+  }
+\cs_new_protected:Npe \SHOWNL #1#2
+  {
+    \exp_not:N \scontents_get:nnN {#1} {#2} \exp_not:N \l_test_tl
+    \exp_not:N \tl_replace_all:Nnn \exp_not:N \l_test_tl
+      { \char_generate:nn { 10 } { 12 } } { <NL> }
+    \exp_not:N \TYPE { \exp_not:N \tl_to_str:N \exp_not:N \l_test_tl }
+  }
+\cs_new_protected:Npn \SHOWFILE #1
+  {
+    \ior_open:Nn \g_test_ior {#1}
+    \ior_str_map_inline:Nn \g_test_ior { \TYPE { |##1| } }
+    \ior_close:N \g_test_ior
+  }
+\ExplSyntaxOff
+\usepackage{scontents}
+\setupsc{debug-var=true}
+\newcommand\BOXSTART{\setbox0=\vbox\bgroup\hsize=250pt \parindent=0pt\relax}
+\newcommand\BOXEND{\par\egroup\showbox0 }
+\newcommand\valor{UNO}
+\begin{document}
+
+\START
+
+\TYPE{=== A. Guardar expandido ===}
+
+\BEGINTEST{[1] entorno}
+\begin{scontents}[store-env=env, expand]
+Valor \valor{} en \textbf{negrita}, seccion \thesection, 50% comentario
+segunda   linea con # y #1
+
+tras la linea en blanco
+\end{scontents}
+\renewcommand\valor{DOS}
+\SHOW{env}{1}
+\SHOWNL{env}{1}
+\ENDTEST
+
+\BEGINTEST{[2] Scontents y Scontents*}
+\renewcommand\valor{UNO}
+\Scontents[store-cmd=cmd, expand]{Cmd \valor\ y \textbf{x}}
+\Scontents*[store-cmd=cmd, expand]|Star \valor{} y \textbf{y}|
+\renewcommand\valor{DOS}
+\SHOW{cmd}{1}
+\SHOW{cmd}{2}
+\ENDTEST
+
+\BEGINTEST{[3] setupsc}
+\renewcommand\valor{UNO}
+\setupsc{expand}
+\begin{scontents}[store-env=setup]
+Con setupsc \valor
+\end{scontents}
+\Scontents*[store-cmd=setup]|Star \valor|
+\begin{scontents}[store-env=setup, expand=false]
+Sin expandir \valor
+\end{scontents}
+\setupsc{expand=false}
+\Scontents*[store-cmd=setup]|Sin expandir \valor|
+\renewcommand\valor{DOS}
+\SHOW{setup}{1}
+\SHOW{setup}{2}
+\SHOW{setup}{3}
+\SHOW{setup}{4}
+\ENDTEST
+
+\TYPE{=== B. Uso del contenido ===}
+
+\BEGINTEST{[4] getstored, typestored y print-env}
+\renewcommand\valor{UNO}
+\BOXSTART
+\begin{scontents}[store-env=impr, print-env, expand]
+Impreso \valor
+\end{scontents}
+\renewcommand\valor{DOS}
+\getstored{impr}\par
+\typestored{impr}
+\BOXEND
+\ENDTEST
+
+\BEGINTEST{[5] write-env}
+\renewcommand\valor{UNO}
+\begin{scontents}[store-env=arch, write-env=\jobname-a.tsc, expand]
+Al archivo \valor
+\end{scontents}
+\SHOWFILE{\jobname-a.tsc}
+\SHOW{arch}{1}
+\ENDTEST
+
+\BEGINTEST{[6] newenvsc}
+\newenvsc{expenv}[store-env=nuevo, expand]
+\renewcommand\valor{UNO}
+\begin{expenv}
+Nuevo \valor
+\end{expenv}
+\renewcommand\valor{DOS}
+\SHOW{nuevo}{1}
+\ENDTEST
+
+\BEGINTEST{[7] entorno vacio}
+\begin{scontents}[store-env=vacio, expand]
+\end{scontents}
+\SHOW{vacio}{1}
+\ENDTEST
+
+\end{document}
