@@ -167,5 +167,30 @@ l. ...\SHOW { contents } { 2 }
 <recently read> }
 l. ...\SHOW { coment } { 1 }
 ============================================================
+============================================================
+TEST 10: [10] tokens guardados
+============================================================
+Defining \g__scontents_name_tok_seq on line ...
+The token list \l_test_tl contains the tokens:
+>  a (the letter a)
+>  ^^I (active character=macro:-> )
+>  b (the letter b)
+>    (the character  )
+>  $ (the character $)
+>  c (the letter c)
+>  $ (the character $)
+>  
+(the character 
+)
+>  d (the letter d).
+The token list \l_test_tl contains the tokens:
+>  a (the letter a)
+>  ^^I (active character=macro:-> )
+>  b (the letter b)
+>    (the character  )
+>  $ (the character $)
+>  c (the letter c)
+>  $ (the character $).
+============================================================
 [1
 ] (test-008.aux)
