@@ -164,7 +164,7 @@
     pdftitle           = {.:: The scontents package --- \fileinfo{} ::.},
     pdfauthor          = {Pablo González L},
     pdfsubject         = {Documentation for \fileversion{} [\filedate] },
-    pdfkeywords        = {sequences, contents, external files, expl3, l3seq, store contents, tagged},
+    pdfkeywords        = {sequences, contents, external files, expl3, l3prop, store contents, tagged},
     bookmarksopenlevel = 1,
   }
 % User level commands
@@ -494,11 +494,14 @@
                     enquote, hologo, mymeta, mypkg, LaTeX, leavevmode, scriptsize,%
                     ensuremath, rfloor, neq, matrix, node, rightarrowfill, VerbatimInput,%
                     hypersetup, iow_log, text_uppercase, jobname.sct, jobname.tsc,%
-                    jobname.txt, NSA, foo, bar, baz},%
+                    jobname.txt, NSA, foo, bar, baz, endlinechar, newlinechar, everyeof,%
+                    protect, protected@edef, directlua, label, ref, lowercase, newwrite,%
+                    newcommand, renewcommand, textcolor, textnormal, myoarg, permanent,%
+                    pushoverloadmode, popoverloadmode},%
 % Other words 5 (package name)
     keywordstyle  = [5]{\bfseries\color{pkgname}},%
     keywords      = [5]{listings, minted, fancyvrb, fvextra, tcolorbox, xcolor, tikz,%
-                    amsmath, hyperref, unicode-math, inputenc, l3seq, expl3, filecontentsdef},%
+                    amsmath, hyperref, unicode-math, inputenc, l3prop, expl3, filecontentsdef},%
 % Reserved words 6 (document class)
     keywordstyle  = [6]{\bfseries\color{clsname}},%
     keywords      = [6]{article},%
@@ -537,7 +540,7 @@
     keywordstyle  = [12]{\color{danger}},%
     keywords      = [12]{let, @undefined, def, @bsphack, @esphack, @ifpackagelater,%
                     ver@xparse.sty, ver@scontents.sty, l__scontents_ver_str, do@noligs,%
-                    MakeFile},%
+                    MakeFile, @unexpandable@protect},%
 % Other words 14 (units)
     keywordstyle  = [14]{\color{unit}},%
     keywords      = [14]{pt, em},%
@@ -747,7 +750,7 @@
 % \begin{scontents}[store-env=abstract, print-env=true]
 % \begin{abstract}
 % This package allows to store \hologo{LaTeX} code, including \enquote{\emph{verbatim}},
-% in \mymeta{sequences} using the \mypkg{l3seq} module of \mypkg{expl3}. The \mymeta{stored
+% in \mymeta{sequences} using the \mypkg{l3prop} module of \mypkg{expl3}. The \mymeta{stored
 % content} can be used as many times as desired in the document, additionally you can write
 % to \mymeta{external files} or show it in \mymeta{verbatim style}.
 % \end{abstract}
@@ -762,7 +765,9 @@
 % or \mymeta{external files}. In some ways it is similar to the \mypkg{filecontentsdef}
 % package, with the difference in which the \mymeta{content} is stored. The idea behind
 % this package is to get an approach to \hologo{ConTeXt} \emph{\enquote{buffers}} by
-% making use of \mymeta{sequences}.
+% making use of \mymeta{sequences}. Each \mymeta{sequence} is kept in a \emph{linked}
+% property list, so storing a \mymeta{content} or getting it by its \mymeta{index} takes
+% the same time with few or many \mymeta{stored contents}.
 % \end{scontents}
 %
 % \section{Motivation and Acknowledgments}
@@ -1793,7 +1798,7 @@ This text is in the outer environment (after nested).
 \begin{scontents}[store-env=abstract,print-env=true]
 \begin{abstract}
 This package allows to store \hologo{LaTeX} code, including \enquote{\emph{verbatim}},
-in \mymeta{sequences} using the \mypkg{l3seq} module of \mypkg{expl3}. The \mymeta{stored
+in \mymeta{sequences} using the \mypkg{l3prop} module of \mypkg{expl3}. The \mymeta{stored
 content} can be used as many times as desired in the document, additionally you can write
 to \mymeta{external files} or show it in \mymeta{verbatim style}.
 \end{abstract}
@@ -1814,7 +1819,9 @@ The \mypkg*[no-index]{scontents} package allows to \mymeta{store contents} in \m
 or \mymeta{external files}. In some ways it is similar to the \mypkg{filecontentsdef}
 package, with the difference in which the \mymeta{content} is stored. The idea behind
 this package is to get an approach to \hologo{ConTeXt} \emph{\enquote{buffers}} by
-making use of \mymeta{sequences}.
+making use of \mymeta{sequences}. Each \mymeta{sequence} is kept in a \emph{linked}
+property list, so storing a \mymeta{content} or getting it by its \mymeta{index} takes
+the same time with few or many \mymeta{stored contents}.
 \end{scontents}
 \end{examplecode}
 % \iffalse
