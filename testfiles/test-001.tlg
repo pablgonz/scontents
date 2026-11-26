@@ -5,7 +5,8 @@ Don't change this file in any respect.
 TEST 1: [1] scontents sin claves
 ============================================================
 > \l__scontents_processed_body_lines_tl=Uno dos tres.%^^Ascheol%.
-Defining \g__scontents_name_contents_seq on line ...
+Defining \g__scontents_name_contents_prop on line ...
+Defining \g__scontents_name_contents_int on line ...
 countsc{contents}=1
 ============================================================
 ============================================================
@@ -13,10 +14,11 @@ TEST 2: [2] store-env=envuno con varias lineas
 ============================================================
 > \l__scontents_processed_body_lines_tl=Primera linea con \verb|\foo| y $x^2$.
 Segunda linea despues de una linea en blanco: & # % ~ _ ^.%^^Ascheol%.
-Defining \g__scontents_name_envuno_seq on line ...
+Defining \g__scontents_name_envuno_prop on line ...
+Defining \g__scontents_name_envuno_int on line ...
 countsc{envuno}=1
-The sequence \g__scontents_name_envuno_seq contains the items (without outer braces):
->  {Primera linea con \verb|\foo| y $x^2$.
+The linked property list \g__scontents_name_envuno_prop contains the pairs (without outer braces):
+>  {1}  =>  {Primera linea con \verb|\foo| y $x^2$.
 Segunda linea despues de una linea en blanco: & # % ~ _ ^.%^^Ascheol%}.
 <recently read> }
 l. ...\SHOWSEQ{envuno}
@@ -25,7 +27,8 @@ l. ...\SHOWSEQ{envuno}
 TEST 3: [3] print-env=true
 ============================================================
 > \l__scontents_processed_body_lines_tl=Texto impreso con \verb|\bar|.%^^Ascheol%.
-Defining \g__scontents_name_envdos_seq on line ...
+Defining \g__scontents_name_envdos_prop on line ...
+Defining \g__scontents_name_envdos_int on line ...
 > \box...=
 \vbox(6.94+1.94)x250.0, direction TLT
 .\hbox(6.94+1.94)x250.0, glue set 142.26fil, direction TLT
@@ -125,7 +128,8 @@ l. ...\BOXEND
 TEST 6: [6] force-eol=false y force-eol=true
 ============================================================
 > \l__scontents_processed_body_lines_tl=Sin fin de linea%^^Ascheol%.
-Defining \g__scontents_name_eol_seq on line ...
+Defining \g__scontents_name_eol_prop on line ...
+Defining \g__scontents_name_eol_int on line ...
 > \l__scontents_processed_body_lines_tl=Con fin de linea.
 > \l__scontents_processed_body_lines_tl=Con fin de linea sin valor.
 > \box...=
@@ -242,7 +246,8 @@ l. ...\BOXEND
 TEST 7: [7] argumento opcional en la linea siguiente
 ============================================================
 > \l__scontents_processed_body_lines_tl=Contenido de envtres.%^^Ascheol%.
-Defining \g__scontents_name_envtres_seq on line ...
+Defining \g__scontents_name_envtres_prop on line ...
+Defining \g__scontents_name_envtres_int on line ...
 countsc{envtres}=1
 ============================================================
 ============================================================
@@ -253,11 +258,13 @@ TEST 8: [8] entornos anidados
 Dentro del anidado.
 \end{scontents}
 Despues del anidado.%^^Ascheol%.
-Defining \g__scontents_name_outer_seq on line ...
+Defining \g__scontents_name_outer_prop on line ...
+Defining \g__scontents_name_outer_int on line ...
 countsc{outer}=1
 inner existe: no
 > \l__scontents_processed_body_lines_tl=Dentro del anidado.%^^Ascheol%.
-Defining \g__scontents_name_inner_seq on line ...
+Defining \g__scontents_name_inner_prop on line ...
+Defining \g__scontents_name_inner_int on line ...
 > \box...=
 \vbox(7.16+1.94)x250.0, direction TLT
 .\hbox(7.16+1.94)x250.0, glue set 71.63fil, direction TLT
@@ -325,7 +332,8 @@ TEST 9: [9] verbatim dentro de scontents
   \raw{texto} & % #
 \end{verbatim}
 Despues.%^^Ascheol%.
-Defining \g__scontents_name_verb_seq on line ...
+Defining \g__scontents_name_verb_prop on line ...
+Defining \g__scontents_name_verb_int on line ...
 > \box...=
 \vbox(47.16+1.94)x250.0, direction TLT
 .\hbox(7.16+0.11)x250.0, glue set 222.17fil, direction TLT
@@ -431,7 +439,8 @@ countsc{contents}=2
 TEST 11: [11] store-cmd y print-cmd
 ============================================================
 > \l__scontents_Scontents_arg_tl=No se imprime.%^^Ascheol%.
-Defining \g__scontents_name_cmduno_seq on line ...
+Defining \g__scontents_name_cmduno_prop on line ...
+Defining \g__scontents_name_cmduno_int on line ...
 > \l__scontents_Scontents_arg_tl=Se imprime.%^^Ascheol%.
 > \l__scontents_Scontents_arg_tl=Se imprime sin valor.%^^Ascheol%.
 > \box...=
@@ -493,7 +502,8 @@ countsc{cmduno}=3
 TEST 12: [12] Scontents* con llaves y delimitadores
 ============================================================
 > \l__scontents_Scontents_arg_tl=Llaves con \verb|\foo|.%^^Ascheol%.
-Defining \g__scontents_name_cmddos_seq on line ...
+Defining \g__scontents_name_cmddos_prop on line ...
+Defining \g__scontents_name_cmddos_int on line ...
 > \l__scontents_Scontents_arg_tl=Barras con \verb+\bar+.%^^Ascheol%.
 > \l__scontents_Scontents_arg_tl=Mas con \verb|\baz| y \verb|%#&|.%^^Ascheol%.
 countsc{cmddos}=3
@@ -606,7 +616,8 @@ TEST 13: [13] Scontents* en varias lineas
   verbatim  dentro
 \end{verbatim}
 Ultima linea.%^^Ascheol%.
-Defining \g__scontents_name_cmdtres_seq on line ...
+Defining \g__scontents_name_cmdtres_prop on line ...
+Defining \g__scontents_name_cmdtres_int on line ...
 > \box...=
 \vbox(50.94+0.22)x250.0, direction TLT
 .\hbox(6.94+0.11)x250.0, glue set 188.13fil, direction TLT
@@ -715,7 +726,8 @@ l. ...\BOXEND
 TEST 14: [14] force-eol en Scontents
 ============================================================
 > \l__scontents_Scontents_arg_tl=Sin%^^Ascheol%.
-Defining \g__scontents_name_cmdeol_seq on line ...
+Defining \g__scontents_name_cmdeol_prop on line ...
+Defining \g__scontents_name_cmdeol_int on line ...
 > \l__scontents_Scontents_arg_tl=Con.
 > \box...=
 \vbox(19.05+0.22)x250.0, direction TLT
@@ -763,7 +775,8 @@ l. ...\BOXEND
 TEST 15: [15] setupsc store-all
 ============================================================
 > \l__scontents_processed_body_lines_tl=Entorno en todo.%^^Ascheol%.
-Defining \g__scontents_name_todo_seq on line ...
+Defining \g__scontents_name_todo_prop on line ...
+Defining \g__scontents_name_todo_int on line ...
 > \l__scontents_Scontents_arg_tl=Comando en todo.%^^Ascheol%.
 countsc{todo}=2
 ============================================================
@@ -778,7 +791,8 @@ countsc{contents}=3
 TEST 17: [16] setupsc print-all
 ============================================================
 > \l__scontents_processed_body_lines_tl=Entorno impreso.%^^Ascheol%.
-Defining \g__scontents_name_impr_seq on line ...
+Defining \g__scontents_name_impr_prop on line ...
+Defining \g__scontents_name_impr_int on line ...
 > \l__scontents_Scontents_arg_tl=Comando impreso.%^^Ascheol%.
 > \box...=
 \vbox(7.05+1.94)x250.0, direction TLT
@@ -852,7 +866,8 @@ countsc{impr}=4
 ============================================================
 TEST 19: [18] debug-var=false
 ============================================================
-Defining \g__scontents_name_nolog_seq on line ...
+Defining \g__scontents_name_nolog_prop on line ...
+Defining \g__scontents_name_nolog_int on line ...
 countsc{nolog}=2
 ============================================================
 === D. \newenvsc===
@@ -860,14 +875,16 @@ countsc{nolog}=2
 TEST 20: [19] newenvsc
 ============================================================
 > \l__scontents_processed_body_lines_tl=Contenido de envnuevo.%^^Ascheol%.
-Defining \g__scontents_name_nuevo_seq on line ...
+Defining \g__scontents_name_nuevo_prop on line ...
+Defining \g__scontents_name_nuevo_int on line ...
 countsc{nuevo}=1
 ============================================================
 ============================================================
 TEST 21: [20] newenvsc con claves
 ============================================================
 > \l__scontents_processed_body_lines_tl=Contenido impreso de envnuevo.%^^Ascheol%.
-Defining \g__scontents_name_nuevodos_seq on line ...
+Defining \g__scontents_name_nuevodos_prop on line ...
+Defining \g__scontents_name_nuevodos_int on line ...
 > \box...=
 \vbox(7.05+1.94)x250.0, direction TLT
 .\hbox(7.05+1.94)x250.0, glue set 108.25fil, direction TLT
@@ -934,10 +951,12 @@ TEST 22: [21] newenvsc anidado
 Dentro.
 \end{envnuevo}
 Despues.%^^Ascheol%.
-Defining \g__scontents_name_nest_seq on line ...
+Defining \g__scontents_name_nest_prop on line ...
+Defining \g__scontents_name_nest_int on line ...
 countsc{nest}=1
 > \l__scontents_processed_body_lines_tl=Dentro.%^^Ascheol%.
-Defining \g__scontents_name_innernest_seq on line ...
+Defining \g__scontents_name_innernest_prop on line ...
+Defining \g__scontents_name_innernest_int on line ...
 > \box...=
 \vbox(19.16+0.11)x250.0, direction TLT
 .\hbox(7.16+1.94)x250.0, glue set 179.43fil, direction TLT
@@ -1011,7 +1030,7 @@ TEST 24: [23] cleanseqsc
 ============================================================
 countsc{cmduno}=3
 countsc{cmduno}=0
-The sequence \g__scontents_name_cmduno_seq is empty
+The linked property list \g__scontents_name_cmduno_prop is empty
 > .
 <recently read> }
 l. ...\SHOWSEQ{cmduno}
@@ -1021,6 +1040,7 @@ countsc{cmduno}=1
 ============================================================
 TEST 25: [24] cleanseqsc de una secuencia nueva
 ============================================================
-Defining \g__scontents_name_vacia_seq on line ...
+Defining \g__scontents_name_vacia_prop on line ...
+Defining \g__scontents_name_vacia_int on line ...
 countsc{vacia}=0
 ============================================================

@@ -3,6 +3,7 @@ Don't change this file in any respect.
 (scontents.sty
 Package: scontents ....-..-.. v... Stores LaTeX contents in memory or files
 (scontents-code.tex
+\g__scontents_name_sc!internal_int=\count...
 )
 ! Package scontents Error: The key 'clavefalsa' is unknown by command \usepackage and is being ignored on line ....
 For immediate help type H <return>.

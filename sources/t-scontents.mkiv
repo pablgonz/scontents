@@ -33,16 +33,16 @@
 %% scontents.dtx  (with options: `loader,context')
 %D  \module
 %D    [     file=t-scontents,
-%D       version=2.9,
+%D       version=3.09,
 %D         title=\CONTEXT\ User Module,
 %D      subtitle=Storing Contents,
 %D        author=Pablo González,
-%D          date=2026-11-24,
+%D          date=2026-11-26,
 %D     copyright=Pablo González,
 %D         email=pablgonz@educarchile.cl,
 %D       license=LPPL]
-\def\ScontentsFileDate{2026-11-24}%
-\def\ScontentsFileVersion{2.9}%
+\def\ScontentsFileDate{2026-11-26}%
+\def\ScontentsFileVersion{3.09}%
 \def\ScontentsFileDescription{Stores LaTeX contents in memory or files}%
 \writestatus{loading}{User Module scontents v\ScontentsFileVersion}
 \unprotect
@@ -92,6 +92,7 @@
           for~line~in~(s~..~nl):gmatch("(.-)"~..~nl)~do~
             tex.print(line)~
           end~
+          tex.print("")~
         end
       }
     \cs_new_protected:Npn \__scontents_retokenize:n #1
@@ -101,6 +102,88 @@
       }
   }
   { \cs_new_eq:NN \__scontents_retokenize:n \tl_retokenize:n }
+\bool_new:N \l__scontents_verb_content_bool
+\int_new:N  \l__scontents_eol_catcode_int
+\tl_new:N   \g__scontents_expand_tl
+\cs_new_protected:Nn \__scontents_save_catcodes:
+  {
+    \int_set:Nn \l__scontents_tab_catcode_int { \char_value_catcode:n { 9 } }
+    \int_set:Nn \l__scontents_eol_catcode_int { \char_value_catcode:n { 13 } }
+    \int_set:Nn \l__scontents_space_catcode_int { \char_value_catcode:n { 32 } }
+    \int_set:Nn \l__scontents_percent_catcode_int { \char_value_catcode:n { 37 } }
+  }
+\cs_new_protected:Nn \__scontents_expand_catcodes:
+  {
+    \char_set_catcode:nn { 9 } { \l__scontents_tab_catcode_int }
+    \char_set_catcode:nn { 13 } { \l__scontents_eol_catcode_int }
+    \char_set_catcode:nn { 32 } { \l__scontents_space_catcode_int }
+    \char_set_catcode:nn { 37 } { \l__scontents_percent_catcode_int }
+    \char_set_catcode_other:n { 10 }
+    \char_set_catcode_other:n { 35 }
+    \int_set:Nn \tex_endlinechar:D { 10 }
+  }
+\cs_new_protected:Npn \__scontents_expand_tl:N #1 { \tl_set:Ne #1 {#1} }
+\cs_new_protected:Npn \__scontents_expand_rescan:N #1
+  {
+    \group_begin:
+      \__scontents_expand_catcodes:
+      \int_set:Nn \tex_newlinechar:D { 10 }
+      \tex_everyeof:D { \q__scontents_stop }
+      \exp_after:w \__scontents_expand_rescan:w \tex_scantokens:D \exp_after:w {#1}
+    \group_end:
+    \tl_set_eq:NN #1 \g__scontents_expand_tl
+    \tl_gclear:N \g__scontents_expand_tl
+  }
+\cs_new_protected:Npn \__scontents_expand_rescan:w #1 \q__scontents_stop
+  { \tl_gset:Nn \g__scontents_expand_tl {#1} }
+\bool_if:NTF \contextlmtxmode
+  {
+    \cs_new_protected:Npn \__scontents_expand_verb:N #1
+      {
+        \group_begin:
+          \__scontents_expand_catcodes:
+          \tl_gset:Ne \g__scontents_expand_tl
+            {
+              \lua_now:e
+                { scontents_retokenize("\lua_escape:e { \tl_to_str:N #1 }") }
+            }
+        \group_end:
+        \tl_set_eq:NN #1 \g__scontents_expand_tl
+        \tl_gclear:N \g__scontents_expand_tl
+        \__scontents_remove_last_nl:N #1
+      }
+  }
+  {
+    \cs_new_protected:Npn \__scontents_expand_verb:N #1
+      {
+        \__scontents_expand_rescan:N #1
+        \__scontents_remove_last_nl:N #1
+        \__scontents_expand_tl:N #1
+      }
+  }
+\cs_new_protected:Npe \__scontents_remove_last_nl:N #1
+  {
+    \exp_not:N \exp_after:w \exp_not:N \__scontents_remove_last_nl:w
+      #1 \exp_not:N \q__scontents_mark \char_generate:nn { 10 } { 12 }
+      \exp_not:N \q__scontents_mark \exp_not:N \q__scontents_stop #1
+  }
+\use:e
+  {
+    \cs_new_protected:Npn \exp_not:N \__scontents_remove_last_nl:w
+      #1 \char_generate:nn { 10 } { 12 } \exp_not:N \q__scontents_mark #2
+      \exp_not:N \q__scontents_stop #3
+  }
+  { \tl_if_empty:nF {#2} { \tl_set:Nn #3 {#1} } }
+\bool_if:NTF \contextlmtxmode
+  {
+    \cs_new_protected:Npn \__scontents_iow_open:Nn #1#2
+      {
+        \pushoverloadmode
+        \iow_open:Nn #1 {#2}
+        \popoverloadmode
+      }
+  }
+  { \cs_new_eq:NN \__scontents_iow_open:Nn \iow_open:Nn }
 \tl_new:N \g__scontents_end_verbatimsc_tl
 \tl_gset_rescan:Nnn \g__scontents_end_verbatimsc_tl
   {
@@ -136,6 +219,7 @@
         \group_end:
       }
   }
+\cs_generate_variant:Nn \__scontents_define_env:nnn { ooo }
 \NewDocumentCommand \newenvsc { m O{} }
   {
     \cs_if_exist:cTF { start #1 }
@@ -149,6 +233,8 @@
       { \seq_map_function:NN \l_char_special_seq \do }
   }
 \definetyping[verbatimsc]
+\prg_new_conditional:Npnn \__scontents_if_verbatimsc: { TF }
+  { \prg_return_true: }
 \char_set_catcode_letter:N \!
 \ExplSyntaxOff
 \endinput

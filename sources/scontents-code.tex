@@ -27,7 +27,7 @@
 %%                                 t-scontents.mkiv and
 %%                                 scontents-code.tex.
 %% 
-\def\ScontentsCoreFileDate{2026-11-24}%
+\def\ScontentsCoreFileDate{2026-11-26}%
 \begingroup
   \catcode32=10
   \endlinechar=32
@@ -71,6 +71,11 @@
   \fi
 \next
 \cs_generate_variant:Nn \tl_replace_all:Nnn { NeV }
+\cs_generate_variant:Nn \str_remove_all:Nn { NV }
+\cs_generate_variant:Nn \seq_use:Nn { NV }
+\cs_generate_variant:Nn \prop_gput:Nnn { cen, ceV }
+\cs_generate_variant:Nn \prop_get:NnN { ceN }
+\cs_generate_variant:Nn \prop_item:Nn { ce }
 \cs_generate_variant:Nn \__scontents_retokenize:n { V, e }
 \quark_new:N \q__scontents_stop
 \quark_new:N \q__scontents_mark
@@ -84,7 +89,6 @@
 \bool_new:N \l__scontents_writable_bool
 \bool_set_true:N \l__scontents_storing_bool
 \seq_new:N \l__scontents_seq_item_seq
-\seq_new:c { g__scontents_name_sc!internal_seq }
 \tl_new:N \g__scontents_last_stored_tl
 \str_const:Ne \c__scontents_hidden_space_str
   { \c_percent_str \c_circumflex_str \c_circumflex_str A scheol \c_percent_str }
@@ -162,8 +166,11 @@
     print-all .default:n        = true,
     store-all .meta:n           = { store-env = #1, store-cmd = #1 },
     store-all .value_required:n = true,
+    expand    .bool_set:N       = \l__scontents_expand_bool,
+    expand    .initial:n        = false,
+    expand    .default:n        = true,
     debug-var .bool_set:N       = \l__scontents_debug_var_bool,
-    debug-var .initial:n        = true,
+    debug-var .initial:n        = false,
     debug-var .default:n        = true,
     remember  .code:n           = { \__scontents_remember:n {#1} },
     remember  .value_required:n = true,
@@ -211,21 +218,23 @@
     Check~that~you~have~spelled~the~key~name~correctly.
   }
 \cs_new_protected:Npn \__scontents_unknown_keys_env:n #1
-  { \exp_args:NV \__scontents_unknown_keys_env:nn \l_keys_key_str {#1} }
+  { \__scontents_unknown_keys_env:Vn \l_keys_key_str {#1} }
 \cs_new_protected:Npn \__scontents_unknown_keys_env:nn #1 #2
   {
     \tl_if_blank:nTF {#2}
       { \msg_error:nnn { scontents } { env-key-unknown } {#1} }
       { \msg_error:nnnn { scontents } { env-key-value-unknown } {#1} {#2} }
   }
+\cs_generate_variant:Nn \__scontents_unknown_keys_env:nn { V }
 \cs_new_protected:Npn \__scontents_unknown_keys_cmd:n #1
-  { \exp_args:NV \__scontents_unknown_keys_cmd:nn \l_keys_key_str {#1} }
+  { \__scontents_unknown_keys_cmd:Vn \l_keys_key_str {#1} }
 \cs_new_protected:Npn \__scontents_unknown_keys_cmd:nn #1 #2
   {
     \tl_if_blank:nTF {#2}
       { \msg_error:nnn { scontents } { cmd-key-unknown } {#1} }
       { \msg_error:nnnn { scontents } { cmd-key-value-unknown } {#1} {#2} }
   }
+\cs_generate_variant:Nn \__scontents_unknown_keys_cmd:nn { V }
 \cs_new:Npn \__scontents_use_delimit_by_s_stop:nw #1 \s__scontents_stop {#1}
 \cs_new:Npn \__scontents_use_i_delimit_by_s_stop:nw #1 #2 \s__scontents_stop {#1}
 \cs_new:Npn \__scontents_use_none_delimit_by_s_stop:w #1 \s__scontents_stop { }
@@ -285,7 +294,7 @@
   {
     \__scontents_file_if_writable:nT {#1}
       {
-        \iow_open:Nn \l__scontents_file_write_iow {#1}
+        \__scontents_iow_open:Nn \l__scontents_file_write_iow {#1}
         \iow_now:Nn  \l__scontents_file_write_iow {#2}
         \iow_close:N \l__scontents_file_write_iow
       }
@@ -362,12 +371,49 @@
           }
       }
   }
-\cs_new_protected:Npn \__scontents_append_contents:nn #1 #2
+\cs_new_protected:Npn \__scontents_store_new:n #1
   {
-    \seq_if_exist:cF { g__scontents_name_#1_seq }
-      { \seq_new:c { g__scontents_name_#1_seq } }
-    \seq_gput_right:cn { g__scontents_name_#1_seq } {#2}
+    \prop_new_linked:c { g__scontents_#1_prop }
+    \int_new:c { g__scontents_#1_int }
   }
+\prg_new_conditional:Npnn \__scontents_store_if_exist:n #1 { p, T, F, TF }
+  {
+    \prop_if_exist:cTF { g__scontents_#1_prop }
+      { \prg_return_true: }
+      { \prg_return_false: }
+  }
+\cs_new_protected:Npn \__scontents_store_gput:nn #1 #2
+  {
+    \__scontents_store_if_exist:nF {#1} { \__scontents_store_new:n {#1} }
+    \int_gincr:c { g__scontents_#1_int }
+    \prop_gput:cen { g__scontents_#1_prop } { \int_use:c { g__scontents_#1_int } } {#2}
+  }
+\cs_generate_variant:Nn \__scontents_store_gput:nn { eV, ne }
+\cs_new:Npn \__scontents_store_count:n #1 { \int_use:c { g__scontents_#1_int } }
+\cs_new:Npn \__scontents_store_item:nn #1 #2
+  { \__scontents_store_item_aux:nf {#1} { \int_eval:n {#2} } }
+\cs_new:Npn \__scontents_store_item_aux:nn #1 #2
+  {
+    \int_compare:nNnTF {#2} < { 0 }
+      {
+        \prop_item:ce { g__scontents_#1_prop }
+          { \int_eval:n { \int_use:c { g__scontents_#1_int } + 1 + #2 } }
+      }
+      { \prop_item:cn { g__scontents_#1_prop } {#2} }
+  }
+\cs_generate_variant:Nn \__scontents_store_item_aux:nn { nf }
+\cs_new_protected:Npn \__scontents_store_gclear:n #1
+  {
+    \__scontents_store_if_exist:nTF {#1}
+      {
+        \prop_gclear:c { g__scontents_#1_prop }
+        \int_gzero:c { g__scontents_#1_int }
+      }
+      { \__scontents_store_new:n {#1} }
+  }
+\__scontents_store_new:n { name_sc!internal }
+\cs_new_protected:Npn \__scontents_append_contents:nn #1 #2
+  { \__scontents_store_gput:nn { name_#1 } {#2} }
 \cs_generate_variant:Nn \__scontents_append_contents:nn { Ve }
 \cs_new_protected:Npn \__scontents_store_to_seq:NN #1 #2
   {
@@ -384,6 +430,12 @@
         \tl_if_blank:VTF #2
           { \msg_error:nn { scontents } { empty-store-name } }
           {
+            \bool_if:NT \l__scontents_expand_bool
+              {
+                \bool_if:NTF \l__scontents_verb_content_bool
+                  { \__scontents_expand_verb:N #1 }
+                  { \__scontents_expand_tl:N #1 }
+              }
             \bool_if:NF \l__scontents_forced_eol_bool
               { \tl_put_right:Ne #1 { \c__scontents_hidden_space_str } }
             \__scontents_store_to_seq:NN #1 #2
@@ -394,8 +446,8 @@
 \prg_new_conditional:Npnn \__scontents_seq_if_exist:n #1 { TF }
   {
     \bool_lazy_or:nnTF
-      { \seq_if_exist_p:c { g__scontents_name_#1_seq } }
-      { \seq_if_exist_p:c { g__scontents_prev_#1_seq } }
+      { \__scontents_store_if_exist_p:n { name_#1 } }
+      { \__scontents_store_if_exist_p:n { prev_#1 } }
       { \prg_return_true: }
       { \prg_return_false: }
   }
@@ -403,33 +455,32 @@
   {
     \int_max:nn
       {
-        \seq_if_exist:cTF { g__scontents_name_#1_seq }
-          { \seq_count:c { g__scontents_name_#1_seq } }
+        \__scontents_store_if_exist:nTF { name_#1 }
+          { \__scontents_store_count:n { name_#1 } }
           { 0 }
       }
       {
-        \seq_if_exist:cTF { g__scontents_prev_#1_seq }
-          { \seq_count:c { g__scontents_prev_#1_seq } }
+        \__scontents_store_if_exist:nTF { prev_#1 }
+          { \__scontents_store_count:n { prev_#1 } }
           { 0 }
       }
   }
 \cs_new:Npn \__scontents_seq_item:nn #1 #2
   {
     \bool_lazy_and:nnTF
-      { \seq_if_exist_p:c { g__scontents_prev_#1_seq } }
+      { \__scontents_store_if_exist_p:n { prev_#1 } }
       {
         \int_compare_p:nNn { \int_abs:n {#2} }
-          < { \seq_count:c { g__scontents_prev_#1_seq } + 1 }
+          < { \__scontents_store_count:n { prev_#1 } + 1 }
       }
-      { \seq_item:cn { g__scontents_prev_#1_seq } {#2} }
-      { \seq_item:cn { g__scontents_name_#1_seq } {#2} }
+      { \__scontents_store_item:nn { prev_#1 } {#2} }
+      { \__scontents_store_item:nn { name_#1 } {#2} }
   }
 \cs_new:Npn \__scontents_getfrom_seq:Nn #1 #2
   {
     \__scontents_seq_if_exist:nTF {#2}
       {
-        \exp_args:Nf \__scontents_getfrom_seq:nNn
-          { \__scontents_seq_count:n {#2} } #1 {#2}
+        \__scontents_getfrom_seq:fNn { \__scontents_seq_count:n {#2} } #1 {#2}
       }
       { \msg_expandable_error:nnn { scontents } { undefined-storage } {#2} }
   }
@@ -439,16 +490,13 @@
   }
 \cs_new:Npn \__scontents_getfrom_seq_aux:nnn #1 #2 #3
   {
-    \exp_args:Nnf \use:n
-      { \__scontents_getfrom_seq:nnn {#1} } { \int_eval:n {#3} } {#2}
+    \__scontents_getfrom_seq:nfn {#1} { \int_eval:n {#3} } {#2}
   }
 \cs_new:Npn \__scontents_getfrom_seq:nn #1 #2
   {
     \__scontents_seq_if_exist:nTF {#2}
       {
-        \exp_args:Nf \__scontents_getfrom_seq:nnn
-          { \__scontents_seq_count:n {#2} }
-          {#1} {#2}
+        \__scontents_getfrom_seq:fnn { \__scontents_seq_count:n {#2} } {#1} {#2}
       }
       { \msg_expandable_error:nnn { scontents } { undefined-storage } {#2} }
   }
@@ -463,11 +511,13 @@
       }
       { \__scontents_seq_item:nn {#3} {#2} }
   }
+\cs_generate_variant:Nn \__scontents_getfrom_seq:nNn { f }
+\cs_generate_variant:Nn \__scontents_getfrom_seq:nnn { f, nf }
 \cs_new_protected:Npn \__scontents_lastfrom_seq:n #1
   {
     \tl_gset:Ne \g__scontents_last_stored_tl
       {
-        \seq_item:cn { g__scontents_name_#1_seq } { -1 }
+        \__scontents_store_item:nn { name_#1 } { -1 }
       }
     \group_insert_after:N \__scontents_retokenize:V
     \group_insert_after:N \g__scontents_last_stored_tl
@@ -499,7 +549,7 @@
 \prg_new_protected_conditional:Npnn \__scontents_if_pending:nn #1 #2 { T, F }
   {
     \bool_lazy_and:nnTF
-      { \seq_if_exist_p:c { g__scontents_prev_#1_seq } }
+      { \__scontents_store_if_exist_p:n { prev_#1 } }
       { \int_compare_p:nNn { \int_abs:n {#2} } > { \__scontents_seq_count:n {#1} } }
       {
         \bool_gset_true:N \g__scontents_remember_pending_bool
@@ -512,7 +562,6 @@
 \tl_new:N  \l__scontents_processed_body_lines_tl
 \tl_new:N  \l__scontents_environment_keys_tl
 \int_new:N \l__scontents_nesting_env_int
-\int_new:N \l__scontents_nesting_aux_int
 \cs_new:Npn \__scontents_env_begin_str:n #1
   {
     \__scontents_format_case:nnn
@@ -526,16 +575,6 @@
       { \c_backslash_str end \c_left_brace_str #1 \c_right_brace_str }
       { \c_backslash_str end #1 }
       { \c_backslash_str stop #1 }
-  }
-\msg_new:nnnn { scontents } { junk-after-begin }
-  {
-    Junk~characters~#1~\msg_line_context: :
-    \\ \\
-    #2
-  }
-  {
-    Nothing~is~allowed~after~the~start~of~the~environment~on~the~same~
-    line.~These~characters~are~ignored.
   }
 \msg_new:nnnn { scontents } { env-already-defined }
   { Environment~'#1'~already~defined! }
@@ -551,11 +590,6 @@
     Rescanning~text~'#1'~after~\__scontents_env_end_str:n {#2}~
     \msg_line_context:.
   }
-\msg_new:nnn { scontents } { multiple-begin }
-  {
-    Multiple~\__scontents_env_begin_str:n { \l__scontents_env_name_tl }~
-    \msg_line_context:.
-  }
 \keys_define:nn { scontents / scontents }
   {
     write-env .code:n           = { \__scontents_set_write_store:n {#1} },
@@ -567,6 +601,8 @@
     store-env .meta:nn          = { scontents } { store-env = #1 },
     force-eol .meta:nn          = { scontents } { force-eol = #1 },
     force-eol .default:n        = true,
+    expand    .meta:nn          = { scontents } { expand = #1 },
+    expand    .default:n        = true,
     overwrite .meta:nn          = { scontents } { overwrite = #1 },
     overwrite .default:n        = true,
     unknown   .code:n           = { \__scontents_unknown_keys_env:n {#1} },
@@ -580,37 +616,119 @@
     \tl_set:Nn \l__scontents_environment_keys_tl {#1}
     \__scontents_normalise_line_ends:N \l__scontents_environment_keys_tl
     \keys_set:nV { scontents / scontents } \l__scontents_environment_keys_tl
-    \__scontents_start_after_option:w
+    \__scontents_start_body:
   }
+\cs_new_eq:NN \l__scontents_tmp_token \scan_stop:
+\tl_new:N   \l__scontents_leading_tl
+\tl_new:N   \l__scontents_first_token_tl
+\tl_new:N   \l__scontents_body_tmp_tl
+\str_new:N  \l__scontents_rest_str
+\bool_new:N \l__scontents_options_allowed_bool
+\int_new:N  \l__scontents_space_catcode_int
+\int_new:N  \l__scontents_tab_catcode_int
+\int_new:N  \l__scontents_percent_catcode_int
+\tl_const:Ne \c__scontents_other_space_tl { \char_generate:nn { 32 } { 12 } }
 \group_begin:
   \char_set_catcode_active:N \^^I
   \char_set_catcode_active:N \^^L
   \char_set_catcode_active:N \^^M
   \cs_new_protected:Npn \__scontents_normalise_line_ends:N #1
     { \tl_replace_all:Nnn #1 { ^^M } { ~ } }
-  \cs_new_protected:Npn \__scontents_start_environment:w #1 ^^M
-    { \tl_trim_spaces_apply:nN {#1} \__scontents_start_environment:n }
-  \cs_new_protected:Npn \__scontents_start_environment:n #1
+  \cs_new_protected:Nn \__scontents_start_body:
     {
-      \tl_if_head_is_N_type:nTF {#1}
-        {
-          \str_if_eq:eeTF { \tl_head:n {#1} } { [ }
-            { \__scontents_grab_opt_arg:w #1 ^^M }
-            { \__scontents_check_line_process:nn { } {#1} }
-        }
-        { \__scontents_check_line_process:nn { } {#1} }
+      \bool_set_false:N \l__scontents_options_allowed_bool
+      \__scontents_peek_start:
     }
-  \cs_new_protected:Npn \__scontents_start_after_option:w #1 ^^M
-    { \__scontents_check_line_process:nn { [...] } {#1} }
-  \cs_new_protected:Npn \__scontents_check_line_process:nn #1 #2
+  \cs_new_protected:Nn \__scontents_peek_start:
     {
-      \tl_if_blank:nF {#2}
+      \tl_clear:N \l__scontents_leading_tl
+      \char_set_catcode_other:n { 32 }
+      \char_set_catcode_other:n { 9 }
+      \char_set_catcode_other:N \%
+      \__scontents_peek_next:
+    }
+  \cs_new_protected:Nn \__scontents_peek_next:
+    {
+      \peek_N_type:TF
+        { \__scontents_peek_token:N }
         {
-          \msg_error:nnee { scontents } { junk-after-begin }
-            { after~ \__scontents_env_begin_str:n { \l__scontents_env_name_tl } #1 } {#2}
+          \peek_catcode:NTF \c_space_token
+            { \peek_remove_spaces:n { \__scontents_peek_next: } }
+            {
+              \peek_catcode:NTF \c_group_begin_token
+                { \__scontents_start_body_brace:n { \c_left_brace_str } }
+                { \__scontents_start_body_brace:n { \c_right_brace_str } }
+            }
         }
+    }
+  \cs_new_protected:Npn \__scontents_peek_token:N #1
+    {
+      \bool_lazy_or:nnTF
+        { \str_if_eq_p:nn {#1} { ~ } }
+        { \str_if_eq_p:nn {#1} { ^^I } }
+        {
+          \tl_put_right:Nn \l__scontents_leading_tl {#1}
+          \__scontents_peek_next:
+        }
+        { \__scontents_first_token:N #1 }
+    }
+  \cs_new_protected:Npn \__scontents_first_token:N #1
+    {
+      \str_if_eq:nnTF {#1} { ^^M }
+        { \__scontents_body_start:n { ^^M } }
+        {
+          \bool_if:NTF \l__scontents_options_allowed_bool
+            {
+              \str_if_eq:nnTF {#1} { [ }
+                {
+                  \__scontents_restore_catcodes:
+                  \__scontents_grab_opt_arg:w #1
+                }
+                {
+                  \str_if_eq:eeTF { \tl_to_str:n {#1} } { \c_percent_str }
+                    { \__scontents_skip_comment: }
+                    { \__scontents_first_token_str:N #1 }
+                }
+            }
+            { \__scontents_first_token_str:N #1 }
+        }
+    }
+  \cs_new_protected:Npn \__scontents_first_token_str:N #1
+    {
+      \tl_set:Ne \l__scontents_first_token_tl
+        { \tl_to_str:N \l__scontents_leading_tl \token_to_str:N #1 }
+      \__scontents_body_start:V \l__scontents_first_token_tl
+    }
+  \cs_new_protected:Nn \__scontents_restore_catcodes:
+    {
+      \char_set_catcode:nn { 32 } { \l__scontents_space_catcode_int }
+      \char_set_catcode:nn { 9 } { \l__scontents_tab_catcode_int }
+      \char_set_catcode:nn { 37 } { \l__scontents_percent_catcode_int }
+    }
+  \cs_new_protected:Nn \__scontents_skip_comment:
+    {
+      \group_begin:
+        \seq_map_function:NN \l_char_special_seq \char_set_catcode_other:N
+        \__scontents_skip_comment:w
+    }
+  \cs_new_protected:Npn \__scontents_skip_comment:w #1 ^^M
+    {
+      \group_end:
+      \__scontents_peek_start:
+    }
+  \cs_new_protected:Npn \__scontents_start_body_brace:n #1
+    {
+      \tl_set:Ne \l__scontents_first_token_tl
+        { \tl_to_str:N \l__scontents_leading_tl #1 }
+      \tex_afterassignment:D \__scontents_body_start_brace:
+      \tex_let:D \l__scontents_tmp_token =~
+    }
+  \cs_new_protected:Npn \__scontents_body_start_brace:
+    { \__scontents_body_start:V \l__scontents_first_token_tl }
+  \cs_new_protected:Npn \__scontents_body_start:n #1
+    {
       \__scontents_make_control_chars_active:
-      \__scontents_file_tl_write_start:V \l__scontents_file_name_tl
+      \__scontents_file_tl_write_start:Vn \l__scontents_file_name_tl {#1}
     }
   \cs_new_protected:Nn \__scontents_stop_environment:
     {
@@ -623,74 +741,149 @@
             { \l__scontents_env_name_tl }
         }
     }
-  \cs_new_protected:Npn \__scontents_file_tl_write_start:n #1
+  \cs_new_protected:Npn \__scontents_file_tl_write_start:nn #1 #2
     {
       \group_begin:
         \__scontents_file_if_writable:nTF {#1}
           {
             \bool_set_true:N \l__scontents_writable_bool
-            \iow_open:Nn \l__scontents_file_write_iow {#1}
+            \__scontents_iow_open:Nn \l__scontents_file_write_iow {#1}
           }
           { \bool_set_false:N \l__scontents_writable_bool }
         \tl_clear:N \l__scontents_save_every_body_lines_tl
         \seq_map_function:NN \l_char_special_seq \char_set_catcode_other:N
         \int_step_function:nnnN { 128 } { 1 } { 255 } \char_set_catcode_letter:n
-        \cs_set_protected:Npe \__scontents_ret:w ##1 ^^M
-          {
-            \exp_not:N \__scontents_verb_processor_iterate:w
-            ##1 \c__scontents_end_env_tl
-                \c__scontents_end_env_tl
-                \exp_not:N \q__scontents_stop
-          }
+        \cs_set_protected:Npn \__scontents_ret:w { }
         \__scontents_make_control_chars_active:
-        \__scontents_ret:w
+        \tl_if_eq:nnTF {#2} { ^^M }
+          { \tl_set:Nn \l__scontents_first_token_tl { ^^M } }
+          { \tl_set_rescan:Nnn \l__scontents_first_token_tl { } {#2} }
+        \exp_after:w \__scontents_grab_body:w \l__scontents_first_token_tl
     }
   \cs_new_protected:Nn \__scontents_setup_verb_processor:
     {
       \use:e
         {
-          \cs_set_protected:Npn \exp_not:N \__scontents_verb_processor_iterate:w
+          \cs_set_protected:Npn \exp_not:N \__scontents_grab_body:w
             ##1 \c__scontents_end_env_tl
-            ##2 \c__scontents_end_env_tl
-            ##3 \exp_not:N \q__scontents_stop
-        }   { \__scontents_verb_processor_iterate:nnn {##1} {##2} {##3} }
+        }   { \__scontents_grab_body:n {##1} }
     }
-  \cs_new_protected:Npn \__scontents_verb_processor_iterate:nnn #1 #2 #3
+  \cs_new_protected:Npn \__scontents_grab_body:n #1
     {
-      \tl_if_blank:nTF {#3}
+      \__scontents_analyse_nesting_format:n {#1}
+      \tl_put_right:Nn \l__scontents_save_every_body_lines_tl {#1}
+      \__scontents_if_nested:TF
         {
-          \__scontents_analyse_nesting:n {#1}
-          \__scontents_verb_processor_output:n {#1}
+          \__scontents_nesting_decr:
+          \tl_put_right:Ne \l__scontents_save_every_body_lines_tl
+            { \c__scontents_end_env_tl }
+          \__scontents_grab_body:w
         }
+        { \__scontents_grab_end_line:w }
+    }
+  \cs_new_protected:Npn \__scontents_grab_end_line:w #1 ^^M
+    {
+      \__scontents_body_finish:
+      \str_set:Nn \l__scontents_rest_str {#1}
+      \str_remove_all:NV \l__scontents_rest_str
+        \c__scontents_hidden_space_str
+      \cs_set_protected:Npe \__scontents_ret:w
         {
-          \__scontents_if_nested:TF
+          \__scontents_env_end_function:
+          \bool_lazy_or:nnF
+            { \tl_if_blank_p:n {#1} }
+            { \str_if_eq_p:ee {#1} { \c_percent_str } }
             {
-              \__scontents_nesting_decr:
-              \__scontents_verb_processor_output:e
-                { \exp_not:n {#1} \c__scontents_end_env_tl \exp_not:n {#2} }
-            }
-            {
-              \tl_if_blank:nF {#1}
-                { \__scontents_verb_processor_output:n {#1} }
-              \cs_set_protected:Npe \__scontents_ret:w
+              \tl_if_blank:VF \l__scontents_rest_str
                 {
-                  \__scontents_env_end_function:
-                  \bool_lazy_or:nnF
-                    { \tl_if_blank_p:n {#2} }
-                    { \str_if_eq_p:ee {#2} { \c_percent_str } }
-                    {
-                      \str_if_eq:VnF \c__scontents_hidden_space_str {#2}
-                        {
-                          \msg_warning:nnnn { scontents } { rescanning-text }
-                            {#2} { \tl_use:N \l__scontents_env_name_tl }
-                        }
-                      \__scontents_retokenize:n {#2}
-                    }
+                  \msg_warning:nnnn { scontents } { rescanning-text }
+                    { \l__scontents_rest_str }
+                    { \tl_use:N \l__scontents_env_name_tl }
                 }
-              \char_set_active_eq:NN ^^M \__scontents_ret:w
+              \__scontents_retokenize:n {#1}
             }
         }
-      ^^M
+      \__scontents_ret:w
+    }
+  \cs_new_protected:Nn \__scontents_body_finish:
+    {
+      \__scontents_body_trim_end:
+      \__scontents_body_remove_first_eol:
+      \tl_replace_all:Nnn \l__scontents_save_every_body_lines_tl { ^^M } { ^^J }
+      \bool_lazy_and:nnT
+        { \l__scontents_writable_bool }
+        { ! \tl_if_empty_p:N \l__scontents_save_every_body_lines_tl }
+        {
+          \group_begin:
+            \int_set:Nn \tex_newlinechar:D { `\^^J }
+            \iow_now:NV \l__scontents_file_write_iow
+              \l__scontents_save_every_body_lines_tl
+          \group_end:
+        }
+    }
+  \cs_new_protected:Nn \__scontents_body_trim_end:
+    {
+      \tl_set_eq:NN \l__scontents_body_tmp_tl \l__scontents_save_every_body_lines_tl
+      \__scontents_body_trim_blanks:
+      \exp_after:w \__scontents_body_trim_eol:w
+        \l__scontents_save_every_body_lines_tl
+        \q__scontents_mark ^^M \q__scontents_mark \q__scontents_stop
+    }
+  \cs_new_protected:Nn \__scontents_body_trim_blanks:
+    {
+      \use:e
+        {
+          \exp_not:N \__scontents_body_trim_space:w
+          \exp_not:V \l__scontents_save_every_body_lines_tl
+          \exp_not:N \q__scontents_mark \c__scontents_other_space_tl
+          \exp_not:N \q__scontents_mark \exp_not:N \q__scontents_stop
+        }
+    }
+  \use:e
+    {
+      \cs_new_protected:Npn \exp_not:N \__scontents_body_trim_space:w
+        #1 \c__scontents_other_space_tl \exp_not:N \q__scontents_mark #2
+        \exp_not:N \q__scontents_stop
+    }
+    {
+      \tl_if_empty:nTF {#2}
+        {
+          \exp_after:w \__scontents_body_trim_tab:w
+            \l__scontents_save_every_body_lines_tl
+            \q__scontents_mark ^^I \q__scontents_mark \q__scontents_stop
+        }
+        {
+          \tl_set:Nn \l__scontents_save_every_body_lines_tl {#1}
+          \__scontents_body_trim_blanks:
+        }
+    }
+  \cs_new_protected:Npn \__scontents_body_trim_tab:w
+    #1 ^^I \q__scontents_mark #2 \q__scontents_stop
+    {
+      \tl_if_empty:nF {#2}
+        {
+          \tl_set:Nn \l__scontents_save_every_body_lines_tl {#1}
+          \__scontents_body_trim_blanks:
+        }
+    }
+  \cs_new_protected:Npn \__scontents_body_trim_eol:w
+    #1 ^^M \q__scontents_mark #2 \q__scontents_stop
+    {
+      \tl_if_empty:nTF {#2}
+        {
+          \tl_set_eq:NN \l__scontents_save_every_body_lines_tl
+            \l__scontents_body_tmp_tl
+        }
+        { \tl_set:Nn \l__scontents_save_every_body_lines_tl {#1} }
+    }
+  \cs_new_protected:Nn \__scontents_body_remove_first_eol:
+    {
+      \str_if_eq:eeT
+        { \tl_head:N \l__scontents_save_every_body_lines_tl } { \exp_not:N ^^M }
+        {
+          \tl_set:Ne \l__scontents_save_every_body_lines_tl
+            { \tl_tail:N \l__scontents_save_every_body_lines_tl }
+        }
     }
   \cs_new:Nn \__scontents_env_end_function:
     {
@@ -714,51 +907,16 @@
           \bool_if:NT \l__scontents_storing_bool
             {
               \tl_set:Nn \exp_not:N #1
-                {
-                  \exp_args:NV
-                    \__scontents_remove_leading_nl:n \l__scontents_save_every_body_lines_tl
-                }
+                { \exp_not:V \l__scontents_save_every_body_lines_tl }
             }
         }
     }
-  \cs_new:Npn \__scontents_remove_leading_nl:n #1
-    {
-      \tl_if_head_is_N_type:nTF {#1}
-        {
-          \exp_args:Nf
-            \__scontents_remove_leading_nl:nn
-              { \tl_head:n {#1} } {#1}
-        }
-        { \exp_not:n {#1} }
-    }
-  \cs_new:Npn \__scontents_remove_leading_nl:nn #1 #2
-    {
-      \token_if_eq_meaning:NNTF ^^J #1
-        { \exp_not:o { \__scontents_remove_leading_nl:w #2 } }
-        { \exp_not:n {#2} }
-    }
-  \cs_new:Npn \__scontents_remove_leading_nl:w ^^J { }
-  \cs_new_protected:Npn \__scontents_verb_processor_output:n #1
-    {
-      \bool_if:NT \l__scontents_writable_bool
-        { \iow_now:Nn \l__scontents_file_write_iow {#1} }
-      \bool_if:NT \l__scontents_storing_bool
-        { \tl_put_right:Nn \l__scontents_save_every_body_lines_tl { ^^J #1 } }
-    }
 \group_end:
-\cs_generate_variant:Nn \__scontents_verb_processor_output:n { e }
-\cs_generate_variant:Nn \__scontents_file_tl_write_start:n { V }
-\cs_new_protected:Npn \__scontents_analyse_nesting:n #1
-  {
-    \int_zero:N \l__scontents_nesting_aux_int
-    \__scontents_analyse_nesting_format:n {#1}
-    \int_compare:nNnT { \l__scontents_nesting_aux_int } > { 1 }
-      { \msg_warning:nn { scontents } { multiple-begin } }
-  }
+\cs_generate_variant:Nn \__scontents_body_start:n { V }
+\cs_generate_variant:Nn \__scontents_file_tl_write_start:nn { Vn }
 \cs_new_protected:Nn \__scontents_nesting_incr:
   {
     \int_incr:N \l__scontents_nesting_env_int
-    \int_incr:N \l__scontents_nesting_aux_int
   }
 \cs_new_protected:Nn \__scontents_nesting_decr:
   {
@@ -823,8 +981,11 @@
   }
 \cs_new_protected:Npn \__scontents_generic_begin:
   {
+    \__scontents_save_catcodes:
     \char_set_catcode_active:N \^^M
-    \__scontents_start_environment:w
+    \bool_set_true:N \l__scontents_verb_content_bool
+    \bool_set_true:N \l__scontents_options_allowed_bool
+    \__scontents_peek_start:
   }
 \cs_new_protected:Npn \__scontents_generic_end:
   {
@@ -846,7 +1007,7 @@
       }
     \cs_new_protected:cpn { __scontents_#1_end: }
       { \__scontents_generic_end: }
-    \exp_args:Nooo \__scontents_define_env:nnn
+    \__scontents_define_env:ooo
       { \tl_to_str:n {#1} }
       { \cs:w __scontents_#1_begin: \cs_end: }
       { \cs:w __scontents_#1_end: \cs_end: }
@@ -876,6 +1037,8 @@
     store-cmd .meta:nn          = { scontents } { store-cmd = #1 },
     force-eol .meta:nn          = { scontents } { force-eol = #1 },
     force-eol .default:n        = true,
+    expand    .meta:nn          = { scontents } { expand = #1 },
+    expand    .default:n        = true,
     overwrite .meta:nn          = { scontents } { overwrite = #1 },
     overwrite .default:n        = true,
     unknown   .code:n           = { \__scontents_unknown_keys_cmd:n {#1} },
@@ -885,14 +1048,28 @@
     \__scontents_bsphack:
     \group_begin:
       \keys_set:nn { scontents / Scontents } {#2}
+      \__scontents_save_catcodes:
+      \bool_set_eq:NN \l__scontents_verb_content_bool #1
       \char_set_catcode_active:n { 9 }
       \bool_if:NTF #1
         { \__scontents_Scontents_verb_arg:w }
         { \__scontents_Scontents_norm_arg:n }
   }
+\group_begin:
+  \char_set_lccode:nn { `\* } { 32 }
+  \char_set_catcode_active:N \*
+  \tex_lowercase:D
+    {
+      \group_end:
+      \cs_new_protected:Npn \__scontents_Scontents_other_spaces:N #1
+        {
+          \tl_replace_all:NnV #1 { * } \c__scontents_other_space_tl
+        }
+    }
 \NewDocumentCommand \__scontents_Scontents_verb_arg:w { +v }
   {
     \tl_set:Nn \l__scontents_Scontents_arg_tl {#1}
+    \__scontents_Scontents_other_spaces:N \l__scontents_Scontents_arg_tl
     \__scontents_format_case:nnn
       {
         \cs_if_exist:NT \obeyedline
@@ -1035,8 +1212,7 @@
         \__scontents_foreach_add_body:n
       \tl_gset:Ne \g__scontents_foreach_exec_tl
         {
-          \exp_args:NNV \seq_use:Nn
-            \l__scontents_foreach_print_seq \l__scontents_foreach_sep_tl
+          \seq_use:NV \l__scontents_foreach_print_seq \l__scontents_foreach_sep_tl
         }
     \group_end:
     \exp_after:w \tl_gclear:N
@@ -1088,7 +1264,7 @@
     unknown   .code:n           = { \__scontents_parse_type_meaning_key:n {#1} },
   }
 \cs_new_protected:Npn \__scontents_parse_type_meaning_key:n #1
-  { \exp_args:NV \__scontents_parse_type_meaning_key:nn \l_keys_key_str {#1} }
+  { \__scontents_parse_type_meaning_key:Vn \l_keys_key_str {#1} }
 \cs_new_protected:Npn \__scontents_parse_type_meaning_key:nn #1 #2
   {
     \tl_if_blank:nTF {#2}
@@ -1144,7 +1320,7 @@
                   {
                     \__scontents_if_digits:VTF \l__scontents_range_stop_tl
                       {
-                        \exp_args:NVV \__scontents_range_step:nn
+                        \__scontents_range_step:VV
                           \l__scontents_range_start_tl \l__scontents_range_stop_tl
                       }
                       { #3 {#1} }
@@ -1168,6 +1344,8 @@
       {#2}
       { \seq_put_right:Nn \l__scontents_seq_item_seq {##1} }
   }
+\cs_generate_variant:Nn \__scontents_parse_type_meaning_key:nn { V }
+\cs_generate_variant:Nn \__scontents_range_step:nn { VV }
 \bool_new:N \l__scontents_pending_bool
 \cs_new_protected:Npn \__scontents_typemeaning_setup:nn #1 #2
   {
@@ -1185,6 +1363,12 @@
       }
   }
 \tl_new:N \l__scontents_typestored_arg_tl
+\msg_new:nnnn { scontents } { verbatimsc-undefined }
+  { Environment~'verbatimsc'~undefined~\msg_line_context:. }
+  {
+    The~key~'verb-env'~is~false,~so~the~environment~'verbatimsc'~must~
+    be~defined~in~the~preamble.~Nothing~is~printed~in~verbatim~style.
+  }
 \msg_new:nnnn { scontents } { empty-variable }
   { Blank~stored~content~to~print~\msg_line_context:. }
   {
@@ -1225,6 +1409,12 @@
 \group_begin:
   \char_set_catcode_active:N \^^M
   \cs_new_protected:Npn \__scontents_typestored:N #1
+    {
+      \__scontents_if_verbatimsc:TF
+        { \__scontents_typestored_aux:N #1 }
+        { \msg_error:nn { scontents } { verbatimsc-undefined } }
+    }
+  \cs_new_protected:Npn \__scontents_typestored_aux:N #1
     {
       \tl_if_blank:VT #1
         { \msg_error:nn { scontents } { empty-variable } }
@@ -1326,6 +1516,7 @@
   {
     \msg_error:nn { scontents } { mergesc-missing-key }
   }
+\cs_generate_variant:Nn \__scontents_mergesc_cmd:nn { e }
 \cs_new_protected:Npn \__scontents_mergesc_code:nn #1 #2
   {
     \group_begin:
@@ -1335,11 +1526,11 @@
           \keys_set_known:nnN { scontents / mergesc } {#1}
             \l__scontents_mergesc_keys_tl
         }
-      \seq_gclear:c { g__scontents_name_sc!internal_seq }
+      \__scontents_store_gclear:n { name_sc!internal }
       \__scontents_mergesc_parse_list:n {#2}
-      \seq_if_empty:cF { g__scontents_name_sc!internal_seq }
+      \int_compare:nNnF { \__scontents_store_count:n { name_sc!internal } } = { 0 }
         {
-          \exp_args:Ne \__scontents_mergesc_cmd:nn
+          \__scontents_mergesc_cmd:en
             { 1-end, \exp_not:V \l__scontents_mergesc_keys_tl } { sc!internal }
         }
     \group_end:
@@ -1347,11 +1538,13 @@
 \cs_new_protected:Npn \__scontents_mergesc_parse_list:n #1
   {
     \clist_map_inline:nn {#1} { \__scontents_mergesc_parse_item:n {##1} }
-    \seq_if_empty:cF { g__scontents_name_sc!internal_seq }
+    \int_compare:nNnF { \__scontents_store_count:n { name_sc!internal } } = { 0 }
       {
-        \seq_gpop_right:cN { g__scontents_name_sc!internal_seq } \l__scontents_mergesc_arg_tl
+        \prop_get:ceN { g__scontents_name_sc!internal_prop }
+          { \__scontents_store_count:n { name_sc!internal } } \l__scontents_mergesc_arg_tl
         \__scontents_remove_trailing_eol:N \l__scontents_mergesc_arg_tl
-        \seq_gput_right:cV { g__scontents_name_sc!internal_seq } \l__scontents_mergesc_arg_tl
+        \prop_gput:ceV { g__scontents_name_sc!internal_prop }
+          { \__scontents_store_count:n { name_sc!internal } } \l__scontents_mergesc_arg_tl
       }
   }
 \cs_new_protected:Npn \__scontents_mergesc_parse_item:n #1
@@ -1403,7 +1596,7 @@
               {#2} {#1} { \__scontents_seq_count:n {#1} }
           }
           {
-            \seq_gput_right:ce { g__scontents_name_sc!internal_seq }
+            \__scontents_store_gput:ne { name_sc!internal }
               { \__scontents_seq_item:nn {#1} {#2} }
           }
       }
@@ -1412,12 +1605,18 @@
   {
     unknown .code:n = { \__scontents_unknown_keys_cmd:n {#1} },
   }
+\cs_new:Npn \__scontents_mergesc_join:nn #1 #2
+  {
+    \int_compare:nNnF {#1} = { 1 } { \exp_not:V \c__scontents_newline_tl }
+    \exp_not:n {#2}
+  }
 \cs_new_protected:Npn \__scontents_mergesc_getstored:nn #1 #2
   {
     \keys_set:nV { scontents / getstored } \l__scontents_mergesc_keys_tl
     \tl_gset:Ne \g__scontents_last_stored_tl
       {
-        \exp_args:NnV \seq_use:cn { g__scontents_name_#2_seq } \c__scontents_newline_tl
+        \prop_map_function:cN { g__scontents_name_#2_prop }
+          \__scontents_mergesc_join:nn
         \c__scontents_hidden_space_str
       }
     \group_insert_after:N \__scontents_retokenize:V
@@ -1446,7 +1645,7 @@
   }
 \NewDocumentCommand \cleanseqsc { m }
   {
-    \seq_gclear_new:c { g__scontents_name_#1_seq }
+    \__scontents_store_gclear:n { name_#1 }
   }
 \int_new:N \g__scontents_map_int
 \tl_new:N  \l__scontents_map_item_tl
@@ -1458,7 +1657,7 @@
   }
 \cs_new:Npn \scontents_count:n #1 { \__scontents_seq_count:n {#1} }
 \cs_new_protected:Npn \scontents_get:nnN #1 #2 #3
-  { \exp_args:Nne \__scontents_get:nnN {#1} { \int_eval:n {#2} } #3 }
+  { \__scontents_get:neN {#1} { \int_eval:n {#2} } #3 }
 \cs_new_protected:Npn \__scontents_get:nnN #1 #2 #3
   {
     \tl_clear:N #3
@@ -1484,6 +1683,7 @@
       }
       { \msg_error:nnn { scontents } { undefined-storage } {#1} }
   }
+\cs_generate_variant:Nn \__scontents_get:nnN { ne }
 \cs_new_protected:Npn \scontents_map_inline:nn #1 #2
   {
     \__scontents_seq_if_exist:nTF {#1}
@@ -1491,7 +1691,7 @@
         \int_gincr:N \g__scontents_map_int
         \cs_gset_protected:cpn { __scontents_map_ \int_use:N \g__scontents_map_int :n }
           ##1 {#2}
-        \exp_args:Nne \__scontents_map_inline:nn {#1} { \int_use:N \g__scontents_map_int }
+        \__scontents_map_inline:ne {#1} { \int_use:N \g__scontents_map_int }
         \int_gdecr:N \g__scontents_map_int
       }
       { \msg_error:nnn { scontents } { undefined-storage } {#1} }
@@ -1504,6 +1704,7 @@
         \exp_args:Nc \exp_args:NV { __scontents_map_ #2 :n } \l__scontents_map_item_tl
       }
   }
+\cs_generate_variant:Nn \__scontents_map_inline:nn { ne }
 \file_input_stop:
 %% 
 %%
