@@ -2054,6 +2054,19 @@ $ pdfdetach -saveall scontents.pdf
 % \begin{description}[font=\small\sffamily,leftmargin=1.1\descrwidth,labelwidth=1.1\descrwidth,labelsep=0pt,itemindent=0pt,nosep,noitemsep]
 % \item [\fileversion{} (ctan), \filedate]
 %    \begin{itemize}
+%        \item The \mymeta{stored contents} are saved in \emph{linked} property lists of \mypkg{l3prop} instead of |seq| variables, storing and getting them by their \mymeta{index} takes the same time with few or many \mymeta{stored contents}.
+%        \item The body of the environments is read in one step.
+%        \item Spaces and \texttt{TAB} at the beginning and the end of the body of the environments are kept, as in |\Scontents*|, only a last line with spaces or \texttt{TAB} is removed.
+%        \item The spaces of |\Scontents*| are stored with catcode 12, as in the environments.
+%        \item The \mykey{debug-var} key is false by default.
+%        \item Added the \mykey{expand} key to store the content expanded.
+%        \item Added the \mykey{verb-env} key, it requires a value. The environment \myenv*[no-index]{verbatimsc} is defined at the beginning of the document and only if it does not exist.
+%        \item |\foreachsc| and the \mykey{remember} key work in linear time.
+%        \item Fix \mykey{force-eol} and avoid the overload warning when opening files in \hologo{ConTeXt} LMTX.
+%        \item Use variants instead of \myhlc|\exp_args| in the code.
+%    \end{itemize}
+% \item [v2.9 (ctan), 2026-11-24]
+%    \begin{itemize}
 %        \item Spaces between |\begin{scontents}| and its optional argument are ignored.
 %        \item Documented that \mymeta{output files} can be written in existing subdirectories and that |\Scontents| can be used in the argument of another command.
 %        \item Support for \hologo{ConTeXt} LMTX (LuaMetaTeX).

@@ -1,6 +1,16 @@
 Changes in v3.0 2026-11-26:
-– Support for ConTeXt LMTX (LuaMetaTeX).
-– Spaces between \begin{scontents} and its optional argument are ignored.
-– Document output files in subdirectories and \Scontents in arguments.
-– Tagged PDF documentation and more syntax colouring in the examples.
-– Add regression tests for ConTeXt LMTX.
+– The stored contents are saved in linked property lists (l3prop)
+  instead of seq variables: storing and getting them by their index
+  takes the same time with few or many stored contents. With 1000
+  stored contents, \getstored is about 25 to 150 times faster and
+  storing environments about 5 to 7 times faster than in v2.9.
+– The body of the environments is read in one step.
+– Spaces and TAB at the beginning and the end of the body of the
+  environments are kept, as in \Scontents*.
+– The spaces of \Scontents* are stored with catcode 12.
+– The debug-var key is false by default.
+– New expand key to store the content expanded.
+– New verb-env key; verbatimsc is defined at the beginning of the
+  document and only if it does not exist.
+– \foreachsc and the remember key work in linear time.
+– Fix force-eol and avoid the overload warning in ConTeXt LMTX.
