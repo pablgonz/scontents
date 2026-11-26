@@ -501,7 +501,7 @@
 % Other words 5 (package name)
     keywordstyle  = [5]{\bfseries\color{pkgname}},%
     keywords      = [5]{listings, minted, fancyvrb, fvextra, tcolorbox, xcolor, tikz,%
-                    amsmath, hyperref, unicode-math, inputenc, l3prop, expl3, filecontentsdef},%
+                    amsmath, hyperref, unicode-math, inputenc, l3seq, l3prop, expl3, filecontentsdef},%
 % Reserved words 6 (document class)
     keywordstyle  = [6]{\bfseries\color{clsname}},%
     keywords      = [6]{article},%
@@ -764,11 +764,21 @@
 % The \mypkg*[no-index]{scontents} package allows to \mymeta{store contents} in \mymeta{sequences}
 % or \mymeta{external files}. In some ways it is similar to the \mypkg{filecontentsdef}
 % package, with the difference in which the \mymeta{content} is stored. The idea behind
-% this package is to get an approach to \hologo{ConTeXt} \emph{\enquote{buffers}} by
-% making use of \mymeta{sequences}. Each \mymeta{sequence} is kept in a \emph{linked}
-% property list, so storing a \mymeta{content} or getting it by its \mymeta{index} takes
-% the same time with few or many \mymeta{stored contents}.
+% this package is to get an approach to \hologo{ConTeXt}
+% \emph{\enquote{buffers}}: the \mymeta{stored contents} are saved sequentially
+% in a \emph{linked} property list, the \mymeta{sequence}, and each one can be
+% used by its \mymeta{index} as many times as desired.
 % \end{scontents}
+%
+% \begin{important}*
+% Up to version 2.9 the \mymeta{stored contents} were saved in |seq| variables of the
+% \mypkg{l3seq} module, where storing a \mymeta{content} or getting it by its
+% \mymeta{index} takes longer as the \mymeta{sequence} grows. Since version 3.0 they are
+% saved sequentially in \emph{linked} property lists of the \mypkg{l3prop} module, where it
+% takes the same time with few or many \mymeta{stored contents}. The name
+% \mymeta{sequence} and the user interface did not change, so the documents written for
+% the previous versions work without changes.
+% \end{important}
 %
 % \section{Motivation and Acknowledgments}
 %
@@ -986,7 +996,7 @@
 % whose \mymeta{stored contents} can be used before they are stored, as
 % |\label| and |\ref| do with the references. At the end of the document
 % the \mymeta{stored contents} of these \emph{sequences} are written to the
-% file |\jobname.sct| and in the next compilation |\getstored|,
+% file \myfile{\textbackslash jobname.sct} and in the next compilation |\getstored|,
 % |\foreachsc|, |\typestored|, |\meaningsc|, |\mergesc| and |\countsc|
 % take the \mymeta{stored contents} from it, so they are available before
 % they are stored.
@@ -1011,7 +1021,7 @@
 % \iffalse
 %</example>
 % \fi
-% A complete example is in \S\ref{exa:remember}. The file |\jobname.sct| is
+% A complete example is in \S\ref{exa:remember}. The file \myfile{\textbackslash jobname.sct} is
 % an auxiliary file, as the |.aux| file, and it can be removed at any time.
 % To remove it with |latexmk -c| add this line to the \myfile{latexmkrc}
 % file:
@@ -1818,10 +1828,10 @@ to \mymeta{external files} or show it in \mymeta{verbatim style}.
 The \mypkg*[no-index]{scontents} package allows to \mymeta{store contents} in \mymeta{sequences}
 or \mymeta{external files}. In some ways it is similar to the \mypkg{filecontentsdef}
 package, with the difference in which the \mymeta{content} is stored. The idea behind
-this package is to get an approach to \hologo{ConTeXt} \emph{\enquote{buffers}} by
-making use of \mymeta{sequences}. Each \mymeta{sequence} is kept in a \emph{linked}
-property list, so storing a \mymeta{content} or getting it by its \mymeta{index} takes
-the same time with few or many \mymeta{stored contents}.
+this package is to get an approach to \hologo{ConTeXt}
+\emph{\enquote{buffers}}: the \mymeta{stored contents} are saved sequentially
+in a \emph{linked} property list, the \mymeta{sequence}, and each one can be
+used by its \mymeta{index} as many times as desired.
 \end{scontents}
 \end{examplecode}
 % \iffalse
@@ -3743,7 +3753,7 @@ $ pdfdetach -saveall scontents.pdf
 % \mymeta{stored contents} of some \emph{sequences} available before they
 % are stored, as |\label| and |\ref| do with the references. At the end
 % of the document the \mymeta{stored contents} of these \emph{sequences}
-% are written to the file |\jobname.sct| and at the beginning of
+% are written to the file \myfile{\textbackslash jobname.sct} and at the beginning of
 % the next compilation they are read in a second \emph{sequence}, that
 % is used by \myhlc|\@@_seq_item:nn| (\S\ref{fun:sequences}). Each line
 % of the file has the name of the \emph{sequence} and one
@@ -3778,7 +3788,7 @@ $ pdfdetach -saveall scontents.pdf
 %     \l_@@_remember_item_str,
 %   }
 %   The streams \myhlc|\g_@@_remember_ior| and \myhlc|\g_@@_remember_iow|
-%   read and write the file |\jobname.sct|. The string
+%   read and write the file \myfile{\textbackslash jobname.sct}. The string
 %   \myhlc|\g_@@_remember_old_str| saves the lines read from the file and
 %   \myhlc|\l_@@_remember_new_str| the lines written, to compare them at
 %   the end of the document, and the strings
@@ -3818,7 +3828,7 @@ $ pdfdetach -saveall scontents.pdf
 %
 % \begin{macro}[int]{remember-rerun, remember-undefined}
 %   The \enquote{warning} |remember-rerun| is issued at the end of the
-%   document when the lines written to |\jobname.sct| are not the
+%   document when the lines written to \myfile{\textbackslash jobname.sct} are not the
 %   ones read from it, and otherwise the \enquote{warning}
 %   |remember-undefined| when a \mymeta{stored content} was requested and
 %   it was not available.
@@ -3894,7 +3904,7 @@ $ pdfdetach -saveall scontents.pdf
 %     \@@_remember_read_line:w,
 %   }
 %   The function \myhlc|\@@_remember_read:| reads the file
-%   |\jobname.sct|, if it exists, line by line with
+%   \myfile{\textbackslash jobname.sct}, if it exists, line by line with
 %   \myhlc|\@@_remember_read_line:n|, and creates an empty copy of the
 %   remembered \emph{sequences} that are not in the file. The function
 %   \myhlc|\@@_remember_read_line:w| converts the name of the
@@ -3945,7 +3955,7 @@ $ pdfdetach -saveall scontents.pdf
 %     \@@_remember_write_item:nn,
 %   }
 %   The function \myhlc|\@@_remember_write:| writes the file
-%   |\jobname.sct| if some \emph{sequence} is remembered: for each
+%   \myfile{\textbackslash jobname.sct} if some \emph{sequence} is remembered: for each
 %   one that exists, \myhlc|\@@_remember_write_seq:n| converts its name
 %   to hexadecimal digits and \myhlc|\@@_remember_write_item:n| writes a
 %   line for each \mymeta{stored content}, also saved in
