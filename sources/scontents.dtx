@@ -3804,27 +3804,27 @@ $ pdfdetach -saveall scontents.pdf
 %   {
 %     \g_@@_remember_ior,
 %     \g_@@_remember_iow,
-%     \g_@@_remember_old_str,
-%     \l_@@_remember_new_str,
+%     \g_@@_remember_old_tl,
+%     \l_@@_remember_new_tl,
 %     \l_@@_remember_name_str,
 %     \l_@@_remember_item_str,
 %   }
 %   The streams \myhlc|\g_@@_remember_ior| and \myhlc|\g_@@_remember_iow|
-%   read and write the file \myfile{\textbackslash jobname.sct}. The string
-%   \myhlc|\g_@@_remember_old_str| saves the lines read from the file and
-%   \myhlc|\l_@@_remember_new_str| the lines written, to compare them at
-%   the end of the document; both are built with the |tl_build| functions,
-%   whose time grows with the number of lines and not with its square.
-%   The strings
-%   \myhlc|\l_@@_remember_name_str| and \myhlc|\l_@@_remember_item_str|
+%   read and write the file \myfile{\textbackslash jobname.sct}. The token
+%   list \myhlc|\g_@@_remember_old_tl| saves the lines read from the file
+%   and \myhlc|\l_@@_remember_new_tl| the lines written, to compare them as
+%   strings at the end of the document. They are token lists because they
+%   are built with the |tl_build| functions, whose time grows with the
+%   number of lines and not with its square, as with
+%   \myhlc|\str_put_right:Nn|. The strings \myhlc|\l_@@_remember_name_str| and \myhlc|\l_@@_remember_item_str|
 %   save the name of the \emph{sequence} and the \mymeta{stored content}
 %   of a line.
 %    \begin{macrocode}
 %<*latex>
 \ior_new:N \g_@@_remember_ior
 \iow_new:N \g_@@_remember_iow
-\str_new:N \g_@@_remember_old_str
-\str_new:N \l_@@_remember_new_str
+\tl_new:N  \g_@@_remember_old_tl
+\tl_new:N  \l_@@_remember_new_tl
 \str_new:N \l_@@_remember_name_str
 \str_new:N \l_@@_remember_item_str
 %</latex>
@@ -3933,7 +3933,7 @@ $ pdfdetach -saveall scontents.pdf
 %   remembered \emph{sequences} that are not in the file. The function
 %   \myhlc|\@@_remember_read_line:w| converts the name of the
 %   \emph{sequence} from hexadecimal digits and, if it is remembered,
-%   saves the line in \myhlc|\g_@@_remember_old_str| and adds the
+%   saves the line in \myhlc|\g_@@_remember_old_tl| and adds the
 %   \mymeta{stored content}, converted from hexadecimal digits, to the
 %   copy of the previous compilation. The lines of the
 %   \emph{sequences} that are no longer remembered are ignored.
@@ -3941,14 +3941,14 @@ $ pdfdetach -saveall scontents.pdf
 %<*latex>
 \cs_new_protected:Npn \@@_remember_read:
   {
-    \tl_build_gbegin:N \g_@@_remember_old_str
+    \tl_build_gbegin:N \g_@@_remember_old_tl
     \ior_open:NnT \g_@@_remember_ior { \c_sys_jobname_str .sct }
       {
         \ior_str_map_inline:Nn \g_@@_remember_ior
           { \@@_remember_read_line:n {##1} }
         \ior_close:N \g_@@_remember_ior
       }
-    \tl_build_gend:N \g_@@_remember_old_str
+    \tl_build_gend:N \g_@@_remember_old_tl
     \seq_map_inline:Nn \g_@@_remember_seq
       {
         \@@_store_if_exist:nF { prev_##1 }
@@ -3965,7 +3965,7 @@ $ pdfdetach -saveall scontents.pdf
     \str_set_convert:Nnnn \l_@@_remember_name_str {#1} { utf8/hex } { }
     \seq_if_in:NVT \g_@@_remember_seq \l_@@_remember_name_str
       {
-        \tl_build_gput_right:Nn \g_@@_remember_old_str { #1 = #2 , }
+        \tl_build_gput_right:Nn \g_@@_remember_old_tl { #1 = #2 , }
         \str_set_convert:Nnnn \l_@@_remember_item_str {#2} { utf8/hex } { }
         \@@_store_gput:eV { prev_ \l_@@_remember_name_str }
           \l_@@_remember_item_str
@@ -3985,7 +3985,7 @@ $ pdfdetach -saveall scontents.pdf
 %   one that exists, \myhlc|\@@_remember_write_seq:n| converts its name
 %   to hexadecimal digits and \myhlc|\@@_remember_write_item:nn| writes a
 %   line for each \mymeta{stored content}, also saved in
-%   \myhlc|\l_@@_remember_new_str|. If the lines written are not the ones
+%   \myhlc|\l_@@_remember_new_tl|. If the lines written are not the ones
 %   read, the \enquote{warning} |remember-rerun| is issued, otherwise
 %   |remember-undefined| if a \mymeta{stored content} was not available.
 %    \begin{macrocode}
@@ -3993,12 +3993,12 @@ $ pdfdetach -saveall scontents.pdf
   {
     \seq_if_empty:NF \g_@@_remember_seq
       {
-        \tl_build_begin:N \l_@@_remember_new_str
+        \tl_build_begin:N \l_@@_remember_new_tl
         \iow_open:Nn \g_@@_remember_iow { \c_sys_jobname_str .sct }
         \seq_map_function:NN \g_@@_remember_seq \@@_remember_write_seq:n
         \iow_close:N \g_@@_remember_iow
-        \tl_build_end:N \l_@@_remember_new_str
-        \str_if_eq:NNTF \g_@@_remember_old_str \l_@@_remember_new_str
+        \tl_build_end:N \l_@@_remember_new_tl
+        \str_if_eq:NNTF \g_@@_remember_old_tl \l_@@_remember_new_tl
           {
             \bool_if:NT \g_@@_remember_pending_bool
               { \msg_warning:nn { scontents } { remember-undefined } }
@@ -4020,7 +4020,7 @@ $ pdfdetach -saveall scontents.pdf
     \str_set_convert:Nnnn \l_@@_remember_item_str {#2} { } { utf8/hex }
     \iow_now:Ne \g_@@_remember_iow
       { \l_@@_remember_name_str = \l_@@_remember_item_str }
-    \tl_build_put_right:Ne \l_@@_remember_new_str
+    \tl_build_put_right:Ne \l_@@_remember_new_tl
       { \l_@@_remember_name_str = \l_@@_remember_item_str , }
   }
 %    \end{macrocode}
