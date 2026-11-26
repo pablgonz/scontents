@@ -36,7 +36,7 @@
 \newcommand\BOXEND{\par\egroup\showbox0 }
 \ExplSyntaxOn
 \NewDocumentCommand \SHOWSEQ { m }
-  { \seq_show:c { g__scontents_name_#1_seq } }
+  { \prop_show:c { g__scontents_name_#1_prop } }
 \ExplSyntaxOff
 \newcommand\COUNT[1]{\TYPE{countsc{#1}=\countsc{#1}}}
 
@@ -134,7 +134,7 @@ Dentro del anidado.
 Despues del anidado.
 \end{scontents}
 \COUNT{outer}
-\TYPE{inner existe: \ifcsname g__scontents_name_inner_seq\endcsname si\else no\fi}
+\TYPE{inner existe: \ifcsname g__scontents_name_inner_prop\endcsname si\else no\fi}
 \BOXSTART
 \getstored{outer}
 \BOXEND

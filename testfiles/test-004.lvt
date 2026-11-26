@@ -38,7 +38,7 @@ Entorno con las opciones del paquete.
 \Scontents{Comando con las opciones del paquete.}
 \BOXEND
 \COUNT{opt}
-\TYPE{contents existe: \ifcsname g__scontents_name_contents_seq\endcsname si\else no\fi}
+\TYPE{contents existe: \ifcsname g__scontents_name_contents_prop\endcsname si\else no\fi}
 \ENDTEST
 
 % 2. force-eol: el final de linea queda como espacio.
