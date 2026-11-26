@@ -1761,7 +1761,7 @@ This text is in the outer environment (after nested).
 %   \end{syntax}
 % Applies the \mymarg{inline function} to each \mymeta{stored content} of
 % the \emph{sequence} \mymarg{seq name}, in order, the
-% \mymeta{stored content} is |#1|. The \mymarg{inline function} can use
+% \mymeta{stored content} is `|#1|'. The \mymarg{inline function} can use
 % the other functions and \myhlc|\scontents_map_inline:nn| again. If the
 % \emph{sequence} does not exist an \enquote{error} is returned. For
 % example, this shows in the \texttt{.log} file each
@@ -2431,7 +2431,7 @@ $ pdfdetach -saveall scontents.pdf
 %
 % \begin{macro}[int]{\@@_format_case:nnn}
 %   The function \myhlc|\@@_format_case:nnn| leaves the argument for the
-%   current format: |#1| for \LaTeX, |#2| for \hologo{plainTeX} and |#3| for
+%   current format: `|#1|' for \LaTeX, `|#2|' for \hologo{plainTeX} and `|#3|' for
 %   \hologo{ConTeXt}.
 %    \begin{macrocode}
 %<*loader>
@@ -2444,7 +2444,7 @@ $ pdfdetach -saveall scontents.pdf
 %
 % \begin{macro}[int,TF]{\@@_file_if_exist:n}
 %   The conditional \myhlc|\@@_file_if_exist:nTF| tests if the
-%   \mymeta{output file} passed in |#1| exists in the working directory.
+%   \mymeta{output file} passed in `|#1|' exists in the working directory.
 %   In \hologo{LaTeX} and \hologo{plainTeX} it is
 %   \myhlc|\file_if_exist:nTF|. In \hologo{ConTeXt} the file search keeps
 %   the result found at the start of the run, so a file written by the
@@ -2479,7 +2479,7 @@ $ pdfdetach -saveall scontents.pdf
 %
 % \begin{macro}[int]{\@@_retokenize:n}
 %   The function \myhlc|\@@_retokenize:n| rescans the
-%   \mymeta{stored content} passed in |#1|. In \hologo{LaTeX},
+%   \mymeta{stored content} passed in `|#1|'. In \hologo{LaTeX},
 %   \hologo{plainTeX} and \hologo{ConTeXt} MkIV it is
 %   \myhlc|\tl_retokenize:n|.
 %    \begin{macrocode}
@@ -2550,11 +2550,11 @@ $ pdfdetach -saveall scontents.pdf
 %   not expanded.
 %
 %   The function \myhlc|\@@_expand_tl:N| expands the token list passed in
-%   |#1| with \myhlc|\tl_gset:Ne|, which also accepts `\myhlc|#|' in the
+%   `|#1|' with \myhlc|\tl_gset:Ne|, which also accepts `\myhlc|#|' in the
 %   content. In \LaTeX{} it is done in a group where |\protect| is
 %   |\@unexpandable@protect|, as in |\protected@edef|, so the robust
 %   commands are not expanded. The function \myhlc|\@@_expand_rescan:N| reads the
-%   content in |#1| again in a group with \myhlc|\@@_expand_catcodes:|,
+%   content in `|#1|' again in a group with \myhlc|\@@_expand_catcodes:|,
 %   using |\scantokens| directly, which splits the text at the
 %   |\newlinechar| `\myhlc|^^J|'; the end of the text is marked by
 %   \myhlc|\q_@@_stop| in |\everyeof| and \myhlc|\@@_expand_rescan:w|
@@ -2668,7 +2668,7 @@ $ pdfdetach -saveall scontents.pdf
 %
 % \begin{macro}[int]{\@@_iow_open:Nn}
 %   The function \myhlc|\@@_iow_open:Nn| opens the \mymeta{output file}
-%   passed in |#2| in the stream |#1|. In \hologo{LaTeX},
+%   passed in `|#2|' in the stream `|#1|'. In \hologo{LaTeX},
 %   \hologo{plainTeX} and \hologo{ConTeXt} MkIV it is \myhlc|\iow_open:Nn|.
 %    \begin{macrocode}
 %<!context>\cs_new_eq:NN \@@_iow_open:Nn \iow_open:Nn
@@ -2942,9 +2942,9 @@ $ pdfdetach -saveall scontents.pdf
 %   The integer variable \myhlc|\l_@@_tab_width_int| stores the value of
 %   the \mykey{width-tab} key. The function
 %   \myhlc|\@@_set_positive_int:Nnn| sets the integer variable passed in
-%   |#1| to the value passed in |#3| only if it is a
+%   `|#1|' to the value passed in `|#3|' only if it is a
 %   \mymeta{positive integer}, otherwise it raises the \enquote{error}
-%   |positive-integer| naming the \mymeta{key} passed in |#2| and the
+%   |positive-integer| naming the \mymeta{key} passed in `|#2|' and the
 %   value is ignored. It is used by the \mykey{width-tab} key and by the
 %   \mykey{start}, \mykey{step} and \mykey{stop} keys of |\foreachsc|
 %   (\S\ref{key:foreachsc}). The core code does not use `|!|' in boolean
@@ -3210,7 +3210,7 @@ $ pdfdetach -saveall scontents.pdf
 % \begin{macro}[int]{\@@_remove_trailing_eol:N, \@@_remove_trailing_eol:w}
 %   The function \myhlc|\@@_remove_trailing_eol:N| removes the string
 %   \myhlc|\c_@@_hidden_space_str| from the end of the token list passed in
-%   |#1|. It is used by |\typestored| (\S\ref{cmd:typestored}) and
+%   `|#1|'. It is used by |\typestored| (\S\ref{cmd:typestored}) and
 %   |\mergesc| (\S\ref{cmd:mergesc}).
 %    \begin{macrocode}
 \cs_new_protected:Npe \@@_remove_trailing_eol:N #1
@@ -3235,7 +3235,7 @@ $ pdfdetach -saveall scontents.pdf
 %
 % \begin{macro}[int,TF]{\@@_file_if_writable:n}
 %   The conditional \myhlc|\@@_file_if_writable:nTF| tests if the
-%   \mymeta{output file} passed in |#1| can be written, according to the
+%   \mymeta{output file} passed in `|#1|' can be written, according to the
 %   \mykey{write-env}, \mykey{write-cmd}, \mykey{write-out} and
 %   \mykey{overwrite} keys, and issues the messages for writing files
 %   (\S\ref{subsec:general-messages}). The \mymeta{output file} is
@@ -3269,7 +3269,7 @@ $ pdfdetach -saveall scontents.pdf
 %
 % \begin{macro}[int]{\@@_file_write_cmd:nn, \@@_file_write_cmd:VV}
 %   The function \myhlc|\@@_file_write_cmd:nn| writes the content passed
-%   in |#2| to the \mymeta{output file} passed in |#1|, it is used by the
+%   in `|#2|' to the \mymeta{output file} passed in `|#1|', it is used by the
 %   commands.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_file_write_cmd:nn #1 #2
@@ -3287,7 +3287,7 @@ $ pdfdetach -saveall scontents.pdf
 %
 % \begin{macro}[int]{\@@_set_write_out:n, \@@_set_write_store:n}
 %   The function \myhlc|\@@_set_write_out:n| sets the name of the
-%   \mymeta{output file} passed in |#1| and only writes the content, it is
+%   \mymeta{output file} passed in `|#1|' and only writes the content, it is
 %   used by the \mykey{write-out} key. The function
 %   \myhlc|\@@_set_write_store:n| also stores the content, it is used by
 %   the \mykey{write-env} and \mykey{write-cmd} keys
@@ -3472,7 +3472,7 @@ $ pdfdetach -saveall scontents.pdf
 %     \@@_store_gclear:n,
 %   }
 % \begin{macro}[int,pTF]{\@@_store_if_exist:n}
-%   The \emph{storage} named by |#1|, |name_|\meta{seq name} for the
+%   The \emph{storage} named by `|#1|', |name_|\meta{seq name} for the
 %   \mymeta{stored contents} of the current compilation and
 %   |prev_|\meta{seq name} for those of the previous one
 %   (\S\ref{subsec:remember}), uses the variables
@@ -3480,10 +3480,10 @@ $ pdfdetach -saveall scontents.pdf
 %   function \myhlc|\@@_store_new:n| creates them, the conditional
 %   \myhlc|\@@_store_if_exist:nTF| tests if they exist and
 %   \myhlc|\@@_store_gput:nn| creates them if needed and adds the content
-%   passed in |#2| with the next \mymeta{index}. The function
+%   passed in `|#2|' with the next \mymeta{index}. The function
 %   \myhlc|\@@_store_count:n| returns the number of
 %   \mymeta{stored contents} and \myhlc|\@@_store_item:nn| the one at the
-%   \mymeta{index} passed in |#2|, an \emph{integer expression}, counting
+%   \mymeta{index} passed in `|#2|', an \emph{integer expression}, counting
 %   from the end if it is negative, as \myhlc|\seq_item:Nn| does. The
 %   function \myhlc|\@@_store_gclear:n| removes all the
 %   \mymeta{stored contents}, creating the \emph{storage} if it does not
@@ -3545,8 +3545,8 @@ $ pdfdetach -saveall scontents.pdf
 % \begin{macro}[int]{\@@_append_contents:nn, \@@_append_contents:Ve}
 %   The function \myhlc|\@@_append_contents:nn| appends the
 %   \mymarg{body env} of an environment or the \mymarg{argument} of a
-%   command, passed in |#2|, to the end of the \emph{sequence} passed in
-%   |#1|, creating it if it does not exist.
+%   command, passed in `|#2|', to the end of the \emph{sequence} passed in
+%   `|#1|', creating it if it does not exist.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_append_contents:nn #1 #2
   { \@@_store_gput:nn { name_#1 } {#2} }
@@ -3556,8 +3556,8 @@ $ pdfdetach -saveall scontents.pdf
 %
 % \begin{macro}[int]{\@@_store_to_seq:NN}
 %   The function \myhlc|\@@_store_to_seq:NN| writes the recorded content
-%   in |#1| to the \texttt{.log} file if \mykey{debug-var} is true and
-%   stores it in the \emph{sequence} named by |#2|.
+%   in `|#1|' to the \texttt{.log} file if \mykey{debug-var} is true and
+%   stores it in the \emph{sequence} named by `|#2|'.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_store_to_seq:NN #1 #2
   {
@@ -3578,11 +3578,11 @@ $ pdfdetach -saveall scontents.pdf
 %   \emph{verbatim catcodes}, or with \myhlc|\@@_expand_tl:N|. If
 %   the key \mykey{force-eol} is false, its default value,
 %   \myhlc|\c_@@_hidden_space_str| is added to the end of the token list
-%   passed in |#1|, which contains the \mymarg{body env} of an environment
+%   passed in `|#1|', which contains the \mymarg{body env} of an environment
 %   or the \mymarg{argument} of |\Scontents|.
 %
 %   Then \myhlc|\@@_store_to_seq:NN| stores the content in the
-%   \emph{sequence} named by |#2| and, if the boolean passed in |#3|, set
+%   \emph{sequence} named by `|#2|' and, if the boolean passed in `|#3|', set
 %   by the \mykey{print-env} or \mykey{print-cmd} key, is true, the content
 %   is printed from the \emph{sequence} by \myhlc|\@@_lastfrom_seq:V|. If
 %   the \emph{name} of the \emph{sequence} is blank, the \enquote{error}
@@ -3617,11 +3617,11 @@ $ pdfdetach -saveall scontents.pdf
 %   with the \mymeta{stored contents} of the previous compilation, whose
 %   name uses |prev| instead of |name| (\S\ref{subsec:remember}). The
 %   conditional \myhlc|\@@_seq_if_exist:nTF| tests if any of the two
-%   \emph{sequences} named by |#1| exists, the function
+%   \emph{sequences} named by `|#1|' exists, the function
 %   \myhlc|\@@_seq_count:n| returns the larger number of
 %   \mymeta{stored contents} of the two, or |0| if none exists, and the
 %   function \myhlc|\@@_seq_item:nn| returns the \mymeta{stored content}
-%   at the \mymeta{index} passed in |#2|, from the previous compilation
+%   at the \mymeta{index} passed in `|#2|', from the previous compilation
 %   if it has it and from the current one otherwise. Without
 %   \mykey{remember}, and always in \hologo{plainTeX} and
 %   \hologo{ConTeXt}, only the current \emph{sequence} exists.
@@ -3676,9 +3676,9 @@ $ pdfdetach -saveall scontents.pdf
 %   }
 %   The function \myhlc|\@@_getfrom_seq:Nn| retrieves the
 %   \mymeta{stored contents} whose \mymeta{indexes} are in the sequence
-%   passed in |#1| from the \emph{sequence} named by |#2| and the function
+%   passed in `|#1|' from the \emph{sequence} named by `|#2|' and the function
 %   \myhlc|\@@_getfrom_seq:nn| retrieves the one whose \mymeta{index} is
-%   passed in |#1|, both with \myhlc|\@@_seq_item:nn|. Both raise the
+%   passed in `|#1|', both with \myhlc|\@@_seq_item:nn|. Both raise the
 %   \enquote{errors} |undefined-storage| and |index-out-of-range|
 %   (\S\ref{subsec:general-messages}).
 %    \begin{macrocode}
@@ -3724,7 +3724,7 @@ $ pdfdetach -saveall scontents.pdf
 %
 % \begin{macro}[int]{\@@_lastfrom_seq:n, \@@_lastfrom_seq:V}
 %   The function \myhlc|\@@_lastfrom_seq:n| saves the last
-%   \mymeta{stored content} of the \emph{sequence} named by |#1| in
+%   \mymeta{stored content} of the \emph{sequence} named by `|#1|' in
 %   \myhlc|\g_@@_last_stored_tl| and rescans it with
 %   \myhlc|\@@_retokenize:V| after the group, when the keys
 %   \mykey{print-env} or \mykey{print-cmd} are active.
@@ -3844,7 +3844,7 @@ $ pdfdetach -saveall scontents.pdf
 %
 % \begin{macro}[int]{\@@_remember:n}
 %   The function \myhlc|\@@_remember:n|, used by the \mykey{remember}
-%   key, adds each name of the comma separated list passed in |#1| to
+%   key, adds each name of the comma separated list passed in `|#1|' to
 %   \myhlc|\g_@@_remember_seq| as a string, only once. In
 %   \hologo{plainTeX} and \hologo{ConTeXt} it raises the
 %   \enquote{error} |remember-latex-only|.
@@ -3870,8 +3870,8 @@ $ pdfdetach -saveall scontents.pdf
 % \begin{macro}[int]{\@@_if_pending:neF}
 %   The conditionals \myhlc|\@@_if_pending:nnT| and
 %   \myhlc|\@@_if_pending:nnF| test if the \mymeta{stored content} at the
-%   \mymeta{index} passed in |#2| of the remembered \emph{sequence} named
-%   by |#1| is not available yet, that is, if its absolute value is
+%   \mymeta{index} passed in `|#2|' of the remembered \emph{sequence} named
+%   by `|#1|' is not available yet, that is, if its absolute value is
 %   greater than the number of \mymeta{stored contents} of both copies. In
 %   that case \myhlc|\g_@@_remember_pending_bool| is set to true and the
 %   commands print nothing. For the \emph{sequences} that are not
@@ -4048,7 +4048,7 @@ $ pdfdetach -saveall scontents.pdf
 % \begin{macro}[int]{\@@_env_begin_str:n, \@@_env_end_str:n}
 %   The functions \myhlc|\@@_env_begin_str:n| and
 %   \myhlc|\@@_env_end_str:n| return the start and the end of the
-%   environment named by |#1| as they are written in each format:
+%   environment named by `|#1|' as they are written in each format:
 %   |\begin{#1}| and |\end{#1}| in \LaTeX, |\#1| and |\end#1| in
 %   \hologo{plainTeX} and |\start#1| and |\stop#1| in \hologo{ConTeXt}.
 %   They are used in the messages of the environments.
@@ -4398,7 +4398,7 @@ $ pdfdetach -saveall scontents.pdf
 %   environment. The function \myhlc|\@@_file_tl_write_start:nn| starts a
 %   \emph{group}, opens the \mymeta{output file} if necessary, sets the
 %   \emph{verbatim catcodes}, takes the first token of the
-%   \mymarg{body env} in |#2| with these \emph{catcodes} and calls
+%   \mymarg{body env} in `|#2|' with these \emph{catcodes} and calls
 %   \myhlc|\@@_grab_body:w|.
 %
 %   The function \myhlc|\@@_setup_verb_processor:| defines
@@ -4760,7 +4760,7 @@ $ pdfdetach -saveall scontents.pdf
 %
 % \begin{macro}[int]{\@@_setting_env:nn, \@@_define_env:nnn, \@@_define_env:ooo}
 %   The function \myhlc|\@@_setting_env:nn| receives the \emph{name} of
-%   the environment in |#1| and the \mymeta{initial keys} in |#2|. It
+%   the environment in `|#1|' and the \mymeta{initial keys} in `|#2|'. It
 %   creates the functions \cs[no-index]{@@_\#1_begin:} and
 %   \cs[no-index]{@@_\#1_end:}, which set \myhlc|\l_@@_env_name_tl| and
 %   the \mymeta{initial keys} and call \myhlc|\@@_generic_begin:| and
@@ -5181,10 +5181,10 @@ $ pdfdetach -saveall scontents.pdf
 % \begin{macro}[int]{\@@_Scontents_code:nn}
 %   The function \myhlc|\@@_Scontents_code:nn| executes
 %   \myhlc|\@@_bsphack:|, opens a group, sets the \mymeta{keys} passed in
-%   |#2|, saves the \emph{catcodes} with \myhlc|\@@_save_catcodes:|, notes
+%   `|#2|', saves the \emph{catcodes} with \myhlc|\@@_save_catcodes:|, notes
 %   in \myhlc|\l_@@_verb_content_bool| if the content is read with the
 %   \emph{verbatim catcodes} and leaves the \texttt{TAB} character active. With the
-%   \emph{starred argument} passed in |#1| it calls
+%   \emph{starred argument} passed in `|#1|' it calls
 %   \myhlc|\@@_Scontents_verb_arg:w|, otherwise
 %   \myhlc|\@@_Scontents_norm_arg:n|.
 %    \begin{macrocode}
@@ -5318,7 +5318,7 @@ $ pdfdetach -saveall scontents.pdf
 % \begin{macro}[int]{\@@_getstored:nn}
 %   The function \myhlc|\@@_getstored:nn| rescans with
 %   \myhlc|\@@_retokenize:e| the \mymeta{stored content} at the
-%   \mymeta{index} passed in |#1| in the \emph{sequence} named by |#2|,
+%   \mymeta{index} passed in `|#1|' in the \emph{sequence} named by `|#2|',
 %   given by \myhlc|\@@_getfrom_seq:nn| (\S\ref{fun:sequences}), unless
 %   it is not available yet in a remembered \emph{sequence}
 %   (\S\ref{subsec:remember}).
@@ -5499,7 +5499,7 @@ $ pdfdetach -saveall scontents.pdf
 %     \@@_foreach_wrap:V,
 %   }
 %   The function \myhlc|\@@_foreachsc:nn| sets the \mymeta{keys} passed in
-%   |#1| and steps from \mykey{start} to \mykey{stop}, the number of
+%   `|#1|' and steps from \mykey{start} to \mykey{stop}, the number of
 %   \mymeta{stored contents} by default, with \myhlc|\@@_foreach_add_body:n|,
 %   which adds the command saved in \myhlc|\l_@@_foreach_cmd_tl|, with the
 %   code of the \mykey{before}, \mykey{after} and \mykey{wrapper} keys, and
@@ -5654,15 +5654,15 @@ $ pdfdetach -saveall scontents.pdf
 %   unknown \mymeta{key} has no value, otherwise something odd as |1=1|
 %   was used and the \enquote{error} |cmd-key-value-unknown| is raised.
 %   The conditional \myhlc|\@@_if_digits:nTF|
-%   tests if |#1| is not blank and only has digits, it removes the digits
+%   tests if `|#1|' is not blank and only has digits, it removes the digits
 %   from \myhlc|\l_@@_index_str|, so a text that is not a number never
 %   reaches an \emph{integer expression} and only the \enquote{error} of
 %   the package is raised.
 %
 %   The function \myhlc|\@@_range_parser:nnn| receives the
-%   \mymeta{index} or the range in |#1|, the number of
-%   \mymeta{stored contents} in |#2| and the code that raises the
-%   \enquote{error} in |#3|, and splits |#1| at the hyphens with
+%   \mymeta{index} or the range in `|#1|', the number of
+%   \mymeta{stored contents} in `|#2|' and the code that raises the
+%   \enquote{error} in `|#3|', and splits `|#1|' at the hyphens with
 %   \myhlc|\@@_range_parser:nnnw|: without hyphen it is an
 %   \mymeta{index}, with a hyphen at the beginning it is a negative
 %   \mymeta{index} and otherwise it is a range \mymeta{start-stop}, where
@@ -5670,7 +5670,7 @@ $ pdfdetach -saveall scontents.pdf
 %   \mymeta{stored contents} and \myhlc|\@@_range_step:nn| adds the
 %   \mymeta{indexes} of the range, ascending or descending, to
 %   \myhlc|\l_@@_seq_item_seq|. Anything else is passed to the code in
-%   |#3|.
+%   `|#3|'.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_parse_type_meaning_key:n #1
   { \@@_parse_type_meaning_key:Vn \l_keys_key_str {#1} }
@@ -5762,8 +5762,8 @@ $ pdfdetach -saveall scontents.pdf
 % \begin{macro}[int]{\@@_typemeaning_setup:nn, \l_@@_pending_bool}
 %   The function \myhlc|\@@_typemeaning_setup:nn| is the common start of
 %   |\typestored| and |\meaningsc|, it saves the name of the
-%   \emph{sequence} passed in |#2|, sets the \mymeta{keys} and the
-%   \mymeta{indexes} passed in |#1| and uses the first
+%   \emph{sequence} passed in `|#2|', sets the \mymeta{keys} and the
+%   \mymeta{indexes} passed in `|#1|' and uses the first
 %   \mymeta{stored content} if no \mymeta{index} was given. The boolean
 %   \myhlc|\l_@@_pending_bool| is true if any of them is not available
 %   yet in a remembered \emph{sequence} (\S\ref{subsec:remember}).
@@ -5832,8 +5832,8 @@ $ pdfdetach -saveall scontents.pdf
 %
 % \begin{macro}[int]{\@@_typestored:nn}
 %   The function \myhlc|\@@_typestored:nn| sets the \mymeta{keys} and the
-%   \mymeta{indexes} passed in |#1| with \myhlc|\@@_typemeaning_setup:nn|,
-%   gets the \mymeta{stored contents} of the \emph{sequence} named by |#2|,
+%   \mymeta{indexes} passed in `|#1|' with \myhlc|\@@_typemeaning_setup:nn|,
+%   gets the \mymeta{stored contents} of the \emph{sequence} named by `|#2|',
 %   writes them to the \texttt{.log} file if \mykey{debug-var} is true and
 %   prints them with \myhlc|\@@_typestored:N| and writes them with
 %   \myhlc|\@@_file_write_cmd:VV|.
@@ -5877,7 +5877,7 @@ $ pdfdetach -saveall scontents.pdf
 %   |verbatimsc-undefined| if the environment |verbatimsc| does not exist
 %   and otherwise calls \myhlc|\@@_typestored_aux:N|, which is defined with active carriage
 %   return characters to mimic an actual |verbatim| environment
-%   \enquote{on the loose}. The content of the token list passed in |#1|
+%   \enquote{on the loose}. The content of the token list passed in `|#1|'
 %   is placed in a |verbatimsc| environment and rescanned with
 %   \myhlc|\@@_retokenize:e|.
 %    \begin{macrocode}
@@ -5944,9 +5944,9 @@ $ pdfdetach -saveall scontents.pdf
 %
 % \begin{macro}[int]{\@@_meaningsc:nn}
 %   The function \myhlc|\@@_meaningsc:nn| sets the \mymeta{keys} and the
-%   \mymeta{indexes} passed in |#1| with \myhlc|\@@_typemeaning_setup:nn|
+%   \mymeta{indexes} passed in `|#1|' with \myhlc|\@@_typemeaning_setup:nn|
 %   and calls \myhlc|\@@_meaningsc:n| with the \emph{sequence} named by
-%   |#2|.
+%   `|#2|'.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_meaningsc:nn #1 #2
   {
@@ -6094,8 +6094,8 @@ $ pdfdetach -saveall scontents.pdf
 %
 % \begin{macro}[int]{\@@_mergesc_code:nn}
 %   The function \myhlc|\@@_mergesc_code:nn| sets the known \mymeta{keys}
-%   passed in |#1|, saves the others in \myhlc|\l_@@_mergesc_keys_tl|,
-%   assembles the \emph{internal sequence} from the list passed in |#2|
+%   passed in `|#1|', saves the others in \myhlc|\l_@@_mergesc_keys_tl|,
+%   assembles the \emph{internal sequence} from the list passed in `|#2|'
 %   and, if it is not empty, passes it to \myhlc|\@@_mergesc_cmd:nn|.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_mergesc_code:nn #1 #2
@@ -6217,7 +6217,7 @@ $ pdfdetach -saveall scontents.pdf
 % \begin{macro}[int]{\@@_mergesc_getstored:nn, \@@_mergesc_join:nn}
 %   The function \myhlc|\@@_mergesc_getstored:nn|, set by the
 %   \mykey{getstored} key, joins the \mymeta{stored contents} of the
-%   \emph{internal sequence} passed in |#2| in
+%   \emph{internal sequence} passed in `|#2|' in
 %   \myhlc|\g_@@_last_stored_tl| separated by an end of line, added by
 %   \myhlc|\@@_mergesc_join:nn| before each one except the first, adds
 %   \myhlc|\c_@@_hidden_space_str| at the end, because the last one has
@@ -6225,7 +6225,7 @@ $ pdfdetach -saveall scontents.pdf
 %   the group of |\mergesc|, as \myhlc|\@@_lastfrom_seq:n| does
 %   (\S\ref{fun:sequences}). The result is the same as using |\getstored|
 %   on each \mymeta{stored content}. The
-%   \mymeta{indexes} passed in |#1| are always |1-end| and the other
+%   \mymeta{indexes} passed in `|#1|' are always |1-end| and the other
 %   \mymeta{keys}, saved in \myhlc|\l_@@_mergesc_keys_tl|, are unknown for
 %   it and raise the \enquote{errors} of the unknown \mymeta{keys}
 %   (\S\ref{key:unknown-keys}).
@@ -6358,7 +6358,7 @@ $ pdfdetach -saveall scontents.pdf
 % \begin{macro}[int]{\@@_get:nnN, \@@_get:neN}
 %   The function \myhlc|\scontents_get:nnN| evaluates the \mymeta{index} and
 %   passes it to \myhlc|\@@_get:nnN|, which sets the token list passed in
-%   |#3| to the \mymeta{stored content} given by \myhlc|\@@_seq_item:nn|
+%   `|#3|' to the \mymeta{stored content} given by \myhlc|\@@_seq_item:nn|
 %   and removes \myhlc|\c_@@_hidden_space_str| from its end with
 %   \myhlc|\@@_remove_trailing_eol:N|. Otherwise the token list is empty
 %   and the \enquote{errors} |undefined-storage| or |index-out-of-range|
@@ -6401,7 +6401,7 @@ $ pdfdetach -saveall scontents.pdf
 % \begin{macro}[int]{\@@_map_inline:nn, \@@_map_inline:ne}
 %   The function \myhlc|\scontents_map_inline:nn| increases
 %   \myhlc|\g_@@_map_int|, defines with the \mymarg{inline function}
-%   passed in |#2| a function whose name has the nesting level and calls
+%   passed in `|#2|' a function whose name has the nesting level and calls
 %   \myhlc|\@@_map_inline:nn|, which gets each \mymeta{stored content}
 %   with \myhlc|\@@_get:nnN| and passes it to that function. Each nesting
 %   level has its own function, so the \mymarg{inline function} can use
