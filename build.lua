@@ -45,7 +45,7 @@
 
 -- General package identification
 module     = "scontents"
-pkgversion = "3.09"
+pkgversion = "3.0"
 pkgdate    = "2026-11-26"
 ltxrelease = "2026-11-01"
 

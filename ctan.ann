@@ -1,4 +1,4 @@
-Changes in v3.09 2026-11-26:
+Changes in v3.0 2026-11-26:
 – Support for ConTeXt LMTX (LuaMetaTeX).
 – Spaces between \begin{scontents} and its optional argument are ignored.
 – Document output files in subdirectories and \Scontents in arguments.
