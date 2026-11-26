@@ -2749,7 +2749,6 @@ $ pdfdetach -saveall scontents.pdf
 %   {
 %     \tl_replace_all:NeV,
 %     \str_remove_all:NV,
-%     \seq_use:NV,
 %     \prop_gput:cen,
 %     \prop_gput:ceV,
 %     \prop_get:ceN,
@@ -2763,7 +2762,6 @@ $ pdfdetach -saveall scontents.pdf
 %<*core>
 \cs_generate_variant:Nn \tl_replace_all:Nnn { NeV }
 \cs_generate_variant:Nn \str_remove_all:Nn { NV }
-\cs_generate_variant:Nn \seq_use:Nn { NV }
 \cs_generate_variant:Nn \prop_gput:Nnn { cen, ceV }
 \cs_generate_variant:Nn \prop_get:NnN { ceN }
 \cs_generate_variant:Nn \prop_item:Nn { ce }
@@ -5049,7 +5047,7 @@ $ pdfdetach -saveall scontents.pdf
       { \l_@@_verb_env_bool }
       { ! \cs_if_exist_p:N \verbatimsc }
       {
-        \IfDocumentMetadataTF { \@@_verbatimsc_instance: } { }
+        \IfDocumentMetadataT { \@@_verbatimsc_instance: }
         \@@_define_verbatimsc:
       }
   }
@@ -5361,7 +5359,8 @@ $ pdfdetach -saveall scontents.pdf
 % \begin{macro}[int]
 %   {
 %     \l_@@_foreachsc_arg_tl,
-%     \l_@@_foreach_print_seq,
+%     \l_@@_foreach_print_tl,
+%     \l_@@_foreach_first_bool,
 %     \g_@@_foreach_exec_tl,
 %     \l_@@_foreach_before_tl,
 %     \l_@@_foreach_before_bool,
@@ -5376,16 +5375,19 @@ $ pdfdetach -saveall scontents.pdf
 %     \l_@@_foreach_cmd_tl,
 %   }
 %   The token list \myhlc|\l_@@_foreachsc_arg_tl| saves the
-%   \mymarg{seq name}, the sequence \myhlc|\l_@@_foreach_print_seq|
+%   \mymarg{seq name}, the token list \myhlc|\l_@@_foreach_print_tl|
 %   collects the code for each \mymeta{stored content}, built in the token
-%   list \myhlc|\l_@@_foreach_body_tl|, and the token list
+%   list \myhlc|\l_@@_foreach_body_tl|, the boolean
+%   \myhlc|\l_@@_foreach_first_bool| is true for the first one, and the
+%   token list
 %   \myhlc|\g_@@_foreach_exec_tl| executes it outside the group. The
 %   token list \myhlc|\l_@@_foreach_cmd_tl| saves the command executed on
 %   each \mymeta{stored content}, |\getstored| by default. The other
 %   variables are set by the \mymeta{keys} of |\foreachsc|.
 %    \begin{macrocode}
 \tl_new:N   \l_@@_foreachsc_arg_tl
-\seq_new:N  \l_@@_foreach_print_seq
+\tl_new:N   \l_@@_foreach_print_tl
+\bool_new:N \l_@@_foreach_first_bool
 \tl_new:N   \g_@@_foreach_exec_tl
 \tl_new:N   \l_@@_foreach_before_tl
 \bool_new:N \l_@@_foreach_before_bool
@@ -5461,7 +5463,6 @@ $ pdfdetach -saveall scontents.pdf
                                 },
     wrapper .value_required:n = true,
     sep     .tl_set:N         = \l_@@_foreach_sep_tl,
-    sep     .initial:n        = { },
     sep     .value_required:n = true,
     unknown .code:n           = { \@@_unknown_keys_cmd:n {#1} },
   }
@@ -5501,9 +5502,12 @@ $ pdfdetach -saveall scontents.pdf
 %   |#1| and steps from \mykey{start} to \mykey{stop}, the number of
 %   \mymeta{stored contents} by default, with \myhlc|\@@_foreach_add_body:n|,
 %   which adds the command saved in \myhlc|\l_@@_foreach_cmd_tl|, with the
-%   code of the \mykey{before}, \mykey{after} and \mykey{wrapper} keys, to
-%   \myhlc|\l_@@_foreach_print_seq|. The result, separated by \mykey{sep},
-%   is executed after the group. The function \myhlc|\@@_foreach_wrap:n|
+%   code of the \mykey{before}, \mykey{after} and \mykey{wrapper} keys, and
+%   the \mykey{sep} key before each one except the first, to
+%   \myhlc|\l_@@_foreach_print_tl|. It is built with
+%   \myhlc|\tl_build_put_right:Ne|, whose time grows with the number of
+%   \mymeta{stored contents} and not with its square, as with
+%   \myhlc|\seq_put_right:Ne|. The result is executed after the group. The function \myhlc|\@@_foreach_wrap:n|
 %   expands \myhlc|\@@_foreach_wrapper:n| once inside the group, so the
 %   code of the \mykey{wrapper} key is already in place when the result
 %   is executed; the function \myhlc|\@@_foreach_wrapper:n| is local and
@@ -5514,7 +5518,8 @@ $ pdfdetach -saveall scontents.pdf
     \group_begin:
       \tl_if_novalue:nF {#1} { \keys_set:nn { scontents / foreachsc } {#1} }
       \tl_set:Nn \l_@@_foreachsc_arg_tl {#2}
-      \seq_clear:N \l_@@_foreach_print_seq
+      \tl_build_begin:N \l_@@_foreach_print_tl
+      \bool_set_true:N \l_@@_foreach_first_bool
       \bool_if:NF \l_@@_foreach_stop_bool
         {
           \int_set:Nn \l_@@_foreach_stop_int
@@ -5525,10 +5530,8 @@ $ pdfdetach -saveall scontents.pdf
         { \l_@@_foreach_step_int }
         { \l_@@_foreach_stop_int }
         \@@_foreach_add_body:n
-      \tl_gset:Ne \g_@@_foreach_exec_tl
-        {
-          \seq_use:NV \l_@@_foreach_print_seq \l_@@_foreach_sep_tl
-        }
+      \tl_build_end:N \l_@@_foreach_print_tl
+      \tl_gset_eq:NN \g_@@_foreach_exec_tl \l_@@_foreach_print_tl
     \group_end:
     \exp_after:w \tl_gclear:N
     \exp_after:w \g_@@_foreach_exec_tl
@@ -5543,14 +5546,17 @@ $ pdfdetach -saveall scontents.pdf
       }
     \bool_if:NT \l_@@_foreach_wrapper_bool
       { \@@_foreach_wrap:V \l_@@_foreach_body_tl }
-    \seq_put_right:Ne \l_@@_foreach_print_seq
+    \tl_build_put_right:Ne \l_@@_foreach_print_tl
       {
+        \bool_if:NF \l_@@_foreach_first_bool
+          { \exp_not:V \l_@@_foreach_sep_tl }
         \bool_if:NT \l_@@_foreach_before_bool
           { \exp_not:V \l_@@_foreach_before_tl }
         \exp_not:V \l_@@_foreach_body_tl
         \bool_if:NT \l_@@_foreach_after_bool
           { \exp_not:V \l_@@_foreach_after_tl }
       }
+    \bool_set_false:N \l_@@_foreach_first_bool
   }
 \cs_new_protected:Npn \@@_foreach_wrap:n #1
   { \tl_set:No \l_@@_foreach_body_tl { \@@_foreach_wrapper:n {#1} } }
