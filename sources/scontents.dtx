@@ -975,11 +975,13 @@
 % \keyexampcmd{verb-env}{true \textnormal{\textcolor{lightgray}{\textbar}} false}{true}[setupsc]
 % Determines whether the package defines the environment
 % \myenv*[no-index]{verbatimsc} (\S\ref{subsec:verbatimsc}) at the beginning
-% of the document. With |true| it is defined only if it does not exist,
-% so it can be defined in the preamble with other packages. With |false|
-% it is never defined and it must be defined before using |\typestored| or
-% |\mergesc|. This \mymeta{key} is only available in \hologo{LaTeX}, in the
-% preamble, as a package option or using |\setupsc|.
+% of the document. With |false| it is never defined: the user defines it,
+% in the preamble or later, before using |\typestored| or |\mergesc|, as
+% in the examples of \S\ref{exa:verbatimsc}. With |true| it is defined
+% only if it does not exist, so it can also be defined in the preamble,
+% but not after |\begin{document}|. This \mymeta{key} requires a value and
+% is only available in \hologo{LaTeX}, in the preamble, as a package option
+% or using |\setupsc|.
 %
 % \keyexampcmd{verb-font}{font family}{\textnormal{\ttfamily\textbackslash{}ttfamily}}[setupsc]
 % Sets the \mymeta{font family} used to display the \mymeta{stored content} for
@@ -1607,14 +1609,14 @@ This text is in the outer environment (after nested).
 % The environment used by |\typestored| and |\mergesc| to
 % display the \mymeta{stored content} in \emph{verbatim style}.
 % The environment is compatible with \emph{tagged} \texttt{PDF}. In
-% \hologo{LaTeX} it is defined at the beginning of the document and only if
-% it does not exist, so it can be customized in the preamble, after loading
-% the \mypkg*[no-index]{scontents} package, in the following ways, without
-% undefining it first as in versions before 3.0. With the \mykey{verb-env}
-% key set to |false| the package does not define it, for example when
-% another package defines it later, and if it does not exist |\typestored|
-% and |\mergesc| raise an \enquote{error} and print nothing in
-% \emph{verbatim style}.
+% \hologo{LaTeX}, with the \mykey{verb-env} key set to |false| the package
+% does not define it and it can be defined in the preamble, after loading
+% the \mypkg*[no-index]{scontents} package, in the following ways, or later;
+% if it does not exist |\typestored| and |\mergesc| raise an
+% \enquote{error} and print nothing in \emph{verbatim style}. With the
+% default value |true| it is defined at the beginning of the document and
+% only if it does not exist, so it can also be defined in the preamble,
+% without undefining it first as in versions before 3.0.
 % \end{function}
 %
 % Using the packages \mypkg{fvextra}\cite{fvextra} or \mypkg{fancyvrb}\cite{fancyvrb}:
@@ -1622,6 +1624,7 @@ This text is in the outer environment (after nested).
 %<*example>
 % \fi
 \begin{examplecode}[frame=single]
+\usepackage[verb-env=false]{scontents}
 \usepackage{fancyvrb}
 \DefineVerbatimEnvironment{verbatimsc}{Verbatim}{numbers=left}
 \end{examplecode}
@@ -1633,6 +1636,7 @@ This text is in the outer environment (after nested).
 %<*example>
 % \fi
 \begin{examplecode}[frame=single]
+\usepackage[verb-env=false]{scontents}
 \usepackage{minted}
 \newminted{tex}{linenos}
 \newenvironment{verbatimsc}{\VerbatimEnvironment\begin{texcode}}{\end{texcode}}
@@ -1645,6 +1649,7 @@ This text is in the outer environment (after nested).
 %<*example>
 % \fi
 \begin{examplecode}[frame=single]
+\usepackage[verb-env=false]{scontents}
 \usepackage{listings}
 \lstnewenvironment{verbatimsc}
   {
@@ -1900,7 +1905,11 @@ $ pdfdetach -saveall scontents.pdf
 % \myattachfile*{scontents-exa-6}
 % \lstinputlisting[language=scontents-doc,numbers=left]{scontents-exa-6.tex}
 %
-% \subsection{Customization of \texttt{verbatimsc}}
+% \subsection{Customization of \texttt{verbatimsc}}\label{exa:verbatimsc}
+%
+% In these examples the package is loaded with the \mykey{verb-env} key set
+% to |false|, so it does not define \myenv*[no-index]{verbatimsc} and the
+% environment is defined in the preamble with other packages.
 %
 % \subsubsection*{Example 7}
 %
@@ -2334,7 +2343,9 @@ $ pdfdetach -saveall scontents.pdf
 % For \hologo{plainTeX}, \hologo{LaTeX} and \hologo{ConTeXt} we must check
 % the minimum requirement, in this case \myhlc|\tl_retokenize:n| which
 % was added in release 2025-07-08 of \mypkg{expl3} included in
-% \hologo{TeX} Live 2025.
+% \hologo{TeX} Live 2025. This release also has the \emph{linked}
+% property lists (\myhlc|\prop_new_linked:N|, added in 2024) used to
+% store the \mymeta{stored contents}.
 %    \begin{macrocode}
 \cs_if_exist:NF \tl_retokenize:n
   {
@@ -3048,7 +3059,7 @@ $ pdfdetach -saveall scontents.pdf
   {
     verb-env .bool_set:N        = \l_@@_verb_env_bool,
     verb-env .initial:n         = true,
-    verb-env .default:n         = true,
+    verb-env .value_required:n  = true,
     verb-env .usage:n           = preamble,
   }
 %</loader&latex>
@@ -3789,7 +3800,9 @@ $ pdfdetach -saveall scontents.pdf
 %   read and write the file \myfile{\textbackslash jobname.sct}. The string
 %   \myhlc|\g_@@_remember_old_str| saves the lines read from the file and
 %   \myhlc|\l_@@_remember_new_str| the lines written, to compare them at
-%   the end of the document, and the strings
+%   the end of the document; both are built with the |tl_build| functions,
+%   whose time grows with the number of lines and not with its square.
+%   The strings
 %   \myhlc|\l_@@_remember_name_str| and \myhlc|\l_@@_remember_item_str|
 %   save the name of the \emph{sequence} and the \mymeta{stored content}
 %   of a line.
@@ -3915,12 +3928,14 @@ $ pdfdetach -saveall scontents.pdf
 %<*latex>
 \cs_new_protected:Npn \@@_remember_read:
   {
+    \tl_build_gbegin:N \g_@@_remember_old_str
     \ior_open:NnT \g_@@_remember_ior { \c_sys_jobname_str .sct }
       {
         \ior_str_map_inline:Nn \g_@@_remember_ior
           { \@@_remember_read_line:n {##1} }
         \ior_close:N \g_@@_remember_ior
       }
+    \tl_build_gend:N \g_@@_remember_old_str
     \seq_map_inline:Nn \g_@@_remember_seq
       {
         \@@_store_if_exist:nF { prev_##1 }
@@ -3937,7 +3952,7 @@ $ pdfdetach -saveall scontents.pdf
     \str_set_convert:Nnnn \l_@@_remember_name_str {#1} { utf8/hex } { }
     \seq_if_in:NVT \g_@@_remember_seq \l_@@_remember_name_str
       {
-        \str_gput_right:Nn \g_@@_remember_old_str { #1 = #2 , }
+        \tl_build_gput_right:Nn \g_@@_remember_old_str { #1 = #2 , }
         \str_set_convert:Nnnn \l_@@_remember_item_str {#2} { utf8/hex } { }
         \@@_store_gput:eV { prev_ \l_@@_remember_name_str }
           \l_@@_remember_item_str
@@ -3955,7 +3970,7 @@ $ pdfdetach -saveall scontents.pdf
 %   The function \myhlc|\@@_remember_write:| writes the file
 %   \myfile{\textbackslash jobname.sct} if some \emph{sequence} is remembered: for each
 %   one that exists, \myhlc|\@@_remember_write_seq:n| converts its name
-%   to hexadecimal digits and \myhlc|\@@_remember_write_item:n| writes a
+%   to hexadecimal digits and \myhlc|\@@_remember_write_item:nn| writes a
 %   line for each \mymeta{stored content}, also saved in
 %   \myhlc|\l_@@_remember_new_str|. If the lines written are not the ones
 %   read, the \enquote{warning} |remember-rerun| is issued, otherwise
@@ -3965,10 +3980,11 @@ $ pdfdetach -saveall scontents.pdf
   {
     \seq_if_empty:NF \g_@@_remember_seq
       {
-        \str_clear:N \l_@@_remember_new_str
+        \tl_build_begin:N \l_@@_remember_new_str
         \iow_open:Nn \g_@@_remember_iow { \c_sys_jobname_str .sct }
         \seq_map_function:NN \g_@@_remember_seq \@@_remember_write_seq:n
         \iow_close:N \g_@@_remember_iow
+        \tl_build_end:N \l_@@_remember_new_str
         \str_if_eq:NNTF \g_@@_remember_old_str \l_@@_remember_new_str
           {
             \bool_if:NT \g_@@_remember_pending_bool
@@ -3991,7 +4007,7 @@ $ pdfdetach -saveall scontents.pdf
     \str_set_convert:Nnnn \l_@@_remember_item_str {#2} { } { utf8/hex }
     \iow_now:Ne \g_@@_remember_iow
       { \l_@@_remember_name_str = \l_@@_remember_item_str }
-    \str_put_right:Ne \l_@@_remember_new_str
+    \tl_build_put_right:Ne \l_@@_remember_new_str
       { \l_@@_remember_name_str = \l_@@_remember_item_str , }
   }
 %    \end{macrocode}
